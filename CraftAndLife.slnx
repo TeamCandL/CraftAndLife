@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="CraftAndLife.vcxproj" />
+  <Project Path="CraftAndLife.vcxproj" Id="a4cf1a43-3bbe-49ba-89c8-1494f6902497" />
 </Solution>
