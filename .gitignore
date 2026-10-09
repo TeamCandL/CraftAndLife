@@ -428,9 +428,13 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
+# Official VS Code C# Dev Kit Extension exclusion
+#*.lscache
+
 # ここはライブラリのlibファイルが入るため無視しない
 !/Library/Debug/*
 !/Library/Debug/*.lib
 !/Library/Release/*
 !/Library/Release/*.lib
 /x64/Debug.zip
+
