@@ -6,10 +6,10 @@ namespace cha
 	class DeltaTime;
 
 	/// @brief ゲーム内時間を扱う
-	class GameTime : public IManager
+	class GameTimeManager : public IManager
 	{
 	public:
-		GameTime(const uint32_t _targetFPS, DeltaTime& _deltaTime);
+		GameTimeManager(const uint32_t _targetFPS, DeltaTime& _deltaTime);
 
 		bool Update();
 

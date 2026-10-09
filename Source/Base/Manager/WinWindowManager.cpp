@@ -1,8 +1,8 @@
 
-#include "WinWindow.h"
+#include "WinWindowManager.h"
 #include "../resource.h"
 
-cha::WinWindow::WinWindow(
+cha::WinWindowManager::WinWindowManager(
 	const Vec2Int _clientSize,
 	const bool _isWindow,
 	const HINSTANCE _hInstance,
@@ -18,7 +18,7 @@ cha::WinWindow::WinWindow(
 {
 }
 
-bool cha::WinWindow::Show(const int32_t _nCmdShow)
+bool cha::WinWindowManager::Show(const int32_t _nCmdShow)
 {
 	SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
 

@@ -6,7 +6,7 @@ namespace cha
 	/// @brief フレーム間時間
 	class DeltaTime : public IManager
 	{
-		friend class GameTime;
+		friend class GameTimeManager;
 	public:
 		DeltaTime() = default;
 		~DeltaTime() = default;

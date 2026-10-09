@@ -1,7 +1,7 @@
 
 #include "RawMouseInput.h"
 #include "../ManagerRegistry.h"
-#include "WinWindow.h"
+#include "WinWindowManager.h"
 
 LRESULT CursorRawInputHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -53,7 +53,7 @@ LRESULT CursorRawInputHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return FALSE;
 }
 
-cha::RawMouseInput::RawMouseInput(WinWindow& _winWindow) :
+cha::RawMouseInput::RawMouseInput(WinWindowManager& _winWindow) :
 	winWindow_{ _winWindow }
 {
 }

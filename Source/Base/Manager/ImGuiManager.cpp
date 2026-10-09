@@ -1,9 +1,9 @@
 
 #include "ImGuiManager.h"
-#include "WinWindow.h"
+#include "WinWindowManager.h"
 #include "Dx11Manager.h"
 
-cha::ImGuiManager::ImGuiManager(WinWindow& _winWindow, Dx11Manager& _dx11Manager) :
+cha::ImGuiManager::ImGuiManager(WinWindowManager& _winWindow, Dx11Manager& _dx11Manager) :
 	winWindow_{ _winWindow },
 	dx11Manager_{ _dx11Manager }
 {

@@ -3,9 +3,9 @@
 
 #include "Core/ResourceManagerInstance.h"
 
-#include "Manager/GameTime.h"
-#include "Manager/WinMessage.h"
-#include "Manager/WinWindow.h"
+#include "Manager/GameTimeManager.h"
+#include "Manager/WinMessageManager.h"
+#include "Manager/WinWindowManager.h"
 #include "Manager/Dx11Manager.h"
 #include "Manager/SceneManager.h"
 #include "Manager/DeltaTime.h"
@@ -52,11 +52,11 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 
 	IssueManager& issueManager = ManagerRegistry::Add<IssueManager>();
 
-	GameTime& gameTime = ManagerRegistry::Add<GameTime>(
+	GameTimeManager& gameTime = ManagerRegistry::Add<GameTimeManager>(
 		clientConfig_.targetFPS,
 		ManagerRegistry::Add<DeltaTime>());
 
-	WinMessage& winMessage = ManagerRegistry::Add<WinMessage>(
+	WinMessageManager& winMessage = ManagerRegistry::Add<WinMessageManager>(
 		_hInstance);
 
 	constexpr size_t MAX_LOADSTRING{ 100 };
@@ -70,7 +70,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 
 	ManagerRegistry::Add<ScreenSize>(clientConfig_.clientSize);
 
-	WinWindow& winWindow = ManagerRegistry::Add<WinWindow>(
+	WinWindowManager& winWindow = ManagerRegistry::Add<WinWindowManager>(
 		clientConfig_.clientSize,
 		clientConfig_.isWindow,
 		_hInstance,

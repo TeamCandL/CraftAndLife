@@ -5,7 +5,7 @@
 namespace cha
 {
 	/// @brief ウィンドウを扱うマネージャ
-	class WinWindow : public IManager
+	class WinWindowManager : public IManager
 	{
 	public:
 		/// @brief ウィンドウを扱うマネージャの初期化
@@ -15,7 +15,7 @@ namespace cha
 		/// @param _wndProc ウィンドウイベントのコールバック関数
 		/// @param _title ウィンドウのタイトル
 		/// @param _appName アプリケーションの名前
-		WinWindow(
+		WinWindowManager(
 			const Vec2Int _clientSize,
 			const bool _isWindow,
 			const HINSTANCE _hInstance,

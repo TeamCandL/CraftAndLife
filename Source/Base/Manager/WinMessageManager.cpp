@@ -1,5 +1,5 @@
 
-#include "WinMessage.h"
+#include "WinMessageManager.h"
 #include "../../resource.h"
 #include <imgui/imgui_impl_dx11.h>
 
@@ -18,12 +18,12 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 extern LRESULT CursorRawInputHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-cha::WinMessage::WinMessage(const HINSTANCE _hInstance) :
+cha::WinMessageManager::WinMessageManager(const HINSTANCE _hInstance) :
 	INSTANCE_HANDLE_{ _hInstance }
 {
 }
 
-bool cha::WinMessage::Update()
+bool cha::WinMessageManager::Update()
 {
 	MSG msg{};
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -40,17 +40,17 @@ bool cha::WinMessage::Update()
 }
 
 
-void cha::WinMessage::BeginIME()
+void cha::WinMessageManager::BeginIME()
 {
 	g_isTextInputMode = true;
 }
 
-std::wstring_view cha::WinMessage::GetIME()
+std::wstring_view cha::WinMessageManager::GetIME()
 {
 	return g_imeCompText;
 }
 
-LRESULT cha::WinMessage::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT cha::WinMessageManager::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (g_isTextInputMode)
 	{

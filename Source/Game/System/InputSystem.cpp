@@ -1,11 +1,11 @@
 
 #include "InputSystem.h"
-#include <Base/Manager/WinWindow.h>
+#include <Base/Manager/WinWindowManager.h>
 
 void InputSystem::Start()
 {
 	HRESULT hResult{};
-	HWND hWnd{ Get<WinWindow>().GetWndHandle() };
+	HWND hWnd{ Get<WinWindowManager>().GetWndHandle() };
 
 #pragma region DirectInput8デバイス作成
 	hResult = DirectInput8Create(

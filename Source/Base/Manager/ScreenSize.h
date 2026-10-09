@@ -7,7 +7,7 @@ namespace cha
 	/// @brief スクリーンサイズ
 	class ScreenSize : public IManager
 	{
-		friend class GameTime;
+		friend class GameTimeManager;
 	public:
 		inline ScreenSize(const Vec2 _clientSize) :
 			CLIENT_SIZE{ _clientSize }

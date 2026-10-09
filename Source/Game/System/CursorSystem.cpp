@@ -1,10 +1,10 @@
 #include "CursorSystem.h"
-#include <Base/Manager/WinWindow.h>
+#include <Base/Manager/WinWindowManager.h>
 
 void CursorSystem::Start()
 {
 	// ウィンドウハンドルを取得しておく
-	hWnd = Get<WinWindow>().GetWndHandle();
+	hWnd = Get<WinWindowManager>().GetWndHandle();
 
 	// NOTE: 前のマウスカーソル位置を捨てるためにあえて2回呼ぶ
 	UpdatePosition();

@@ -14,13 +14,13 @@ LRESULT CursorRawInputHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 namespace cha
 {
-	class WinWindow;
+	class WinWindowManager;
 
 	/// @brief 生のマウスデータを取得する
 	class RawMouseInput : public IManager
 	{
 	public:
-		RawMouseInput(WinWindow& _winWindow);
+		RawMouseInput(WinWindowManager& _winWindow);
 
 		/// @brief 初期化処理
 		/// @return 初期化処理に成功 true / false
@@ -75,6 +75,6 @@ namespace cha
 		int32_t rawScrollWheel_{};  // ホイールスクロール回転量
 		int32_t prevScrollWheel_{};  // 前回の回転量
 
-		WinWindow& winWindow_;  // ウィンドウマネージャ
+		WinWindowManager& winWindow_;  // ウィンドウマネージャ
 	};
 }

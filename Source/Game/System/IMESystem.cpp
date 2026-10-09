@@ -1,5 +1,5 @@
 #include "IMESystem.h"
-#include <Base/Manager/WinMessage.h>
+#include <Base/Manager/WinMessageManager.h>
 
 void IMESystem::Start()
 {
@@ -10,9 +10,9 @@ void IMESystem::Update()
 	// TODO: とくに文字入力使わない！
 	/*if (Get<InputSystem>().GetKeyDown(KeyCode::Enter))
 	{
-		Get<WinMessage>().BeginIME();
+		Get<WinMessageManager>().BeginIME();
 	}*/
 
-	//Get<WinMessage>().
-	//OutputDebugString(std::format(L"{}\r\n", Get<WinMessage>().GetIME()).c_str());
+	//Get<WinMessageManager>().
+	//OutputDebugString(std::format(L"{}\r\n", Get<WinMessageManager>().GetIME()).c_str());
 }

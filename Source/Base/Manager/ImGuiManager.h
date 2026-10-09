@@ -4,13 +4,13 @@
 
 namespace cha
 {
-	class WinWindow;
+	class WinWindowManager;
 	class Dx11Manager;
 
 	class ImGuiManager : public IManager
 	{
 	public:
-		ImGuiManager(WinWindow& _winWindow, Dx11Manager& _dx11Manager);
+		ImGuiManager(WinWindowManager& _winWindow, Dx11Manager& _dx11Manager);
 		~ImGuiManager();
 
 		/// @brief 初期化処理
@@ -24,7 +24,7 @@ namespace cha
 		void Render();
 
 	private:
-		WinWindow& winWindow_;
+		WinWindowManager& winWindow_;
 		Dx11Manager& dx11Manager_;
 	};
 }

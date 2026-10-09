@@ -4,10 +4,10 @@
 namespace cha
 {
 	/// @brief Window メッセージ
-	class WinMessage : public IManager
+	class WinMessageManager : public IManager
 	{
 	public:
-		WinMessage(const HINSTANCE _hInstance);
+		WinMessageManager(const HINSTANCE _hInstance);
 
 		bool Update();
 

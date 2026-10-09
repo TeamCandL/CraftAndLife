@@ -1,16 +1,16 @@
 
-#include "GameTime.h"
+#include "GameTimeManager.h"
 #include "DeltaTime.h"
 #include <algorithm>
 
-cha::GameTime::GameTime(const uint32_t _targetFPS, DeltaTime& _deltaTime) :
+cha::GameTimeManager::GameTimeManager(const uint32_t _targetFPS, DeltaTime& _deltaTime) :
 	targetFPS_{ _targetFPS },
 	deltaTime_{ _deltaTime }
 {
 	QueryPerformanceCounter(&performanceCounterPrev_);
 }
 
-bool cha::GameTime::Update()
+bool cha::GameTimeManager::Update()
 {
 	if (QueryPerformanceFrequency(&performanceFrequency_) == FALSE)
 	{
