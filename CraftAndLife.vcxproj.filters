@@ -1160,4 +1160,8 @@
     <FxCompile Include="Resource\Shader\UICircleImage.hlsl" />
     <FxCompile Include="Resource\Shader\Unlit.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="Library\Debug\DirectXTex.lib" />
+    <Library Include="Library\Release\DirectXTex.lib" />
+  </ItemGroup>
 </Project>
