@@ -390,14 +390,14 @@
     <ClCompile Include="Source\Base\Manager\D2DManager.cpp" />
     <ClCompile Include="Source\Base\Manager\Dx11Manager.cpp" />
     <ClCompile Include="Source\Base\Manager\Dx11Manager\BlendStater.cpp" />
-    <ClCompile Include="Source\Base\Manager\GameTime.cpp" />
+    <ClCompile Include="Source\Base\Manager\GameTimeManager.cpp" />
     <ClCompile Include="Source\Base\Manager\ImGuiManager.cpp" />
     <ClCompile Include="Source\Base\Manager\LightManager.cpp" />
     <ClCompile Include="Source\Base\Manager\RawMouseInput.cpp" />
     <ClCompile Include="Source\Base\Manager\SceneManager.cpp" />
     <ClCompile Include="Source\Base\Manager\UIManager.cpp" />
-    <ClCompile Include="Source\Base\Manager\WinMessage.cpp" />
-    <ClCompile Include="Source\Base\Manager\WinWindow.cpp" />
+    <ClCompile Include="Source\Base\Manager\WinMessageManager.cpp" />
+    <ClCompile Include="Source\Base\Manager\WinWindowManager.cpp" />
     <ClCompile Include="Source\Game\BootScene\BootScene.cpp" />
     <ClCompile Include="Source\Game\BootScene\BootSceneBackground.cpp" />
     <ClCompile Include="Source\Game\BootScene\BootSceneLogo.cpp" />
@@ -441,6 +441,7 @@
     <ClCompile Include="Source\Game\System\IMESystem.cpp" />
     <ClCompile Include="Source\Game\System\InputSystem.cpp" />
     <ClCompile Include="Source\Game\System\OBBRenderSystem.cpp" />
+    <ClCompile Include="Source\Game\System\PadInputSystem.cpp" />
     <ClCompile Include="Source\Game\System\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Game\System\RaycastSystem.cpp" />
     <ClCompile Include="Source\Game\System\ShaderTimeSystem.cpp" />
@@ -568,6 +569,7 @@
     <ClInclude Include="Source\Base\Manager\Dx11Manager\DepthState.h" />
     <ClInclude Include="Source\Base\Manager\Dx11Manager\DepthStateType.h" />
     <ClInclude Include="Source\Base\Manager\GameTime.h" />
+    <ClInclude Include="Source\Base\Manager\GameTimeManager.h" />
     <ClInclude Include="Source\Base\Manager\IGameLoopCallable.h" />
     <ClInclude Include="Source\Base\Manager\IManager.h" />
     <ClInclude Include="Source\Base\Manager\ImGuiManager.h" />
@@ -582,7 +584,9 @@
     <ClInclude Include="Source\Base\Manager\UIManager\UILayerOrder.h" />
     <ClInclude Include="Source\Base\Manager\UIManager\UIRenderElement.h" />
     <ClInclude Include="Source\Base\Manager\WinMessage.h" />
+    <ClInclude Include="Source\Base\Manager\WinMessageManager.h" />
     <ClInclude Include="Source\Base\Manager\WinWindow.h" />
+    <ClInclude Include="Source\Base\Manager\WinWindowManager.h" />
     <ClInclude Include="Source\Base\Utility\HashCombine.h" />
     <ClInclude Include="Source\framework.h" />
     <ClInclude Include="Source\Game\BootScene\BootScene.h" />
@@ -680,6 +684,7 @@
     <ClInclude Include="Source\Game\System\InputSystem\MouseCode.h" />
     <ClInclude Include="Source\Game\System\OBBRenderSystem.h" />
     <ClInclude Include="Source\Game\System\OBBRenderSystem\DebugOBBMaterial.h" />
+    <ClInclude Include="Source\Game\System\PadInputSystem.h" />
     <ClInclude Include="Source\Game\System\PhysicsSystem.h" />
     <ClInclude Include="Source\Game\System\RaycastSystem.h" />
     <ClInclude Include="Source\Game\System\RaycastSystem\RaycastHitInfo.h" />
