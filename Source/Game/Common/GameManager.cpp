@@ -20,11 +20,15 @@
 #include <Base/Manager/IssueManager.h>
 #include <Base/Manager/SceneManager.h>
 #include <Game/System/IMESystem.h>
+#include <Game/System/PadInputSystem.h>
+#include <Game/System/AbstructInputSystem.h>
 
 
 void GameManager::Start()
 {
 	GetScene().Instantiate<InputSystem>();
+	GetScene().Instantiate<PadInputSystem>();
+	GetScene().Instantiate<AbstructInputSystem>();
 	GetScene().Instantiate<CursorSystem>();
 	GetScene().Instantiate<AudioSystem>();
 	//GetScene().Instantiate<DiscordSystem>();

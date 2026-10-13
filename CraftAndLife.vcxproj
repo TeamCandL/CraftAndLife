@@ -432,6 +432,7 @@
     <ClCompile Include="Source\Game\PlayScene\PlayScene.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
+    <ClCompile Include="Source\Game\System\AbstructInputSystem.cpp" />
     <ClCompile Include="Source\Game\System\AudioSystem.cpp" />
     <ClCompile Include="Source\Game\System\AudioSystem\AudioPlayer.cpp" />
     <ClCompile Include="Source\Game\System\CameraSystem.cpp" />
@@ -670,6 +671,7 @@
     <ClInclude Include="Source\Game\PlayScene\PlayScene.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainController.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Reticle.h" />
+    <ClInclude Include="Source\Game\System\AbstructInputSystem.h" />
     <ClInclude Include="Source\Game\System\AudioSystem.h" />
     <ClInclude Include="Source\Game\System\AudioSystem\AudioPlayer.h" />
     <ClInclude Include="Source\Game\System\CameraSystem.h" />
