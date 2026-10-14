@@ -2,6 +2,20 @@
 #include <Game/Game.h>
 #include <GameInput.h>
 
+/// @brief ゲームパッド入力のボタンとしてのトリガー部分
+enum struct GamePadInputTriggerButton
+{
+	Left,   // 左トリガー
+	Right,  // 右トリガー
+};
+
+/// @brief ゲームパッド入力のスティック
+enum struct GamePadInputStick
+{
+	Left,   // 左スティック
+	Right,  // 右スティック
+};
+
 /// @brief ゲームパッド入力システムのデータ
 struct PadInputSystemData
 {
@@ -25,6 +39,9 @@ struct PadInputSystemData
 
 	IGameInput* pGameInput{ nullptr };  ///< ゲームインプット本体
 	bool isConnected{ false };          ///< ゲームパッドが接続されているか
+
+	float deadZoneTrigger{ 0.1f };  ///< トリガーのデッドゾーン
+	float deadZoneStick{ 0.1f };    ///< スティックのデッドゾーン
 };
 
 /// @brief ゲームパッド入力システム
@@ -42,17 +59,47 @@ struct PadInputSystem : SystemObjectBase<PadInputSystem, PadInputSystemData>
 	bool IsConnected() const;
 
 	/// @brief 指定のボタンが押されているか
-	/// @param button 指定のボタン
+	/// @param _button 指定のボタン
 	/// @return 押されている true / false
-	bool IsButton(const GameInputGamepadButtons button) const;
+	bool IsButton(const GamePadInputTriggerButton _button) const;
+	/// @brief 指定のトリガーボタンが押されているか
+	/// @param _button 指定のボタン
+	/// @return 押されている true / false
+	bool IsButton(const GameInputGamepadButtons _button) const;
 	/// @brief 指定のボタンが押された瞬間か
-	/// @param button 指定のボタン
+	/// @param _button 指定のボタン
 	/// @return 押された瞬間 true / false
-	bool IsButtonTriggered(const GameInputGamepadButtons button) const;
+	bool IsButtonTriggered(const GamePadInputTriggerButton _button) const;
+	/// @brief 指定のトリガーボタンが押された瞬間か
+	/// @param _button 指定のボタン
+	/// @return 押された瞬間 true / false
+	bool IsButtonTriggered(const GameInputGamepadButtons _button) const;
 	/// @brief 指定のボタンが離された瞬間か
-	/// @param button 指定のボタン
+	/// @param _button 指定のボタン
 	/// @return 離された瞬間 true / false
-	bool IsButtonReleased(const GameInputGamepadButtons button) const;
+	bool IsButtonReleased(const GameInputGamepadButtons _button) const;
+	/// @brief 指定のトリガーボタンが離された瞬間か
+	/// @param _button 指定のボタン
+	/// @return 離された瞬間 true / false
+	bool IsButtonReleased(const GamePadInputTriggerButton _button) const;
+
+	/// @brief スティックのフリック入力右があったか
+	/// @param _stick スティック
+	/// @return 入力があった true / false
+	bool IsFlickedRight(const GamePadInputStick _stick);
+	/// @brief スティックのフリック入力左
+	/// があったか
+	/// @param _stick スティック
+	/// @return 入力があった true / false
+	bool IsFlickedLeft(const GamePadInputStick _stick);
+	/// @brief スティックのフリック入力上があったか
+	/// @param _stick スティック
+	/// @return 入力があった true / false
+	bool IsFlickedUp(const GamePadInputStick _stick);
+	/// @brief スティックのフリック入力下があったか
+	/// @param _stick スティック
+	/// @return 入力があった true / false
+	bool IsFlickedDown(const GamePadInputStick _stick);
 
 	/// @brief 左スティックの入力を取得
 	/// @return 入力Vec2

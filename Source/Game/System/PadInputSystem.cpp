@@ -80,26 +80,111 @@ bool PadInputSystem::IsConnected() const
 	return isConnected;
 }
 
-bool PadInputSystem::IsButton(const GameInputGamepadButtons button) const
+bool PadInputSystem::IsButton(const GamePadInputTriggerButton _button) const
 {
-	// bit演算して0か0以外かを判定しているだけ
-	return (current.buttons & static_cast<uint32_t>(button)) != 0;
+	const float CURRENT_TRIGGER = _button == GamePadInputTriggerButton::Left
+		? current.leftTrigger
+		: current.rightTrigger;
+	const float PREVIOUS_TRIGGER = _button == GamePadInputTriggerButton::Left
+		? previous.leftTrigger
+		: previous.rightTrigger;
+	return CURRENT_TRIGGER > deadZoneTrigger;
 }
 
-bool PadInputSystem::IsButtonTriggered(const GameInputGamepadButtons button) const
+bool PadInputSystem::IsButton(const GameInputGamepadButtons _button) const
 {
-	const uint32_t MASK{ static_cast<uint32_t>(button) };
+	// bit演算して0か0以外かを判定しているだけ
+	return (current.buttons & static_cast<uint32_t>(_button)) != 0;
+}
+
+bool PadInputSystem::IsButtonTriggered(const GamePadInputTriggerButton _button) const
+{
+	const float CURRENT_TRIGGER = _button == GamePadInputTriggerButton::Left
+		? current.leftTrigger
+		: current.rightTrigger;
+	const float PREVIOUS_TRIGGER = _button == GamePadInputTriggerButton::Left
+		? previous.leftTrigger
+		: previous.rightTrigger;
+
+	// 今回が押された かつ 前回が押されていなかった
+	return CURRENT_TRIGGER > deadZoneTrigger && PREVIOUS_TRIGGER <= deadZoneTrigger;
+}
+
+bool PadInputSystem::IsButtonTriggered(const GameInputGamepadButtons _button) const
+{
+	const uint32_t MASK{ static_cast<uint32_t>(_button) };
 
 	// 今回が押された かつ 前回が押されていなかった
 	return (current.buttons & MASK) != 0 && (previous.buttons & MASK) == 0;
 }
 
-bool PadInputSystem::IsButtonReleased(const GameInputGamepadButtons button) const
+bool PadInputSystem::IsButtonReleased(const GameInputGamepadButtons _button) const
 {
-	const uint32_t MASK{ static_cast<uint32_t>(button) };
+	const uint32_t MASK{ static_cast<uint32_t>(_button) };
 
 	// 今回が押されていない かつ 前回が押されていた
 	return (current.buttons & MASK) == 0 && (previous.buttons & MASK) != 0;
+}
+
+bool PadInputSystem::IsButtonReleased(const GamePadInputTriggerButton _button) const
+{
+	const float CURRENT_TRIGGER = _button == GamePadInputTriggerButton::Left
+		? current.leftTrigger
+		: current.rightTrigger;
+	const float PREVIOUS_TRIGGER = _button == GamePadInputTriggerButton::Left
+		? previous.leftTrigger
+		: previous.rightTrigger;
+
+	// 今回が押された かつ 前回が押されていなかった
+	return CURRENT_TRIGGER <= deadZoneTrigger && PREVIOUS_TRIGGER > deadZoneTrigger;
+}
+
+bool PadInputSystem::IsFlickedRight(const GamePadInputStick _stick)
+{
+	const float CURRENT_X = _stick == GamePadInputStick::Left
+		? current.leftStickX
+		: current.rightStickX;
+	const float PREVIOUS_X = _stick == GamePadInputStick::Left
+		? previous.leftStickX
+		: previous.rightStickX;
+
+	return CURRENT_X > deadZoneStick && PREVIOUS_X <= deadZoneStick;
+}
+
+bool PadInputSystem::IsFlickedLeft(const GamePadInputStick _stick)
+{
+	const float CURRENT_X = _stick == GamePadInputStick::Left
+		? current.leftStickX
+		: current.rightStickX;
+	const float PREVIOUS_X = _stick == GamePadInputStick::Left
+		? previous.leftStickX
+		: previous.rightStickX;
+
+	return CURRENT_X < -deadZoneStick && PREVIOUS_X >= -deadZoneStick;
+}
+
+bool PadInputSystem::IsFlickedUp(const GamePadInputStick _stick)
+{
+	const float CURRENT_Y = _stick == GamePadInputStick::Left
+		? current.leftStickY
+		: current.rightStickY;
+	const float PREVIOUS_Y = _stick == GamePadInputStick::Left
+		? previous.leftStickY
+		: previous.rightStickY;
+
+	return CURRENT_Y > deadZoneStick && PREVIOUS_Y <= deadZoneStick;
+}
+
+bool PadInputSystem::IsFlickedDown(const GamePadInputStick _stick)
+{
+	const float CURRENT_Y = _stick == GamePadInputStick::Left
+		? current.leftStickY
+		: current.rightStickY;
+	const float PREVIOUS_Y = _stick == GamePadInputStick::Left
+		? previous.leftStickY
+		: previous.rightStickY;
+
+	return CURRENT_Y < -deadZoneStick && PREVIOUS_Y >= -deadZoneStick;
 }
 
 Vec2 PadInputSystem::GetLeftStickXY() const
