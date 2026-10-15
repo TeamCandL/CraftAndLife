@@ -128,11 +128,11 @@ bool cha::ModelRegistry::TryLoadFbx(const fs::path& _file, ModelResource& _out)
 
 							std::string_view textureFileName{ pTexture->filename.data };
 
-							// 💡 埋め込みデータ（Embedded）が存在するかチェック
+							// 埋め込みテクスチャ（Embedded）データが存在するかチェック
 							if (pTexture->content.size > 0 && pTexture->content.data != nullptr)
 							{
-								// ✨ 【埋め込み対応】メモリの生バイナリからテクスチャを作成する
-								// ※必要に応じて、独自マテリアルクラスに「メモリからロードする機能」を追加してください
+								// 埋め込みデータの場合はメモリからテクスチャを作成する
+								// ※必要に応じて、独自マテリアルクラスにメモリからのロード機能を追加してください
 								material.texture =
 								{
 									TextureLoadConfig
@@ -438,14 +438,30 @@ void cha::ModelResource::Draw(const float _deltaTime, const size_t _animIndex)
 	}
 
 	// アニメーションの時間を追加して再生
+	// fmod を直接使うと currentAnimTime が大きくなると丸め誤差や大きなジャンプの原因になるため
+	// 細かく時間をラップしておく（ループ時の不連続なジャンプを緩和する）
 	_model.currentAnimTime += _deltaTime;
 	double duration = stack->time_end - stack->time_begin;  // 総再生時間
-	// 現在の時間
-	double evalTime = fmod(_model.currentAnimTime, duration) + stack->time_begin;
+	double evalTime = stack->time_begin;
+	if (duration > 0.0)
+	{
+		// currentAnimTime を [0, duration) の範囲に保つ
+		while (_model.currentAnimTime >= duration)
+		{
+			_model.currentAnimTime -= duration;
+		}
+		while (_model.currentAnimTime < 0.0)
+		{
+			_model.currentAnimTime += duration;
+		}
+
+		// 評価時間を決定
+		evalTime = _model.currentAnimTime + stack->time_begin;
+	}
 
 	ufbx_anim* anim = stack->anim;
 
-	// ⭕ 確保サイズは elements.count のままで安全性を維持
+	// 確保サイズは elements.count のままにする（安全のため）
 	std::vector<DirectX::XMMATRIX> worldMatrices(scene->elements.count, DirectX::XMMatrixIdentity());
 
 	// 階層順にノードのワールド行列を計算
@@ -461,8 +477,8 @@ void cha::ModelResource::Draw(const float _deltaTime, const size_t _animIndex)
 		//{ 1.0f, 1.0f, 1.0f, 1.0f }; 
 		DirectX::XMMATRIX localMatrix = DirectX::XMMatrixAffineTransformation(s, DirectX::XMVectorZero(), r, t);
 
-		// ⭕ 修正：自分の element_id の位置に書き込む
-		// 親がいる場合は、すでに親のループ時点で書き込みが終わっている `parent->element_id` の行列を確実に乗算する
+		// 修正: 自分の element_id の位置に書き込む
+		// 親がいる場合は、親のループで書き込み済みの parent->element_id の行列を乗算する
 		if (node->parent)
 		{
 			worldMatrices[node->element_id] = DirectX::XMMatrixMultiply(localMatrix, worldMatrices[node->parent->element_id]);
@@ -489,27 +505,27 @@ void cha::ModelResource::Draw(const float _deltaTime, const size_t _animIndex)
 		// ufbxから逆バインド行列を取得
 		ufbx_matrix m = cluster->geometry_to_bone;
 
-		// ⭕ 修正：ヘルパー関数が弄れないため、ここもこれまで動いていた「ufbxの生の並び」のまま初期化します
+		// ヘルパー関数を変更できないため、ufbx の行列並びのまま初期化する
 		DirectX::XMMATRIX invBind = DirectX::XMMatrixSet(
 			(float)m.v[0], (float)m.v[1], (float)m.v[2], 0.0f,
 			(float)m.v[3], (float)m.v[4], (float)m.v[5], 0.0f,
 			(float)m.v[6], (float)m.v[7], (float)m.v[8], 0.0f,
 			(float)m.v[9], (float)m.v[10], (float)m.v[11], 1.0f
 		);
-		// ⚠️ 前回入れてしまったTranspose（転置）を削除！これまでの挙動に合わせます
+		// 注意: 前回追加したTransposeを削除（従来の挙動に合わせる）
 
-		// ⭕ 安全対策：element_id を使って現在のワールド行列を取得
+		// 安全対策: element_id を使って現在のワールド行列を取得
 		DirectX::XMMATRIX currentBoneWorld = DirectX::XMMatrixIdentity();
 		if (cluster->bone_node && cluster->bone_node->element_id < worldMatrices.size())
 		{
 			currentBoneWorld = worldMatrices[cluster->bone_node->element_id];
 		}
 
-		// ⭕ 修正：掛け算の順序を「今まで動いていた順序（元のコード）」に戻します
-		// もしこれで駄目なら、逆に「DirectX::XMMatrixMultiply(currentBoneWorld, invBind);」を試してください
+		// 修正: 掛け算の順序を従来の順序に戻す
+		// もし問題がある場合は掛け算の順序を入れ替えて確認してください
 		DirectX::XMMATRIX finalSkinMatrix = DirectX::XMMatrixMultiply(invBind, currentBoneWorld);
 
-		// ⚠️ HLSLの定数バッファへ送るための転置（これはシェーダーの要求なので残す、または以前外していたなら外す）
+		// HLSL の定数バッファ用に転置を行う（シェーダの要求に合わせる）
 		finalSkinMatrix = DirectX::XMMatrixTranspose(finalSkinMatrix);
 
 		DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&skinningMatrices[i]), finalSkinMatrix);
@@ -602,120 +618,10 @@ void cha::ModelResource::UpdateAnim(const float _deltaTime, const int _animIndex
 	}
 	else
 	{
-		// 💡 スキンメッシュモデルの場合は、既存のボーン行列配列 (worldMatrices) を計算する処理をここに記述します
-		// (以前実装しかけていた skinningMatrices への転送処理などをここに移植すると綺麗に収まります)
+	// スキンメッシュモデルの場合は、ボーン行列配列 (worldMatrices) を計算して
+	// ここで定数バッファへ転送する処理を実装してください。
 	}
 
 	// 評価用の一時的なシーンを必ず解放（メモリリーク防止）
 	ufbx_free_scene(pEvaluatedScene);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//void cha::ModelResource::Draw(float _deltaTime)
-//{
-//	ModelResource& _model = *this;
-//
-//	ufbx_scene* scene = _model.pRawScene;
-//	if (!scene || scene->anim_stacks.count == 0) return;
-//
-//	// -------------------------------------------------------------
-//	// ① 再生時間を進めて、ufbxにその瞬間のポーズ（TRS）を自動補間してもらう
-//	// -------------------------------------------------------------
-//	ufbx_anim_stack* stack = scene->anim_stacks.data[0]; // ひとまず0番目のモーション
-//
-//	// 💡 本来はTimeはコンポーネント等で保持すべきですが、テスト用にstaticで回します
-//	static float animTime = 0.0f;
-//	animTime += _deltaTime;
-//	double duration = stack->time_end - stack->time_begin;  // ✨ time_end と time_begin に変更
-//	double evalTime = fmod(animTime, duration) + stack->time_begin;
-//
-//	ufbx_anim* anim = stack->anim;
-//	std::vector<DirectX::XMMATRIX> worldMatrices(scene->nodes.count);
-//
-//	// 階層順にノードのワールド行列を計算（ufbxの特性上、1階層のループで親->子が成立します）
-//	for (size_t i = 0; i < scene->nodes.count; ++i)
-//	{
-//		ufbx_node* node = scene->nodes.data[i];
-//		ufbx_transform localTRS = ufbx_evaluate_transform(anim, node, evalTime);
-//
-//		// DirectXMathの型に変換してローカル行列を作成
-//		DirectX::XMVECTOR t = DirectX::XMVectorSet((float)localTRS.translation.x, (float)localTRS.translation.y, (float)localTRS.translation.z, 1.0f);
-//		DirectX::XMVECTOR r = DirectX::XMVectorSet((float)localTRS.rotation.x, (float)localTRS.rotation.y, (float)localTRS.rotation.z, (float)localTRS.rotation.w);
-//		DirectX::XMVECTOR s = DirectX::XMVectorSet((float)localTRS.scale.x, (float)localTRS.scale.y, (float)localTRS.scale.z, 0.0f);
-//		DirectX::XMMATRIX localMatrix = DirectX::XMMatrixAffineTransformation(s, DirectX::XMVectorZero(), r, t);
-//
-//		if (node->parent) {
-//			worldMatrices[node->typed_id] = DirectX::XMMatrixMultiply(localMatrix, worldMatrices[node->parent->typed_id]);
-//		}
-//		else {
-//			worldMatrices[node->typed_id] = localMatrix;
-//		}
-//	}
-//
-//	// -------------------------------------------------------------
-//	// ② 逆バインド行列を合成して、最終的な「スキン行列」を作る
-//	// -------------------------------------------------------------
-//	if (scene->skin_deformers.count == 0) return;
-//	ufbx_skin_deformer* skin = scene->skin_deformers.data[0];
-//
-//	// シェーダーに送る用の配列（Unlit.hlslのMAX_BONESである256個分の固定長バッファにする）
-//	std::vector<cha::Mat4x4> skinningMatrices(256);
-//
-//	// 安全のためにループ上限をデフォーマーのボーン数か256の小さい方に絞る
-//	size_t numBones = std::min(skin->clusters.count, size_t(256));
-//
-//	for (size_t i = 0; i < numBones; ++i)
-//	{
-//		ufbx_skin_cluster* cluster = skin->clusters.data[i];
-//
-//		// ufbxから逆バインド行列を取得してDirectXMathに変換
-//		ufbx_matrix m = cluster->geometry_to_bone;
-//		DirectX::XMMATRIX invBind = DirectX::XMMatrixSet(
-//			(float)m.v[0], (float)m.v[1], (float)m.v[2], 0.0f,
-//			(float)m.v[3], (float)m.v[4], (float)m.v[5], 0.0f,
-//			(float)m.v[6], (float)m.v[7], (float)m.v[8], 0.0f,
-//			(float)m.v[9], (float)m.v[10], (float)m.v[11], 1.0f
-//		);
-//
-//		// スキン行列 ＝ 逆バインド行列 × 現在のボーンのワールド行列
-//		DirectX::XMMATRIX currentBoneWorld = worldMatrices[cluster->bone_node->typed_id];
-//		DirectX::XMMATRIX finalSkinMatrix = DirectX::XMMatrixMultiply(invBind, currentBoneWorld);
-//
-//		// ⚠️ HLSLの「列優先」に合わせるため、GPUに送る直前で転置(Transpose)する
-//		finalSkinMatrix = DirectX::XMMatrixTranspose(finalSkinMatrix);
-//
-//		// 自前のMat4x4型などにキャストして配列に格納（中身がfloat16個の連続データならmemcpyでもキャストでも可）
-//		DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&skinningMatrices[i]), finalSkinMatrix);
-//	}
-//
-//	// -------------------------------------------------------------
-//	// ③ 作成した行列配列を、Modelが持つ専用定数バッファへ転送＆バインド
-//	// -------------------------------------------------------------
-//	ManagerRegistry::Ref<Dx11Manager>().Ref([&](const ComPtr<ID3D11DeviceContext> _pContext)
-//	{
-//		D3D11_MAPPED_SUBRESOURCE mappedResource{};
-//		HRESULT hr = _pContext->Map(_model.pBoneConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-//
-//		if (SUCCEEDED(hr))
-//		{
-//			// 256個分の行列データを一気に転送
-//			memcpy(mappedResource.pData, skinningMatrices.data(), sizeof(cha::Mat4x4) * 256);
-//			_pContext->Unmap(_model.pBoneConstantBuffer.Get(), 0);
-//		}
-//
-//		// 💡 Unlit.hlsl で指定したレジスタ「b4」に、このモデルのバッファをバインド
-//		_pContext->VSSetConstantBuffers(4, 1, _model.pBoneConstantBuffer.GetAddressOf());
-//	});
-//}

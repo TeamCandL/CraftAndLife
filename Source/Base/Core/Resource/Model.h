@@ -84,17 +84,17 @@ namespace cha
 			return hash;
 		}
 
-		/// @brief 仮のアニメーション更新描画処理
+		/// @brief アニメーション更新描画処理 NOTE: キーフレームではない場合 UpdateAnim を使ってね
 		/// @param _deltaTime デルタタイム
 		/// @param _animIndex アニメーションインデックス
 		void Draw(const float _deltaTime, const size_t _animIndex);
 
-		/// @brief キーフレームではないアニメーションの適用
+		/// @brief キーフレームではないアニメーションの適用 NOTE: キーフレームの場合 Draw(float, size_t) を使ってね
 		/// @param _deltaTime アニメーション時間
 		/// @param _animIndex アニメーションインデックス
 		void UpdateAnim(const float _deltaTime, const int _animIndex);
 
-		fs::path file{};  // モデルファイル
+		fs::path file{};  ///< モデルファイル
 
 		std::vector<ModelParts> subParts{};
 
