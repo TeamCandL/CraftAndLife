@@ -4,7 +4,7 @@
 
 void Player::Start()
 {
-	transform.scale = Vec3::One() * 0.01f;
+	transform.scale = Vec3::One() * 10.0f;
 	objPlayerController = GetScene().Instantiate<PlayerControllerNormal>();
 }
 
@@ -20,6 +20,7 @@ void Player::Update()
 
 void Player::Draw()
 {
+	/*
 	Get<Dx11Manager>().EnqueueTransparent([this]
 	{
 		// ブレンドステートは透明度考慮するやつ
@@ -58,4 +59,18 @@ void Player::Draw()
 		Get<Dx11Manager>().ChangeDepthState(DepthStateType_Standard);
 		Get<Dx11Manager>().SetBlendState(BlendStateType_None);
 	});
+	*/
+	Get<Dx11Manager>().SetShader(shader);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	model.Get().UpdateAnim(Get<DeltaTime>(), 0);
+
+	const auto& subParts{ model.Get().subParts };
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
 }

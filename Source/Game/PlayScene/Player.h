@@ -10,7 +10,7 @@ struct PlayerData
 	{
 	}
 
-	Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
+	/*Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
 	{
 		"Shader/Unlit.hlsl",
 		RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
@@ -19,8 +19,9 @@ struct PlayerData
 	{
 		"Shader/Unlit.hlsl",
 		RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};
-	Resource<Model> model{ "Model/TestMCModel/MCModel.fbx" };  ///< モデル
+	};*/
+	Resource<Shader> shader{ "Shader/Unlit.hlsl" };  ///< シェーダ
+	Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx" };  ///< モデル
 
 	Component<Transform> transform{};  ///< 座標系
 	Component<RigidBody> rigidBody{};  ///< 剛体

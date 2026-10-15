@@ -65,6 +65,8 @@ VSOutput VS(ModelVertex input)
 
 float4 PS(VSOutput input) : SV_Target0
 {
+	//return float4(1, 1, 0, 1);
+	
 	float4 diffuseColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	// 偽の時絶対にテクスチャをサンプルしなくなる！らしい！←結果ダメだった
 	[branch]

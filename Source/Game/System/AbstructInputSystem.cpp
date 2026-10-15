@@ -17,7 +17,6 @@ void AbstructInputSystem::Update()
 
 		if (padInputSystem.IsConnected())
 		{
-			VCU_LOG("コントローラー接続済み");
 			ImGui::Begin("AbstrucInputSystem");
 			ImGui::Text("LT %3.2f", padInputSystem.GetLeftTrigger());
 			ImGui::Text("RT %3.2f", padInputSystem.GetRightTrigger());

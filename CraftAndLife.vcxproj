@@ -446,6 +446,7 @@
     <ClCompile Include="Source\Game\System\InputSystem.cpp" />
     <ClCompile Include="Source\Game\System\OBBRenderSystem.cpp" />
     <ClCompile Include="Source\Game\System\PadInputSystem.cpp" />
+    <ClCompile Include="Source\Game\System\ParticleSystem.cpp" />
     <ClCompile Include="Source\Game\System\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Game\System\RaycastSystem.cpp" />
     <ClCompile Include="Source\Game\System\ShaderTimeSystem.cpp" />
@@ -695,6 +696,7 @@
     <ClInclude Include="Source\Game\System\OBBRenderSystem.h" />
     <ClInclude Include="Source\Game\System\OBBRenderSystem\DebugOBBMaterial.h" />
     <ClInclude Include="Source\Game\System\PadInputSystem.h" />
+    <ClInclude Include="Source\Game\System\ParticleSystem.h" />
     <ClInclude Include="Source\Game\System\PhysicsSystem.h" />
     <ClInclude Include="Source\Game\System\RaycastSystem.h" />
     <ClInclude Include="Source\Game\System\RaycastSystem\RaycastHitInfo.h" />
