@@ -14,7 +14,7 @@
 #include "Manager/IssueManager.h"
 #include "Manager/ImGuiManager.h"
 #include "Manager/LightManager.h"
-#include "Manager/RawMouseInput.h"
+#include "Manager/RawMouseInputManager.h"
 #include "Manager/UIManager.h"
 #include "Manager/D2DManager.h"
 
@@ -98,7 +98,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 		return;
 	}
 
-	RawMouseInput& rawMouseInput = ManagerRegistry::Add<RawMouseInput>(winWindow);
+	RawMouseInputManager& rawMouseInput = ManagerRegistry::Add<RawMouseInputManager>(winWindow);
 
 	succeed = rawMouseInput.Initialize();
 	if (!succeed)

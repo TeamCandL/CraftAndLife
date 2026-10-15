@@ -3,7 +3,7 @@
 
 #include <Base/Manager/DeltaTime.h>
 #include <Base/Manager/LightManager.h>
-#include <Base/Manager/RawMouseInput.h>
+#include <Base/Manager/RawMouseInputManager.h>
 
 #include <Base/Core/Mathf.h>
 #include <Base/Core/SceneBase.inl>

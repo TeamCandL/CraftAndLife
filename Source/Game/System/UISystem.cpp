@@ -159,7 +159,7 @@ void UISystem::UpdateText()
 
 void UISystem::UpdateRaycast()
 {
-	RawMouseInput& mouse = Get<RawMouseInput>();
+	RawMouseInputManager& mouse = Get<RawMouseInputManager>();
 	const Vec2 CURSOR_POSITION = Get<CursorSystem>().GetPosition();
 
 	using UISortPair = std::pair<UILayerOrder, size_t>;

@@ -16,11 +16,11 @@ namespace cha
 {
 	class WinWindowManager;
 
-	/// @brief 生のマウスデータを取得する
-	class RawMouseInput : public IManager
+	/// @brief 生のマウスデータを取得するマネージャー
+	class RawMouseInputManager : public IManager
 	{
 	public:
-		RawMouseInput(WinWindowManager& _winWindow);
+		RawMouseInputManager(WinWindowManager& _winWindow);
 
 		/// @brief 初期化処理
 		/// @return 初期化処理に成功 true / false

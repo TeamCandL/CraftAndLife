@@ -11,7 +11,7 @@ void MainCamera::Start()
 
 void MainCamera::Update()
 {
-	RawMouseInput& rawMouseInput = Get<cha::RawMouseInput>();
+	RawMouseInputManager& rawMouseInput = Get<cha::RawMouseInputManager>();
 	CursorSystem& cursor = Get<CursorSystem>();
 	InputSystem& input = Get<InputSystem>();
 	CameraSystemData& camera = Get<CameraSystem>().Data();

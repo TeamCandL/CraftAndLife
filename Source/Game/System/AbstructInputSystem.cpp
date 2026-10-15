@@ -80,3 +80,8 @@ PadInputSystem& AbstructInputSystem::GetPadInputSystem()
 {
 	return Get<PadInputSystem>();
 }
+
+RawMouseInputManager& AbstructInputSystem::GetRawMouseInputManager()
+{
+	return Get<RawMouseInputManager>();
+}

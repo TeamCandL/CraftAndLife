@@ -1,5 +1,5 @@
 
-#include "RawMouseInput.h"
+#include "RawMouseInputManager.h"
 #include "../ManagerRegistry.h"
 #include "WinWindowManager.h"
 
@@ -26,7 +26,7 @@ LRESULT CursorRawInputHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		if (rawInput.header.dwType == RIM_TYPEMOUSE)
 		{
-			cha::RawMouseInput& input = cha::ManagerRegistry::Ref<cha::RawMouseInput>();
+			cha::RawMouseInputManager& input = cha::ManagerRegistry::Ref<cha::RawMouseInputManager>();
 
 			input.UpdateButtons(rawInput.data.mouse.usButtonFlags);
 
@@ -53,12 +53,12 @@ LRESULT CursorRawInputHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return FALSE;
 }
 
-cha::RawMouseInput::RawMouseInput(WinWindowManager& _winWindow) :
+cha::RawMouseInputManager::RawMouseInputManager(WinWindowManager& _winWindow) :
 	winWindow_{ _winWindow }
 {
 }
 
-bool cha::RawMouseInput::Initialize()
+bool cha::RawMouseInputManager::Initialize()
 {
 	RAWINPUTDEVICE DEVICE
 	{
@@ -74,7 +74,7 @@ bool cha::RawMouseInput::Initialize()
 	return succeed;
 }
 
-bool cha::RawMouseInput::Update()
+bool cha::RawMouseInputManager::Update()
 {
 	// マウス移動量更新
 	prevRawDelta_ = rawDelta_;
@@ -92,18 +92,18 @@ bool cha::RawMouseInput::Update()
 	return true;
 }
 
-void cha::RawMouseInput::AddDelta(const LONG _lLastX, const LONG _lLastY)
+void cha::RawMouseInputManager::AddDelta(const LONG _lLastX, const LONG _lLastY)
 {
 	rawDelta_.x += _lLastX;
 	rawDelta_.y += _lLastY;
 }
 
-void cha::RawMouseInput::AddWheelDelta(const SHORT _scroll)
+void cha::RawMouseInputManager::AddWheelDelta(const SHORT _scroll)
 {
 	rawScrollWheel_ += _scroll;
 }
 
-void cha::RawMouseInput::UpdateButtons(const uint16_t _buttonFlags)
+void cha::RawMouseInputManager::UpdateButtons(const uint16_t _buttonFlags)
 {
 	//for (uint16_t buttonCode = 0; buttonCode < MouseCode_Max; buttonCode++)
 	//{
@@ -127,19 +127,19 @@ void cha::RawMouseInput::UpdateButtons(const uint16_t _buttonFlags)
 	if (_buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)   buttonStateRaw[MouseCode_Middle] = false;
 }
 
-bool cha::RawMouseInput::GetMouse(const MouseCode _mouseCode) const
+bool cha::RawMouseInputManager::GetMouse(const MouseCode _mouseCode) const
 {
 	// 現在のボタン状況を返す
 	return buttonStateRaw[_mouseCode];
 }
 
-bool cha::RawMouseInput::GetMouseDown(const MouseCode _mouseCode) const
+bool cha::RawMouseInputManager::GetMouseDown(const MouseCode _mouseCode) const
 {
 	// 前回が押されていないが今回押されているなら押された瞬間
 	return !buttonStatePrevious[_mouseCode] && buttonStateCurrent[_mouseCode];
 }
 
-bool cha::RawMouseInput::GetMouseUp(const MouseCode _mouseCode) const
+bool cha::RawMouseInputManager::GetMouseUp(const MouseCode _mouseCode) const
 {
 	// 前回が押されているが今回押されていないなら離された瞬間
 	return buttonStatePrevious[_mouseCode] && !buttonStateCurrent[_mouseCode];

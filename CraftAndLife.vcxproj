@@ -393,7 +393,7 @@
     <ClCompile Include="Source\Base\Manager\GameTimeManager.cpp" />
     <ClCompile Include="Source\Base\Manager\ImGuiManager.cpp" />
     <ClCompile Include="Source\Base\Manager\LightManager.cpp" />
-    <ClCompile Include="Source\Base\Manager\RawMouseInput.cpp" />
+    <ClCompile Include="Source\Base\Manager\RawMouseInputManager.cpp" />
     <ClCompile Include="Source\Base\Manager\SceneManager.cpp" />
     <ClCompile Include="Source\Base\Manager\UIManager.cpp" />
     <ClCompile Include="Source\Base\Manager\WinMessageManager.cpp" />
@@ -584,7 +584,7 @@
     <ClInclude Include="Source\Base\Manager\IssueManager.h" />
     <ClInclude Include="Source\Base\Manager\LightManager.h" />
     <ClInclude Include="Source\Base\Manager\LightManager\LightMaterial.h" />
-    <ClInclude Include="Source\Base\Manager\RawMouseInput.h" />
+    <ClInclude Include="Source\Base\Manager\RawMouseInputManager.h" />
     <ClInclude Include="Source\Base\Manager\RawMouseInput\MouseCode.h" />
     <ClInclude Include="Source\Base\Manager\SceneManager.h" />
     <ClInclude Include="Source\Base\Manager\ScreenSize.h" />
