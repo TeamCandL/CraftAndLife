@@ -18,6 +18,8 @@ struct TPSCameraData
 /// @brief 3人称カメラ
 struct TPSCamera : ObjectBase<TPSCameraData>, IMainCameraUpdater
 {
+	using ObjectBase<TPSCameraData>::ObjectBase;
+
 private:
 	/// @brief 更新処理
 	void Update(MainCameraData& _data) override;

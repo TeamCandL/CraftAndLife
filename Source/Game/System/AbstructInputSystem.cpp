@@ -42,9 +42,11 @@ void AbstructInputSystem::Update()
 			ImGui::Text("GetMoveBody: (%3.2f, %3.2f)", bodyMove.x, bodyMove.y);
 			Vec2 cameraMove{ pPlayerInput->GetMoveCamera() };
 			ImGui::Text("GetMoveCamera: (%3.2f, %3.2f)", cameraMove.x, cameraMove.y);
+			ImGui::Text("IsActionTrigger: %3.2f", pPlayerInput->GetActionTrigger());
 			ImGui::Text("IsActionBegin: %s", pPlayerInput->IsActionBegin() ? "TRUE" : "FALSE");
 			ImGui::Text("IsAction: %s", pPlayerInput->IsAction() ? "TRUE" : "FALSE");
 			ImGui::Text("IsActionEnd: %s", pPlayerInput->IsActionEnd() ? "TRUE" : "FALSE");
+			ImGui::Text("IsSubActionTrigger: %3.2f", pPlayerInput->GetSubActionTrigger());
 			ImGui::Text("IsSubActionBegin: %s", pPlayerInput->IsSubActionBegin() ? "TRUE" : "FALSE");
 			ImGui::Text("IsSubAction: %s", pPlayerInput->IsSubAction() ? "TRUE" : "FALSE");
 			ImGui::Text("IsSubActionEnd: %s", pPlayerInput->IsSubActionEnd() ? "TRUE" : "FALSE");
