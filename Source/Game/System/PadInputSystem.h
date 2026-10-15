@@ -113,4 +113,14 @@ struct PadInputSystem : SystemObjectBase<PadInputSystem, PadInputSystemData>
 	/// @brief 右トリガーの入力を取得
 	/// @return 入力float
 	float GetRightTrigger() const;
+
+	/// @brief スティック入力がデッドゾーンの場合切り捨てる加工
+	/// @param _input スティック入力
+	/// @return 加工された入力
+	Vec2 ToCutDeadStick(const Vec2 _input) const;
+
+	/// @brief トリガー入力がデッドゾーンの場合切り捨てる加工
+	/// @param _input トリガー入力
+	/// @return 加工された入力
+	float ToCutDeadTrigger(const float _input) const;
 };

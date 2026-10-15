@@ -15,6 +15,8 @@ public:
 	// IPlayerInput を介して継承されました
 	Vec2 GetMoveBody() const override;
 	Vec2 GetMoveCamera() const override;
+	float GetActionTrigger() const override;
+	float GetSubActionTrigger() const override;
 	bool IsActionBegin() const override;
 	bool IsAction() const override;
 	bool IsActionEnd() const override;

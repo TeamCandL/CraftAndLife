@@ -39,10 +39,10 @@ void MainCamera::Update()
 		cursor.ChangeMode(CursorMode_CenterLock);
 	}
 
-	if (!isHideCursor)
-	{
-		return;  // カーソルが非表示なら操作しない
-	}
+	//if (!isHideCursor)
+	//{
+	//	return;  // カーソルが非表示なら操作しない
+	//}
 
 	if (input.GetKeyDown(KeyCode::Escape))
 	{
@@ -52,10 +52,10 @@ void MainCamera::Update()
 		return;
 	}
 
-	if (cursor.IsVisible())
-	{
-		return;  // カーソルが表示されているなら操作しない
-	}
+	//if (cursor.IsVisible())
+	//{
+	//	return;  // カーソルが表示されているなら操作しない
+	//}
 
 	Get<IMainCameraUpdater>(objUpdater).Update(Data());
 }

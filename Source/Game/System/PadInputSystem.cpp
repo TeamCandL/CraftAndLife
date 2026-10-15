@@ -189,20 +189,34 @@ bool PadInputSystem::IsFlickedDown(const GamePadInputStick _stick)
 
 Vec2 PadInputSystem::GetLeftStickXY() const
 {
-	return Vec2{ current.leftStickX, current.leftStickY };
+	return ToCutDeadStick(Vec2{ current.leftStickX, current.leftStickY });
 }
 
 Vec2 PadInputSystem::GetRightStickXY() const
 {
-	return Vec2{ current.rightStickX, current.rightStickY };
+	return ToCutDeadStick(Vec2{ current.rightStickX, current.rightStickY });
 }
 
 float PadInputSystem::GetLeftTrigger() const
 {
-	return current.leftTrigger;
+	return ToCutDeadTrigger(current.leftTrigger);
 }
 
 float PadInputSystem::GetRightTrigger() const
 {
-	return current.rightTrigger;
+	return ToCutDeadTrigger(current.rightTrigger);
+}
+
+Vec2 PadInputSystem::ToCutDeadStick(const Vec2 _input) const
+{
+	return Vec2
+	{
+		_input.x < -deadZoneStick || deadZoneStick < _input.x ? _input.x : 0.0f,
+		_input.y < -deadZoneStick || deadZoneStick < _input.y ? _input.y : 0.0f,
+	};
+}
+
+float PadInputSystem::ToCutDeadTrigger(const float _input) const
+{
+	return _input > deadZoneTrigger ? _input : 0.0f;
 }

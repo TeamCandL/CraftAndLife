@@ -25,18 +25,13 @@ struct AbstructInputSystem : SystemObjectBase<AbstructInputSystem, AbstructInput
 	template<typename T>
 	void SetUIInput();
 
-	std::shared_ptr<IPlayerInput> GetPlayerInput();
-	std::shared_ptr<IUIInput> GetUIInput();
+
+	/// @brief 抽象プレイヤー入力を取得
+	/// @return 抽象プレイヤー入力のシェアポインタ
+	std::shared_ptr<IPlayerInput> GetPlayerInput() { return pPlayerInput; }
+	/// @brief 抽象UI入力を取得
+	/// @return 抽象UI入力のシェアポインタ
+	std::shared_ptr<IUIInput> GetUIInput() { return pUIInput; }
 };
 
-template<typename T>
-inline void AbstructInputSystem::SetPlayerInput()
-{
-	pPlayerInput = std::make_shared<T>(*this);
-}
-
-template<typename T>
-inline void AbstructInputSystem::SetUIInput()
-{
-	pUIInput = std::make_shared<T>(*this);
-}
+#include "AbstructInputSystem.inl"

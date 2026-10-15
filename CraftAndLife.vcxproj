@@ -757,6 +757,7 @@
     <None Include="Source\Game\Common\Stage\StageLoader.inl" />
     <None Include="Source\Game\Network\MessageRegistry.inl" />
     <None Include="Source\Game\Network\NetworkSessionManager.inl" />
+    <None Include="Source\Game\System\AbstructInputSystem.inl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

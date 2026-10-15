@@ -16,6 +16,16 @@ Vec2 NormalPlayerInput::GetMoveCamera() const
 	return abstructInputSystem_.GetPadInputSystem().GetRightStickXY();
 }
 
+float NormalPlayerInput::GetActionTrigger() const
+{
+	return abstructInputSystem_.GetPadInputSystem().GetRightTrigger();
+}
+
+float NormalPlayerInput::GetSubActionTrigger() const
+{
+	return abstructInputSystem_.GetPadInputSystem().GetLeftTrigger();
+}
+
 bool NormalPlayerInput::IsActionBegin() const
 {
 	return abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GamePadInputTriggerButton::Right);

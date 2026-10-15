@@ -16,6 +16,12 @@ public:
 	/// @brief カメラの回転入力を取得する
 	/// @return 回転入力Vec2 0.0f ~ 1.0f
 	virtual Vec2 GetMoveCamera() const = 0;
+	/// @brief アクションの押し込み具合
+	/// @return 押し込み具合 0.0f ~ 1.0f
+	virtual float GetActionTrigger() const = 0;
+	/// @brief アクションの押し込み具合
+	/// @return 押し込み具合 0.0f ~ 1.0f
+	virtual float GetSubActionTrigger() const = 0;
 	/// @brief アクション入力が始まったタイミングか取得
 	/// @return アクション入力が始まったタイミング true / false
 	virtual bool IsActionBegin() const = 0;
