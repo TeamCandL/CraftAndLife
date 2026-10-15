@@ -729,7 +729,9 @@
     <ClInclude Include="Source\TheGame.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".clang-format" />
     <None Include=".editorconfig" />
+    <None Include="CodingGuideLine.md" />
     <None Include="Library\DirectXTex\DirectXTex.inl" />
     <None Include="Resource\ConnectionConfig.json" />
     <None Include="Resource\Shader\Camera.hlsli" />
