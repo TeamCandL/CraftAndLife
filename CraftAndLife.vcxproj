@@ -666,6 +666,7 @@
     <ClInclude Include="Source\Game\PlayScene\MainCamera\FPSCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\MainCamera\GhostCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\MainCamera\IMainCameraUpdater.h" />
+    <ClInclude Include="Source\Game\PlayScene\MainCamera\TPSCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\Player.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\IPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerControllerNormal.h" />

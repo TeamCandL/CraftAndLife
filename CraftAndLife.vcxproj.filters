@@ -1118,6 +1118,9 @@
     <ClInclude Include="Source\Game\System\AbstructInputSystem\NormalUIInput.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\MainCamera\TPSCamera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Base\Core\ComponentPool\ComponentPools.inl">
