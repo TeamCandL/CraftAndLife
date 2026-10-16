@@ -1,6 +1,8 @@
 #pragma once
 #include <Game/Game.h>
 
+struct Player;
+
 struct EnemyAttackCollData
 {
 	EnemyAttackCollData()
