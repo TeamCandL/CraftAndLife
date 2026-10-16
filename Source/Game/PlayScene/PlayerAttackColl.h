@@ -48,5 +48,5 @@ struct PlayerAttackColl : ObjectBase<PlayerAttackCollData>
 	void Update() override;
 
 	/// 対象へのダメージ付与
-	void SendDamage();
+	void SendDamage(Enemy& enemy, int32_t);
 };

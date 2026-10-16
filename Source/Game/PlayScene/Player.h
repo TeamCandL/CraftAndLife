@@ -34,6 +34,12 @@ struct PlayerData
 	float angleY{};
 
 	int animIndex{};  ///< アニメーションのインデクス
+
+	//-----------------------------------------//
+	//パラメータ//-----------------------------//
+	//-----------------------------------------//
+	int32_t hp{};
+	int32_t damage{};
 };
 
 /// @brief プレイヤー
@@ -49,4 +55,8 @@ struct Player : ObjectBase<PlayerData>
 
 	/// @brief 描画処理
 	void Draw() override;
+
+	void AttackCollider();
+
+	void Damaged(int32_t damage);
 };

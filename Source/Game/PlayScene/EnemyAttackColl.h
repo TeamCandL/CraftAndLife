@@ -48,5 +48,5 @@ struct EnemyAttackColl : ObjectBase<EnemyAttackCollData>
 	void Update() override;
 
 	/// 対象へのダメージ付与
-	void SendDamage();
+	void SendDamage(Player& player,int32_t damage_);
 };
