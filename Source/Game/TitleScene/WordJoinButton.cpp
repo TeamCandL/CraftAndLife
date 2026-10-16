@@ -4,6 +4,7 @@
 #include <Game/Network/NetworkSessionManager.h>
 #include <Game/Manager/SessionManager.h>
 #include "TitleNetworkController.h"
+#include <Game/System/AudioSystem.h>
 
 void WordJoinButton::Start()
 {
@@ -53,6 +54,7 @@ void WordJoinButton::Update()
 		}
 		isInputtingWord = false;
 
+		Get<AudioSystem>().Play(pushSound);
 		return;
 	}
 
@@ -60,5 +62,7 @@ void WordJoinButton::Update()
 	{
 		Get<WordInputPanel>(objWordInputPanel).Show();
 		isInputtingWord = true;
+
+		Get<AudioSystem>().Play(pushSound);
 	}
 }

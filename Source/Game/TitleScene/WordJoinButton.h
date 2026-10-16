@@ -19,6 +19,8 @@ struct WordJoinButtonData
 
 	bool isInputtingWord{ false };
 	std::string inputWord{};
+
+	Resource<Audio> pushSound{ "Sound/stopbutton.mp3" };
 };
 
 /// @brief 合言葉で参加するボタン

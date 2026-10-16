@@ -9,15 +9,23 @@ struct AudioSystem : SystemObjectBase<AudioSystem>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+	/// @brief BGMを設定する
+	/// @param _resource 音声リソース
 	void SetBGM(Resource<ResourceType::Audio>& _resource);
+	/// @brief 再生終了時にループを離脱する
 	void SetBGMExitLoop();
+	/// @brief BGMを止める
 	void SetBGMStop();
+	/// @brief BGMを再開する
 	void SetBGMStart();
+	/// @brief 効果音を再生する
+	/// @param _resource 音声リソース
 	void Play(Resource<ResourceType::Audio>& _resource);
 
-	// 毎フレーム呼ばれる更新処理
+	/// @brief 毎フレーム呼ばれる更新処理
 	void LateUpdate() override;
-	void OnDestroy();
+	/// @brief 廃棄処理
+	void OnDestroy() override;
 
 private:
 	ComPtr<IXAudio2> pXAudio2{};

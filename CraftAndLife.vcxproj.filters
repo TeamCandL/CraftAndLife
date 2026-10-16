@@ -108,9 +108,6 @@
     <ClCompile Include="Source\Base\Manager\LightManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Base\Manager\RawMouseInput.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Base\Manager\SceneManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -364,6 +361,21 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\PlayScene\MainCamera\TPSCamera.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Base\Manager\RawMouseInputManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\PlayerAttackColl.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\System\ParticleSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -633,9 +645,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\Base\Manager\LightManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Base\Manager\RawMouseInput.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\Base\Manager\SceneManager.h">
@@ -1124,6 +1133,24 @@
     <ClInclude Include="Source\Game\PlayScene\MainCamera\TPSCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Base\Manager\RawMouseInputManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\EnemyAttackColl.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\PlayerAttackColl.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\System\ParticleSystem.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\dr_lib\dr_mp3.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Base\Core\ComponentPool\ComponentPools.inl">
@@ -1185,6 +1212,8 @@
     <None Include="Source\Game\System\AbstructInputSystem.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="Library\dr_lib\LICENSE" />
+    <None Include="Library\ufbx\LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc">

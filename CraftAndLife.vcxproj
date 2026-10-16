@@ -478,6 +478,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\DirectXTex\DirectXTex.h" />
+    <ClInclude Include="Library\dr_lib\dr_mp3.h" />
     <ClInclude Include="Library\enet\enet.h" />
     <ClInclude Include="Library\imgui\imconfig.h" />
     <ClInclude Include="Library\imgui\imgui.h" />
@@ -737,6 +738,8 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="Library\DirectXTex\DirectXTex.inl" />
+    <None Include="Library\dr_lib\LICENSE" />
+    <None Include="Library\ufbx\LICENSE" />
     <None Include="Resource\ConnectionConfig.json" />
     <None Include="Resource\Shader\Camera.hlsli" />
     <None Include="Resource\Shader\Material\DebugOBBMaterial.hlsli" />
