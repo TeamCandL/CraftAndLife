@@ -4,6 +4,7 @@
 #include "AbstructInputSystem/IUIInput.h"
 #include "PadInputSystem.h"
 #include <Base/Manager/RawMouseInputManager.h>
+#include "InputSystem.h"
 
 /// @brief 抽象的な入力を扱うシステムデータ
 struct AbstructInputSystemData
@@ -20,6 +21,7 @@ struct AbstructInputSystem : SystemObjectBase<AbstructInputSystem, AbstructInput
 
 	PadInputSystem& GetPadInputSystem();
 	RawMouseInputManager& GetRawMouseInputManager();
+	InputSystem& GetInputSystem();
 
 	template<typename T>
 	void SetPlayerInput();

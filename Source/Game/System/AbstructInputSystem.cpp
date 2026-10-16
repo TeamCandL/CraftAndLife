@@ -85,3 +85,8 @@ RawMouseInputManager& AbstructInputSystem::GetRawMouseInputManager()
 {
 	return Get<RawMouseInputManager>();
 }
+
+InputSystem& AbstructInputSystem::GetInputSystem()
+{
+	return Get<InputSystem>();
+}
