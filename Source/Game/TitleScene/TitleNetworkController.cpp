@@ -44,9 +44,9 @@ void TitleNetworkController::Update()
 
 			switch (protocolType)
 			{
-			case ProtocolType::JoinOk:
+			case ProtocolType::JoinOK:
 			{
-				Protocol::JoinOk protocol{};
+				Protocol::JoinOK protocol{};
 				converter.ToMessage(_event.data, protocol);
 
 				Get<SessionManager>().SetPlayerName(protocol.playerName);

@@ -4,7 +4,8 @@
 enum struct ProtocolType : uint8_t
 {
 	JoinRoom = 0,    ///< 部屋を作成・参加 (部屋名)
-	JoinOk,          ///< 部屋の参加ok (プレイヤー名)
+	JoinOK,          ///< 部屋の参加ok (プレイヤー名)
+	JoinNG,
 	LobbyMembers,    ///< ロビー内メンバー一覧
 	ReadySelf,       ///< ロビー内で準備ok
 	StartGame,       ///< ゲーム開始

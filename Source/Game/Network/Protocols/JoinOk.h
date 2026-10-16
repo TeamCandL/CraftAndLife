@@ -4,11 +4,11 @@
 namespace Protocol
 {
 	/// @brief プロトコル : JoinOk
-	struct JoinOk : INetworkMessage
+	struct JoinOK : INetworkMessage
 	{
 		/// @brief プロトコルの種類を取得する
 		/// @return プロトコルの種類
-		ProtocolType GetProtocolType() const override { return ProtocolType::JoinOk; }
+		ProtocolType GetProtocolType() const override { return ProtocolType::JoinOK; }
 
 		/// @brief メンバーをロードする
 		/// @param _registry メンバーを登録するやつ
