@@ -34,3 +34,13 @@ void Player::Draw()
 		Get<Dx11Manager>().Draw();
 	}
 }
+
+void Player::AttackCollider()
+{
+	//new PlayerAttackColl();
+}
+
+void Player::Damaged(int32_t damage)
+{
+	hp -= damage;
+}

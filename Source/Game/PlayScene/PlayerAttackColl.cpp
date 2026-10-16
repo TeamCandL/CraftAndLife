@@ -1,5 +1,6 @@
 #include "pch\pch.h"
 #include "PlayerAttackColl.h"
+#include "Enemy.h"
 
 void PlayerAttackColl::Start()
 {
@@ -7,12 +8,16 @@ void PlayerAttackColl::Start()
 
 void PlayerAttackColl::Update()
 {
-	//触れている敵に対してダメージを与える
-	/*
-	SendDamage();
-	*/
+	for (auto& info : obb.hitGameObjects)
+	{
+		if (Get<Name>(info.gameObject).content == "Enemy")
+		{
+			SendDamage(Get<Enemy>(info.gameObject), damage);
+		}
+	}
 }
 
-void PlayerAttackColl::SendDamage()
+void PlayerAttackColl::SendDamage(Enemy& enemy, int32_t)
 {
+	enemy.Damaged(damage);
 }

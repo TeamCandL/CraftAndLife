@@ -53,4 +53,6 @@ struct Enemy : ObjectBase<EnemyData>
 
 	/// 攻撃判定の生成
 	void AttackCollider();
+
+	void Damaged(int32_t damage);
 };
