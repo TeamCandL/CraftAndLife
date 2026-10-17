@@ -701,7 +701,7 @@
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Common\Terrain\TerrainMaterial.h">
+    <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Common\UI\Button\ButtonText.h">
