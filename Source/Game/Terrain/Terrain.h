@@ -4,12 +4,6 @@
 /// @brief 地形のデータ
 struct TerrainData
 {
-	std::vector<uint8_t> rawData{};    ///< 高さ配列 (1次元)
-	uint32_t terrainMapResolution{ 32 };  ///< 地形の解像度 多いほどなめらか
-	float widthSizeWorld{};            ///< ワールド座標上の1辺のサイズ
-	float maxHeight{};                 ///< 最大の高さ
-	Vec3 offset{};                     ///< 地形のオフセット
-
 	/// @brief タイルの4頂点の高さセット
 	struct TileHeights
 	{
@@ -19,11 +13,38 @@ struct TerrainData
 		float h11{};  ///< 右下
 	};
 
+#pragma region ほかのパーツと共通化できそうなリソースたち
+	Resource<Shader> shader{ "Shader/Terrain.hlsl" };  ///< 地形描画のシェーダ
+	Resource<Texture> texture
+	{
+		"Texture/Terrain/grass_01.png",
+		true,
+		D3D11_SAMPLER_DESC
+		{
+			.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+			.AddressU = D3D11_TEXTURE_ADDRESS_WRAP,
+			.AddressV = D3D11_TEXTURE_ADDRESS_WRAP,
+			.AddressW = D3D11_TEXTURE_ADDRESS_WRAP,
+			.MipLODBias = {},
+			.MaxAnisotropy = 1,
+			.ComparisonFunc = D3D11_COMPARISON_NEVER,
+			.BorderColor = {},
+			.MinLOD = 0.0f,
+			.MaxLOD = D3D11_FLOAT32_MAX,
+		}
+	};  ///< 地形のテクスチャ
+	Resource<Material> material{};  ///< 地形のマテリアル
+#pragma endregion
+
 	Resource<Surface> surface{};  ///< 地形の面
 
-	Resource<Shader> shader{};
+	Component<Transform> transform{};  ///< 座標系
 
-	Resource<Texture> texture{}; ///< 
+	std::vector<uint8_t> rawData{};    ///< 高さ配列 (1次元)
+	uint32_t terrainMapResolution{ 32 };  ///< 地形の解像度 多いほどなめらか
+	float widthSizeWorld{};            ///< ワールド座標上の1辺のサイズ
+	float maxHeight{};                 ///< 最大の高さ
+	Vec3 offset{};                     ///< 地形のオフセット
 };
 
 /// @brief 地形
@@ -59,14 +80,14 @@ struct Terrain : ObjectBase<TerrainData>
 	Vec3 GetWorldOffset() const;
 
 	/// @brief 地形を指定の値で埋める
-	/// @param _widthSize 地形の幅
+	/// @param _resolutionWidthSize 地形の幅
 	/// @param _height 埋める高さ
-	void FillRaw(const size_t _widthSize, const uint8_t _height);
+	void FillRaw(const uint32_t _resolutionWidthSize, const uint8_t _height);
 
 	/// @brief 地形を指定の高さで埋める
-	/// @param _widthSize 地形の幅
-	/// @param _worldHeight 
-	void Fill(const size_t _widthSize, const float _worldHeight);
+	/// @param _resolutionWidthSize 地形の幅
+	/// @param _worldHeight 埋める高さ(ワールド座標)
+	void Fill(const uint32_t _resolutionWidthSize, const float _worldHeight);
 
 private:
 	/// @brief タイルの4頂点の高さを取得する

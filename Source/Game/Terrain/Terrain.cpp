@@ -1,9 +1,25 @@
 #include "pch\pch.h"
 #include "Terrain.h"
+#include "TerrainMaterial.h"
 
 void Terrain::Start()
 {
-	
+	transform.scale = { 60, 1, 60 };
+
+#pragma region マテリアル作成
+		MaterialResource material{};
+
+		std::unique_ptr<TerrainMaterialProperty> pModelProperty = std::make_unique<TerrainMaterialProperty>();
+		pModelProperty->Get().hasTexture = { TRUE, TRUE, TRUE, TRUE };
+		pModelProperty->Get().baseColor = { 1, 1, 1, 1 };
+
+		material.TryLoad(std::move(pModelProperty));
+
+		this->material = Resource<Material>{ std::move(material) };
+#pragma endregion
+
+	FillRaw(200, 0);
+	Reload();
 }
 
 void Terrain::Update()
@@ -14,7 +30,14 @@ void Terrain::Draw()
 {
 	Dx11Manager& dx11 = Get<Dx11Manager>();
 
-	//dx11.SetMaterial()
+	dx11.SetMaterial(transform.GetMaterial());
+	dx11.SetMaterial(material);
+
+	dx11.SetShader(shader);
+	dx11.SetSurface(surface);
+	dx11.SetTexture(texture);
+
+	dx11.Draw();
 }
 
 Vec3 Terrain::GetNormal(const float _worldX, const float _worldZ) const
@@ -72,10 +95,12 @@ Vec3 Terrain::GetWorldOffset() const
 	return offset;
 }
 
-void Terrain::FillRaw(const size_t _widthSize, const uint8_t _height)
+void Terrain::FillRaw(const uint32_t _resolutionWidthSize, const uint8_t _height)
 {
+	terrainMapResolution = _resolutionWidthSize;
+
 	rawData.clear();  // 一度きれいに消してから
-	rawData.resize(_widthSize * _widthSize, _height);  // リサイズ
+	rawData.resize((_resolutionWidthSize + 1) * (_resolutionWidthSize + 1), _height);  // リサイズ
 }
 
 TerrainData::TileHeights Terrain::GetTileHeights(const float _worldX, const float _worldZ, Vec2* _pOutD) const
@@ -171,9 +196,9 @@ void Terrain::Reload()
 		std::vector<uint32_t> indices((n - 1) * (n - 1) * 6);
 
 		int32_t indicesCount = 0;
-		for (uint32_t z = 0; z < n; z++)
+		for (uint32_t z = 0; z < n - 1; z++)
 		{
-			for (uint32_t x = 0; x < n; x++)
+			for (uint32_t x = 0; x < n - 1; x++)
 			{
 				uint32_t topLeft = z * n + x;
 				uint32_t topRight = z * n + (x + 1);
@@ -218,7 +243,7 @@ void Terrain::Reload()
 		}
 
 		// 蓄積した分を正規化していく
-		for (size_t i = 0; i < indices.size(); i++)
+		for (size_t i = 0; i < vertices.size(); i++)
 		{
 			Vec3 normal{ vertices[i].normal.v };
 			normal = DirectX::XMVector3Normalize(normal);
