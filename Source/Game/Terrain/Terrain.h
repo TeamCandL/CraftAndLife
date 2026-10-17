@@ -17,11 +17,16 @@ struct TerrainData
 	Resource<Shader> shader{ "Shader/Terrain.hlsl" };  ///< 地形描画のシェーダ
 	Resource<Texture> texture
 	{
-		"Texture/Terrain/grass_01.png",
+		"Texture/Terrain/TileGrass.png",
 		true,
 		D3D11_SAMPLER_DESC
 		{
-			.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+			.Filter = 
+			#if 0  // テクスチャをくっきりではなくぼやかすフィルターをつけるか 1/0
+				D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+			#else
+				D3D11_FILTER_MIN_MAG_MIP_POINT,
+			#endif
 			.AddressU = D3D11_TEXTURE_ADDRESS_WRAP,
 			.AddressV = D3D11_TEXTURE_ADDRESS_WRAP,
 			.AddressW = D3D11_TEXTURE_ADDRESS_WRAP,
@@ -35,6 +40,8 @@ struct TerrainData
 	};  ///< 地形のテクスチャ
 	Resource<Material> material{};  ///< 地形のマテリアル
 #pragma endregion
+
+	float worldScale{ 200 };  ///< 一時的な地形のサイズ 1面描画を想定(チャンク処理などナシ)
 
 	Resource<Surface> surface{};  ///< 地形の面
 

@@ -25,8 +25,7 @@ VSOutput VS(ModelVertex input)
 	output.pos = mul(worldPos, Camera_ViewProjection);
 	output.uv = input.uv;
 	output.lightSpacePos = mul(worldPos, LightMaterial_ViewProjection);
-	
-	// 【追加】ピクセルシェーダーにワールド座標を渡す
+
 	output.worldPos = worldPos.xyz;
 	
 	return output;
@@ -46,10 +45,14 @@ float4 hash4fast(float2 p)
 float4 PS(VSOutput input) : SV_Target0
 {
 	// --- 元のテクスチャ・タイリング処理 ---
+#if 0  // テクスチャをずらしてジャギーを抑える処理 1/0
 	float4 off = hash4fast(floor(input.uv));
 	off.zw = off.zw >= float2(0.5f, 0.5f) ? float2(1.0f, 1.0f) : float2(-1.0f, -1.0f);
 	float2 fuv = frac(input.uv);
 	float2 uv = fuv * off.zw + off.xy;
+#else
+	float2 uv = input.uv;
+#endif
 	
 	float4 diffuseColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	if (TerrainMaterial_HasTexture.x)

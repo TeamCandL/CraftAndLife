@@ -4,7 +4,27 @@
 
 void Terrain::Start()
 {
-	transform.scale = { 60, 1, 60 };
+	//transform.position = Vec3{ -worldScale * 0.5f, 0.0f, -worldScale * 0.5f };
+
+	widthSizeWorld = worldScale;
+
+	// デフォルトで幅や高さが未設定だと距離計算で0除算になるため
+	// transform のスケールをデフォルトのワールドサイズ・最大高さとして設定する
+	if (widthSizeWorld == 0.0f)
+	{
+		widthSizeWorld = transform.scale.x;
+	}
+
+	if (maxHeight == 0.0f)
+	{
+		maxHeight = transform.scale.y;
+	}
+
+	// オフセットが未設定ならトランスフォーム位置を使う
+	if (offset == Vec3{})
+	{
+		offset = transform.position;
+	}
 
 #pragma region マテリアル作成
 		MaterialResource material{};
