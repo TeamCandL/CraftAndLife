@@ -1,11 +1,13 @@
 #include "AbstructInputSystem.h"
 #include <Game/System/PadInputSystem.h>
 #include "AbstructInputSystem/NormalPlayerInput.h"
+#include "AbstructInputSystem/PadOnlyPlayerInput.h"
 #include "AbstructInputSystem/NormalUIInput.h"
 
 void AbstructInputSystem::Start()
 {
-	SetPlayerInput<NormalPlayerInput>();
+	//SetPlayerInput<NormalPlayerInput>();
+	SetPlayerInput<PadOnlyPlayerInput>();
 	SetUIInput<NormalUIInput>();
 }
 

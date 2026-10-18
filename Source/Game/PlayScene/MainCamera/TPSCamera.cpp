@@ -44,8 +44,12 @@ void TPSCamera::Update(MainCameraData& _data)
 	const float MOVE_SPEED{ moveSpeedPerSec * DELTA_TIME };
 
 #pragma region カメラの回転処理
+	float xRotateAssist{ angles.x * angles.x * xRotateAssistRatio + 1.0f };
+
+	VCU_LOG("assist:{}", xRotateAssist);
+
 	// カメラ移動をカメラの回転に適用
-	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED;
+	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED * xRotateAssist;
 	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED;
 
 	// 角度に制限をつける
@@ -64,60 +68,91 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 	Vec3 targetPosition = Get<Transform>(_objTarget).position;
 	
 	ImGui::Begin("TPS.UpdatePositionFromTarget");
-	ImGui::DragFloat3("offset", offset.v, 0.1f);
+	ImGui::DragFloat("xRotateAssistRatio", &xRotateAssistRatio, 0.1f);
+	ImGui::DragFloat3("offsetFar", offsetFar.v, 0.1f);
+	ImGui::DragFloat3("offsetNear", offsetNear.v, 0.1f);
 	ImGui::DragFloat2("angles", _data.angles.v);
-	ImGui::End();
 
 	Mat4x4 rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(
 		_data.angles.x,
 		_data.angles.y,
 		0.0f);
 
-	Vec3 localOffset = DirectX::XMVector3TransformCoord(offset, rotationMatrix);
-
 	// MEMO: 始点から終点までの線分と地面の平面との交点に移動する
+	struct ClampGroundHeightResult{ Vec3 p; float t; };
+	auto ClampGroundHeight = [](
+		const Vec3 p0,             ///< 視点座標
+		const Vec3 p1,             ///< 終点座標
+		const float groundHeight  ///< 地面の高さ
+		) -> ClampGroundHeightResult
+	{	
+		// 最終的な点の位置
+		Vec3 p = p1;
+		float t{ 1.0f };
 
-	// 本来のカメラワールド座標 終点
-	Vec3 p1 = targetPosition + localOffset;
-	// 線分の始点
-	Vec3 p0 = targetPosition + axisOffset;
+		// カメラが地面より下にあり、かつ中心点が地面以上の高さにある場合
+		if (p1.y < groundHeight && p0.y >= groundHeight)
+		{
+			// 平面(Y = groundHeight)と線分の交点パラメータtを求める
+			t = (groundHeight - p0.y) / (p1.y - p0.y);
 
-	const float groundHeight{ 0.0f };
-	Vec3 finalCameraPosition = p1;
+			// 始点から終点に向かう直線上の交点を算出
+			p = p0 + (p1 - p0) * t;
+		}
+		else if (p0.y < groundHeight)
+		{
+			p = p0;
+			t = 0.0f;
+		}
 
-	// カメラが地面より下にあり、かつ中心点が地面以上の高さにある場合
-	if (p1.y < groundHeight && p0.y >= groundHeight)
-	{
-		// 平面(Y = groundHeight)と線分の交点パラメータtを求める
-		float t = (groundHeight - p0.y) / (p1.y - p0.y);
+		return { .p = p, .t = t };
+	};
 
-		// 始点から終点に向かう直線上の交点を算出
-		finalCameraPosition = p0 + (p1 - p0) * t;
-	}
-	else if (p1.y < groundHeight)
-	{
-		// 始点自体が地面より下にいる場合はカメラを真上に持っていく
-		finalCameraPosition.y = groundHeight;
-	}
+	const float GROUND_HEIGHT{ 0.0f };
+
+	// 注視点の終点
+	Vec3 fp1 = DirectX::XMVector3TransformCoord(
+		focusOffsetMax,
+		rotationMatrix);
+	fp1 = targetPosition + fp1;
+	
+	// 注視点の視点
+	Vec3 fp0 = DirectX::XMVector3TransformCoord(
+		focusOffsetMin,
+		rotationMatrix);
+	fp0 = targetPosition + fp0;
+
+	auto [finalFocusPoint, focusPointT] = ClampGroundHeight(
+		fp0,
+		fp1,
+		targetPosition.y + /*targetPosition.y + std::min(focusOffsetMax.y, focusOffsetMin.y) - 0.1f*/0.5f);
+
+	ImGui::DragFloat("focusPointT", &focusPointT);
+
+	Vec3 localOffset = DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNear, offsetFar, focusPointT), rotationMatrix);
+
+
+	auto [finalCameraPosition, finalCameraT] = ClampGroundHeight(
+		targetPosition + axisOffset,    // 線分の始点
+		targetPosition + localOffset,
+		GROUND_HEIGHT);  // 本来のカメラワールド座標 終点
+
+	ImGui::DragFloat("finalCameraT", &finalCameraT);
 
 	// 最終的なカメラ位置をセット
 	camera.transform.position = finalCameraPosition;
 
-	Vec3 focusOffsetWorld = DirectX::XMVector3TransformCoord(
-		focusOffsetMax,
-		rotationMatrix);
-
-	Vec3 focusPoint = targetPosition + focusOffsetWorld;
-
 	if (!objDebugPoint.IsEmpty())
 	{
-		Get<DebugPoint>(objDebugPoint).Data().transform.position = focusPoint;
+		Get<DebugPoint>(objDebugPoint).Data().transform.position = finalFocusPoint;
 	}
 
 	camera.transform.rotation = Quaternion::FromLookAtQuaternion(
 		camera.transform.position,
-		focusPoint,
+		finalFocusPoint,
 		Vec3::Up());
+
+	ImGui::End();
 }
 
 void TPSCamera::OnDestroy()

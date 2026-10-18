@@ -2,6 +2,7 @@
 
 void DebugPoint::Draw()
 {
+return;
 	ImGui::Begin("DebugPoint");
 	ImGui::InputFloat3("focusPoint", transform.position.v);
 	ImGui::End();

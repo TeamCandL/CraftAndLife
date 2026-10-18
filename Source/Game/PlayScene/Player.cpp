@@ -20,6 +20,12 @@ void Player::Update()
 
 	// カメラの更新処理
 	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
+	transform.rotation = Quaternion::FromEuler(Vec3
+	{
+		0.0f,
+		Get<IMainCamera>(objMainCamera).GetAngleY(),
+		0.0f,
+	});
 }
 
 void Player::Draw()
