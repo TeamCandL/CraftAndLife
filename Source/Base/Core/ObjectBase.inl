@@ -70,7 +70,7 @@ namespace cha
 	template<std::derived_from<IComponent> T>
 	inline T& ObjectBase<DataT>::Get(const GameObject _gameObject)
 	{
-		VCU_ASSERT(!_gameObject.IsEmpty() && "ゲームオブジェクトが空っぽ");
+		VCU_ASSERT(!_gameObject.IsEmpty() && "ゲームオブジェクトが空っぽだよ！ .IsEmpty()で空っぽかチェックしてください。");
 		return *ManagerRegistry::Ref<SceneManager>().template FindComponent<T>(_gameObject);
 	}
 
@@ -78,7 +78,7 @@ namespace cha
 	template<std::derived_from<IComponent> T>
 	inline T* ObjectBase<DataT>::TryGet(const GameObject _gameObject)
 	{
-		VCU_ASSERT(!_gameObject.IsEmpty() && "ゲームオブジェクトが空っぽ");
+		VCU_ASSERT(!_gameObject.IsEmpty() && "ゲームオブジェクトが空っぽだよ！ .IsEmpty()で空っぽかチェックしてください。");
 		return ManagerRegistry::Ref<SceneManager>().template FindComponent<T>(_gameObject);
 	}
 	
@@ -86,6 +86,7 @@ namespace cha
 	template<typename T>
 	inline T& ObjectBase<DataT>::Get(const GameObject _gameObject)
 	{
+		VCU_ASSERT(!_gameObject.IsEmpty() && "ゲームオブジェクトが空っぽだよ！ .IsEmpty()で空っぽかチェックしてください。");
 		return ManagerRegistry::Ref<SceneManager>().template FindObject<T>(_gameObject);
 	}
 }

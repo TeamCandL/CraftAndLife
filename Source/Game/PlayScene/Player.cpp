@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "Player.h"
 #include "Player/PlayerControllerNormal.h"
+#include "IMainCamera.h"
 
 void Player::Start()
 {
@@ -16,6 +17,9 @@ void Player::Update()
 
 	// プレイヤーの更新処理
 	Get<IPlayerController>(objPlayerController).Update(Data());
+
+	// カメラの更新処理
+	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
 }
 
 void Player::Draw()

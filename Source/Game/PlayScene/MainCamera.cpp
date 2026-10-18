@@ -20,6 +20,16 @@ void MainCamera::Update()
 
 	ImGui::DragFloat3("position", camera.transform.position.v);
 
+	if (ImGui::Button("Ghost"))
+	{
+		GetScene().Destroy(objUpdater);
+		objUpdater = GetScene().Instantiate<GhostCamera>();
+	}
+	if (ImGui::Button("TPS"))
+	{
+
+	}
+
 	ImGui::End();
 
 	//#ifdef _DEBUG
@@ -57,7 +67,10 @@ void MainCamera::Update()
 	//	return;  // カーソルが表示されているなら操作しない
 	//}
 
-	Get<IMainCameraUpdater>(objUpdater).Update(Data());
+	if (objUpdater)
+	{
+		Get<IMainCameraUpdater>(objUpdater).Update(Data());
+	}
 }
 
 void MainCamera::SetPosition(const Vec3 _worldPosition)
@@ -74,4 +87,12 @@ void MainCamera::ChangeUpdater(const GameObject _objUpdater)
 	
 	GetScene().Destroy(objUpdater);
 	objUpdater = _objUpdater;
+}
+
+void MainCamera::UpdatePositionFromTarget(const GameObject _objTarget)
+{
+	if (!objUpdater.IsEmpty())
+	{
+		Get<IMainCameraUpdater>(objUpdater).UpdatePositionFromTarget(Data(), _objTarget);
+	}
 }

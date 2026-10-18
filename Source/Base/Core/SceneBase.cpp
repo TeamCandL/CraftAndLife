@@ -7,9 +7,10 @@ cha::SceneBase::SceneBase() :
 {
 }
 
-void cha::SceneBase::Destroy(GameObject _gameObject)
+void cha::SceneBase::Destroy(GameObject& _gameObject)
 {
 	pGameObjectCollection_->DestroyAt(_gameObject);
+	_gameObject = GameObject::Empty();
 }
 
 void cha::SceneBase::Update()

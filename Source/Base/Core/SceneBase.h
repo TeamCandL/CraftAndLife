@@ -27,7 +27,7 @@ namespace cha
 
 		/// @brief 指定のオブジェクトを削除する
 		/// @param _gameObject ゲームオブジェクト
-		void Destroy(GameObject _gameObject);
+		void Destroy(GameObject& _gameObject);
 
 		/// @brief シーンの更新処理
 		virtual void Update() override final;

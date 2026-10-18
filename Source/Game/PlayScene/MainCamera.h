@@ -1,6 +1,7 @@
 #pragma once
 #include <Game/Game.h>
 #include "MainCamera/IMainCameraUpdater.h"
+#include "IMainCamera.h"
 
 /// @brief メインのカメラデータ
 struct MainCameraData
@@ -15,7 +16,7 @@ struct MainCameraData
 };
 
 /// @brief メインのカメラ
-struct MainCamera : ObjectBase<MainCameraData>
+struct MainCamera : ObjectBase<MainCameraData>, IMainCamera
 {
 	/// @brief 開始処理
 	void Start() override;
@@ -29,4 +30,7 @@ struct MainCamera : ObjectBase<MainCameraData>
 	/// @brief カメラの更新モードを変更する
 	/// @param _objUpdater 新しく設定する更新モード
 	void ChangeUpdater(const GameObject _objUpdater);
+
+	// IMainCamera を介して継承されました
+	void UpdatePositionFromTarget(const GameObject _objTarget) override;
 };

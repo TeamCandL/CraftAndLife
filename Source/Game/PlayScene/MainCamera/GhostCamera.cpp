@@ -11,7 +11,7 @@ void GhostCamera::Update(MainCameraData& _data)
 		position,
 		moveSpeedPerSec,
 		rotateSpeedPerSec,
-		isHideCursor,
+		isHideCursor, 
 		objUpdater] = _data;
 
 	// MEMO: これと同じこと
@@ -81,4 +81,10 @@ void GhostCamera::Update(MainCameraData& _data)
 	// 移動した座標をtransformに適用
 	camera.transform.position = position;
 #pragma endregion
+}
+
+void GhostCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject _objTarget)
+{
+	// なにもしないでおく
+	//_data.position = Get<Transform>(_objTarget).position;
 }

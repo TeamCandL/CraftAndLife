@@ -3,6 +3,7 @@
 #include "../MainCamera.h"
 #include <Game/System/AbstructInputSystem.h>
 
+
 void TPSCamera::Update(MainCameraData& _data)
 {
 	// _data.hogehogeが面倒なので参照して省略しまくる
@@ -38,4 +39,35 @@ void TPSCamera::Update(MainCameraData& _data)
 	const float MOVE_SPEED{ moveSpeedPerSec * DELTA_TIME };
 
 	// TODO: ここにTPSカメラの処理書く
+#pragma region カメラの回転処理
+	// カメラ移動をカメラの回転に適用
+	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED;
+	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED;
+
+	// 回転をtransformに適用
+	camera.transform.rotation = DirectX::XMQuaternionRotationRollPitchYaw(
+		angles.x,
+		angles.y,
+		0.0f);
+#pragma endregion
+
+
+}
+
+void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject _objTarget)
+{
+	// カメラシステムのデータを参照
+	CameraSystemData& camera = Get<CameraSystem>().Data();
+
+	Vec3 targetPosition = Get<Transform>(_objTarget).position;
+
+	Vec3 offset{};
+	
+	ImGui::Begin("TPS.UpdatePositionFromTarget");
+	ImGui::DragFloat3("offset", offset.v, 0.1f);
+	ImGui::End();
+
+	Vec3 localOffset = DirectX::XMVector3TransformCoord(offset, camera.transform.localNormal);
+
+	camera.transform.position = targetPosition + localOffset;
 }

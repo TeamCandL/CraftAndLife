@@ -8,7 +8,7 @@ struct GhostCamera : ObjectBase<>, IMainCameraUpdater
 	GhostCamera() = default;
 	~GhostCamera() = default;
 
-private:
 	// IMainCameraUpdater を介して継承されました
 	void Update(MainCameraData& _data) override;
+	void UpdatePositionFromTarget(MainCameraData& _data, const GameObject _objTarget) override;
 };

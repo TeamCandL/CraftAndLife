@@ -1151,6 +1151,9 @@
     <ClInclude Include="Library\dr_lib\dr_mp3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\IMainCamera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Base\Core\ComponentPool\ComponentPools.inl">

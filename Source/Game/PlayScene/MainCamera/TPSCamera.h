@@ -13,14 +13,18 @@ struct TPSCameraData
 
 	GameObject objTarget{};  ///< ターゲットのオブジェクト
 	//Vec3 targetOffset{ 1, 1, 0 };     ///< カメラが注視するターゲットの座標からのオフセット
+
 };
 
 /// @brief 3人称カメラ
 struct TPSCamera : ObjectBase<TPSCameraData>, IMainCameraUpdater
 {
 	using ObjectBase<TPSCameraData>::ObjectBase;
-
-private:
+	
 	/// @brief 更新処理
 	void Update(MainCameraData& _data) override;
+
+	/// @brief カメラの座標をターゲットから更新する
+	/// @param _objTarget ターゲットのゲームオブジェクト
+	void UpdatePositionFromTarget(MainCameraData& _data, const GameObject _objTarget) override;
 };

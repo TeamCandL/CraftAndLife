@@ -5,8 +5,8 @@
 /// @brief プレイヤーのデータ
 struct PlayerData
 {
-	PlayerData(const GameObject _objCamera) :
-		objCamera{ _objCamera }
+	PlayerData(const GameObject _objMainCamera) :
+		objMainCamera{ _objMainCamera }
 	{
 	}
 
@@ -27,7 +27,7 @@ struct PlayerData
 	Component<RigidBody> rigidBody{};  ///< 剛体
 	Component<DynamicOBB> obb{};       ///< OBB当たり判定
 
-	GameObject objCamera{};            ///< カメラオブジェクト
+	GameObject objMainCamera{};            ///< カメラオブジェクト
 	GameObject objPlayerController{};  ///< プレイヤー操作するやつ
 
 	float angleX{};
