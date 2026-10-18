@@ -38,7 +38,6 @@ void TPSCamera::Update(MainCameraData& _data)
 	// 移動スピード
 	const float MOVE_SPEED{ moveSpeedPerSec * DELTA_TIME };
 
-	// TODO: ここにTPSカメラの処理書く
 #pragma region カメラの回転処理
 	// カメラ移動をカメラの回転に適用
 	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED;
@@ -47,8 +46,8 @@ void TPSCamera::Update(MainCameraData& _data)
 	// 角度に制限をつける
 	angles.x = std::clamp(
 		angles.x,
-		-DirectX::XM_PIDIV2 + 0.01f,
-		DirectX::XM_PIDIV2 - 0.01f);
+		angleLimitXMin,
+		angleLimitXMax);
 #pragma endregion
 }
 
@@ -64,14 +63,6 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 	ImGui::DragFloat2("angles", _data.angles.v);
 	ImGui::End();
 
-	// 回転をtransformに適用
-	/*camera.transform.rotation = DirectX::XMQuaternionRotationRollPitchYaw(
-		angles.x,
-		angles.y,
-		0.0f);*/
-
-	//camera.transform.UpdateSelf();
-
 	Mat4x4 rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(
 		_data.angles.x,
 		_data.angles.y,
@@ -79,7 +70,33 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 
 	Vec3 localOffset = DirectX::XMVector3TransformCoord(offset, rotationMatrix);
 
-	camera.transform.position = targetPosition + localOffset;
+	// MEMO: 始点から終点までの線分と地面の平面との交点に移動する
+
+	// 本来のカメラワールド座標 終点
+	Vec3 p1 = targetPosition + localOffset;
+	// 線分の始点
+	Vec3 p0 = targetPosition + axisOffset;
+
+	const float groundHeight{ 0.0f };
+	Vec3 finalCameraPosition = p1;
+
+	// カメラが地面より下にあり、かつ中心点が地面以上の高さにある場合
+	if (p1.y < groundHeight && p0.y >= groundHeight)
+	{
+		// 平面(Y = groundHeight)と線分の交点パラメータtを求める
+		float t = (groundHeight - p0.y) / (p1.y - p0.y);
+
+		// 始点から終点に向かう直線上の交点を算出
+		finalCameraPosition = p0 + (p1 - p0) * t;
+	}
+	else if (p1.y < groundHeight)
+	{
+		// 始点自体が地面より下にいる場合はカメラを真上に持っていく
+		finalCameraPosition.y = groundHeight;
+	}
+
+	// 最終的なカメラ位置をセット
+	camera.transform.position = finalCameraPosition;
 
 	Vec3 focusOffsetWorld = DirectX::XMVector3TransformCoord(
 		focusOffsetMax,
