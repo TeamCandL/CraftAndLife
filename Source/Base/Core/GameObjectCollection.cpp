@@ -184,7 +184,8 @@ bool cha::GameObjectCollection::IsRegisteredIndex(const size_t _index) const
 
 bool cha::GameObjectCollection::IsPendingIndex(const size_t _index) const
 {
-	return registry_.size() <= _index && _index <= (registry_.size() + toAdd_.size());
+	// toAdd_ の有効なインデックスは registry_.size() から registry_.size() + toAdd_.size() - 1
+	return registry_.size() <= _index && _index < (registry_.size() + toAdd_.size());
 }
 
 void cha::GameObjectCollection::FillComponentRegistry()

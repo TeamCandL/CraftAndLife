@@ -2,6 +2,7 @@
 #include "MainCamera.h"
 #include "MainCamera/IMainCameraUpdater.h"
 #include "MainCamera/GhostCamera.h"
+#include "MainCamera/TPSCamera.h"
 
 void MainCamera::Start()
 {
@@ -27,7 +28,8 @@ void MainCamera::Update()
 	}
 	if (ImGui::Button("TPS"))
 	{
-
+		GetScene().Destroy(objUpdater);
+		objUpdater = GetScene().Instantiate<TPSCamera>();
 	}
 
 	ImGui::End();

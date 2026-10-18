@@ -71,6 +71,26 @@ namespace cha
 		{
 			return DirectX::XMQuaternionIdentity();
 		}
+
+		static Quaternion FromLookAtQuaternion(
+			const DirectX::XMVECTOR& _eyePosition,
+			const DirectX::XMVECTOR& _focusPosition,
+			const DirectX::XMVECTOR& _upDirection)
+		{
+			// ターゲットを見るためのLookAtビュー行列
+			DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(
+				_eyePosition,
+				_focusPosition,
+				_upDirection);
+
+			// 逆行列ビューtoワールド
+			DirectX::XMMATRIX worldRotationMatrix = XMMatrixInverse(nullptr, viewMatrix);
+
+			// 算出した回転行列からクォータニオンへ変換する
+			Quaternion rotation = XMQuaternionRotationMatrix(worldRotationMatrix);
+
+			return rotation;
+		}
 	};
 }
 

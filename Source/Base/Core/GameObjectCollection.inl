@@ -50,9 +50,13 @@ namespace cha
 	inline GameObject GameObjectCollection::Add(Args&& ..._args)
 	{
 		// Idは一意に割り当てるためにindicesは追加する
-		const uint64_t ID{ indices_.size() };
-		// この場で追加してしまうとまずいかもAA
-		indices_.push_back(registry_.size() + toAdd_.size() - toDestroyIds_.size());
+	const uint64_t ID{ indices_.size() };
+	// この場で追加してしまうとまずいかもAA
+	// toDestroyIds_ のサイズで補正してしまうと、
+	// Destroy() 直後に Instantiate() した場合にインデックスがずれて
+	// 追加予定配列(toAdd_)を正しく参照できなくなる問題がある。
+	// そのためここでは単純に現在の registry_.size() と toAdd_.size() を用いる。
+	indices_.push_back(registry_.size() + toAdd_.size());
 
 		PreviousComponentFlag::flag_.reset();
 		// コンポーネント登録用レジストリに枠を追加

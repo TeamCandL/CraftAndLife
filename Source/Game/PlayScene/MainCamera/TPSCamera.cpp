@@ -44,14 +44,12 @@ void TPSCamera::Update(MainCameraData& _data)
 	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED;
 	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED;
 
-	// 回転をtransformに適用
-	camera.transform.rotation = DirectX::XMQuaternionRotationRollPitchYaw(
+	// 角度に制限をつける
+	angles.x = std::clamp(
 		angles.x,
-		angles.y,
-		0.0f);
+		-DirectX::XM_PIDIV2 + 0.01f,
+		DirectX::XM_PIDIV2 - 0.01f);
 #pragma endregion
-
-
 }
 
 void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject _objTarget)
@@ -60,14 +58,37 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 	CameraSystemData& camera = Get<CameraSystem>().Data();
 
 	Vec3 targetPosition = Get<Transform>(_objTarget).position;
-
-	Vec3 offset{};
 	
 	ImGui::Begin("TPS.UpdatePositionFromTarget");
 	ImGui::DragFloat3("offset", offset.v, 0.1f);
+	ImGui::DragFloat2("angles", _data.angles.v);
 	ImGui::End();
 
-	Vec3 localOffset = DirectX::XMVector3TransformCoord(offset, camera.transform.localNormal);
+	// 回転をtransformに適用
+	/*camera.transform.rotation = DirectX::XMQuaternionRotationRollPitchYaw(
+		angles.x,
+		angles.y,
+		0.0f);*/
+
+	//camera.transform.UpdateSelf();
+
+	Mat4x4 rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(
+		_data.angles.x,
+		_data.angles.y,
+		0.0f);
+
+	Vec3 localOffset = DirectX::XMVector3TransformCoord(offset, rotationMatrix);
 
 	camera.transform.position = targetPosition + localOffset;
+
+	Vec3 focusOffsetWorld = DirectX::XMVector3TransformCoord(
+		focusOffsetMax,
+		rotationMatrix);
+
+	Vec3 focusPoint = targetPosition + focusOffsetWorld;
+
+	camera.transform.rotation = Quaternion::FromLookAtQuaternion(
+		camera.transform.position,
+		focusPoint,
+		Vec3::Up());
 }
