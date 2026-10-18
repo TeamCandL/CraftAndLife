@@ -98,3 +98,13 @@ void MainCamera::UpdatePositionFromTarget(const GameObject _objTarget)
 		Get<IMainCameraUpdater>(objUpdater).UpdatePositionFromTarget(Data(), _objTarget);
 	}
 }
+
+float MainCamera::GetAngleX() const
+{
+	return angles.x;
+}
+
+float MainCamera::GetAngleY() const
+{
+	return std::fmodf(angles.y, DirectX::XM_2PI);
+}

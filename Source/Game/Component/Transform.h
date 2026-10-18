@@ -13,10 +13,35 @@ using TransformMaterialProperty = MaterialProperty<TransformMaterialProperty_>;
 /// @brief 座標系コンポーネント
 struct Transform : ComponentBase<Transform>
 {
+	/// @brief デフォルトのコンストラクタ
 	Transform() = default;
+	/// @brief コンストラクタ
+	/// @param _position 座標
 	inline Transform(const Vec3 _position) :
 		position{ _position }
-	{}
+	{
+	}
+	/// @brief コンストラクタ
+	/// @param _position 座標
+	/// @param _scale 大きさ
+	inline Transform(const Vec3 _position, const Vec3 _scale) :
+		position{ _position },
+		scale{ _scale }
+	{
+	}
+	/// @brief コンストラクタ
+	/// @param _position 座標
+	/// @param _rotation 回転
+	/// @param _scale 大きさ
+	inline Transform(const Vec3 _position, const Quaternion _rotation, const Vec3 _scale) :
+		position{ _position },
+		rotation{ _rotation },
+		scale{ _scale }
+	{
+	}
+
+	/// @brief コンストラクタ
+	/// @param _parent 親オブジェクト
 	inline Transform(const GameObject _parent) :
 		parent{ _parent }  // 親オブジェクトを指定する
 	{}

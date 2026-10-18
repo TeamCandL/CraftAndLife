@@ -33,4 +33,6 @@ struct MainCamera : ObjectBase<MainCameraData>, IMainCamera
 
 	// IMainCamera を介して継承されました
 	void UpdatePositionFromTarget(const GameObject _objTarget) override;
+	float GetAngleX() const override;
+	float GetAngleY() const override;
 };

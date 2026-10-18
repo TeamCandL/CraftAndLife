@@ -422,6 +422,7 @@
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
@@ -611,6 +612,7 @@
     <ClInclude Include="Source\Game\Common\Sky\SkyMaterial.h" />
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
+    <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />

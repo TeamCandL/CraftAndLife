@@ -2,7 +2,12 @@
 #include "TPSCamera.h"
 #include "../MainCamera.h"
 #include <Game/System/AbstructInputSystem.h>
+#include "../DebugPoint.h"
 
+void TPSCamera::Start()
+{
+	objDebugPoint = GetScene().Instantiate<DebugPoint>();
+}
 
 void TPSCamera::Update(MainCameraData& _data)
 {
@@ -104,8 +109,18 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 
 	Vec3 focusPoint = targetPosition + focusOffsetWorld;
 
+	if (!objDebugPoint.IsEmpty())
+	{
+		Get<DebugPoint>(objDebugPoint).Data().transform.position = focusPoint;
+	}
+
 	camera.transform.rotation = Quaternion::FromLookAtQuaternion(
 		camera.transform.position,
 		focusPoint,
 		Vec3::Up());
+}
+
+void TPSCamera::OnDestroy()
+{
+	GetScene().Destroy(objDebugPoint);
 }
