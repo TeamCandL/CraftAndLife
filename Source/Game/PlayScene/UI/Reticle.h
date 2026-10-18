@@ -4,7 +4,7 @@
 /// @brief レティクルのデータ
 struct ReticleData
 {
-	Resource<Texture> texture{ "UI/Image/Reticle_CrossHair.png" };  ///< テクスチャ
+	Resource<Texture> texture{ "Image/UI/reticle.png" };  ///< テクスチャ
 
 	Component<UITransform> transform{};  ///< UI座標系
 	Component<UIImage> image{};          ///< UI画像

@@ -9,7 +9,7 @@ void Main(const HINSTANCE _hInstance)
 {
 	cha::GameLoop gameLoop
 	{{
-	#if 0
+	#if 1
 		.clientSize = { 1920, 1080 },
 		.targetFPS = 60,
 		.isWindow = false,
