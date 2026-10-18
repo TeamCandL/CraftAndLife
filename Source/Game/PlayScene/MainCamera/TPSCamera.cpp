@@ -46,8 +46,6 @@ void TPSCamera::Update(MainCameraData& _data)
 #pragma region カメラの回転処理
 	float xRotateAssist{ angles.x * angles.x * xRotateAssistRatio + 1.0f };
 
-	VCU_LOG("assist:{}", xRotateAssist);
-
 	// カメラ移動をカメラの回転に適用
 	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED * xRotateAssist;
 	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED;
@@ -70,7 +68,8 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 	ImGui::Begin("TPS.UpdatePositionFromTarget");
 	ImGui::DragFloat("xRotateAssistRatio", &xRotateAssistRatio, 0.1f);
 	ImGui::DragFloat3("offsetFar", offsetFar.v, 0.1f);
-	ImGui::DragFloat3("offsetNear", offsetNear.v, 0.1f);
+	ImGui::DragFloat3("offsetNearLower", offsetNearLower.v, 0.1f);
+	ImGui::DragFloat3("offsetNearUpper", offsetNearUpper.v, 0.1f);
 	ImGui::DragFloat2("angles", _data.angles.v);
 
 	Mat4x4 rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(
@@ -129,8 +128,7 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 
 	ImGui::DragFloat("focusPointT", &focusPointT);
 
-	Vec3 localOffset = DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNear, offsetFar, focusPointT), rotationMatrix);
-
+	Vec3 localOffset = DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNearLower, offsetFar, focusPointT), rotationMatrix);
 
 	auto [finalCameraPosition, finalCameraT] = ClampGroundHeight(
 		targetPosition + axisOffset,    // 線分の始点
@@ -138,6 +136,18 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 		GROUND_HEIGHT);  // 本来のカメラワールド座標 終点
 
 	ImGui::DragFloat("finalCameraT", &finalCameraT);
+
+	if (finalCameraT < 1.0f)  // 上を向いたとき下の地面に当たるなら再計算する
+	{
+		localOffset = DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNearUpper, offsetFar, finalCameraT), rotationMatrix);
+
+		auto [p, t] = ClampGroundHeight(
+			targetPosition + axisOffset,    // 線分の始点
+			targetPosition + localOffset,
+			GROUND_HEIGHT);  // 本来のカメラワールド座標 終点
+
+		finalCameraPosition = p;
+	}
 
 	// 最終的なカメラ位置をセット
 	camera.transform.position = finalCameraPosition;

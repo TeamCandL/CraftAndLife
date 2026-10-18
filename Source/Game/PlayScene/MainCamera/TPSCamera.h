@@ -5,7 +5,8 @@
 struct TPSCameraData
 {
 	Vec3 offsetFar{ 0.7f, 2.0f, -5.0f };  ///< カメラが注視するターゲットの座標からのオフセット
-	Vec3 offsetNear{ 0.5f, 1.4f, -0.8f };  ///< カメラが注視するターゲットの座標からのオフセット
+	Vec3 offsetNearLower{ 0.5f, 1.4f, -0.8f };  ///< カメラが注視するターゲットの座標からのオフセット
+	Vec3 offsetNearUpper{ 0.0f, 0.4f, 3.0f };  ///< カメラが注視するターゲットの座標からのオフセット
 	Vec3 focusOffsetMax{ 0, 1, 10 };   ///< プレイヤーから直線上のに伸びる注視点の最長
 	Vec3 focusOffsetMin{ 0.0f, 1.0f, 0.7f };    ///< プレイヤーから直線上のに伸びる注視点の最短
 
