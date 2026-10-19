@@ -13,6 +13,8 @@ void Player::Update()
 {
 	ImGui::Begin("Player");
 	ImGui::DragInt("anim", &animIndex, 1, 0);
+	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
+	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
 	ImGui::End();
 
 	// プレイヤーの更新処理
@@ -26,6 +28,8 @@ void Player::Update()
 		Get<IMainCamera>(objMainCamera).GetAngleY(),
 		0.0f,
 	});
+
+	
 }
 
 void Player::Draw()

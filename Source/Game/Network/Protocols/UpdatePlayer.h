@@ -17,7 +17,11 @@ namespace Protocol
 			_registry
 				.AddMember(positionX)
 				.AddMember(positionY)
-				.AddMember(positionZ);
+				.AddMember(positionZ)
+				
+				.AddMember(rotationX)
+				.AddMember(rotationY)
+				;
 		}
 
 		uint8_t GetChannel() const override { return 1; }
@@ -27,5 +31,8 @@ namespace Protocol
 		float positionX{};
 		float positionY{};
 		float positionZ{};
+
+		float rotationX{};
+		float rotationY{};
 	};
 }

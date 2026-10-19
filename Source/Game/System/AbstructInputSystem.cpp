@@ -6,8 +6,8 @@
 
 void AbstructInputSystem::Start()
 {
-	//SetPlayerInput<NormalPlayerInput>();
-	SetPlayerInput<PadOnlyPlayerInput>();
+	SetPlayerInput<NormalPlayerInput>();
+	//SetPlayerInput<PadOnlyPlayerInput>();
 	SetUIInput<NormalUIInput>();
 }
 
@@ -16,7 +16,7 @@ void AbstructInputSystem::Update()
 	if (pPlayerInput && pUIInput)
 	{
 		PadInputSystem& padInputSystem = Get<PadInputSystem>();
-
+		
 		if (padInputSystem.IsConnected())
 		{
 			ImGui::Begin("AbstrucInputSystem");
