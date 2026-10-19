@@ -1,42 +1,39 @@
 #pragma once
-#include <Game/Game.h>
 #include "Player/IPlayerController.h"
+#include "PlayerRoleType.h"
+#include <Game/Game.h>
 
 /// @brief プレイヤーのデータ
 struct PlayerData
 {
 	PlayerData(const GameObject _objMainCamera) :
-		objMainCamera{ _objMainCamera }
+	    objMainCamera{_objMainCamera}
 	{
 	}
 
-	Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
-	{
-		"Shader/Unlit.hlsl",
-		RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};
-	Resource<Shader> shaderBack  ///< モデル描画用シェーダー(裏面)
-	{
-		"Shader/Unlit.hlsl",
-		RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};
-	Resource<Shader> shader{ "Shader/Unlit.hlsl" };  ///< シェーダ
-	Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };  ///< モデル
+	Resource<Shader> shaderFront ///< モデル描画用シェーダー(表面)
+	    {"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}};
+	Resource<Shader> shaderBack ///< モデル描画用シェーダー(裏面)
+	    {"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}};
+	Resource<Shader> shader{"Shader/Unlit.hlsl"};                                                         ///< シェーダ
+	Resource<Model> model{"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx"}; ///< モデル
 
-	Component<Transform> transform{};  ///< 座標系
-	Component<RigidBody> rigidBody{};  ///< 剛体
-	Component<DynamicOBB> obb{};       ///< OBB当たり判定
+	Component<Transform> transform{}; ///< 座標系
+	Component<RigidBody> rigidBody{}; ///< 剛体
+	Component<DynamicOBB> obb{};      ///< OBB当たり判定
 
-	GameObject objMainCamera{};            ///< カメラオブジェクト
-	GameObject objPlayerController{};  ///< プレイヤー操作するやつ
+	GameObject objMainCamera{};       ///< カメラオブジェクト
+	GameObject objPlayerController{}; ///< プレイヤー操作するやつ
+
+	PlayerRoleType role{PlayerRoleType_Max}; ///< 役職
 
 	float angleX{};
 	float angleY{};
 
-	int animIndex{};  ///< アニメーションのインデクス
+	int animIndex{}; ///< アニメーションのインデクス
 
 	//-----------------------------------------//
-	//パラメータ//-----------------------------//
+	// パラメータ//-----------------------------//
 	//-----------------------------------------//
 	int32_t hp{};
 	int32_t damage{};

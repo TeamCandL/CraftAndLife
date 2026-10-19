@@ -78,4 +78,4 @@ SpaceBeforeParens: ControlStatements
 IndentCaseLabels: false
 
 # 改行設定
-BinPackParameters: AlwaysOnePerLine
+#BinPackParameters: AlwaysOnePerLine
