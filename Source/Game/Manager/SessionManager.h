@@ -25,6 +25,10 @@ public:
 	/// @param _name 部屋名
 	void SetJoinRoomName(const std::string_view _name);
 
+	/// @brief 自分がロビーのホストかどうかの設定をする
+	/// @pram _isLobbyHost　ホストかどうか
+	void SetLobbyHost(bool _isLobbyHost);
+
 	/// @brief ワールド内の全プレイヤーを更新する
 	/// @param _names プレイヤー名
 	/// @param _positions 座標情報

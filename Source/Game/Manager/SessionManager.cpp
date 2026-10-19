@@ -35,6 +35,11 @@ void SessionManager::SetJoinRoomName(const std::string_view _name)
 	inSessionStatus_.joinRoomName = _name;
 }
 
+void SessionManager::SetLobbyHost(bool _imLobbyHost)
+{
+	inSessionStatus_.imLobbyHost = _imLobbyHost;
+}
+
 void SessionManager::UpdatePlayers(
     const std::string_view _names, SizedBuffer<float>& _positions, SizedBuffer<float>& _rotations)
 {
@@ -70,6 +75,12 @@ void SessionManager::UpdatePlayers(
 		{
 			VCU_LOG("取得した名前分の回転データのサイズが足りない({}個以上必要)", Vec3::AT_MAX * i);
 			break;
+		}
+
+		// CRLF 対策OtherPlayer
+		if (!line.empty() && line.back() == '\r')
+		{
+			line.remove_suffix(1);
 		}
 
 		InSessionStatus::PlayerStatus& playerStatus = inSessionStatus_.playersStatus[std::string{line}];
