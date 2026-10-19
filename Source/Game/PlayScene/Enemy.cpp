@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "EnemyAttackColl.h"
 #include "pch\pch.h"
-#include <Library/shigaRandom/SgRandom.h>
+#include <shigaRandom/SgRandom.h>
 
 void Enemy::Start()
 {
