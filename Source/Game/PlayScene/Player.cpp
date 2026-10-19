@@ -29,7 +29,7 @@ void Player::Update()
 	    0.0f,
 	});
 
-	AbstructInputSystem &inputSystem = Get<AbstructInputSystem>();
+	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
 	auto pPlayerInput = inputSystem.GetPlayerInput();
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
 
@@ -58,8 +58,8 @@ void Player::Draw()
 
 	model.Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto &subParts{model.Get().subParts};
-	for (const auto &parts : subParts)
+	const auto& subParts{model.Get().subParts};
+	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
 		Get<Dx11Manager>().SetMaterial(parts.material);
@@ -76,4 +76,14 @@ void Player::AttackCollider()
 void Player::Damaged(int32_t damage)
 {
 	hp -= damage;
+}
+
+Vec3 Player::GetPosition() const
+{
+	return transform.position;
+}
+
+float Player::GetAngleY() const
+{
+	return Vec3{transform.rotation.ToEuler()}.y;
 }

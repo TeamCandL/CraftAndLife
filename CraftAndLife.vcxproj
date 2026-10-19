@@ -432,6 +432,7 @@
     <ClCompile Include="Source\Game\PlayScene\MainCamera\IMainCameraUpdater.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\TPSCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayer.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherPlayerController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayerAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerControllerNormal.cpp" />
@@ -619,7 +620,9 @@
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
+    <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayer.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />

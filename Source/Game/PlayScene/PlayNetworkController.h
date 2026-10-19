@@ -3,11 +3,14 @@
 
 struct PlayNetworkControllerData
 {
-	PlayNetworkControllerData(const GameObject _objPlayer) :
-		objPlayer{ _objPlayer }
-	{}
+	PlayNetworkControllerData(const GameObject _objPlayer, const GameObject _objCamera) :
+	    objPlayer{_objPlayer},
+	    objCamera{_objCamera}
+	{
+	}
 
-	GameObject objPlayer{};  ///< プレイヤーのオブジェクト
+	GameObject objPlayer{}; ///< プレイヤーのオブジェクト
+	GameObject objCamera{}; ///< メインカメラ
 };
 
 struct PlayNetworkController : ObjectBase<PlayNetworkControllerData>

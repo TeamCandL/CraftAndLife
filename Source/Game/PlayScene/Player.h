@@ -1,4 +1,5 @@
 #pragma once
+#include "IPlayer.h"
 #include "Player/IPlayerController.h"
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
@@ -40,7 +41,7 @@ struct PlayerData
 };
 
 /// @brief プレイヤー
-struct Player : ObjectBase<PlayerData>
+struct Player : ObjectBase<PlayerData>, IPlayer
 {
 	using ObjectBase<PlayerData>::ObjectBase;
 
@@ -56,4 +57,8 @@ struct Player : ObjectBase<PlayerData>
 	void AttackCollider();
 
 	void Damaged(int32_t damage);
+
+	// IPlayer を介して継承されました
+	Vec3 GetPosition() const override;
+	float GetAngleY() const override;
 };

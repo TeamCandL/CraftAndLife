@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "MainCamera.h"
 #include "OtherPlayer.h"
+#include "OtherPlayerController.h"
 #include "PlayNetworkController.h"
 #include "Player.h"
 #include "UI/Reticle.h"
@@ -18,11 +19,10 @@ void PlayScene::Start()
 	GameObject objTerrain = Instantiate<Terrain>();
 
 	Instantiate<Enemy>(); // 仮設置
-
-	Instantiate<OtherPlayer>(); // 仮設置
+	Instantiate<OtherPlayerController>();
 
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer = Instantiate<Player>(objMainCamera);
-	Instantiate<PlayNetworkController>(objPlayer);
+	Instantiate<PlayNetworkController>(objPlayer, objMainCamera);
 }

@@ -9,33 +9,23 @@ struct EnemyAttackCollData
 	{
 	}
 
-	/*Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
-	{
-		"Shader/Unlit.hlsl",
-		RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};
-	Resource<Shader> shaderBack  ///< モデル描画用シェーダー(裏面)
-	{
-		"Shader/Unlit.hlsl",
-		RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};*/
-	Resource<Shader> shader{ "Shader/Unlit.hlsl" };  ///< シェーダ
-	Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx" };  ///< モデル
+	Resource<Shader> shader{"Shader/Unlit.hlsl"}; ///< シェーダ
+	Resource<Model> model{
+	    "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"}; ///< モデル
 
-	Component<Transform> transform{};  ///< 座標系
-	Component<RigidBody> rigidBody{};  ///< 剛体
-	Component<DynamicOBB> obb{};       ///< OBB当たり判定
+	Component<Transform> transform{}; ///< 座標系
+	Component<RigidBody> rigidBody{}; ///< 剛体
+	Component<DynamicOBB> obb{};      ///< OBB当たり判定
 
 	float angleX{};
 	float angleY{};
 
-	int animIndex{};  ///< アニメーションのインデクス
+	int animIndex{}; ///< アニメーションのインデクス
 
 	//-----------------------------------------//
-	//パラメータ//-----------------------------//
+	// パラメータ//-----------------------------//
 	//-----------------------------------------//
 	int32_t damage{};
-
 };
 
 /// @brief 敵の攻撃当たり判定
@@ -50,5 +40,5 @@ struct EnemyAttackColl : ObjectBase<EnemyAttackCollData>
 	void Update() override;
 
 	/// 対象へのダメージ付与
-	void SendDamage(Player& player,int32_t damage_);
+	void SendDamage(Player& player, int32_t damage_);
 };
