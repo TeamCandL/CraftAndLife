@@ -8,6 +8,14 @@ struct EnemyData
 	{
 	}
 
+	enum EnemyType
+	{
+		Skelton,
+		Spider,
+		Bat,
+		Dragon
+	};
+
 	/*Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
 	{
 	    "Shader/Unlit.hlsl",
@@ -36,6 +44,9 @@ struct EnemyData
 	//-----------------------------------------//
 	int32_t hp{};
 	int32_t damage{};
+
+	const int WanRangeW{};
+	const int WanRangeH{};
 
 	GameObject objWanderingCheckPoint{}; ///< 徘徊時のチェックポイント
 };
