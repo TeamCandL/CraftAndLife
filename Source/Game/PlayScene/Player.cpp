@@ -1,7 +1,8 @@
-#include "pch\pch.h"
 #include "Player.h"
-#include "Player/PlayerControllerNormal.h"
 #include "IMainCamera.h"
+#include "Player/PlayerControllerNormal.h"
+#include "pch\pch.h"
+#include <Game/System/AbstructInputSystem.h>
 
 void Player::Start()
 {
@@ -22,14 +23,32 @@ void Player::Update()
 
 	// カメラの更新処理
 	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
-	transform.rotation = Quaternion::FromEuler(Vec3
-	{
-		0.0f,
-		Get<IMainCamera>(objMainCamera).GetAngleY(),
-		0.0f,
+	transform.rotation = Quaternion::FromEuler(Vec3{
+	    0.0f,
+	    Get<IMainCamera>(objMainCamera).GetAngleY(),
+	    0.0f,
 	});
 
-	
+	AbstructInputSystem &inputSystem = Get<AbstructInputSystem>();
+	auto pPlayerInput = inputSystem.GetPlayerInput();
+	Vec2 bodyMove = pPlayerInput->GetMoveBody();
+
+	float moveSpeed = 0.1f;
+
+	// カメラの向きを取得
+	float angleY = Get<IMainCamera>(objMainCamera).GetAngleY();
+
+	// カメラの向きから前方向を計算
+	Vec3 forward = Vec3{sinf(angleY), 0.0f, cosf(angleY)};
+
+	// カメラの向きから右方向を計算
+	Vec3 right = Vec3{cosf(angleY), 0.0f, -sinf(angleY)};
+
+	// 入力に応じて移動方向を計算
+	Vec3 moveDirection = right * bodyMove.x + forward * bodyMove.y;
+
+	// 平行移動
+	transform.position += moveDirection * moveSpeed;
 }
 
 void Player::Draw()
@@ -39,8 +58,8 @@ void Player::Draw()
 
 	model.Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto& subParts{ model.Get().subParts };
-	for (const auto& parts : subParts)
+	const auto &subParts{model.Get().subParts};
+	for (const auto &parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
 		Get<Dx11Manager>().SetMaterial(parts.material);
@@ -51,7 +70,7 @@ void Player::Draw()
 
 void Player::AttackCollider()
 {
-	//new PlayerAttackColl();
+	// new PlayerAttackColl();
 }
 
 void Player::Damaged(int32_t damage)

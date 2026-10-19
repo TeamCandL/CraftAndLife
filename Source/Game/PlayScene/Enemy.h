@@ -10,10 +10,11 @@ struct EnemyData
 
 	enum EnemyType
 	{
-		Skelton,
+		Skeleton,
 		Spider,
 		Bat,
-		Dragon
+		Dragon,
+		EnemyType_Max,
 	};
 
 	/*Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
@@ -27,8 +28,17 @@ struct EnemyData
 	    RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
 	};*/
 	Resource<Shader> shader{"Shader/Unlit.hlsl"}; ///< シェーダ
-	Resource<Model> model{
-	    "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"}; ///< モデル
+	// Resource<Model> model{
+	//     "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"}; ///< モデル
+
+	Resource<Model> model{"Model/Enemy/Spider.fbx"};
+
+	/*std::array<Resource<Model>, EnemyType_Max> models{
+	    Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
+	    Resource<Model>{ "Model/Enemy/Spider.fbx" },
+	    Resource<Model>{ "Model/Enemy/Bat.fbx" },
+	    Resource<Model>{ "Model/Enemy/Dragon.fbx" },
+	};*/
 
 	Component<Transform> transform{}; ///< 座標系
 	Component<RigidBody> rigidBody{}; ///< 剛体

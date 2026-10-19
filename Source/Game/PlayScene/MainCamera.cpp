@@ -1,25 +1,29 @@
-#include "pch\pch.h"
 #include "MainCamera.h"
-#include "MainCamera/IMainCameraUpdater.h"
 #include "MainCamera/GhostCamera.h"
+#include "MainCamera/IMainCameraUpdater.h"
 #include "MainCamera/TPSCamera.h"
+#include "pch\pch.h"
 
 void MainCamera::Start()
 {
 	objUpdater = GetScene().Instantiate<GhostCamera>();
-	position = { 0.0f, 0.0f, -10.0f };
+	position = {0.0f, 0.0f, -10.0f};
 }
 
 void MainCamera::Update()
 {
-	RawMouseInputManager& rawMouseInput = Get<cha::RawMouseInputManager>();
-	CursorSystem& cursor = Get<CursorSystem>();
-	InputSystem& input = Get<InputSystem>();
-	CameraSystemData& camera = Get<CameraSystem>().Data();
+	RawMouseInputManager &rawMouseInput = Get<cha::RawMouseInputManager>();
+	CursorSystem &cursor = Get<CursorSystem>();
+	InputSystem &input = Get<InputSystem>();
+	CameraSystemData &camera = Get<CameraSystem>().Data();
 
 	ImGui::Begin("DebugCamera");
 
 	ImGui::DragFloat3("position", camera.transform.position.v);
+
+	ImGui::DragFloat("rotationX", &camera.transform.rotation.x);
+
+	ImGui::DragFloat("rotationY", &camera.transform.rotation.y);
 
 	if (ImGui::Button("Ghost"))
 	{
@@ -34,40 +38,39 @@ void MainCamera::Update()
 
 	ImGui::End();
 
-	//#ifdef _DEBUG
-	ImGuiIO& io = ImGui::GetIO();
+	// #ifdef _DEBUG
+	ImGuiIO &io = ImGui::GetIO();
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard)
 	{
 		// ImGui操作中なら無視
 		return;
 	}
-	//#endif
-
+	// #endif
 
 	if (rawMouseInput.GetMouseDown(MouseCode_Left))
 	{
 		isHideCursor = true;
-		cursor.SetVisible(false);  // 非表示に
+		cursor.SetVisible(false); // 非表示に
 		cursor.ChangeMode(CursorMode_CenterLock);
 	}
 
-	//if (!isHideCursor)
+	// if (!isHideCursor)
 	//{
 	//	return;  // カーソルが非表示なら操作しない
-	//}
+	// }
 
 	if (input.GetKeyDown(KeyCode::Escape))
 	{
 		isHideCursor = false;
-		cursor.SetVisible(true);  // 表示する
+		cursor.SetVisible(true); // 表示する
 		cursor.ChangeMode(CursorMode_Free);
 		return;
 	}
 
-	//if (cursor.IsVisible())
+	// if (cursor.IsVisible())
 	//{
 	//	return;  // カーソルが表示されているなら操作しない
-	//}
+	// }
 
 	if (objUpdater)
 	{
@@ -79,14 +82,14 @@ void MainCamera::SetPosition(const Vec3 _worldPosition)
 {
 	position = _worldPosition;
 
-	CameraSystemData& cameraSystemData = Get<CameraSystem>().Data();
+	CameraSystemData &cameraSystemData = Get<CameraSystem>().Data();
 	cameraSystemData.transform.position = position;
 }
 
 void MainCamera::ChangeUpdater(const GameObject _objUpdater)
 {
 	VCU_ASSERT(_objUpdater.IsEmpty() && "渡された更新処理オブジェクトが空っぽであった");
-	
+
 	GetScene().Destroy(objUpdater);
 	objUpdater = _objUpdater;
 }

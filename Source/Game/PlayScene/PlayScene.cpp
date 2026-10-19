@@ -1,11 +1,12 @@
-#include "pch\pch.h"
 #include "PlayScene.h"
-#include <Game/Common/GameManager.h>
-#include "PlayNetworkController.h"
-#include <Game/Common/Sky.h>
-#include "UI/Reticle.h"
+#include "Enemy.h"
 #include "MainCamera.h"
+#include "PlayNetworkController.h"
 #include "Player.h"
+#include "UI/Reticle.h"
+#include "pch\pch.h"
+#include <Game/Common/GameManager.h>
+#include <Game/Common/Sky.h>
 #include <Game/Terrain/Terrain.h>
 
 void PlayScene::Start()
@@ -14,6 +15,8 @@ void PlayScene::Start()
 	Instantiate<Sky>();
 
 	GameObject objTerrain = Instantiate<Terrain>();
+
+	Instantiate<Enemy>();
 
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
