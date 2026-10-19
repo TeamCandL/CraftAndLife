@@ -27,22 +27,23 @@ struct EnemyData
 	    "Shader/Unlit.hlsl",
 	    RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
 	};*/
-	Resource<Shader> shader{"Shader/Unlit.hlsl"}; ///< シェーダ
+	Resource<Shader> shader{"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}}; ///< シェーダ
 	// Resource<Model> model{
 	//     "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"}; ///< モデル
 
-	Resource<Model> model{"Model/Enemy/Spider.fbx"};
+	// Resource<Model> model{"Model/Enemy/Bat.fbx"};
 
-	/*std::array<Resource<Model>, EnemyType_Max> models{
-	    Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
-	    Resource<Model>{ "Model/Enemy/Spider.fbx" },
-	    Resource<Model>{ "Model/Enemy/Bat.fbx" },
-	    Resource<Model>{ "Model/Enemy/Dragon.fbx" },
-	};*/
+	std::array<Resource<Model>, EnemyType_Max> models{
+	    Resource<Model>{"Model/Enemy/Skeleton.fbx"},
+	    Resource<Model>{"Model/Enemy/Spider.fbx"},
+	    Resource<Model>{"Model/Enemy/Bat.fbx"},
+	    Resource<Model>{"Model/Enemy/Dragon.fbx"},
+	};
+	int32_t modelIndex{};
 
-	Component<Transform> transform{}; ///< 座標系
-	Component<RigidBody> rigidBody{}; ///< 剛体
-	Component<DynamicOBB> obb{};      ///< OBB当たり判定
+	Component<Transform> transform{Vec3{}, Quaternion::FromEuler(Vec3{-DirectX::XM_PIDIV2, 0.0f, 0.0f})}; ///< 座標系
+	Component<RigidBody> rigidBody{};                                                                     ///< 剛体
+	Component<DynamicOBB> obb{}; ///< OBB当たり判定
 
 	float angleX{};
 	float angleY{};
@@ -55,8 +56,8 @@ struct EnemyData
 	int32_t hp{};
 	int32_t damage{};
 
-	const int WanRangeW{};
-	const int WanRangeH{};
+	const int WAN_RANGE{100};
+	const int WAN_REFERENCE{WAN_RANGE / 2};
 
 	GameObject objWanderingCheckPoint{}; ///< 徘徊時のチェックポイント
 };

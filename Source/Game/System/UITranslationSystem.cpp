@@ -14,23 +14,23 @@ void UITranslationSystem::Update()
 	std::vector<bool> ignoreFlags(view.GetSize(), true);
 	std::vector<std::vector<size_t>> refGraph(view.GetSize(), std::vector<size_t>{});
 
-	view.ForEachWithIndex([&idToIndex, &ignoreFlags](const size_t _index, IObject& _object, UITransform& _transform)
+	view.ForEachWithIndex([&idToIndex, &ignoreFlags](const size_t _index, IObject &_object, UITransform &_transform)
 	{
 		using namespace DirectX;
 
-		ignoreFlags[_index] = false;  // 無視しない
+		ignoreFlags[_index] = false; // 無視しない
 		idToIndex[_object.GetId()] = _index;
 
 		// UI行列を計算する
-		_transform.uiWorld = _transform.uiLocal = XMMatrixIdentity()
-			* DirectX::XMMatrixScaling(_transform.scale.x, _transform.scale.y, 1.0f)
-			* DirectX::XMMatrixTranslation(_transform.position.x, _transform.position.y, 0.0f);
+		_transform.uiWorld = _transform.uiLocal =
+		    XMMatrixIdentity() * DirectX::XMMatrixScaling(_transform.scale.x, _transform.scale.y, 1.0f) *
+		    DirectX::XMMatrixTranslation(_transform.position.x, _transform.position.y, 0.0f);
 	});
 
 	// 依存関係グラフの構築
-	view.ForEachWithIndex([&idToIndex, &refGraph](const size_t _index, IObject& _object, UITransform& _transform)
+	view.ForEachWithIndex([&idToIndex, &refGraph](const size_t _index, IObject &_object, UITransform &_transform)
 	{
-		if (_transform.parent)
+		if (!_transform.parent.IsEmpty())
 		{
 			uint64_t parentId = _transform.parent.GetId();
 			// 親がView内に存在するかチェック
@@ -52,16 +52,16 @@ void UITranslationSystem::Update()
 		{
 			continue;
 		}
-		view.AtFast(index, [&idToIndex, &view](IObject& _objectSelf, UITransform& _transformSelf)
+		view.AtFast(index, [&idToIndex, &view](IObject &_objectSelf, UITransform &_transformSelf)
 		{
-			if (_transformSelf.parent)
+			if (!_transformSelf.parent.IsEmpty())
 			{
 				uint64_t parentId = _transformSelf.parent.GetId();
 				if (idToIndex.contains(parentId))
 				{
 					size_t parentIndex = idToIndex[parentId];
 
-					view.AtFast(parentIndex, [&_transformSelf](IObject& _objectParent, UITransform& _transformParent)
+					view.AtFast(parentIndex, [&_transformSelf](IObject &_objectParent, UITransform &_transformParent)
 					{
 						using namespace DirectX;
 						_transformSelf.uiWorld = _transformSelf.uiLocal * _transformParent.uiWorld;

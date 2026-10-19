@@ -13,28 +13,27 @@ void TranslationSystem::Update()
 	std::vector<bool> ignoreFlags(view.GetSize(), true);
 	std::vector<std::vector<size_t>> refGraph(view.GetSize(), std::vector<size_t>{});
 
-	view.ForEachWithIndex([&idToIndex, &ignoreFlags](const size_t _index, IObject& _object, Transform& _transform)
+	view.ForEachWithIndex([&idToIndex, &ignoreFlags](const size_t _index, IObject &_object, Transform &_transform)
 	{
 		using namespace DirectX;
 
-		ignoreFlags[_index] = false;  // 無視しない
+		ignoreFlags[_index] = false; // 無視しない
 		idToIndex[_object.GetId()] = _index;
 
 		// 法線方向の行列を計算する
-		_transform.normal = _transform.localNormal = XMMatrixIdentity()
-			* XMMatrixRotationQuaternion(_transform.rotation);
+		_transform.normal = _transform.localNormal =
+		    XMMatrixIdentity() * XMMatrixRotationQuaternion(_transform.rotation);
 
 		// 座標変換行列を計算する
-		_transform.world = _transform.local = XMMatrixIdentity()
-			* XMMatrixScalingFromVector(_transform.scale)
-			* XMMatrixRotationQuaternion(_transform.rotation)
-			* XMMatrixTranslationFromVector(_transform.position);
+		_transform.world = _transform.local = XMMatrixIdentity() * XMMatrixScalingFromVector(_transform.scale) *
+		                                      XMMatrixRotationQuaternion(_transform.rotation) *
+		                                      XMMatrixTranslationFromVector(_transform.position);
 	});
 
 	// 依存関係グラフの構築
-	view.ForEachWithIndex([&idToIndex, &refGraph](const size_t _index, IObject& _object, Transform& _transform)
+	view.ForEachWithIndex([&idToIndex, &refGraph](const size_t _index, IObject &_object, Transform &_transform)
 	{
-		if (_transform.parent)
+		if (!_transform.parent.IsEmpty())
 		{
 			uint64_t parentId = _transform.parent.GetId();
 			// 親がView内に存在するかチェック
@@ -56,16 +55,16 @@ void TranslationSystem::Update()
 		{
 			continue;
 		}
-		view.AtFast(index, [&idToIndex, &view](IObject& _objectSelf, Transform& _transformSelf)
+		view.AtFast(index, [&idToIndex, &view](IObject &_objectSelf, Transform &_transformSelf)
 		{
-			if (_transformSelf.parent)
+			if (!_transformSelf.parent.IsEmpty())
 			{
 				uint64_t parentId = _transformSelf.parent.GetId();
 				if (idToIndex.contains(parentId))
 				{
 					size_t parentIndex = idToIndex[parentId];
 
-					view.AtFast(parentIndex, [&_transformSelf](IObject& _objectParent, Transform& _transformParent)
+					view.AtFast(parentIndex, [&_transformSelf](IObject &_objectParent, Transform &_transformParent)
 					{
 						using namespace DirectX;
 						_transformSelf.world = _transformSelf.local * _transformParent.world;
