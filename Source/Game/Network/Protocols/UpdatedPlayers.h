@@ -17,7 +17,7 @@ namespace Protocol
 		/// @param _registry メンバーを登録するやつ
 		void LoadMembers(MessageRegistry& _registry) override
 		{
-			_registry.AddMember(playerNames).AddMember(positions).AddMember(rotations);
+			_registry.AddMember(playerNames).AddMember(positions).AddMember(rotations).AddMember(flag);
 		}
 
 		uint8_t GetChannel() const override
@@ -34,5 +34,7 @@ namespace Protocol
 		std::string playerNames{};
 		SizedBuffer<float> positions{};
 		SizedBuffer<float> rotations{};
+
+		int32_t flag{};
 	};
 } // namespace Protocol

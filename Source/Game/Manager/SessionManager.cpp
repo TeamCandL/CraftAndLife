@@ -45,6 +45,21 @@ void SessionManager::UpdatePlayers(
 	// 文字列を改行で分解してく
 	for (auto&& line_range : _names | std::views::split('\n'))
 	{
+		std::string_view line{line_range.begin(), line_range.end()};
+
+		// CRLF 対策
+		if (!line.empty() && line.back() == '\r')
+		{
+			line.remove_suffix(1);
+		}
+
+		// 空行が来たら無視（サーバー側の末尾改行などで混入することがある）
+		if (line.empty())
+		{
+			VCU_LOG("UpdatePlayers: 空の名前行をスキップ");
+			continue; // i は増やさない
+		}
+
 		if (Vec3::AT_MAX * i >= _positions.Size())
 		{
 			VCU_LOG("取得した名前分の座標データのサイズが足りない({}個以上必要)", Vec3::AT_MAX * i);
@@ -55,14 +70,6 @@ void SessionManager::UpdatePlayers(
 		{
 			VCU_LOG("取得した名前分の回転データのサイズが足りない({}個以上必要)", Vec3::AT_MAX * i);
 			break;
-		}
-
-		std::string_view line{line_range.begin(), line_range.end()};
-
-		// CRLF 対策
-		if (!line.empty() && line.back() == '\r')
-		{
-			line.remove_suffix(1);
 		}
 
 		InSessionStatus::PlayerStatus& playerStatus = inSessionStatus_.playersStatus[std::string{line}];

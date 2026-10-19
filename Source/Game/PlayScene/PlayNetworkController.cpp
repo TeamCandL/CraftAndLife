@@ -23,20 +23,7 @@ void PlayNetworkController::Update()
 	{
 	case Playing:
 	{
-		Transform& playerTransform = Get<Transform>(objPlayer);
-		IMainCamera& mainCamera = Get<IMainCamera>(objCamera);
-
-		Protocol::UpdatePlayer message{};
-		message.positionX = playerTransform.position.x;
-		message.positionY = playerTransform.position.y;
-		message.positionZ = playerTransform.position.z;
-
-		message.rotationX = mainCamera.GetAngleX();
-		message.rotationY = mainCamera.GetAngleY();
-
-		networkSessionManager.Send(message);
-		VCU_LOG("更新処理送信");
-	}
+		// 受信処理を先に行い、受信バッファの蓄積を解消しておく
 		networkSessionManager.Receive(
 		    [this, &converter, &networkSessionManager](const ENetTransport::Event& _event)
 		    {
@@ -57,6 +44,7 @@ void PlayNetworkController::Update()
 
 				    Get<SessionManager>().UpdatePlayers(message.playerNames, message.positions, message.rotations);
 
+				    VCU_LOG("Receive UpdatedPlayers:{}", message.flag);
 				    break;
 			    }
 			    default:
@@ -64,7 +52,25 @@ void PlayNetworkController::Update()
 				    break;
 			    }
 		    });
-		break;
+
+		Transform& playerTransform = Get<Transform>(objPlayer);
+		IMainCamera& mainCamera = Get<IMainCamera>(objCamera);
+
+		Protocol::UpdatePlayer message{};
+		message.positionX = playerTransform.position.x;
+		message.positionY = playerTransform.position.y;
+		message.positionZ = playerTransform.position.z;
+
+		message.rotationX = mainCamera.GetAngleX();
+		message.rotationY = mainCamera.GetAngleY();
+
+		static int32_t counter{};
+		message.flag = counter++;
+
+		networkSessionManager.Send(message);
+		VCU_LOG("更新処理送信: {}", counter);
+	}
+	break;
 	default:
 		break;
 	}

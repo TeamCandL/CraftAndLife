@@ -3,6 +3,7 @@
 
 void OtherPlayer::Start()
 {
+	VCU_LOG("atara");
 }
 
 void OtherPlayer::Update()
@@ -15,6 +16,13 @@ void OtherPlayer::Update()
 		// 座標と角度を更新
 		transform.position = status.position;
 		transform.rotation = Quaternion::FromEuler(Vec3{0.0f, status.rotation.y, 0.0f});
+		VCU_LOG(
+		    "{}の更新！座標:({}, {}, {}) 回転y:{}", name.content, transform.position.x, transform.position.y,
+		    transform.position.z, transform.rotation.y);
+	}
+	else
+	{
+		VCU_LOG("{}がない！", name.content);
 	}
 }
 

@@ -8,24 +8,33 @@ namespace Protocol
 	{
 		/// @brief プロトコルの種類を取得する
 		/// @return プロトコルの種類
-		ProtocolType GetProtocolType() const override { return ProtocolType::UpdatePlayer; }
+		ProtocolType GetProtocolType() const override
+		{
+			return ProtocolType::UpdatePlayer;
+		}
 
 		/// @brief メンバーをロードする
 		/// @param _registry メンバーを登録するやつ
 		void LoadMembers(MessageRegistry& _registry) override
 		{
-			_registry
-				.AddMember(positionX)
-				.AddMember(positionY)
-				.AddMember(positionZ)
-				
-				.AddMember(rotationX)
-				.AddMember(rotationY)
-				;
+			_registry.AddMember(positionX)
+			    .AddMember(positionY)
+			    .AddMember(positionZ)
+
+			    .AddMember(rotationX)
+			    .AddMember(rotationY)
+
+			    .AddMember(flag);
 		}
 
-		uint8_t GetChannel() const override { return 1; }
-		ENetSendMode GetSendMode() const override { return ENetSendMode::Unreliable; }
+		uint8_t GetChannel() const override
+		{
+			return 1;
+		}
+		ENetSendMode GetSendMode() const override
+		{
+			return ENetSendMode::Unreliable;
+		}
 
 		// 以下通信メンバーたち
 		float positionX{};
@@ -34,5 +43,7 @@ namespace Protocol
 
 		float rotationX{};
 		float rotationY{};
+
+		int flag{};
 	};
-}
+} // namespace Protocol
