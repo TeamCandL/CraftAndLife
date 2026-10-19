@@ -18,6 +18,8 @@ void PlayScene::Start()
 
 	GameObject objTerrain = Instantiate<Terrain>();
 
+	Instantiate<OtherPlayer>("てすとん");
+
 	Instantiate<Enemy>(); // 仮設置
 	Instantiate<OtherPlayerController>();
 

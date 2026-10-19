@@ -47,5 +47,5 @@ void NetworkSessionManager::Send(INetworkMessage& _message)
 	// 送信したデータを即時にフラッシュしておく。
 	// 高頻度で送信される位置情報などはENetの内部キューに溜まりやすいため
 	// 明示的にフラッシュしておくことでクライアント側での遅延蓄積を防ぐ。
-	transport_.Flush();
+	// transport_.Flush();
 }

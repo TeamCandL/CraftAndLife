@@ -15,6 +15,8 @@ struct OtherPlayerData
 	Component<Name> name{};                                             ///< プレイヤー名
 	Component<Transform> transform{Vec3::Zero(), Vec3::One() * 200.0f}; ///< 座標系
 
+	Resource<Model> aModel{"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-c.fbx"};
+
 	std::array<Resource<Model>, PlayerRoleType_Max> models{
 	    Resource<Model>{"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx"},
 	    Resource<Model>{"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx"},
