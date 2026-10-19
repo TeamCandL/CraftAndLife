@@ -23,6 +23,14 @@ void Enemy::Update()
 			                            WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2)});
 		}
 	}
+
+	ImGui::Begin("Enemy");
+
+	ImGui::DragInt("modelIndex", &modelIndex);
+	modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
+	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
+
+	ImGui::End();
 }
 
 void Enemy::Draw()
@@ -30,9 +38,9 @@ void Enemy::Draw()
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	model.Get().Draw(Get<DeltaTime>(), animIndex);
+	models[modelIndex].Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto &subParts{model.Get().subParts};
+	const auto &subParts{models[modelIndex].Get().subParts};
 	for (const auto &parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
