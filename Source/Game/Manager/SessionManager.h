@@ -1,6 +1,6 @@
 #pragma once
-#include <Base/Base.h>
 #include "SessionManager/InSessionStatus.h"
+#include <Base/Base.h>
 #include <Game/Common/Utility/SizedBuffer.h>
 
 /// @brief 部屋に入ってからのプレイヤーとしてのセッションを管理する
@@ -28,26 +28,27 @@ public:
 	/// @brief ワールド内の全プレイヤーを更新する
 	/// @param _names プレイヤー名
 	/// @param _positions 座標情報
-	void UpdatePlayers(const std::string_view _names, SizedBuffer<float>& _positions);
+	void UpdatePlayers(const std::string_view _names, SizedBuffer<float> &_positions, SizedBuffer<float> &_rotations);
 
 	/// @brief プレイヤーステータスを参照する
 	/// @param _playerName プレイヤー名
 	/// @return プレイヤーステータスの参照
-	const InSessionStatus::PlayerStatus& RefPlayerStatus(const std::string& _playerName) const;
+	const InSessionStatus::PlayerStatus &RefPlayerStatus(const std::string &_playerName) const;
 
-	template<typename Func>
-	void ForeachPlayerStatus(Func&& _func);
+	template <typename Func> void ForeachPlayerStatus(Func &&_func);
 
-	const InSessionStatus& RefStatus() const { return inSessionStatus_; }
+	const InSessionStatus &RefStatus() const
+	{
+		return inSessionStatus_;
+	}
 
 private:
-	InSessionStatus inSessionStatus_{};    ///< セッション内のステータス
+	InSessionStatus inSessionStatus_{}; ///< セッション内のステータス
 };
 
-template<typename Func>
-inline void SessionManager::ForeachPlayerStatus(Func&& _func)
+template <typename Func> inline void SessionManager::ForeachPlayerStatus(Func &&_func)
 {
-	for (const auto& [name, status] : inSessionStatus_.playersStatus)
+	for (const auto &[name, status] : inSessionStatus_.playersStatus)
 	{
 		_func(name, status);
 	}

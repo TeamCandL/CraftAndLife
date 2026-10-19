@@ -16,9 +16,9 @@ void SessionManager::SetMemberNames(const std::string_view _names)
 	inSessionStatus_.memberNames.clear();
 
 	// 文字列を改行で分解してく
-	for (auto&& line_range : _names | std::views::split('\n'))
+	for (auto &&line_range : _names | std::views::split('\n'))
 	{
-		std::string_view line{ line_range.begin(), line_range.end() };
+		std::string_view line{line_range.begin(), line_range.end()};
 
 		// CRLF 対策
 		if (!line.empty() && line.back() == '\r')
@@ -26,7 +26,7 @@ void SessionManager::SetMemberNames(const std::string_view _names)
 			line.remove_suffix(1);
 		}
 
-		inSessionStatus_.memberNames.push_back(std::string{ line });
+		inSessionStatus_.memberNames.push_back(std::string{line});
 	}
 }
 
@@ -35,14 +35,15 @@ void SessionManager::SetJoinRoomName(const std::string_view _name)
 	inSessionStatus_.joinRoomName = _name;
 }
 
-void SessionManager::UpdatePlayers(const std::string_view _names, SizedBuffer<float>& _positions)
+void SessionManager::UpdatePlayers(const std::string_view _names, SizedBuffer<float> &_positions,
+                                   SizedBuffer<float> &_rotations)
 {
 	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
-	auto& playerStatus = inSessionStatus_.playersStatus;
+	auto &playerStatus = inSessionStatus_.playersStatus;
 
 	size_t i = 0;
 	// 文字列を改行で分解してく
-	for (auto&& line_range : _names | std::views::split('\n'))
+	for (auto &&line_range : _names | std::views::split('\n'))
 	{
 		if (Vec3::AT_MAX * i >= _positions.Size())
 		{
@@ -50,7 +51,13 @@ void SessionManager::UpdatePlayers(const std::string_view _names, SizedBuffer<fl
 			break;
 		}
 
-		std::string_view line{ line_range.begin(), line_range.end() };
+		if (Vec2::AT_MAX * i >= _rotations.Size())
+		{
+			VCU_LOG("取得した名前分の回転データのサイズが足りない({}個以上必要)", Vec3::AT_MAX * i);
+			break;
+		}
+
+		std::string_view line{line_range.begin(), line_range.end()};
 
 		// CRLF 対策
 		if (!line.empty() && line.back() == '\r')
@@ -58,22 +65,29 @@ void SessionManager::UpdatePlayers(const std::string_view _names, SizedBuffer<fl
 			line.remove_suffix(1);
 		}
 
-		InSessionStatus::PlayerStatus& playerStatus = inSessionStatus_.playersStatus[std::string{ line }];
-		playerStatus.position = Vec3
-		{
-			_positions[i * Vec3::AT_MAX + Vec3::AT_X],
-			_positions[i * Vec3::AT_MAX + Vec3::AT_Y],
-			_positions[i * Vec3::AT_MAX + Vec3::AT_Z],
+		InSessionStatus::PlayerStatus &playerStatus = inSessionStatus_.playersStatus[std::string{line}];
+		playerStatus.position = Vec3{
+		    _positions[i * Vec3::AT_MAX + Vec3::AT_X],
+		    _positions[i * Vec3::AT_MAX + Vec3::AT_Y],
+		    _positions[i * Vec3::AT_MAX + Vec3::AT_Z],
 		};
-		playerStatus.updatedFlag = !playerStatus.updatedFlag;  // 更新フラグを反転
 
-		VCU_LOG("Update[{}] = ({}, {}, {})", line, playerStatus.position.x, playerStatus.position.y, playerStatus.position.z);
+		playerStatus.rotation = Vec2{
+		    _rotations[i * Vec2::AT_MAX + Vec2::AT_X],
+		    _rotations[i * Vec2::AT_MAX + Vec2::AT_Y],
+		};
+		playerStatus.updatedFlag = !playerStatus.updatedFlag; // 更新フラグを反転
+
+		VCU_LOG("Update[{}] = ({}, {}, {})", line, playerStatus.position.x, playerStatus.position.y,
+		        playerStatus.position.z);
+
+		VCU_LOG("Update[{}] = ({}, {})", line, playerStatus.rotation.x, playerStatus.rotation.y);
 
 		i++;
 	}
 
 	// 更新フラグが不一致は削除していく
-	std::erase_if(inSessionStatus_.playersStatus, [this](const auto& nameAndStatus)
+	std::erase_if(inSessionStatus_.playersStatus, [this](const auto &nameAndStatus)
 	{
 		if (nameAndStatus.second.updatedFlag != inSessionStatus_.updatedFlag)
 			VCU_LOG("削除オオオ{}", nameAndStatus.first);
@@ -81,7 +95,7 @@ void SessionManager::UpdatePlayers(const std::string_view _names, SizedBuffer<fl
 	});
 }
 
-const InSessionStatus::PlayerStatus& SessionManager::RefPlayerStatus(const std::string& _playerName) const
+const InSessionStatus::PlayerStatus &SessionManager::RefPlayerStatus(const std::string &_playerName) const
 {
 	return inSessionStatus_.playersStatus.at(_playerName);
 }

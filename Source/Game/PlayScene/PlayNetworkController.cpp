@@ -1,9 +1,9 @@
 #include "PlayNetworkController.h"
-#include <Game/Network/NetworkSessionManager.h>
-#include <Game/Manager/SessionManager.h>
-#include <Game/Network/Protocols/UpdatedPlayers.h>
-#include <Game/Network/Protocols/UpdatePlayer.h>
 #include "../TitleScene/TitleScene.h"
+#include <Game/Manager/SessionManager.h>
+#include <Game/Network/NetworkSessionManager.h>
+#include <Game/Network/Protocols/UpdatePlayer.h>
+#include <Game/Network/Protocols/UpdatedPlayers.h>
 
 using enum NetworkSessionManager::State;
 
@@ -14,7 +14,7 @@ void PlayNetworkController::Start()
 
 void PlayNetworkController::Update()
 {
-	NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
+	NetworkSessionManager &networkSessionManager = Get<NetworkSessionManager>();
 
 	MessageConverter converter{};
 
@@ -22,22 +22,25 @@ void PlayNetworkController::Update()
 	{
 	case Playing:
 	{
-		Transform& playerTransform = Get<Transform>(objPlayer);
+		Transform &playerTransform = Get<Transform>(objPlayer);
 
 		Protocol::UpdatePlayer message{};
 		message.positionX = playerTransform.position.x;
 		message.positionY = playerTransform.position.y;
 		message.positionZ = playerTransform.position.z;
 
+		message.rotationX = playerTransform.rotation.x;
+		message.rotationY = playerTransform.rotation.y;
+
 		networkSessionManager.Send(message);
 	}
 		/**/
-		networkSessionManager.Receive([this, &converter, &networkSessionManager](const ENetTransport::Event& _event)
+		networkSessionManager.Receive([this, &converter, &networkSessionManager](const ENetTransport::Event &_event)
 		{
 			if (_event.type == ENetTransport::EventType::Disconnected)
 			{
 				Get<SceneManager>().Move<TitleScene>();
-				return;  // 通信切断
+				return; // 通信切断
 			}
 
 			ProtocolType protocolType = converter.GetProtocolType(_event.data);
@@ -49,7 +52,7 @@ void PlayNetworkController::Update()
 				Protocol::UpdatedPlayers message{};
 				converter.ToMessage(_event.data, message);
 
-				Get<SessionManager>().UpdatePlayers(message.playerNames, message.positions);
+				Get<SessionManager>().UpdatePlayers(message.playerNames, message.positions, message.rotations);
 
 				break;
 			}
