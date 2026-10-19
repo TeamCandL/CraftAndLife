@@ -424,6 +424,7 @@
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\FPSCamera.cpp" />
@@ -494,6 +495,7 @@
     <ClInclude Include="Library\miniaudio\miniaudio.h" />
     <ClInclude Include="Library\nlohmann-json\json.hpp" />
     <ClInclude Include="Library\nlohmann-json\json_fwd.hpp" />
+    <ClInclude Include="Library\shigaRandom\SgRandom.h" />
     <ClInclude Include="Library\ufbx\ufbx.h" />
     <ClInclude Include="Source\Base\Base.h" />
     <ClInclude Include="Source\Base\BasePch.h" />
@@ -614,6 +616,7 @@
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
