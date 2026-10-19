@@ -1,17 +1,17 @@
 root = true
 
-# æ”¹è¡Œè¨­å®š
+[*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
+# ‰üsİ’è
 end_of_line = crlf
 
-# UTF-8ã«å¤‰æ›
+# UTF-8‚É•ÏŠ·
 charset = utf-8
 
-[*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
 
-# Visual C++ ã‚³ãƒ¼ãƒ‰ ã‚¹ã‚¿ã‚¤ãƒ«ã®è¨­å®š
+# Visual C++ ƒR[ƒh ƒXƒ^ƒCƒ‹‚Ìİ’è
 
 
-# Visual C++ ã®æ›¸å¼è¨­å®š
+# Visual C++ ‚Ì‘®İ’è
 
 indent_style = tab
 indent_size = 4
@@ -100,3 +100,11 @@ indent_style = tab
 insert_final_newline = true
 tab_width = 4
 trim_trailing_whitespace = true
+
+[{*.{yml,yaml},.clang-format}]
+# ‰üsİ’è
+end_of_line = lf
+indent_size = 2
+# UTF-8‚É•ÏŠ·
+charset = utf-8
+indent_style = space

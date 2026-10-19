@@ -2,6 +2,8 @@
 # ベーススタイル
 # ==========================================
 BasedOnStyle: Microsoft
+Language: Cpp
+Standard: c++20
 
 # ==========================================
 # インデントとタブ
@@ -20,7 +22,8 @@ BreakBeforeBraces: Allman
 # ポインタと参照の配置
 # ==========================================
 DerivePointerAlignment: false
-PointerAlignment: Right
+PointerAlignment: Left
+ReferenceAlignment: Left
 
 # ==========================================
 # アクセス指定子（public/private等）のインデント
@@ -45,9 +48,10 @@ NamespaceIndentation: All
 # ==========================================
 # 初期化リストとコンストラクタ
 # ==========================================
-BreakConstructorInitializers: BeforeColon
+BreakConstructorInitializers: AfterColon # カンマの後に改行
 ConstructorInitializerIndentWidth: 4
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
+PackConstructorInitializers: Never
 
 # ==========================================
 # 改行と折り返し
@@ -63,3 +67,16 @@ ColumnLimit: 120
 # ラムダ式
 # ==========================================
 LambdaBodyIndentation: OuterScope
+
+# マクロの改行バックスラッシュの整列
+AlignEscapedNewlines: LeftWithLastLine
+
+# 開始括弧を置いた後の引数の並べ方
+AlignAfterOpenBracket: AlwaysBreak
+
+# caseラベルでインデントするか
+IndentCaseLabels: false
+
+# 改行設定
+BinPackParameters: false
+BinPackArguments: false
