@@ -2,6 +2,7 @@
 #include "IMainCamera.h"
 #include "Player/PlayerControllerNormal.h"
 #include "pch\pch.h"
+#include <Game/System/AbstructInputSystem.h>
 
 void Player::Start()
 {
@@ -27,6 +28,27 @@ void Player::Update()
 	    Get<IMainCamera>(objMainCamera).GetAngleY(),
 	    0.0f,
 	});
+
+	AbstructInputSystem &inputSystem = Get<AbstructInputSystem>();
+	auto pPlayerInput = inputSystem.GetPlayerInput();
+	Vec2 bodyMove = pPlayerInput->GetMoveBody();
+
+	float moveSpeed = 0.1f;
+
+	// カメラの向きを取得
+	float angleY = Get<IMainCamera>(objMainCamera).GetAngleY();
+
+	// カメラの向きから前方向を計算
+	Vec3 forward = Vec3{sinf(angleY), 0.0f, cosf(angleY)};
+
+	// カメラの向きから右方向を計算
+	Vec3 right = Vec3{cosf(angleY), 0.0f, -sinf(angleY)};
+
+	// 入力に応じて移動方向を計算
+	Vec3 moveDirection = right * bodyMove.x + forward * bodyMove.y;
+
+	// 平行移動
+	transform.position += moveDirection * moveSpeed;
 }
 
 void Player::Draw()
