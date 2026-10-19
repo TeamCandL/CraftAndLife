@@ -20,7 +20,8 @@ BreakBeforeBraces: Allman
 # ポインタと参照の配置
 # ==========================================
 DerivePointerAlignment: false
-PointerAlignment: Right
+PointerAlignment: Left
+ReferenceAlignment: Left
 
 # ==========================================
 # アクセス指定子（public/private等）のインデント
@@ -45,9 +46,10 @@ NamespaceIndentation: All
 # ==========================================
 # 初期化リストとコンストラクタ
 # ==========================================
-BreakConstructorInitializers: BeforeColon
+BreakConstructorInitializers: AfterColon
 ConstructorInitializerIndentWidth: 4
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
+PackConstructorInitializers: Never
 
 # ==========================================
 # 改行と折り返し
@@ -62,4 +64,18 @@ ColumnLimit: 120
 # ==========================================
 # ラムダ式
 # ==========================================
-LambdaBodyIndentation: OuterScope
+LambdaBodyIndentation: Signature
+
+# マクロの改行バックスラッシュの整列
+AlignEscapedNewlines: LeftWithLastLine
+
+# 開始括弧を置いた後の引数の並べ方
+AlignAfterOpenBracket: AlwaysBreak
+# 開始括弧の前にスペースを入れるか
+SpaceBeforeParens: ControlStatements
+
+# caseラベルでインデントするか
+IndentCaseLabels: false
+
+# 改行設定
+BinPackParameters: AlwaysOnePerLine
