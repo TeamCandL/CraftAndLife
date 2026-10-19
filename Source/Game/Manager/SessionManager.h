@@ -25,19 +25,23 @@ public:
 	/// @param _name 部屋名
 	void SetJoinRoomName(const std::string_view _name);
 
+	/// @brief 自分がロビーのホストかどうかの設定をする
+	/// @pram _isLobbyHost　ホストかどうか
+	void SetLobbyHost(bool _isLobbyHost);
+
 	/// @brief ワールド内の全プレイヤーを更新する
 	/// @param _names プレイヤー名
 	/// @param _positions 座標情報
-	void UpdatePlayers(const std::string_view _names, SizedBuffer<float> &_positions, SizedBuffer<float> &_rotations);
+	void UpdatePlayers(const std::string_view _names, SizedBuffer<float>& _positions, SizedBuffer<float>& _rotations);
 
 	/// @brief プレイヤーステータスを参照する
 	/// @param _playerName プレイヤー名
 	/// @return プレイヤーステータスの参照
-	const InSessionStatus::PlayerStatus &RefPlayerStatus(const std::string &_playerName) const;
+	const InSessionStatus::PlayerStatus& RefPlayerStatus(const std::string& _playerName) const;
 
-	template <typename Func> void ForeachPlayerStatus(Func &&_func);
+	template <typename Func> void ForeachPlayerStatus(Func&& _func);
 
-	const InSessionStatus &RefStatus() const
+	const InSessionStatus& RefStatus() const
 	{
 		return inSessionStatus_;
 	}
@@ -46,9 +50,9 @@ private:
 	InSessionStatus inSessionStatus_{}; ///< セッション内のステータス
 };
 
-template <typename Func> inline void SessionManager::ForeachPlayerStatus(Func &&_func)
+template <typename Func> inline void SessionManager::ForeachPlayerStatus(Func&& _func)
 {
-	for (const auto &[name, status] : inSessionStatus_.playersStatus)
+	for (const auto& [name, status] : inSessionStatus_.playersStatus)
 	{
 		_func(name, status);
 	}

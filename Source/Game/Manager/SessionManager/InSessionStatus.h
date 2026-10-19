@@ -16,6 +16,7 @@ struct InSessionStatus
 	std::string name{};                     ///< プレイヤー名
 	std::vector<std::string> memberNames{}; ///< ロビー内メンバー名一覧
 
+	bool imLobbyHost{false};
 	bool updatedFlag{false};                                       ///< 更新確認用フラグ false / true 切り替え用
 	std::unordered_map<std::string, PlayerStatus> playersStatus{}; ///< プレイヤーの座標情報
 };

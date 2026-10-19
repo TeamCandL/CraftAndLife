@@ -8,15 +8,21 @@ namespace Protocol
 	{
 		/// @brief プロトコルの種類を取得する
 		/// @return プロトコルの種類
-		ProtocolType GetProtocolType() const override { return ProtocolType::StartedGame; }
+		ProtocolType GetProtocolType() const override
+		{
+			return ProtocolType::StartedGame;
+		}
 
 		/// @brief メンバーをロードする
 		/// @param _registry メンバーを登録するやつ
 		void LoadMembers(MessageRegistry& _registry) override
 		{
-			//_registry.AddMember();
+			//_registry.AddMember(imLobbyHost);
 		}
 
 		// 以下通信メンバーたち
+
+		// ホストのプレイヤーかどうか
+		bool imLobbyHost{false};
 	};
-}
+} // namespace Protocol
