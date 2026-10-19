@@ -19,7 +19,8 @@ void Enemy::Update()
 		// チェックポイントに到達したら新しいチェックポイントを生成する
 		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition()).Length() < 1.0f)
 		{
-			SetWanderingCheckPoint(Vec3{Random::GetRandom(1, 200), 0, Random::GetRandom(1, 200)});
+			SetWanderingCheckPoint(Vec3{WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2), 0,
+			                            WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2)});
 		}
 	}
 }

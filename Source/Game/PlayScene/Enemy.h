@@ -45,8 +45,8 @@ struct EnemyData
 	int32_t hp{};
 	int32_t damage{};
 
-	const int WanRangeW{};
-	const int WanRangeH{};
+	const int WAN_RANGE{100};
+	const int WAN_REFERENCE{WAN_RANGE / 2};
 
 	GameObject objWanderingCheckPoint{}; ///< 徘徊時のチェックポイント
 };
