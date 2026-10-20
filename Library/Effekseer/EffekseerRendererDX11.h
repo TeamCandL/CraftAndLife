@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <Effekseer.h>
+#include "Effekseer.h"
 
 #include <d3d11.h>
 #include <windows.h>
@@ -39,7 +39,7 @@ class Renderer;
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <Effekseer.h>
+#include "Effekseer.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -519,7 +519,7 @@ public:
 #ifndef __EFFEKSEERRENDERER_TEXTURELOADER_H__
 #define __EFFEKSEERRENDERER_TEXTURELOADER_H__
 
-#include <Effekseer.h>
+#include "Effekseer.h"
 
 namespace EffekseerRenderer
 {
