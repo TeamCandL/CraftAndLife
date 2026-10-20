@@ -10,12 +10,7 @@
 #include <memory>
 #include "..//Terrain/TerrainMaterial.h"
 
-void MapTestScene::Start()
-{
-	Instantiate<GameManager>();
-	Instantiate<DebugCamera>();
-	Instantiate<Sky>();
-	// Instantiate<オッジェクトの型>();
+
 // ============================================================
 // 共通処理
 // ============================================================
@@ -54,6 +49,10 @@ namespace
 
 void MapTestScene::Start()
 {
+	Instantiate<GameManager>();
+	Instantiate<DebugCamera>();
+	Instantiate<Sky>();
+	// Instantiate<オッジェクトの型>();
 	Instantiate<GameManager>();
 	Instantiate<Sky>();
 

@@ -17,10 +17,6 @@ void DebugCamera::Update()
 	AbstructInputSystem& input = Get<AbstructInputSystem>();
 	auto pPlayerInput = input.GetPlayerInput();
 
-	// 抽象入力システムから抽象プレイヤー入力を取得
-	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
-	auto pPlayerInput = inputSystem.GetPlayerInput();
-
 	// 回転スピード
 	const float ROTATE_SPEED{rotateSpeedPerSec * DELTA_TIME};
 	// 移動スピード
