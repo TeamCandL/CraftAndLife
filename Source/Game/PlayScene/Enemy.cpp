@@ -10,13 +10,13 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	// 徘徊チェックポイントとの距離(差分)
+	float distX = transform.position.x - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x;
+	float distZ = transform.position.z - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().z;
+	// 差分を基に移動方向の計算
+	float angle = std::atan2(distZ, distX) - DirectX::XM_PIDIV2;
 	/// 徘徊時のチェックポイントの更新
-	if (objWanderingCheckPoint.IsEmpty())
-	{
-		// 1+1=11
-		1 + 1;
-	}
-	else
+	if (!objWanderingCheckPoint.IsEmpty())
 	{
 		// チェックポイントに到達したら新しいチェックポイントを生成する
 		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition()).Length() < 1.0f)
@@ -25,6 +25,9 @@ void Enemy::Update()
 			    WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2), 0,
 			    WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2)});
 		}
+	}
+	else
+	{
 	}
 
 	ImGui::Begin("Enemy");
