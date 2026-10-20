@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <vector>
 
+namespace MAP
+{
+
 /// @brief マップ生成設定
 namespace MapConfig
 {
@@ -65,3 +68,4 @@ struct MAP : ObjectBase<MapData>
 	void Update() override;
 	void Draw() override;
 };
+}

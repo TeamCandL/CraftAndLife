@@ -36,17 +36,17 @@ namespace
 // MapData
 // ============================================================
 
-MapData::MapData()
+MAP::MapData::MapData()
 {
 	Generate();
 }
 
-int32_t MapData::GetIndex(int32_t x, int32_t z) const
+int32_t MAP::MapData::GetIndex(int32_t x, int32_t z) const
 {
 	return z * MapConfig::MAP_WIDTH + x;
 }
 
-bool MapData::IsInsideMap(float x, float z) const
+bool MAP::MapData::IsInsideMap(float x, float z) const
 {
 	const float halfWidth = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
 
@@ -59,7 +59,7 @@ bool MapData::IsInsideMap(float x, float z) const
 // 地形の高さ計算
 // ============================================================
 
-float MapData::CalculateHeight(float x, float z) const
+float MAP::MapData::CalculateHeight(float x, float z) const
 {
 	// 大きな丘
 	const float hillA = std::sin(x * 0.035f) * 3.0f;
@@ -78,7 +78,7 @@ float MapData::CalculateHeight(float x, float z) const
 	return ClampValue(height, MapConfig::BASE_HEIGHT, MapConfig::MAX_HEIGHT);
 }
 
-void MapData::Generate()
+void MAP::MapData::Generate()
 {
 	heights.resize(MapConfig::MAP_WIDTH * MapConfig::MAP_DEPTH);
 
@@ -121,7 +121,7 @@ void MapData::Generate()
 // 高さの平滑化
 // ============================================================
 
-void MapData::SmoothHeights()
+void MAP::MapData::SmoothHeights()
 {
 	std::vector<float> temporary(heights.size());
 
@@ -151,7 +151,7 @@ void MapData::SmoothHeights()
 // 高さ取得：頂点間を補間する
 // ============================================================
 
-float MapData::GetHeight(float x, float z) const
+float MAP::MapData::GetHeight(float x, float z) const
 {
 	if (!IsInsideMap(x, z) || heights.empty())
 	{
@@ -191,7 +191,7 @@ float MapData::GetHeight(float x, float z) const
 // 道・川
 // ============================================================
 
-bool MapData::IsPath(float x, float z) const
+bool MAP::MapData::IsPath(float x, float z) const
 {
 	// スタートからゴールまでの直線的な道
 	const float pathCenterX = Lerp(
@@ -200,7 +200,7 @@ bool MapData::IsPath(float x, float z) const
 	return std::abs(x - pathCenterX) <= MapConfig::PATH_WIDTH * 0.5f;
 }
 
-bool MapData::IsRiver(float x, float z) const
+bool MAP::MapData::IsRiver(float x, float z) const
 {
 	(void)x;
 
@@ -211,7 +211,7 @@ bool MapData::IsRiver(float x, float z) const
 // スタート・ゴール位置
 // ============================================================
 
-Vec3 MapData::GetStartPosition() const
+Vec3 MAP::MapData::GetStartPosition() const
 {
 	const float x = PATH_START_X;
 	const float z = -MapConfig::MAP_DEPTH * 0.4f;
@@ -219,7 +219,7 @@ Vec3 MapData::GetStartPosition() const
 	return Vec3{x, GetHeight(x, z), z};
 }
 
-Vec3 MapData::GetGoalPosition() const
+Vec3 MAP::MapData::GetGoalPosition() const
 {
 	const float x = PATH_END_X;
 	const float z = MapConfig::MAP_DEPTH * 0.4f;
@@ -231,17 +231,17 @@ Vec3 MapData::GetGoalPosition() const
 // MAP
 // ============================================================
 
-void MAP::Start()
+void MAP::MAP::Start()
 {
 	// マップデータは MapData の生成時に作成済み
 }
 
-void MAP::Update()
+void MAP::MAP::Update()
 {
 	// 必要に応じてマップのイベント処理を追加
 }
 
-void MAP::Draw()
+void MAP::MAP::Draw()
 {
 	/*
 	    描画処理は、現在の情報だけでは確定できません。
