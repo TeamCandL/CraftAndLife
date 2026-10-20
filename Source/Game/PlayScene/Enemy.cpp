@@ -19,6 +19,8 @@ void Enemy::Update()
 	// 差分を基に移動方向の計算
 	float angelY = Math::GetAngle(distX, distZ);
 
+	Move(vecX, vecZ, speed);
+
 	/// 徘徊時のチェックポイントの更新
 	if (!objWanderingCheckPoint.IsEmpty())
 	{
@@ -41,6 +43,12 @@ void Enemy::Update()
 	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
 
 	ImGui::End();
+}
+
+void Enemy::Move(float vecX_, float vecZ_, float spd_)
+{
+	transform.position.x += vecX_ * spd_;
+	transform.position.z += vecZ_ * spd_;
 }
 
 void Enemy::Draw()
