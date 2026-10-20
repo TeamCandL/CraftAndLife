@@ -69,9 +69,14 @@ struct EnemyData
 	//-----------------------------------------//
 	// パラメータ//-----------------------------//
 	//-----------------------------------------//
-	int32_t hp{};      ///< 体力
-	int32_t damage{};  ///< 攻撃力
-	float speed{5.0f}; ///< 移動速度
+	int32_t hp{};                            ///< 体力
+	int32_t damage{};                        ///< 攻撃力
+	float speed{5.0f};                       ///< 移動速度
+	const float ATTACK_COOL_TIME{5.0f};      ///< 攻撃クールタイム
+	float nowAttackCoolTime{0.0f};           ///< 現在の攻撃クールタイム
+	const float ATTACK_COLL_LIFE_TIME{1.0f}; ///< 攻撃判定の寿命
+	const float DAMAGED_COOL_TIME{1.0f};     ///< 被ダメージクールタイム
+	float nowDamagedCoolTime{0.0f};          ///< 現在の被ダメージクールタイム
 
 	const int WAN_RANGE{100};               ///< 徘徊範囲
 	const int WAN_REFERENCE{WAN_RANGE / 2}; ///< 徘徊基準点

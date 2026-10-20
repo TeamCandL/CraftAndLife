@@ -8,8 +8,10 @@ struct EnemyAttackCollData
 	EnemyAttackCollData()
 	{
 	}
-	EnemyAttackCollData(const Vec3 position_) :
-		transform{position_}
+	EnemyAttackCollData(const Vec3 position_, const int32_t damage_, const float lifeTime_) :
+	    transform{position_},
+	    damage{damage_},
+	    lifeTime{lifeTime_}
 	{
 	}
 
@@ -30,6 +32,7 @@ struct EnemyAttackCollData
 	// パラメータ//-----------------------------//
 	//-----------------------------------------//
 	int32_t damage{};
+	float lifeTime{}; ///< 寿命
 };
 
 /// @brief 敵の攻撃当たり判定
