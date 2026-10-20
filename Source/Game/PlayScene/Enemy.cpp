@@ -13,6 +13,8 @@ void Enemy::Update()
 	/// 徘徊時のチェックポイントの更新
 	if (objWanderingCheckPoint.IsEmpty())
 	{
+		//1+1=1
+		1 + 1;
 	}
 	else
 	{
