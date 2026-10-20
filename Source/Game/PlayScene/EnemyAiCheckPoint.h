@@ -6,6 +6,10 @@ struct EnemyCheckPointData
 	EnemyCheckPointData()
 	{
 	}
+	EnemyCheckPointData(const Vec3 position_) :
+	    transform{position_}
+	{
+	}
 
 	/*
 	Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
