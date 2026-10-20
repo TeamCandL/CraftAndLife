@@ -1,12 +1,14 @@
+
 #include "MapTestScene.h"
 #include "pch\pch.h"
 #include <Game/Common/GameManager.h>
 #include <Game/Common/Sky.h>
-#include <Game/Terrain/Terrain.h>
 #include <algorithm>
 #include <cmath>
 #include <Game/Tool/DebugCamera.h>
 // #include "自分で追加したおぶじぇくとのヘッダー"
+#include <memory>
+#include "..//Terrain/TerrainMaterial.h"
 
 void MapTestScene::Start()
 {
@@ -14,9 +16,10 @@ void MapTestScene::Start()
 	Instantiate<DebugCamera>();
 	Instantiate<Sky>();
 	// Instantiate<オッジェクトの型>();
+// ============================================================
+// 共通処理
+// ============================================================
 
-	GameObject objTerrain = Instantiate<Terrain>();
-}
 namespace
 {
 	constexpr float PI = 3.14159265358979323846f;
@@ -28,12 +31,12 @@ namespace
 	// 川の位置
 	constexpr float RIVER_CENTER_Z = 0.0f;
 
-	float ClampValue(float value, float minValue, float maxValue)
+	float ClampValue(const float value, const float minValue, const float maxValue)
 	{
 		return std::max(minValue, std::min(value, maxValue));
 	}
 
-	float Lerp(float a, float b, float t)
+	float Lerp(const float a, const float b, const float t)
 	{
 		return a + (b - a) * t;
 	}
@@ -46,6 +49,19 @@ namespace
 } // namespace
 
 // ============================================================
+// MapTestScene
+// ============================================================
+
+void MapTestScene::Start()
+{
+	Instantiate<GameManager>();
+	Instantiate<Sky>();
+
+	// マップだけを生成する
+	Instantiate<MAP>();
+}
+
+// ============================================================
 // MapData
 // ============================================================
 
@@ -54,75 +70,95 @@ MapData::MapData()
 	Generate();
 }
 
-int32_t MapData::GetIndex(int32_t x, int32_t z) const
+int32_t MapData::GetIndex(const int32_t x, const int32_t z) const
 {
-	return z * MapConfig::MAP_WIDTH + x;
+	return z * (MapConfig::MAP_WIDTH + 1) + x;
 }
 
-bool MapData::IsInsideMap(float x, float z) const
+// ============================================================
+// マップ範囲判定
+// ============================================================
+
+bool MapData::IsInsideMap(const float x, const float z) const
 {
-	const float halfWidth = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
 
-	const float halfDepth = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
 
-	return x >= -halfWidth && x < halfWidth && z >= -halfDepth && z < halfDepth;
+	return x >= -HALF_WIDTH && x < HALF_WIDTH && z >= -HALF_DEPTH && z < HALF_DEPTH;
 }
 
 // ============================================================
 // 地形の高さ計算
 // ============================================================
 
-float MapData::CalculateHeight(float x, float z) const
+float MapData::CalculateHeight(const float x, const float z) const
 {
 	// 大きな丘
-	const float hillA = std::sin(x * 0.035f) * 3.0f;
+	const float HILL_A = std::sin(x * 0.035f) * 3.0f;
+	const float HILL_B = std::cos(z * 0.045f) * 2.0f;
+	const float HILL_C = std::sin((x + z) * 0.025f) * 2.0f;
 
-	const float hillB = std::cos(z * 0.045f) * 2.0f;
-
-	const float hillC = std::sin((x + z) * 0.025f) * 2.0f;
-
-	float height = MapConfig::BASE_HEIGHT + hillA + hillB + hillC;
+	float height = MapConfig::BASE_HEIGHT + HILL_A + HILL_B + HILL_C;
 
 	// マップ中央付近に高低差を作る
-	const float distanceFromCenter = std::sqrt(x * x + z * z);
+	const float DISTANCE_FROM_CENTER = std::sqrt(x * x + z * z);
 
-	height += std::max(0.0f, 1.0f - distanceFromCenter / 70.0f) * 3.0f;
+	height += std::max(0.0f, 1.0f - DISTANCE_FROM_CENTER / 70.0f) * 3.0f;
+
+	// 川の部分を低くする
+	const float RIVER_DISTANCE = std::abs(z - RIVER_CENTER_Z);
+
+	if (RIVER_DISTANCE < MapConfig::RIVER_WIDTH * 0.5f)
+	{
+		height -= 2.0f;
+	}
 
 	return ClampValue(height, MapConfig::BASE_HEIGHT, MapConfig::MAX_HEIGHT);
 }
 
+// ============================================================
+// 地形生成
+// ============================================================
+
 void MapData::Generate()
 {
-	heights.resize(MapConfig::MAP_WIDTH * MapConfig::MAP_DEPTH);
+	// 200×200の地形に必要な頂点数は201×201
+	const int32_t VERTEX_WIDTH = MapConfig::MAP_WIDTH + 1;
+	const int32_t VERTEX_DEPTH = MapConfig::MAP_DEPTH + 1;
 
-	const float halfWidth = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+	heights.resize(VERTEX_WIDTH * VERTEX_DEPTH);
 
-	const float halfDepth = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
 
-	for (int32_t z = 0; z < MapConfig::MAP_DEPTH; ++z)
+	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+
+	// 全頂点の高さを計算
+	for (int32_t z = 0; z < VERTEX_DEPTH; ++z)
 	{
-		for (int32_t x = 0; x < MapConfig::MAP_WIDTH; ++x)
+		for (int32_t x = 0; x < VERTEX_WIDTH; ++x)
 		{
-			const float worldX = x * MapConfig::TILE_SIZE - halfWidth;
+			const float WORLD_X = x * MapConfig::TILE_SIZE - HALF_WIDTH;
 
-			const float worldZ = z * MapConfig::TILE_SIZE - halfDepth;
+			const float WORLD_Z = z * MapConfig::TILE_SIZE - HALF_DEPTH;
 
-			heights[GetIndex(x, z)] = CalculateHeight(worldX, worldZ);
+			heights[GetIndex(x, z)] = CalculateHeight(WORLD_X, WORLD_Z);
 		}
 	}
 
+	// 地形の高低差を滑らかにする
 	SmoothHeights();
 
-	// 道の部分は歩きやすい高さに近づける
-	for (int32_t z = 0; z < MapConfig::MAP_DEPTH; ++z)
+	// 道の部分は歩きやすい高さにする
+	for (int32_t z = 0; z < VERTEX_DEPTH; ++z)
 	{
-		for (int32_t x = 0; x < MapConfig::MAP_WIDTH; ++x)
+		for (int32_t x = 0; x < VERTEX_WIDTH; ++x)
 		{
-			const float worldX = x * MapConfig::TILE_SIZE - halfWidth;
+			const float WORLD_X = x * MapConfig::TILE_SIZE - HALF_WIDTH;
 
-			const float worldZ = z * MapConfig::TILE_SIZE - halfDepth;
+			const float WORLD_Z = z * MapConfig::TILE_SIZE - HALF_DEPTH;
 
-			if (IsPath(worldX, worldZ))
+			if (IsPath(WORLD_X, WORLD_Z))
 			{
 				heights[GetIndex(x, z)] = MapConfig::BASE_HEIGHT;
 			}
@@ -142,17 +178,19 @@ void MapData::SmoothHeights()
 	{
 		temporary = heights;
 
-		for (int32_t z = 1; z < MapConfig::MAP_DEPTH - 1; ++z)
+		for (int32_t z = 1; z < MapConfig::MAP_DEPTH; ++z)
 		{
-			for (int32_t x = 1; x < MapConfig::MAP_WIDTH - 1; ++x)
+			for (int32_t x = 1; x < MapConfig::MAP_WIDTH; ++x)
 			{
-				const int32_t index = GetIndex(x, z);
+				const int32_t INDEX = GetIndex(x, z);
 
-				const float neighborAverage = (heights[GetIndex(x - 1, z)] + heights[GetIndex(x + 1, z)] +
-				                               heights[GetIndex(x, z - 1)] + heights[GetIndex(x, z + 1)]) *
-				                              0.25f;
+				// 上下左右の平均
+				const float NEIGHBOR_AVERAGE = (heights[GetIndex(x - 1, z)] + heights[GetIndex(x + 1, z)] +
+				                                heights[GetIndex(x, z - 1)] + heights[GetIndex(x, z + 1)]) *
+				                               0.25f;
 
-				temporary[index] = Lerp(heights[index], neighborAverage, MapConfig::SMOOTHING_RATE);
+				// 元の高さと周囲の平均を補間する
+				temporary[INDEX] = Lerp(heights[INDEX], NEIGHBOR_AVERAGE, MapConfig::SMOOTHING_RATE);
 			}
 		}
 
@@ -161,59 +199,62 @@ void MapData::SmoothHeights()
 }
 
 // ============================================================
-// 高さ取得：頂点間を補間する
+// 高さ取得
 // ============================================================
 
-float MapData::GetHeight(float x, float z) const
+float MapData::GetHeight(const float x, const float z) const
 {
 	if (!IsInsideMap(x, z) || heights.empty())
 	{
 		return MapConfig::BASE_HEIGHT;
 	}
 
-	const float halfWidth = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
 
-	const float halfDepth = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
 
-	const float gridX = (x + halfWidth) / MapConfig::TILE_SIZE;
+	const float GRID_X = (x + HALF_WIDTH) / MapConfig::TILE_SIZE;
 
-	const float gridZ = (z + halfDepth) / MapConfig::TILE_SIZE;
+	const float GRID_Z = (z + HALF_DEPTH) / MapConfig::TILE_SIZE;
 
-	const int32_t x0 = static_cast<int32_t>(gridX);
-	const int32_t z0 = static_cast<int32_t>(gridZ);
+	const int32_t X0 = static_cast<int32_t>(GRID_X);
+	const int32_t Z0 = static_cast<int32_t>(GRID_Z);
 
-	const int32_t x1 = std::min(x0 + 1, MapConfig::MAP_WIDTH - 1);
+	const int32_t X1 = std::min(X0 + 1, MapConfig::MAP_WIDTH);
+	const int32_t Z1 = std::min(Z0 + 1, MapConfig::MAP_DEPTH);
 
-	const int32_t z1 = std::min(z0 + 1, MapConfig::MAP_DEPTH - 1);
+	const float TX = GRID_X - X0;
+	const float TZ = GRID_Z - Z0;
 
-	const float tx = gridX - x0;
-	const float tz = gridZ - z0;
+	const float H00 = heights[GetIndex(X0, Z0)];
+	const float H10 = heights[GetIndex(X1, Z0)];
+	const float H01 = heights[GetIndex(X0, Z1)];
+	const float H11 = heights[GetIndex(X1, Z1)];
 
-	const float h00 = heights[GetIndex(x0, z0)];
-	const float h10 = heights[GetIndex(x1, z0)];
-	const float h01 = heights[GetIndex(x0, z1)];
-	const float h11 = heights[GetIndex(x1, z1)];
+	// X方向に補間
+	const float TOP = Lerp(H00, H10, TX);
+	const float BOTTOM = Lerp(H01, H11, TX);
 
-	const float top = Lerp(h00, h10, tx);
-	const float bottom = Lerp(h01, h11, tx);
-
-	return Lerp(top, bottom, tz);
+	// Z方向に補間
+	return Lerp(TOP, BOTTOM, TZ);
 }
 
 // ============================================================
 // 道・川
 // ============================================================
 
-bool MapData::IsPath(float x, float z) const
+bool MapData::IsPath(const float x, const float z) const
 {
-	// スタートからゴールまでの直線的な道
-	const float pathCenterX = Lerp(
-	    PATH_START_X, PATH_END_X, ClampValue((z + MapConfig::MAP_DEPTH * 0.5f) / MapConfig::MAP_DEPTH, 0.0f, 1.0f));
+	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
 
-	return std::abs(x - pathCenterX) <= MapConfig::PATH_WIDTH * 0.5f;
+	const float PATH_RATE = ClampValue((z + HALF_DEPTH) / (MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE), 0.0f, 1.0f);
+
+	const float PATH_CENTER_X = Lerp(PATH_START_X, PATH_END_X, PATH_RATE);
+
+	return std::abs(x - PATH_CENTER_X) <= MapConfig::PATH_WIDTH * 0.5f;
 }
 
-bool MapData::IsRiver(float x, float z) const
+bool MapData::IsRiver(const float x, const float z) const
 {
 	(void)x;
 
@@ -221,23 +262,23 @@ bool MapData::IsRiver(float x, float z) const
 }
 
 // ============================================================
-// スタート・ゴール位置
+// スタート・ゴール
 // ============================================================
 
 Vec3 MapData::GetStartPosition() const
 {
-	const float x = PATH_START_X;
-	const float z = -MapConfig::MAP_DEPTH * 0.4f;
+	const float X = PATH_START_X;
+	const float Z = -MapConfig::MAP_DEPTH * 0.4f;
 
-	return Vec3{x, GetHeight(x, z), z};
+	return Vec3{X, GetHeight(X, Z), Z};
 }
 
 Vec3 MapData::GetGoalPosition() const
 {
-	const float x = PATH_END_X;
-	const float z = MapConfig::MAP_DEPTH * 0.4f;
+	const float X = PATH_END_X;
+	const float Z = MapConfig::MAP_DEPTH * 0.4f;
 
-	return Vec3{x, GetHeight(x, z), z};
+	return Vec3{X, GetHeight(X, Z), Z};
 }
 
 // ============================================================
@@ -246,27 +287,222 @@ Vec3 MapData::GetGoalPosition() const
 
 void MAP::Start()
 {
-	// マップデータは MapData の生成時に作成済み
+#pragma region マテリアル作成
+	MaterialResource material{};
+
+	std::unique_ptr<TerrainMaterialProperty> pModelProperty = std::make_unique<TerrainMaterialProperty>();
+	pModelProperty->Get().hasTexture = {TRUE, TRUE, TRUE, TRUE};
+	pModelProperty->Get().baseColor = {1, 1, 1, 1};
+
+	material.TryLoad(std::move(pModelProperty));
+
+	this->material = Resource<Material>{std::move(material)};
+#pragma endregion
+
+	// 高さデータから地形メッシュを作成
+	Reload();
 }
 
 void MAP::Update()
 {
-	// 必要に応じてマップのイベント処理を追加
+	// 現段階では更新処理なし
 }
 
 void MAP::Draw()
 {
-	/*
-	    描画処理は、現在の情報だけでは確定できません。
+	Dx11Manager& DX11 = Get<Dx11Manager>();
 
-	    Enemy.cpp ではモデル描画に次のAPIを使っています。
+	DX11.SetMaterial(transform.GetMaterial());
+	DX11.SetMaterial(material);
 
-	    Get<Dx11Manager>().SetShader(shader);
-	    Get<Dx11Manager>().SetSurface(parts.mesh);
-	    Get<Dx11Manager>().SetMaterial(parts.material);
-	    Get<Dx11Manager>().Draw();
+	DX11.SetShader(shader);
+	DX11.SetSurface(surface);
+	DX11.SetTexture(texture);
 
-	    地形を動的な三角形メッシュとして生成するための
-	    メッシュ作成APIが必要です。
-	*/
+	DX11.Draw();
+}
+
+// ============================================================
+// 地形メッシュ作成
+// ============================================================
+
+void MAP::Reload()
+{
+	Get<Dx11Manager>().Ref(
+	    [this](const ComPtr<ID3D11Device>& _pDevice)
+	    {
+		    using Vertex = ModelVertex;
+
+		    const uint32_t VERTEX_WIDTH = MapConfig::MAP_WIDTH + 1;
+
+		    const uint32_t VERTEX_DEPTH = MapConfig::MAP_DEPTH + 1;
+
+		    const uint32_t VERTEX_COUNT = VERTEX_WIDTH * VERTEX_DEPTH;
+
+#pragma region 頂点作成
+
+		    std::vector<Vertex> vertices(VERTEX_COUNT);
+
+		    const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+
+		    const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+
+		    for (uint32_t z = 0; z < VERTEX_DEPTH; ++z)
+		    {
+			    for (uint32_t x = 0; x < VERTEX_WIDTH; ++x)
+			    {
+				    const uint32_t INDEX = x + z * VERTEX_WIDTH;
+
+				    Vec3 position{};
+
+				    position.x = x * MapConfig::TILE_SIZE - HALF_WIDTH;
+
+				    position.z = z * MapConfig::TILE_SIZE - HALF_DEPTH;
+
+				    position.y = heights[GetIndex(static_cast<int32_t>(x), static_cast<int32_t>(z))];
+
+				    vertices[INDEX].position = position;
+
+				    vertices[INDEX].uv = Vec2{x * MapConfig::TILE_SIZE, z * MapConfig::TILE_SIZE};
+
+				    vertices[INDEX].normal = Vec3::Up();
+			    }
+		    }
+
+#pragma endregion
+
+#pragma region インデックス作成
+
+		    // 1タイルにつき三角形2つ、インデックス6個
+		    const uint32_t INDEX_COUNT = MapConfig::MAP_WIDTH * MapConfig::MAP_DEPTH * 6;
+
+		    std::vector<uint32_t> indices(INDEX_COUNT);
+
+		    uint32_t indicesCount = 0;
+
+		    for (uint32_t z = 0; z < MapConfig::MAP_DEPTH; ++z)
+		    {
+			    for (uint32_t x = 0; x < MapConfig::MAP_WIDTH; ++x)
+			    {
+				    const uint32_t TOP_LEFT = z * VERTEX_WIDTH + x;
+
+				    const uint32_t TOP_RIGHT = TOP_LEFT + 1;
+
+				    const uint32_t BOTTOM_LEFT = (z + 1) * VERTEX_WIDTH + x;
+
+				    const uint32_t BOTTOM_RIGHT = BOTTOM_LEFT + 1;
+
+				    // 三角形1
+				    indices[indicesCount++] = TOP_LEFT;
+				    indices[indicesCount++] = TOP_RIGHT;
+				    indices[indicesCount++] = BOTTOM_LEFT;
+
+				    // 三角形2
+				    indices[indicesCount++] = TOP_RIGHT;
+				    indices[indicesCount++] = BOTTOM_RIGHT;
+				    indices[indicesCount++] = BOTTOM_LEFT;
+			    }
+		    }
+
+#pragma endregion
+
+#pragma region 頂点法線計算
+
+		    // 各三角形の法線を頂点に加算
+		    for (size_t i = 0; i < indices.size(); i += 3)
+		    {
+			    const uint32_t I0 = indices[i];
+			    const uint32_t I1 = indices[i + 1];
+			    const uint32_t I2 = indices[i + 2];
+
+			    const Vec3 V0 = vertices[I0].position.v;
+			    const Vec3 V1 = vertices[I1].position.v;
+			    const Vec3 V2 = vertices[I2].position.v;
+
+			    const Vec3 EDGE1 = V1 - V0;
+			    const Vec3 EDGE2 = V2 - V0;
+
+			    const Vec3 FACE_NORMAL = DirectX::XMVector3Cross(EDGE1, EDGE2);
+
+			    vertices[I0].normal = Vec3{vertices[I0].normal.v} + FACE_NORMAL;
+
+			    vertices[I1].normal = Vec3{vertices[I1].normal.v} + FACE_NORMAL;
+
+			    vertices[I2].normal = Vec3{vertices[I2].normal.v} + FACE_NORMAL;
+		    }
+
+		    // 法線を正規化
+		    for (Vertex& vertex : vertices)
+		    {
+			    Vec3 normal{vertex.normal.v};
+
+			    normal = DirectX::XMVector3Normalize(normal);
+
+			    vertex.normal = normal;
+		    }
+
+#pragma endregion
+
+#pragma region 頂点バッファ作成
+
+		    const D3D11_BUFFER_DESC VERTEX_BUFFER_DESC{
+		        .ByteWidth = static_cast<UINT>(vertices.size() * sizeof(Vertex)),
+		        .Usage = D3D11_USAGE_DEFAULT,
+		        .BindFlags = D3D11_BIND_VERTEX_BUFFER,
+		        .CPUAccessFlags = NULL,
+		        .MiscFlags = NULL,
+		        .StructureByteStride = 0,
+		    };
+
+		    ComPtr<ID3D11Buffer> pVertexBuffer{};
+
+		    const D3D11_SUBRESOURCE_DATA INITIALIZE_DATA_VERTEX{
+		        .pSysMem = vertices.data(),
+		        .SysMemPitch = static_cast<UINT>(vertices.size() * sizeof(Vertex)),
+		        .SysMemSlicePitch = 0,
+		    };
+
+		    _pDevice->CreateBuffer(&VERTEX_BUFFER_DESC, &INITIALIZE_DATA_VERTEX, pVertexBuffer.GetAddressOf());
+
+#pragma endregion
+
+#pragma region インデックスバッファ作成
+
+		    const D3D11_BUFFER_DESC INDEX_BUFFER_DESC{
+		        .ByteWidth = static_cast<UINT>(indices.size() * sizeof(uint32_t)),
+		        .Usage = D3D11_USAGE_DEFAULT,
+		        .BindFlags = D3D11_BIND_INDEX_BUFFER,
+		        .CPUAccessFlags = NULL,
+		        .MiscFlags = NULL,
+		        .StructureByteStride = 0,
+		    };
+
+		    ComPtr<ID3D11Buffer> pIndexBuffer{};
+
+		    const D3D11_SUBRESOURCE_DATA INITIALIZE_DATA_INDEX{
+		        .pSysMem = indices.data(),
+		        .SysMemPitch = static_cast<UINT>(indices.size() * sizeof(uint32_t)),
+		        .SysMemSlicePitch = 0,
+		    };
+
+		    _pDevice->CreateBuffer(&INDEX_BUFFER_DESC, &INITIALIZE_DATA_INDEX, pIndexBuffer.GetAddressOf());
+
+#pragma endregion
+
+#pragma region サーフェイス作成
+
+		    SurfaceResource surface{
+		        .pVertexBuffer = pVertexBuffer,
+		        .pIndexBuffer = pIndexBuffer,
+		        .size = static_cast<UINT>(sizeof(Vertex)),
+		        .offset = 0,
+		        .vertexCount = static_cast<UINT>(vertices.size()),
+		        .indexCount = static_cast<UINT>(indices.size()),
+		        .toplogy = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		    };
+
+		    this->surface = {std::move(surface)};
+
+#pragma endregion
+	    });
 }

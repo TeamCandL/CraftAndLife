@@ -21,7 +21,14 @@ void Enemy::Update()
 
 	Move(vecX, vecZ, speed);
 
-	/// 徘徊時のチェックポイントの更新
+	nowAttackCoolTime -= Get<DeltaTime>();
+	if (nowAttackCoolTime <= 0.0f)
+	{
+		AttackCollider();
+	}
+	nowDamagedCoolTime -= Get<DeltaTime>();
+
+	//	徘徊時のチェックポイントの更新
 	if (!objWanderingCheckPoint.IsEmpty())
 	{
 		// チェックポイントに到達したら新しいチェックポイントを生成する
@@ -70,18 +77,20 @@ void Enemy::Draw()
 
 void Enemy::AttackCollider()
 {
-	// for (auto& obj : Get<Player>())	//全てのプレイヤーを取得
-	//{
-	//	if ()	//一定範囲内にプレイヤーがいる場合、攻撃する
-	//	{
-	//		//new EnemyAttackColl();
-	//	}
-	// }
+	if (nowAttackCoolTime <= 0.0f)
+	{
+		GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+		nowAttackCoolTime = ATTACK_COOL_TIME;
+	}
 }
 
 void Enemy::Damaged(int32_t damage)
 {
-	hp -= damage;
+	if (nowDamagedCoolTime <= 0.0)
+	{
+		hp -= damage;
+		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+	}
 }
 
 void Enemy::SetWanderingCheckPoint(const Vec3& _checkPoint)
