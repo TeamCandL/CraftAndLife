@@ -16,7 +16,7 @@ struct Math
 	*/
 	static float GetSquareVec(float num1, float num2)
 	{
-		return num1 / GetThreeSquares(num1 * num1 + num2 * num2);
+		return num1 / GetThreeSquares(num1, num2);
 	}
 	/// キャラの向いている方向を求める。
 	static float GetAngle(float num1, float num2)

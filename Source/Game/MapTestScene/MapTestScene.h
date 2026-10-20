@@ -1,12 +1,16 @@
+
 #pragma once
+
 #include <Game/Game.h>
 #include <cstdint>
 #include <vector>
 
+/// @brief マップテストシーン
 struct MapTestScene : SceneBase
 {
 	void Start() override;
 };
+
 /// @brief マップ生成設定
 namespace MapConfig
 {
@@ -24,25 +28,44 @@ namespace MapConfig
 	constexpr int32_t SMOOTHING_ITERATIONS = 3;
 } // namespace MapConfig
 
-/// @brief マップ
+/// @brief マップデータ
 struct MapData
 {
 	MapData();
 
-	// エンジンのコンポーネント
-	Component<Transform> transform{Vec3{}, Quaternion::FromEuler(Vec3{-DirectX::XM_PIDIV2, 0.0f, 0.0f})};
+	// 描画リソース
+	Resource<Shader> shader{"Shader/Terrain.hlsl"};
 
-	Component<RigidBody> rigidBody{};
-	Component<DynamicOBB> obb{};
+	Resource<Texture> texture{
+	    "Texture/Terrain/TileGrass.png", true,
+	    D3D11_SAMPLER_DESC{
+	        .Filter = D3D11_FILTER_MIN_MAG_MIP_POINT,
+	        .AddressU = D3D11_TEXTURE_ADDRESS_WRAP,
+	        .AddressV = D3D11_TEXTURE_ADDRESS_WRAP,
+	        .AddressW = D3D11_TEXTURE_ADDRESS_WRAP,
+	        .MipLODBias = {},
+	        .MaxAnisotropy = 1,
+	        .ComparisonFunc = D3D11_COMPARISON_NEVER,
+	        .BorderColor = {},
+	        .MinLOD = 0.0f,
+	        .MaxLOD = D3D11_FLOAT32_MAX,
+	    }};
+
+	Resource<Material> material{};
+	Resource<Surface> surface{};
+
+	// 座標系
+	Component<Transform> transform{};
 
 	// 地形の高さデータ
-	std::vector<float> heights;
+	std::vector<float> heights{};
 
 	// 地形生成
 	void Generate();
 	void SmoothHeights();
 
 	// 地形情報取得
+	int32_t GetIndex(int32_t x, int32_t z) const;
 	float GetHeight(float x, float z) const;
 	bool IsInsideMap(float x, float z) const;
 
@@ -55,7 +78,6 @@ struct MapData
 	Vec3 GetGoalPosition() const;
 
 private:
-	int32_t GetIndex(int32_t x, int32_t z) const;
 	float CalculateHeight(float x, float z) const;
 };
 
@@ -67,4 +89,8 @@ struct MAP : ObjectBase<MapData>
 	void Start() override;
 	void Update() override;
 	void Draw() override;
+
+private:
+	/// @brief 地形メッシュを再生成する
+	void Reload();
 };
