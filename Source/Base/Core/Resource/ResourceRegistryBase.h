@@ -1,14 +1,14 @@
 #pragma once
 #include "../../BasePch.h"
-#include "IResourceRegistry.h"
 #include "../ResourceTraits.h"
+#include "IResourceRegistry.h"
 
 namespace cha
 {
 	/// @brief リソースレジストリのベース
 	/// @tparam ResourceDataT リソースデータの構造体型
 	/// @tparam ResourceLoadConfigT リソース読み込む設定型 (デフォルトでファイルパス)
-	template<typename ResourceDataT, typename ResourceLoadConfigT = fs::path>
+	template <typename ResourceDataT, typename ResourceLoadConfigT = fs::path>
 	class ResourceRegistryBase : public IResourceRegistry
 	{
 	public:
@@ -19,8 +19,8 @@ namespace cha
 		struct Slot
 		{
 			ResourceDataT data{};
-			uint32_t generation{ 1 };  /// 世代番号 1から開始
-			bool isAlive{ false };     ///< 使用中フラグ
+			uint32_t generation{1}; /// 世代番号 1から開始
+			bool isAlive{false};    ///< 使用中フラグ
 		};
 
 		// ビットマスク用の定数
@@ -33,31 +33,31 @@ namespace cha
 		ResourceRegistryBase();
 		virtual ~ResourceRegistryBase() = default;
 
-	// リソースプールをクリアする（安全に破棄するため）
-	inline void Clear()
-	{
-		registry_.clear();
-		pathIndex_.clear();
-		succededLast_ = true;
-		// 最低1つはスロットを確保しておく従来の挙動を維持
-		registry_.emplace_back();
-	}
+		// リソースプールをクリアする（安全に破棄するため）
+		inline void Clear()
+		{
+			registry_.clear();
+			pathIndex_.clear();
+			succededLast_ = true;
+			// 最低1つはスロットを確保しておく従来の挙動を維持
+			registry_.emplace_back();
+		}
 
 		/// @brief リソースを読み込む or 取得する
 		/// @param _config 設定
 		/// @return ハンドル (失敗時無効ハンドル)
 		inline virtual Handle AddOrGet(ResourceLoadConfigT&& _config) final
 		{
-		// 重複読み込み防止: LoadConfig が fs::path の場合は既存の登録を検索してハンドルを返す
-		if constexpr (std::is_same_v<LoadConfigT, fs::path>)
-		{
-			const std::string key = fs::path(_config).lexically_normal().string();
-			auto it = pathIndex_.find(key);
-			if (it != pathIndex_.end())
+			// 重複読み込み防止: LoadConfig が fs::path の場合は既存の登録を検索してハンドルを返す
+			if constexpr (std::is_same_v<LoadConfigT, fs::path>)
 			{
-				return it->second;
+				const std::string key = fs::path{_config}.lexically_normal().string();
+				auto it = pathIndex_.find(key);
+				if (it != pathIndex_.end())
+				{
+					return it->second;
+				}
 			}
-		}
 
 			if (succededLast_)
 			{
@@ -73,11 +73,11 @@ namespace cha
 
 			if (succededLast_ = TryLoad(std::move(_config), data))
 			{
-			if constexpr (std::is_same_v<LoadConfigT, fs::path>)
-			{
-				const std::string key = fs::path(_config).lexically_normal().string();
-				pathIndex_[key] = static_cast<Handle>(registry_.size() - 1);
-			}
+				if constexpr (std::is_same_v<LoadConfigT, fs::path>)
+				{
+					const std::string key = fs::path{_config}.lexically_normal().string();
+					pathIndex_[key] = static_cast<Handle>(registry_.size() - 1);
+				}
 				return static_cast<Handle>(registry_.size() - 1);
 			}
 			else
@@ -155,11 +155,14 @@ namespace cha
 		/// @param _config 読み込み設定
 		/// @param _out ロード出力先
 		/// @return ロードに成功 true / false
-		inline virtual bool TryLoad(ResourceLoadConfigT&& _config, ResourceDataT& _out) { return false; }
+		inline virtual bool TryLoad(ResourceLoadConfigT&& _config, ResourceDataT& _out)
+		{
+			return false;
+		}
 
 	private:
 		// 前回読み込みに成功したか
-		bool succededLast_{ true };
+		bool succededLast_{true};
 		// リソースのプール
 		std::vector<ResourceDataT> registry_{};
 
@@ -167,9 +170,9 @@ namespace cha
 		// LoadConfigT が fs::path のときのみ利用する
 		std::unordered_map<std::string, Handle> pathIndex_{};
 	};
-	template<typename ResourceDataT, typename ResourceLoadConfigT>
+	template <typename ResourceDataT, typename ResourceLoadConfigT>
 	inline ResourceRegistryBase<ResourceDataT, ResourceLoadConfigT>::ResourceRegistryBase()
 	{
 		registry_.emplace_back();
 	}
-}
+} // namespace cha

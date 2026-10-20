@@ -17,6 +17,13 @@ struct EnemyData
 		EnemyType_Max,
 	};
 
+	enum AnimState
+	{
+		Start,
+		Play,
+		End,
+	};
+
 	/*Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
 	{
 	    "Shader/Unlit.hlsl",
@@ -79,7 +86,8 @@ struct Enemy : ObjectBase<EnemyData>
 	/// 攻撃判定の生成
 	void AttackCollider();
 	void Damaged(int32_t damage);
+	void PlayAnim(int32_t animIndex_, AnimState state_);
 
 	///	徘徊時のチェックポイント設定
-	void SetWanderingCheckPoint(const Vec3 &_checkPoint);
+	void SetWanderingCheckPoint(const Vec3& _checkPoint);
 };
