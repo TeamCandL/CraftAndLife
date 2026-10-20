@@ -21,8 +21,14 @@ void OtherPlayerController::Update()
 	std::erase_if(nameToObjOtherPlayer, [this](const auto& nameAndObj) { return nameAndObj.second.IsEmpty(); });
 
 	sessionManager.ForeachPlayerStatus(
-	    [this](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
+	    [this, &sessionManager](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
 	    {
+		    if (sessionManager.RefStatus().name == _name)
+		    {
+			    // 自分自身は無視する
+			    return;
+		    }
+
 		    if (nameToObjOtherPlayer.count(_name) == 0)
 		    {
 			    nameToObjOtherPlayer[_name] = GetScene().Instantiate<OtherPlayer>(_name);
