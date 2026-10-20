@@ -6,6 +6,8 @@
 #include <Game/Network/Protocols/UpdatePlayer.h>
 #include <Game/Network/Protocols/UpdatedPlayers.h>
 
+#include "../TitleScene/TitleScene.h"
+
 using enum NetworkSessionManager::State;
 
 void PlayNetworkController::Start()
@@ -15,6 +17,11 @@ void PlayNetworkController::Start()
 
 void PlayNetworkController::Update()
 {
+	if (Get<InputSystem>().GetKeyDown(KeyCode::R))
+	{
+		Get<SceneManager>().Move<TitleScene>();
+	}
+
 	NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
 
 	MessageConverter converter{};

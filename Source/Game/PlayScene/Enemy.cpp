@@ -13,14 +13,17 @@ void Enemy::Update()
 	/// 徘徊時のチェックポイントの更新
 	if (objWanderingCheckPoint.IsEmpty())
 	{
+		// 1+1=11
+		1 + 1;
 	}
 	else
 	{
 		// チェックポイントに到達したら新しいチェックポイントを生成する
 		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition()).Length() < 1.0f)
 		{
-			SetWanderingCheckPoint(Vec3{WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2), 0,
-			                            WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2)});
+			SetWanderingCheckPoint(Vec3{
+			    WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2), 0,
+			    WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2)});
 		}
 	}
 
@@ -40,8 +43,8 @@ void Enemy::Draw()
 
 	models[modelIndex].Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto &subParts{models[modelIndex].Get().subParts};
-	for (const auto &parts : subParts)
+	const auto& subParts{models[modelIndex].Get().subParts};
+	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
 		Get<Dx11Manager>().SetMaterial(parts.material);
@@ -66,7 +69,7 @@ void Enemy::Damaged(int32_t damage)
 	hp -= damage;
 }
 
-void Enemy::SetWanderingCheckPoint(const Vec3 &_checkPoint)
+void Enemy::SetWanderingCheckPoint(const Vec3& _checkPoint)
 {
 	GetScene().Destroy(objWanderingCheckPoint);
 

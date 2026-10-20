@@ -7,8 +7,8 @@ void Transform::UpdateFamily()
 
 	SceneManager& sceneManager = ManagerRegistry::Ref<SceneManager>();
 
-	Transform* pParentTransform{ nullptr };
-	if (!parent.IsEmpty())  // 軽量な有無チェック
+	Transform* pParentTransform{nullptr};
+	if (!parent.IsEmpty()) // 軽量な有無チェック
 	{
 		pParentTransform = sceneManager.FindComponent<Transform>(parent);
 		if (pParentTransform)
@@ -26,6 +26,11 @@ void Transform::UpdateFamily()
 		normal = localNormal * pParentTransform->normal;
 		world = local * pParentTransform->world;
 	}
+	else
+	{
+		normal = localNormal;
+		world = local;
+	}
 }
 
 void Transform::UpdateSelf()
@@ -33,12 +38,9 @@ void Transform::UpdateSelf()
 	using namespace DirectX;
 
 	// 法線方向の行列を計算する
-	localNormal = XMMatrixIdentity()
-		* XMMatrixRotationQuaternion(rotation);
+	localNormal = XMMatrixIdentity() * XMMatrixRotationQuaternion(rotation);
 
 	// 座標変換行列を計算する
-	local = XMMatrixIdentity()
-		* XMMatrixScalingFromVector(scale)
-		* XMMatrixRotationQuaternion(rotation)
-		* XMMatrixTranslationFromVector(position);
+	local = XMMatrixIdentity() * XMMatrixScalingFromVector(scale) * XMMatrixRotationQuaternion(rotation) *
+	        XMMatrixTranslationFromVector(position);
 }
