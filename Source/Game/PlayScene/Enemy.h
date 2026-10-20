@@ -7,6 +7,11 @@ struct EnemyData
 	EnemyData()
 	{
 	}
+	EnemyData(const Vec3 position_)
+		:transform{position_}
+	{
+
+	}
 
 	enum EnemyType
 	{

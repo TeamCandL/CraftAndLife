@@ -8,6 +8,10 @@ struct EnemyAttackCollData
 	EnemyAttackCollData()
 	{
 	}
+	EnemyAttackCollData(const Vec3 position_) :
+		transform{position_}
+	{
+	}
 
 	Resource<Shader> shader{"Shader/Unlit.hlsl"}; ///< シェーダ
 	Resource<Model> model{

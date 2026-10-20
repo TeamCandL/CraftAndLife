@@ -1,7 +1,8 @@
 #include "Enemy.h"
 #include "EnemyAttackColl.h"
 #include "pch\pch.h"
-#include <shigaRandom/SgRandom.h>
+#include <shigaLibrary/SgRandom.h>
+#include <shigaLibrary/SgMath.h>
 
 void Enemy::Start()
 {
@@ -11,10 +12,13 @@ void Enemy::Start()
 void Enemy::Update()
 {
 	// 徘徊チェックポイントとの距離(差分)
-	float distX = transform.position.x - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x;
-	float distZ = transform.position.z - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().z;
+	float distX = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x - transform.position.x;
+	float distZ = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().z - transform.position.z;
+	float vecX = Math::GetSquareVec(distX, distZ);
+	float vecZ = Math::GetSquareVec(distZ, distX);
 	// 差分を基に移動方向の計算
-	float angle = std::atan2(distZ, distX) - DirectX::XM_PIDIV2;
+	float angelY = Math::GetAngle(distX, distZ);
+
 	/// 徘徊時のチェックポイントの更新
 	if (!objWanderingCheckPoint.IsEmpty())
 	{
