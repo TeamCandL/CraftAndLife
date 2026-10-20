@@ -359,6 +359,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="Resource\MAP\MAP.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentBase.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentPool\ComponentPools.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentPool\View.cpp" />
@@ -499,6 +500,7 @@
     <ClInclude Include="Library\nlohmann-json\json_fwd.hpp" />
     <ClInclude Include="Library\shigaRandom\SgRandom.h" />
     <ClInclude Include="Library\ufbx\ufbx.h" />
+    <ClInclude Include="Resource\MAP\MAP.h" />
     <ClInclude Include="Source\Base\Base.h" />
     <ClInclude Include="Source\Base\BasePch.h" />
     <ClInclude Include="Source\Base\ClientConfig.h" />
