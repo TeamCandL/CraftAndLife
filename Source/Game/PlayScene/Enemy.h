@@ -10,7 +10,6 @@ struct EnemyData
 	EnemyData(const Vec3 position_)
 		:transform{position_}
 	{
-
 	}
 
 	enum EnemyType
@@ -72,6 +71,7 @@ struct EnemyData
 	const int WAN_REFERENCE{WAN_RANGE / 2};
 
 	GameObject objWanderingCheckPoint{}; ///< 徘徊時のチェックポイント
+
 };
 
 /// @brief 敵
