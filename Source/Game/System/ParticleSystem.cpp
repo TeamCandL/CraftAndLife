@@ -10,15 +10,12 @@
 #pragma comment(lib, "EffekseerRendererDX11.lib")
 #endif
 
-void ParticleSystem::Start()
+bool ParticleRegistry::TryLoad(fs::path&& _file, ParticleResource& _out)
 {
-	Get<Dx11Manager>().Ref(
-	    [](ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11DeviceContext> pContext)
-	    {
-		    // pDevice->
-	    });
-}
-
-void ParticleSystem::Update()
-{
+	if (fs::is_regular_file(_file))
+	{
+		auto particleData = std::make_shared<ParticleResource>();
+		particleData->ref = Effekseer::Effect::Create(managerRef_, _file.u16string().c_str());
+		particleData->filePath = _file;
+	}
 }
