@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "PlayerAttackColl.h"
 #include "IMainCamera.h"
 #include "Player/PlayerControllerNormal.h"
 #include "pch\pch.h"
@@ -17,6 +18,9 @@ void Player::Update()
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
 	ImGui::End();
+
+	nowAttackCoolTime -= Get<DeltaTime>();
+	nowDamagedCoolTime -= Get<DeltaTime>();
 
 	// プレイヤーの更新処理
 	Get<IPlayerController>(objPlayerController).Update(Data());
@@ -70,12 +74,20 @@ void Player::Draw()
 
 void Player::AttackCollider()
 {
-	// new PlayerAttackColl();
+	if (nowAttackCoolTime <= 0.0f)
+	{
+		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+		nowAttackCoolTime = ATTACK_COOL_TIME;
+	}
 }
 
 void Player::Damaged(int32_t damage)
 {
-	hp -= damage;
+	if (nowDamagedCoolTime <= 0.0f)
+	{
+		hp -= damage;
+		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+	}
 }
 
 Vec3 Player::GetPosition() const

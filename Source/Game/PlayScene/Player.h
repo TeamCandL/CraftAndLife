@@ -36,8 +36,13 @@ struct PlayerData
 	//-----------------------------------------//
 	// パラメータ//-----------------------------//
 	//-----------------------------------------//
-	int32_t hp{};
-	int32_t damage{};
+	int32_t hp{};                            ///< 体力
+	int32_t damage{};                        ///< 攻撃力
+	const float ATTACK_COOL_TIME{5.0f};      ///< 攻撃クールタイム
+	float nowAttackCoolTime{0.0f};           ///< 現在の攻撃クールタイム
+	const float ATTACK_COLL_LIFE_TIME{1.0f}; ///< 攻撃判定の寿命
+	const float DAMAGED_COOL_TIME{1.0f};     ///< 被ダメージクールタイム
+	float nowDamagedCoolTime{0.0f};          ///< 現在の被ダメージクールタイム
 };
 
 /// @brief プレイヤー
