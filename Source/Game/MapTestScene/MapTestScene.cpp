@@ -5,11 +5,13 @@
 #include <Game/Terrain/Terrain.h>
 #include <algorithm>
 #include <cmath>
+#include <Game/Tool/DebugCamera.h>
 // #include "自分で追加したおぶじぇくとのヘッダー"
 
 void MapTestScene::Start()
 {
 	Instantiate<GameManager>();
+	Instantiate<DebugCamera>();
 	Instantiate<Sky>();
 	// Instantiate<オッジェクトの型>();
 

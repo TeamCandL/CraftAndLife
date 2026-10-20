@@ -473,6 +473,7 @@
     <ClCompile Include="Source\Game\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordInputPanel.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordJoinButton.cpp" />
+    <ClCompile Include="Source\Game\Tool\DebugCamera.cpp" />
     <ClCompile Include="Source\Game\Utility\Algorithm\TopologicalSort.cpp" />
     <ClCompile Include="Source\Game\Utility\File\JsonLoader.cpp" />
     <ClCompile Include="Source\pch\pch.cpp">
@@ -743,6 +744,7 @@
     <ClInclude Include="Source\Game\TitleScene\TitleScene.h" />
     <ClInclude Include="Source\Game\TitleScene\WordInputPanel.h" />
     <ClInclude Include="Source\Game\TitleScene\WordJoinButton.h" />
+    <ClInclude Include="Source\Game\Tool\DebugCamera.h" />
     <ClInclude Include="Source\Game\Utility\Algorithm\TopologicalSort.h" />
     <ClInclude Include="Source\Game\Utility\File\JsonLoader.h" />
     <ClInclude Include="Source\Library\Library.h" />
