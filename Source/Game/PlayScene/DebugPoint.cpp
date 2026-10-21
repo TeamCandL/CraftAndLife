@@ -2,7 +2,7 @@
 
 void DebugPoint::Draw()
 {
-return;
+	return;
 	ImGui::Begin("DebugPoint");
 	ImGui::InputFloat3("focusPoint", transform.position.v);
 	ImGui::End();
@@ -10,7 +10,7 @@ return;
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	const auto& subParts{ model.Get().subParts };
+	const auto& subParts{model.Get().subParts};
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
@@ -18,4 +18,8 @@ return;
 		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
 		Get<Dx11Manager>().Draw();
 	}
+}
+
+void DebugPoint::OnDestroy()
+{
 }

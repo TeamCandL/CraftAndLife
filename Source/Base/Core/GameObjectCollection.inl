@@ -8,7 +8,7 @@ namespace cha
 {
 	// システムオブジェクトの追加
 	template <std::derived_from<ISystemObject> SystemObjectT, typename... Args>
-	inline GameObject GameObjectCollection::Add(Args &&..._args)
+	inline GameObject GameObjectCollection::Add(Args&&... _args)
 	{
 		// NOTE: SystemObjectの場合はindexがそのままGameObjectIdになる
 		const uint64_t INDEX{SystemRegistry::GetSystemIndex<SystemObjectT>()};
@@ -46,7 +46,7 @@ namespace cha
 		return GameObject{INDEX, this};
 	}
 
-	template <typename ObjectT, typename... Args> inline GameObject GameObjectCollection::Add(Args &&..._args)
+	template <typename ObjectT, typename... Args> inline GameObject GameObjectCollection::Add(Args&&... _args)
 	{
 		// Idは一意に割り当てるためにindicesは追加する
 		const uint64_t ID{indices_.size()};
@@ -55,7 +55,7 @@ namespace cha
 		// Destroy() 直後に Instantiate() した場合にインデックスがずれて
 		// 追加予定配列(toAdd_)を正しく参照できなくなる問題がある。
 		// そのためここでは単純に現在の registry_.size() と toAdd_.size() を用いる。
-		indices_.push_back(registry_.size() + toAdd_.size());
+		indices_.push_back(0);
 
 		PreviousComponentFlag::flag_.reset();
 		// コンポーネント登録用レジストリに枠を追加
@@ -83,12 +83,12 @@ namespace cha
 		return GameObject{ID, this};
 	}
 
-	template <typename ObjectT> inline ObjectT &GameObjectCollection::At(const GameObject _gameObject)
+	template <typename ObjectT> inline ObjectT& GameObjectCollection::At(const GameObject _gameObject)
 	{
 		return At<ObjectT>(_gameObject.GetId());
 	}
 
-	template <typename ObjectT> inline ObjectT &GameObjectCollection::At(const uint64_t _id)
+	template <typename ObjectT> inline ObjectT& GameObjectCollection::At(const uint64_t _id)
 	{
 		std::shared_ptr<ObjectT> spObject = nullptr;
 
@@ -123,12 +123,12 @@ namespace cha
 		return *spObject;
 	}
 
-	template <typename ComponentT> inline ComponentT *GameObjectCollection::FindComponent(const GameObject _gameObject)
+	template <typename ComponentT> inline ComponentT* GameObjectCollection::FindComponent(const GameObject _gameObject)
 	{
 		return FindComponent<ComponentT>(_gameObject.GetId());
 	}
 
-	template <typename ComponentT> inline ComponentT *GameObjectCollection::FindComponent(const uint64_t _id)
+	template <typename ComponentT> inline ComponentT* GameObjectCollection::FindComponent(const uint64_t _id)
 	{
 		const size_t INDEX{IdToRegistryIndex(_id)};
 		const uint64_t COMPONENT_INDEX{ComponentRegistry::GetComponentIndex<ComponentT>()};
@@ -159,29 +159,29 @@ namespace cha
 		}
 	}
 
-	template <typename Func> inline void GameObjectCollection::AtFast(const uint64_t _index, Func &&_fanc)
+	template <typename Func> inline void GameObjectCollection::AtFast(const uint64_t _index, Func&& _fanc)
 	{
 		// 直接 index アクセスしていく
 
-		if constexpr (std::is_invocable_v<Func, IObject &, ComponentFlag>)
+		if constexpr (std::is_invocable_v<Func, IObject&, ComponentFlag>)
 		{
-			auto &spObject = registry_[_index].pObject;
+			auto& spObject = registry_[_index].pObject;
 			if (spObject)
 			{
 				_fanc(*spObject.get(), registry_[_index].componentFlag);
 			}
 		}
-		else if constexpr (std::is_invocable_v<Func, ComponentFlag, IObject &>)
+		else if constexpr (std::is_invocable_v<Func, ComponentFlag, IObject&>)
 		{
-			auto &spObject = registry_[_index].pObject;
+			auto& spObject = registry_[_index].pObject;
 			if (spObject)
 			{
 				_fanc(registry_[_index].componentFlag, *spObject.get());
 			}
 		}
-		else if constexpr (std::is_invocable_v<Func, IObject &>)
+		else if constexpr (std::is_invocable_v<Func, IObject&>)
 		{
-			auto &spObject = registry_[_index].pObject;
+			auto& spObject = registry_[_index].pObject;
 			if (spObject)
 			{
 				_fanc(*spObject.get());
@@ -190,7 +190,7 @@ namespace cha
 		else if constexpr (std::is_invocable_v<Func, ComponentFlag>)
 		{
 
-			auto &spObject = registry_[_index].pObject;
+			auto& spObject = registry_[_index].pObject;
 			if (spObject)
 			{
 				_fanc(registry_[_index].componentFlag);
@@ -198,16 +198,16 @@ namespace cha
 		}
 		else
 		{
-			static_assert(dependent_false<Func>,
-			              "IObject&かComponentFlagまたはその両方を受け取る引数を用意してください。");
+			static_assert(
+			    dependent_false<Func>, "IObject&かComponentFlagまたはその両方を受け取る引数を用意してください。");
 		}
 	}
 
-	template <typename Func> inline void GameObjectCollection::ForEach(Func &&_callback)
+	template <typename Func> inline void GameObjectCollection::ForEach(Func&& _callback)
 	{
-		if constexpr (std::is_invocable_v<Func, IObject &, ComponentFlag>)
+		if constexpr (std::is_invocable_v<Func, IObject&, ComponentFlag>)
 		{
-			for (auto &[spObject, typeIndex, componentFlag] : registry_)
+			for (auto& [spObject, typeIndex, componentFlag] : registry_)
 			{
 				if (spObject && spObject->IsActive())
 				{
@@ -215,20 +215,20 @@ namespace cha
 				}
 			}
 		}
-		else if constexpr (std::is_invocable_v<Func, size_t, IObject &, ComponentFlag>)
+		else if constexpr (std::is_invocable_v<Func, size_t, IObject&, ComponentFlag>)
 		{
 			for (size_t i{1}; i < registry_.size(); i++)
 			{
-				auto &spObject = registry_[i].pObject;
+				auto& spObject = registry_[i].pObject;
 				if (spObject && spObject->IsActive())
 				{
 					_callback(i, *spObject.get(), registry_[i].componentFlag);
 				}
 			}
 		}
-		else if constexpr (std::is_invocable_v<Func, ComponentFlag, IObject &>)
+		else if constexpr (std::is_invocable_v<Func, ComponentFlag, IObject&>)
 		{
-			for (auto &[spObject, typeIndex, componentFlag] : registry_)
+			for (auto& [spObject, typeIndex, componentFlag] : registry_)
 			{
 				if (spObject && spObject->IsActive())
 				{
@@ -236,9 +236,9 @@ namespace cha
 				}
 			}
 		}
-		else if constexpr (std::is_invocable_v<Func, IObject &>)
+		else if constexpr (std::is_invocable_v<Func, IObject&>)
 		{
-			for (auto &[spObject, typeIndex, componentFlag] : registry_)
+			for (auto& [spObject, typeIndex, componentFlag] : registry_)
 			{
 				if (spObject && spObject->IsActive())
 				{
@@ -248,7 +248,7 @@ namespace cha
 		}
 		else if constexpr (std::is_invocable_v<Func, ComponentFlag>)
 		{
-			for (auto &[spObject, typeIndex, componentFlag] : registry_)
+			for (auto& [spObject, typeIndex, componentFlag] : registry_)
 			{
 				if (spObject && spObject->IsActive())
 				{
@@ -258,55 +258,55 @@ namespace cha
 		}
 		else
 		{
-			static_assert(dependent_false<Func>,
-			              "IObject&かComponentFlagまたはその両方を受け取る引数を用意してください。");
+			static_assert(
+			    dependent_false<Func>, "IObject&かComponentFlagまたはその両方を受け取る引数を用意してください。");
 		}
 	}
 
-	template <typename Func> inline void GameObjectCollection::ForEachSystem(Func &&_callback)
+	template <typename Func> inline void GameObjectCollection::ForEachSystem(Func&& _callback)
 	{
-		if constexpr (std::is_invocable_v<Func, ISystemObject &, ComponentFlag>)
+		if constexpr (std::is_invocable_v<Func, ISystemObject&, ComponentFlag>)
 		{
 			// システムオブジェクトの範囲で周回する
 			for (size_t i{1}; i < SYSTEM_COUNT_; i++)
 			{
-				auto &spObject = registry_[i].pObject;
+				auto& spObject = registry_[i].pObject;
 				if (spObject && spObject->IsActive())
 				{
 					_callback(*systemsSubRegistry_[i].get(), registry_[i].componentFlag);
 				}
 			}
 		}
-		else if constexpr (std::is_invocable_v<Func, size_t, ISystemObject &, ComponentFlag>)
+		else if constexpr (std::is_invocable_v<Func, size_t, ISystemObject&, ComponentFlag>)
 		{
 			// システムオブジェクトの範囲で周回する
 			for (size_t i{1}; i < SYSTEM_COUNT_; i++)
 			{
-				auto &spObject = registry_[i].pObject;
+				auto& spObject = registry_[i].pObject;
 				if (spObject && spObject->IsActive())
 				{
 					_callback(i, *systemsSubRegistry_[i].get(), registry_[i].componentFlag);
 				}
 			}
 		}
-		else if constexpr (std::is_invocable_v<Func, ComponentFlag, ISystemObject &>)
+		else if constexpr (std::is_invocable_v<Func, ComponentFlag, ISystemObject&>)
 		{
 			// システムオブジェクトの範囲で周回する
 			for (size_t i{1}; i < SYSTEM_COUNT_; i++)
 			{
-				auto &spObject = registry_[i].pObject;
+				auto& spObject = registry_[i].pObject;
 				if (spObject && spObject->IsActive())
 				{
 					_callback(registry_[i].componentFlag, *systemsSubRegistry_[i].get());
 				}
 			}
 		}
-		else if constexpr (std::is_invocable_v<Func, ISystemObject &>)
+		else if constexpr (std::is_invocable_v<Func, ISystemObject&>)
 		{
 			// システムオブジェクトの範囲で周回する
 			for (size_t i{1}; i < SYSTEM_COUNT_; i++)
 			{
-				auto &spObject = registry_[i].pObject;
+				auto& spObject = registry_[i].pObject;
 				if (spObject && spObject->IsActive())
 				{
 					_callback(*systemsSubRegistry_[i].get());
@@ -318,7 +318,7 @@ namespace cha
 			// システムオブジェクトの範囲で周回する
 			for (size_t i{1}; i < SYSTEM_COUNT_; i++)
 			{
-				auto &spObject = registry_[i].pObject;
+				auto& spObject = registry_[i].pObject;
 				if (spObject && spObject->IsActive())
 				{
 					_callback(registry_[i].componentFlag);
@@ -327,8 +327,8 @@ namespace cha
 		}
 		else
 		{
-			static_assert(dependent_false<Func>,
-			              "ISystemObject&かComponentFlagまたはその両方を受け取る引数を用意してください。");
+			static_assert(
+			    dependent_false<Func>, "ISystemObject&かComponentFlagまたはその両方を受け取る引数を用意してください。");
 		}
 	}
 
@@ -337,7 +337,7 @@ namespace cha
 		return View<ComponentsT...>{*this};
 	}
 
-	template <typename ComponentT> inline ComponentT &GameObjectCollection::GetComponent(const uint64_t _id)
+	template <typename ComponentT> inline ComponentT& GameObjectCollection::GetComponent(const uint64_t _id)
 	{
 		const size_t INDEX{IdToRegistryIndex(_id)};
 		const uint64_t COMPONENT_INDEX{ComponentRegistry::GetComponentIndex<ComponentT>()};
