@@ -25,6 +25,7 @@ void Player::Update()
 	// プレイヤーの更新処理
 	Get<IPlayerController>(objPlayerController).Update(Data());
 
+   
 	// カメラの更新処理
 	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
 	transform.rotation = Quaternion::FromEuler(Vec3{
@@ -53,6 +54,11 @@ void Player::Update()
 
 	// 平行移動
 	transform.position += moveDirection * moveSpeed;
+
+	//ジャンプ処理
+	pPlayerInput->IsJumpBegin();
+	pPlayerInput->IsJump();
+	pPlayerInput->IsJumpEnd();
 }
 
 void Player::Draw()

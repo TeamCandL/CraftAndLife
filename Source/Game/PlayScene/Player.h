@@ -43,6 +43,7 @@ struct PlayerData
 	const float ATTACK_COLL_LIFE_TIME{1.0f}; ///< 攻撃判定の寿命
 	const float DAMAGED_COOL_TIME{1.0f};     ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{0.0f};          ///< 現在の被ダメージクールタイム
+	
 };
 
 /// @brief プレイヤー
