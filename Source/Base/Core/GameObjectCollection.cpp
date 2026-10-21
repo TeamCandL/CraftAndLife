@@ -216,6 +216,7 @@ void cha::GameObjectCollection::DestroyAt(const GameObject _gameObject)
 {
 	// 削除予定リストに入れるだけ
 	toDestroyIds_.insert(_gameObject.id_);
+	At(_gameObject).SetActive(false);
 }
 
 void cha::GameObjectCollection::Clear()
