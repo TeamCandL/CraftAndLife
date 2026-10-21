@@ -9,7 +9,7 @@
 // #include "自分で追加したおぶじぇくとのヘッダー"
 #include <memory>
 #include "..//Terrain/TerrainMaterial.h"
-
+#include <Game/PlayScene/Enemy.h>
 
 // ============================================================
 // 共通処理
@@ -65,6 +65,9 @@ void MapTestScene::Start()
 
 	// マップだけを生成する
 	Instantiate<MAP>();
+
+	Vec3 enemyInitPos{0, 10, 0};
+	Instantiate<Enemy>(enemyInitPos);
 }
 
 // ============================================================

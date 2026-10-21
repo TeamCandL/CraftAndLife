@@ -123,7 +123,7 @@ struct EnemyData
 	const float DAMAGED_COOL_TIME{1.0f};     ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{0.0f};          ///< 現在の被ダメージクールタイム
 
-	const int WAN_RANGE{400};               ///< 徘徊範囲
+	const int WAN_RANGE{100};               ///< 徘徊範囲
 	const int WAN_REFERENCE{WAN_RANGE / 2}; ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する
 
 	GameObject objWanderingCheckPoint{}; ///< 徘徊時のチェックポイント

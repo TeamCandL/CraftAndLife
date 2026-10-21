@@ -58,9 +58,9 @@ void Enemy::Update()
 
 void Enemy::Move(float vecX_, float vecZ_, float spd_, float angleY_)
 {
-	transform.rotation.y = angleY_;
-	transform.position.x += vecX_ * spd_;
-	transform.position.z += vecZ_ * spd_;
+	transform.rotation = Quaternion::FromEuler(Vec3{-DirectX::XM_PIDIV2, angleY_, 0.0f});
+	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
+	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
 }
 
 void Enemy::Draw()
