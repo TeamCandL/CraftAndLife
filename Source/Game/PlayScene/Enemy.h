@@ -1,6 +1,7 @@
 #pragma once
 #include "EnemyAiCheckPoint.h"
 #include <Game/Game.h>
+#include "EnemyType.h"
 
 /// @brief 敵のパラメータ初期値。Skeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
@@ -56,15 +57,6 @@ struct EnemyData
 		speed = EnemyParam::Speed[enemyType_];
 	}
 
-	/// @brief 敵の種類
-	enum EnemyType
-	{
-		Skeleton = 0,
-		Spider,
-		Bat,
-		Dragon,
-		EnemyType_Max,
-	};
 
 	/// @brief アニメーションの状態
 	///	@param Start アニメーション開始

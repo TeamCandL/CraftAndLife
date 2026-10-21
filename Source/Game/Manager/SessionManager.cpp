@@ -172,8 +172,3 @@ bool SessionManager::IsExistEnemy(int _enemyId) const
 {
 	return inSessionStatus_.enemiesStatus.count(_enemyId) != 0;
 }
-
-const InSessionStatus::EnemyStatus& SessionManager::RefEnemyStatus(int _enemyId) const
-{
-	return inSessionStatus_.enemiesStatus.at(_enemyId);
-}

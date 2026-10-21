@@ -69,10 +69,19 @@ public:
 	/// @return 存在している true / false
 	bool IsExistEnemy(int _enemyId) const;
 
+	/// @brief 各敵を周回する
+	/// @tparam Func コールバック [](int, const InSessionStatus::EnemyStatus&){}
+	/// @param _func コールバック [](int, const InSessionStatus::EnemyStatus&){}
+	template <typename Func> void ForeachEnemyStatus(Func&& _func);
+
 	/// @brief 敵IDを参照する
 	/// @param _enemyId ステージに存在してる敵のID
 	/// @return 敵のステータスの参照
-	const InSessionStatus::EnemyStatus& RefEnemyStatus(int _enemyId) const;
+	const InSessionStatus::EnemyStatus& RefEnemyStatus(int _enemyId) const
+	{
+		return inSessionStatus_.enemiesStatus.at(_enemyId);
+	}
+
 
 private:
 	InSessionStatus inSessionStatus_{}; ///< セッション内のステータス
@@ -83,5 +92,13 @@ template <typename Func> inline void SessionManager::ForeachPlayerStatus(Func&& 
 	for (const auto& [name, status] : inSessionStatus_.playersStatus)
 	{
 		_func(name, status);
+	}
+}
+
+template <typename Func> inline void SessionManager::ForeachEnemyStatus(Func&& _func)
+{
+	for (const auto& [id, status] : inSessionStatus_.enemiesStatus)
+	{
+		_func(id, status);
 	}
 }
