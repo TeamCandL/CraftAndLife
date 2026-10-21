@@ -12,38 +12,46 @@ struct PlayerData
 	{
 	}
 
-	Resource<Shader> shaderFront ///< モデル描画用シェーダー(表面)
-	    {"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}};
-	Resource<Shader> shaderBack ///< モデル描画用シェーダー(裏面)
-	    {"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}};
-	Resource<Shader> shader{"Shader/Unlit.hlsl"};                                                         ///< シェーダ
-	Resource<Model> model{"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx"}; ///< モデル
+	Resource<Shader> shaderFront{"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}};
+	Resource<Shader> shaderBack{"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}};
+	Resource<Shader> shader{"Shader/Unlit.hlsl"};
 
-	Component<Transform> transform{}; ///< 座標系
-	Component<RigidBody> rigidBody{}; ///< 剛体
-	Component<DynamicOBB> obb{};      ///< OBB当たり判定
+	Resource<Model> model{"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx"};
 
-	GameObject objMainCamera{};       ///< カメラオブジェクト
-	GameObject objPlayerController{}; ///< プレイヤー操作するやつ
+	Component<Transform> transform{};
+	Component<RigidBody> rigidBody{};
+	Component<DynamicOBB> obb{};
 
-	PlayerRoleType role{PlayerRoleType_Max}; ///< 役職
+	GameObject objMainCamera{};
+	GameObject objPlayerController{};
+
+	PlayerRoleType role{PlayerRoleType_Max};
 
 	float angleX{};
 	float angleY{};
 
-	int animIndex{}; ///< アニメーションのインデクス
+	int animIndex{};
 
-	//-----------------------------------------//
-	// パラメータ//-----------------------------//
-	//-----------------------------------------//
-	int32_t hp{};                            ///< 体力
-	int32_t damage{};                        ///< 攻撃力
-	const float ATTACK_COOL_TIME{5.0f};      ///< 攻撃クールタイム
-	float nowAttackCoolTime{0.0f};           ///< 現在の攻撃クールタイム
-	const float ATTACK_COLL_LIFE_TIME{1.0f}; ///< 攻撃判定の寿命
-	const float DAMAGED_COOL_TIME{1.0f};     ///< 被ダメージクールタイム
-	float nowDamagedCoolTime{0.0f};          ///< 現在の被ダメージクールタイム
 	
+	// パラメータ
+	int32_t hp{};
+	int32_t damage{};
+
+	const float ATTACK_COOL_TIME{5.0f};
+	float nowAttackCoolTime{0.0f};
+
+	const float ATTACK_COLL_LIFE_TIME{1.0f};
+	const float DAMAGED_COOL_TIME{1.0f};
+	float nowDamagedCoolTime{0.0f};
+
+	
+	// ジャンプ用パラメータ
+	float jumpVelocity{0.0f};        // 上下方向の速度
+	const float JUMP_POWER{10.0f};   // ジャンプ初速
+	const float GRAVITY{20.0f};      // 重力
+	const float GROUND_HEIGHT{0.0f}; // 地面の高さ
+	const float JUMP_CUT_RATE{0.5f}; // ボタンを離したときの速度倍率
+	bool isJumping{false};           // ジャンプ中かどうか
 };
 
 /// @brief プレイヤー
@@ -64,7 +72,6 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void Damaged(int32_t damage);
 
-	// IPlayer を介して継承されました
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;
 };
