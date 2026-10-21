@@ -5,8 +5,11 @@
 #include <Game/Common/Sky.h>
 #include <algorithm>
 #include <cmath>
+#include <Game/Tool/DebugCamera.h>
+// #include "自分で追加したおぶじぇくとのヘッダー"
 #include <memory>
 #include "..//Terrain/TerrainMaterial.h"
+
 
 // ============================================================
 // 共通処理
@@ -53,6 +56,10 @@ namespace
 
 void MapTestScene::Start()
 {
+	Instantiate<GameManager>();
+	Instantiate<DebugCamera>();
+	Instantiate<Sky>();
+	// Instantiate<オッジェクトの型>();
 	Instantiate<GameManager>();
 	Instantiate<Sky>();
 
