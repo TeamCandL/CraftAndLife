@@ -71,11 +71,17 @@ namespace cha
 			}
 			ResourceDataT& data = registry_.back();
 
-			if (succededLast_ = TryLoad(std::move(_config), data))
+			ResourceLoadConfigT config{std::move(_config)};
+			fs::path configPath{};
+			if constexpr (std::is_same_v<LoadConfigT, fs::path>)
+			{
+				configPath = config;
+			}
+			if (succededLast_ = TryLoad(std::move(config), data))
 			{
 				if constexpr (std::is_same_v<LoadConfigT, fs::path>)
 				{
-					const std::string key = fs::path{_config}.lexically_normal().string();
+					const std::string key = configPath.lexically_normal().string();
 					pathIndex_[key] = static_cast<Handle>(registry_.size() - 1);
 				}
 				return static_cast<Handle>(registry_.size() - 1);

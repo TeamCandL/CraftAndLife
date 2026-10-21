@@ -9,7 +9,7 @@
 // #include "自分で追加したおぶじぇくとのヘッダー"
 #include <memory>
 #include "..//Terrain/TerrainMaterial.h"
-
+#include <Game/PlayScene/Enemy.h>
 
 // ============================================================
 // 共通処理
@@ -19,12 +19,19 @@ namespace
 {
 	constexpr float PI = 3.14159265358979323846f;
 
-	// 道の中心位置
+	// 道はマップ南西から北東へ進む。曲がりの強さはここで調整する
 	constexpr float PATH_START_X = -70.0f;
 	constexpr float PATH_END_X = 70.0f;
+	constexpr float PATH_BEND_A = 18.0f;
+	constexpr float PATH_BEND_B = 10.0f;
 
-	// 川の位置
-	constexpr float RIVER_CENTER_Z = 0.0f;
+	// 川は道と交差しながら蛇行する
+	constexpr float RIVER_BEND_A = 28.0f;
+	constexpr float RIVER_BEND_B = 12.0f;
+	constexpr float RIVER_CENTER_X = 8.0f;
+
+	// 地形の下側に土の層を作るための高さ
+	constexpr float TERRAIN_BOTTOM = -5.0f;
 
 	float ClampValue(const float value, const float minValue, const float maxValue)
 	{
@@ -58,6 +65,9 @@ void MapTestScene::Start()
 
 	// マップだけを生成する
 	Instantiate<MAP>();
+
+	Vec3 enemyInitPos{0, 10, 0};
+	Instantiate<Enemy>(enemyInitPos);
 }
 
 // ============================================================
@@ -93,24 +103,29 @@ bool MapData::IsInsideMap(const float x, const float z) const
 
 float MapData::CalculateHeight(const float x, const float z) const
 {
-	// 大きな丘
+	// 大きな丘と小さな起伏を組み合わせ、平坦すぎない地形にする
 	const float HILL_A = std::sin(x * 0.035f) * 3.0f;
 	const float HILL_B = std::cos(z * 0.045f) * 2.0f;
 	const float HILL_C = std::sin((x + z) * 0.025f) * 2.0f;
+	const float DETAIL = std::sin(x * 0.11f) * std::cos(z * 0.09f) * 0.7f;
 
-	float height = MapConfig::BASE_HEIGHT + HILL_A + HILL_B + HILL_C;
+	float height = MapConfig::BASE_HEIGHT + HILL_A + HILL_B + HILL_C + DETAIL;
 
-	// マップ中央付近に高低差を作る
-	const float DISTANCE_FROM_CENTER = std::sqrt(x * x + z * z);
+	// 北東側を高くし、設計図のような段丘・丘陵を作る
+	const float NORTH_EAST_RATE = ClampValue((x + z + 100.0f) / 200.0f, 0.0f, 1.0f);
+	height += SmoothStep(NORTH_EAST_RATE) * 5.0f;
 
-	height += std::max(0.0f, 1.0f - DISTANCE_FROM_CENTER / 70.0f) * 3.0f;
+	// マップ中央から少しずれた丘
+	const float HILL_DISTANCE = std::sqrt((x - 12.0f) * (x - 12.0f) + (z - 18.0f) * (z - 18.0f));
+	height += std::max(0.0f, 1.0f - HILL_DISTANCE / 42.0f) * 3.0f;
 
-	// 川の部分を低くする
-	const float RIVER_DISTANCE = std::abs(z - RIVER_CENTER_Z);
-
-	if (RIVER_DISTANCE < MapConfig::RIVER_WIDTH * 0.5f)
+	// 川沿いを低くする。川の中心はZ位置に応じて左右に蛇行する
+	const float RIVER_DISTANCE = std::abs(
+	    x - (RIVER_CENTER_X + std::sin(z * 0.035f) * RIVER_BEND_A + std::sin(z * 0.075f + 1.2f) * RIVER_BEND_B));
+	if (RIVER_DISTANCE < MapConfig::RIVER_WIDTH * 1.8f)
 	{
-		height -= 2.0f;
+		const float RIVER_RATE = 1.0f - RIVER_DISTANCE / (MapConfig::RIVER_WIDTH * 1.8f);
+		height -= SmoothStep(RIVER_RATE) * 3.0f;
 	}
 
 	return ClampValue(height, MapConfig::BASE_HEIGHT, MapConfig::MAX_HEIGHT);
@@ -245,19 +260,22 @@ float MapData::GetHeight(const float x, const float z) const
 bool MapData::IsPath(const float x, const float z) const
 {
 	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
-
 	const float PATH_RATE = ClampValue((z + HALF_DEPTH) / (MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE), 0.0f, 1.0f);
 
-	const float PATH_CENTER_X = Lerp(PATH_START_X, PATH_END_X, PATH_RATE);
+	// 南西から北東へ向かう道に、設計図のようなS字カーブを付ける
+	const float PATH_CENTER_X = Lerp(PATH_START_X, PATH_END_X, PATH_RATE) +
+	                            std::sin(PATH_RATE * 2.0f * PI) * PATH_BEND_A +
+	                            std::sin(PATH_RATE * 4.0f * PI) * PATH_BEND_B;
 
 	return std::abs(x - PATH_CENTER_X) <= MapConfig::PATH_WIDTH * 0.5f;
 }
 
 bool MapData::IsRiver(const float x, const float z) const
 {
-	(void)x;
+	const float RIVER_CENTER =
+	    RIVER_CENTER_X + std::sin(z * 0.035f) * RIVER_BEND_A + std::sin(z * 0.075f + 1.2f) * RIVER_BEND_B;
 
-	return std::abs(z - RIVER_CENTER_Z) <= MapConfig::RIVER_WIDTH * 0.5f;
+	return std::abs(x - RIVER_CENTER) <= MapConfig::RIVER_WIDTH * 0.5f;
 }
 
 // ============================================================
@@ -266,16 +284,20 @@ bool MapData::IsRiver(const float x, const float z) const
 
 Vec3 MapData::GetStartPosition() const
 {
-	const float X = PATH_START_X;
 	const float Z = -MapConfig::MAP_DEPTH * 0.4f;
+	const float RATE = ClampValue((Z + MapConfig::MAP_DEPTH * 0.5f) / MapConfig::MAP_DEPTH, 0.0f, 1.0f);
+	const float X = Lerp(PATH_START_X, PATH_END_X, RATE) + std::sin(RATE * 2.0f * PI) * PATH_BEND_A +
+	                std::sin(RATE * 4.0f * PI) * PATH_BEND_B;
 
 	return Vec3{X, GetHeight(X, Z), Z};
 }
 
 Vec3 MapData::GetGoalPosition() const
 {
-	const float X = PATH_END_X;
 	const float Z = MapConfig::MAP_DEPTH * 0.4f;
+	const float RATE = ClampValue((Z + MapConfig::MAP_DEPTH * 0.5f) / MapConfig::MAP_DEPTH, 0.0f, 1.0f);
+	const float X = Lerp(PATH_START_X, PATH_END_X, RATE) + std::sin(RATE * 2.0f * PI) * PATH_BEND_A +
+	                std::sin(RATE * 4.0f * PI) * PATH_BEND_B;
 
 	return Vec3{X, GetHeight(X, Z), Z};
 }
