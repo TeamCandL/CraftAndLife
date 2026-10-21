@@ -499,7 +499,8 @@
     <ClInclude Include="Library\miniaudio\miniaudio.h" />
     <ClInclude Include="Library\nlohmann-json\json.hpp" />
     <ClInclude Include="Library\nlohmann-json\json_fwd.hpp" />
-    <ClInclude Include="Library\shigaRandom\SgRandom.h" />
+    <ClInclude Include="Library\shigaLibrary\SgMath.h" />
+    <ClInclude Include="Library\shigaLibrary\SgRandom.h" />
     <ClInclude Include="Library\ufbx\ufbx.h" />
     <ClInclude Include="Resource\MAP\MAP.h" />
     <ClInclude Include="Source\Base\Base.h" />
