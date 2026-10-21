@@ -6,7 +6,7 @@
 
 void Enemy::Start()
 {
-	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>();
+	SetWanderingCheckPoint(transform.position);
 }
 
 void Enemy::Update()
@@ -23,9 +23,9 @@ void Enemy::Update()
 	float vecX = Math::GetSquareVec(distX, distZ);
 	float vecZ = Math::GetSquareVec(distZ, distX);
 	// 差分を基に移動方向の計算
-	float angelY = Math::GetAngle(distX, distZ);
+	float angleY = Math::GetAngle(distX, distZ);
 
-	Move(vecX, vecZ, speed);
+	Move(vecX, vecZ, speed, angleY);
 
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
@@ -40,9 +40,7 @@ void Enemy::Update()
 		// チェックポイントに到達したら新しいチェックポイントを生成する
 		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition()).Length() < 1.0f)
 		{
-			SetWanderingCheckPoint(Vec3{
-			    WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2), 0,
-			    WAN_REFERENCE - Random::GetRandom(WAN_RANGE - WAN_REFERENCE * 2)});
+			SetWanderingCheckPoint(transform.position);
 		}
 	}
 	else
@@ -58,10 +56,11 @@ void Enemy::Update()
 	ImGui::End();
 }
 
-void Enemy::Move(float vecX_, float vecZ_, float spd_)
+void Enemy::Move(float vecX_, float vecZ_, float spd_, float angleY_)
 {
-	transform.position.x += vecX_ * spd_;
-	transform.position.z += vecZ_ * spd_;
+	transform.rotation = Quaternion::FromEuler(Vec3{-DirectX::XM_PIDIV2, angleY_, 0.0f});
+	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
+	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
 }
 
 void Enemy::Draw()
@@ -99,9 +98,18 @@ void Enemy::Damaged(int32_t damage)
 	}
 }
 
-void Enemy::SetWanderingCheckPoint(const Vec3& _checkPoint)
+void Enemy::SetWanderingCheckPoint(Vec3 position_)
 {
-	GetScene().Destroy(objWanderingCheckPoint);
+	if (objWanderingCheckPoint)
+	{
+		GetScene().Destroy(objWanderingCheckPoint);
+	}
 
-	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>();
+	Vec3 range_{
+	    WAN_REFERENCE - Random::GetRandom(WAN_RANGE), 0,
+	    WAN_REFERENCE - Random::GetRandom(WAN_RANGE)};
+
+	position_ += range_;
+
+	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position_);
 }
