@@ -94,7 +94,7 @@ namespace cha
 
 		const size_t INDEX{IdToRegistryIndex(_id)};
 
-		GameObjectElement *pElement{nullptr};
+		GameObjectElement* pElement{nullptr};
 		if (IsRegisteredIndex(INDEX))
 		{
 			// レジストリ内から要素を見つける
