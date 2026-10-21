@@ -6,7 +6,7 @@
 
 void MainCamera::Start()
 {
-	objUpdater = GetScene().Instantiate<GhostCamera>();
+	objUpdater = GetScene().Instantiate<TPSCamera>();
 	position = {0.0f, 0.0f, -10.0f};
 }
 
