@@ -49,6 +49,11 @@ void Player::Update()
 
 	// 平行移動
 	transform.position += moveDirection * moveSpeed;
+
+	// if (Get<InputSystem>().GetKeyDown(KeyCode::O)
+	{
+		// Get<ParticleSystem>
+	}
 }
 
 void Player::Draw()
