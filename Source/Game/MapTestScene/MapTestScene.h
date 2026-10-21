@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <Game/Game.h>
@@ -11,21 +10,68 @@ struct MapTestScene : SceneBase
 	void Start() override;
 };
 
-/// @brief マップ生成設定
+/// @brief マップの調整値（設計図「滝と川のボクセル地形マップ」完全準拠）
 namespace MapConfig
 {
-	constexpr int32_t MAP_WIDTH = 200;
-	constexpr int32_t MAP_DEPTH = 200;
+	// ========================================================
+	// 1. マップ全体の大きさ
+	// ========================================================
+	constexpr int32_t MAP_WIDTH = 200;  // X方向のマス数
+	constexpr int32_t MAP_DEPTH = 200;  // Z方向のマス数
+	constexpr float TILE_SIZE = 1.0f;   // 1マスの大きさ
+	constexpr float BASE_HEIGHT = 0.0f; // 地形の最低基準
+	constexpr float MAX_HEIGHT = 16.0f; // 地形の最高高さ（北東の山頂）
 
-	constexpr float TILE_SIZE = 1.0f;
-	constexpr float BASE_HEIGHT = 0.0f;
-	constexpr float MAX_HEIGHT = 12.0f;
+	// ========================================================
+	// 2. ボクセル段差（ステップ）設定
+	// ========================================================
+	constexpr float VOXEL_STEP = 1.0f; // ボクセルの1段の高さ
 
-	constexpr float PATH_WIDTH = 5.0f;
-	constexpr float RIVER_WIDTH = 4.0f;
+	// ========================================================
+	// 3. 北東へ向かう全体的な傾斜
+	// ========================================================
+	constexpr float SLOPE_OFFSET = 100.0f;
+	constexpr float SLOPE_DISTANCE = 180.0f;
+	constexpr float NORTH_EAST_RISE = 10.0f;
 
-	constexpr float SMOOTHING_RATE = 0.25f;
-	constexpr int32_t SMOOTHING_ITERATIONS = 3;
+	// ========================================================
+	// 4. 左上の渦巻き丘 (Spiral Hill)
+	// ========================================================
+	constexpr float SPIRAL_HILL_X = -50.0f;
+	constexpr float SPIRAL_HILL_Z = 45.0f;
+	constexpr float SPIRAL_HILL_RADIUS = 40.0f;
+	constexpr float SPIRAL_HILL_HEIGHT = 7.0f;
+	constexpr float SPIRAL_TURNS = 2.5f; // 渦の回転数
+
+	// ========================================================
+	// 5. 道（S字カーブ：南西スタート -> 北東ゴール）
+	// ========================================================
+	constexpr float PATH_WIDTH = 4.0f;
+	constexpr float PATH_START_X = -75.0f;
+	constexpr float PATH_START_Z = -80.0f; // 青ピン位置
+	constexpr float PATH_GOAL_X = 65.0f;
+	constexpr float PATH_GOAL_Z = 75.0f; // 黄ピン位置
+
+	// ========================================================
+	// 6. 川と階段状の滝 (River & Waterfall)
+	// ========================================================
+	constexpr float RIVER_WIDTH = 5.0f;
+	constexpr float RIVER_CENTER_X = 0.0f;
+	constexpr float RIVER_FREQUENCY_A = 0.025f;
+	constexpr float RIVER_BEND_A = 22.0f;
+	constexpr float RIVER_FREQUENCY_B = 0.060f;
+	constexpr float RIVER_PHASE_B = 1.5f;
+	constexpr float RIVER_BEND_B = 8.0f;
+	constexpr float RIVER_VALLEY_WIDTH = 10.0f;
+	constexpr float RIVER_VALLEY_DEPTH = 4.0f;
+
+	// 滝の範囲（北から一気に落ちる）
+	constexpr float WATERFALL_TOP_Z = 65.0f;
+	constexpr float WATERFALL_BOTTOM_Z = 20.0f;
+	constexpr int32_t WATERFALL_TIERS = 4; // 4段の滝
+	constexpr float WATERFALL_STEP_HEIGHT = 2.0f;
+	constexpr float WATER_SURFACE_OFFSET = 0.15f;
+
 } // namespace MapConfig
 
 /// @brief マップデータ
@@ -35,50 +81,35 @@ struct MapData
 
 	// 描画リソース
 	Resource<Shader> shader{"Shader/Terrain.hlsl"};
-
-	Resource<Texture> texture{
-	    "Texture/Terrain/TileGrass.png", true,
-	    D3D11_SAMPLER_DESC{
-	        .Filter = D3D11_FILTER_MIN_MAG_MIP_POINT,
-	        .AddressU = D3D11_TEXTURE_ADDRESS_WRAP,
-	        .AddressV = D3D11_TEXTURE_ADDRESS_WRAP,
-	        .AddressW = D3D11_TEXTURE_ADDRESS_WRAP,
-	        .MipLODBias = {},
-	        .MaxAnisotropy = 1,
-	        .ComparisonFunc = D3D11_COMPARISON_NEVER,
-	        .BorderColor = {},
-	        .MinLOD = 0.0f,
-	        .MaxLOD = D3D11_FLOAT32_MAX,
-	    }};
+	Resource<Texture> texture{"Texture/Terrain/TileGrass.png", true};
 
 	Resource<Material> material{};
 	Resource<Surface> surface{};
 
-	// 座標系
+	// 水（川・滝）用
+	Resource<Material> waterMaterial{};
+	Resource<Surface> waterSurface{};
+
 	Component<Transform> transform{};
 
-	// 地形の高さデータ
+	// 各頂点およびセルの高さデータ
 	std::vector<float> heights{};
 
-	// 地形生成
+	// 生成・演算関数
 	void Generate();
-	void SmoothHeights();
 
-	// 地形情報取得
 	int32_t GetIndex(int32_t x, int32_t z) const;
 	float GetHeight(float x, float z) const;
 	bool IsInsideMap(float x, float z) const;
 
-	// 道・川の判定
 	bool IsPath(float x, float z) const;
 	bool IsRiver(float x, float z) const;
 
-	// スタート・ゴール
 	Vec3 GetStartPosition() const;
 	Vec3 GetGoalPosition() const;
 
 private:
-	float CalculateHeight(float x, float z) const;
+	float CalculateRawHeight(float x, float z) const;
 };
 
 /// @brief マップオブジェクト
@@ -91,6 +122,5 @@ struct MAP : ObjectBase<MapData>
 	void Draw() override;
 
 private:
-	/// @brief 地形メッシュを再生成する
 	void Reload();
 };
