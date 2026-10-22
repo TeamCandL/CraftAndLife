@@ -86,17 +86,20 @@ void PhysicsSystem::Update()
 			        Vec3 pushVector{};
 			        if (GetPushOBB2OBB(_dynamicOBBSelf, _staticOBBOther, pushVector))
 			        {
-				        // 単純加算（+=）すると複数ブロック接触時に押し出し倍増して宙に浮くため、
-				        // 各軸ごとに最も絶対値が大きい補正量のみを採用する
-				        Vec3& currentPush = refrections[&_transformSelf].push;
-				        // refrections[&_transformSelf].isTrigger = _dynamicOBBSelf.isTrigger;
+				        if (!_staticOBBOther.isTrigger)
+				        {
+					        // 単純加算（+=）すると複数ブロック接触時に押し出し倍増して宙に浮くため、
+					        // 各軸ごとに最も絶対値が大きい補正量のみを採用する
+					        Vec3& currentPush = refrections[&_transformSelf].push;
+					        // refrections[&_transformSelf].isTrigger = _dynamicOBBSelf.isTrigger;
 
-				        if (std::abs(pushVector.x) > std::abs(currentPush.x))
-					        currentPush.x = pushVector.x;
-				        if (std::abs(pushVector.y) > std::abs(currentPush.y))
-					        currentPush.y = pushVector.y;
-				        if (std::abs(pushVector.z) > std::abs(currentPush.z))
-					        currentPush.z = pushVector.z;
+					        if (std::abs(pushVector.x) > std::abs(currentPush.x))
+						        currentPush.x = pushVector.x;
+					        if (std::abs(pushVector.y) > std::abs(currentPush.y))
+						        currentPush.y = pushVector.y;
+					        if (std::abs(pushVector.z) > std::abs(currentPush.z))
+						        currentPush.z = pushVector.z;
+				        }
 
 				        _dynamicOBBSelf.hitGameObjects.emplace_back(_objectOther.ToGameObject(), pushVector);
 			        }
@@ -106,12 +109,8 @@ void PhysicsSystem::Update()
 	// 実際に計算された押し出し力をTransformに適用してめり込みを解決する
 	for (auto& [pTransform, info] : refrections)
 	{
-		// トリガーではないなら押し出す
-		if (!info.isTrigger)
-		{
-			// 座標をめり込んでいる分だけ押し戻す
-			pTransform->position += info.push;
-		}
+		// 座標をめり込んでいる分だけ押し戻す
+		pTransform->position += info.push;
 	}
 
 	// 着地判定の更新
