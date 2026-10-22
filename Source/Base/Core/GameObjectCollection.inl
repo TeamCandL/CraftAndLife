@@ -55,7 +55,7 @@ namespace cha
 		// Destroy() 直後に Instantiate() した場合にインデックスがずれて
 		// 追加予定配列(toAdd_)を正しく参照できなくなる問題がある。
 		// そのためここでは単純に現在の registry_.size() と toAdd_.size() を用いる。
-		indices_.push_back(0);
+		indices_.push_back(registry_.size() + toAdd_.size());
 
 		PreviousComponentFlag::flag_.reset();
 		// コンポーネント登録用レジストリに枠を追加
@@ -78,8 +78,9 @@ namespace cha
 
 		// 追加予定だが、同フレーム内で他システムがコンポーネントを参照する場合があるため
 		// コンポーネントプールへ先に登録する（遅延登録と二重登録になるが安全）
-		UpdateComponentRegistry(componentFlag, ID, toAdd_.size() - 1);
+		// UpdateComponentRegistry(componentFlag, ID, toAdd_.size() - 1);
 
+		// まだregistry_にはないがIdは決まっているため返せる
 		return GameObject{ID, this};
 	}
 
