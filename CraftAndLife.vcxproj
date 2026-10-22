@@ -452,11 +452,11 @@
     <ClCompile Include="Source\Game\System\CursorSystem.cpp" />
     <ClCompile Include="Source\Game\System\DebugSystems\ImGuiRenderingSystem.cpp" />
     <ClCompile Include="Source\Game\System\DiscordSystem.cpp" />
+    <ClCompile Include="Source\Game\System\EffectSystem.cpp" />
     <ClCompile Include="Source\Game\System\IMESystem.cpp" />
     <ClCompile Include="Source\Game\System\InputSystem.cpp" />
     <ClCompile Include="Source\Game\System\OBBRenderSystem.cpp" />
     <ClCompile Include="Source\Game\System\PadInputSystem.cpp" />
-    <ClCompile Include="Source\Game\System\ParticleSystem.cpp" />
     <ClCompile Include="Source\Game\System\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Game\System\RaycastSystem.cpp" />
     <ClCompile Include="Source\Game\System\ShaderTimeSystem.cpp" />
@@ -630,6 +630,7 @@
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
+    <ClInclude Include="Source\Game\System\EffectSystem.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />
     <ClInclude Include="Source\Game\Common\UI\Button.h" />
@@ -722,7 +723,6 @@
     <ClInclude Include="Source\Game\System\OBBRenderSystem.h" />
     <ClInclude Include="Source\Game\System\OBBRenderSystem\DebugOBBMaterial.h" />
     <ClInclude Include="Source\Game\System\PadInputSystem.h" />
-    <ClInclude Include="Source\Game\System\ParticleSystem.h" />
     <ClInclude Include="Source\Game\System\PhysicsSystem.h" />
     <ClInclude Include="Source\Game\System\RaycastSystem.h" />
     <ClInclude Include="Source\Game\System\RaycastSystem\RaycastHitInfo.h" />

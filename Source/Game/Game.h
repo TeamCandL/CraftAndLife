@@ -11,7 +11,7 @@
 #include "System/CameraSystem.h"
 #include "System/InputSystem.h"
 #include "System/CursorSystem.h"
-#include "System/ParticleSystem.h"
+#include "System/EffectSystem.h"
 
 #include "Component/Name.h"
 #include "Component/Transform.h"

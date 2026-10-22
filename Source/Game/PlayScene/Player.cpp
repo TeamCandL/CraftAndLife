@@ -49,23 +49,34 @@ void Player::Update()
 
 	// 平行移動
 	transform.position += moveDirection * moveSpeed;
-	if (sampleParticleInstance)
+	if (sampleEffectInstance)
 	{
-		sampleParticleInstance->position = transform.WorldPosition();
-		sampleParticleInstance->rotation = transform.rotation;
+		sampleEffectInstance->position = transform.WorldPosition();
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::H))
+	{
+		if (hitEffectInstance)
+		{
+			hitEffectInstance->destroyMe = true;
+			hitEffectInstance = Get<EffectSystem>().Play(hitEffect);
+			hitEffectInstance->position = transform.WorldPosition();
+			sampleEffectInstance->rotation = Quaternion::FromLookAtQuaternion(
+			    sampleEffectInstance->position, sampleEffectInstance->position + transform.Back(), transform.Up());
+			hitEffectInstance->scale = Vec3{1.0f, 1.0f, 1.0f};
+		}
 	}
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-		if (sampleParticleInstance)
+		if (sampleEffectInstance)
 		{
-			sampleParticleInstance->destroyMe = true;
+			sampleEffectInstance->destroyMe = true;
 		}
-
-		sampleParticleInstance = Get<ParticleSystem>().Play(sampleParticle);
-		sampleParticleInstance->position = transform.WorldPosition();
-		sampleParticleInstance->scale = Vec3{10.0f, 10.0f, 10.0f};
-
-		sampleParticleInstance->isLoop = true;
+		sampleEffectInstance = Get<EffectSystem>().Play(sampleEffect);
+		sampleEffectInstance->position = transform.WorldPosition();
+		sampleEffectInstance->scale = Vec3{1.0f, 1.0f, 1.0f};
+		sampleEffectInstance->rotation = Quaternion::FromLookAtQuaternion(
+		    sampleEffectInstance->position, sampleEffectInstance->position + transform.Back(), transform.Up());
+		sampleEffectInstance->isLoop = true;
 	}
 }
 

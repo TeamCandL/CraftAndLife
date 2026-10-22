@@ -1,4 +1,4 @@
-#include "ParticleSystem.h"
+#include "EffectSystem.h"
 #include "pch\pch.h"
 
 #ifdef _DEBUG
@@ -52,7 +52,7 @@ Effekseer::Matrix44 CnvMat44(const Mat4x4& _mat)
 	return out;
 }
 
-Mat4x4 CalculateWorldMat(const ParticleInstance& _instance)
+Mat4x4 CalculateWorldMat(const EffectInstance& _instance)
 {
 	using namespace DirectX;
 
@@ -61,7 +61,7 @@ Mat4x4 CalculateWorldMat(const ParticleInstance& _instance)
 	return out;
 }
 
-Effekseer::Matrix43 CalculateMat43(std::shared_ptr<ParticleInstance> _pInstance)
+Effekseer::Matrix43 CalculateMat43(std::shared_ptr<EffectInstance> _pInstance)
 {
 	return CnvMat43(CalculateWorldMat(*_pInstance.get()));
 }
@@ -89,12 +89,12 @@ Effekseer::Matrix44 CnvMat(DirectX::XMFLOAT4X4 _mat)
 	return out;
 }
 
-ParticleRegistry::ParticleRegistry() :
+EffectRegistry::EffectRegistry() :
     ResourceRegistryBase()
 {
 }
 
-bool ParticleRegistry::TryLoad(fs::path&& _file, ParticleResource& _out)
+bool EffectRegistry::TryLoad(fs::path&& _file, EffectResource& _out)
 {
 	if (_file.extension() != ".efkefc")
 	{
@@ -105,7 +105,7 @@ bool ParticleRegistry::TryLoad(fs::path&& _file, ParticleResource& _out)
 	return true;
 }
 
-void ParticleSystem::Start()
+void EffectSystem::Start()
 {
 
 	Get<Dx11Manager>().Ref(
@@ -131,14 +131,14 @@ void ParticleSystem::Start()
 	    });
 
 	// インスタンスプールを確保
-	particleInstanceList_.reserve(PARTICLE_POOL_CAPACITY);
+	effectInstanceList_.reserve(PARTICLE_POOL_CAPACITY);
 }
 
-void ParticleSystem::Update()
+void EffectSystem::Update()
 {
 	const double deltaTime = Get<DeltaTime>();
 	const double fps = 60.0;
-	for (auto& instance : particleInstanceList_)
+	for (auto& instance : effectInstanceList_)
 	{
 		// 未使用のデータは更新しない
 		if (instance == nullptr)
@@ -197,19 +197,9 @@ void ParticleSystem::Update()
 			// フレーム数を設定
 			rendererRef_->SetTime(static_cast<float>(instance->elapsedTime));
 			Effekseer::Matrix43 mat = CalculateMat43(instance);
-			Effekseer::Vector3D trans;
-			Effekseer::Matrix43 rot;
-			Effekseer::Vector3D scale;
-			mat.GetTranslation(trans);
-			mat.GetRotation(rot);
-			mat.GetScale(scale);
-			bool valid = mat.IsValid();
 			// エフェクトのインスタンスに対して処理をし、更新速度を設定
-			Matrix43 matWorld;
-			matWorld.Translation(1.0f, 1.0f, 1.0f);
-			matWorld.Scaling(1.0f, 1.0f, 1.0f);
-			// matWorld.Scaling(1.0f, 1.0f, 1.0f);
-			managerRef_->SetMatrix(handle, matWorld);
+
+			managerRef_->SetMatrix(handle, mat);
 			managerRef_->SetSpeed(handle, instance->playSpeed);
 			// 再生時間を増やす
 			instance->elapsedTime += deltaTime;
@@ -219,49 +209,42 @@ void ParticleSystem::Update()
 	managerRef_->Update(static_cast<float>(deltaTime * fps));
 }
 
-void ParticleSystem::Draw()
+void EffectSystem::Draw()
 {
-	CameraSystemData& data = Get<CameraSystem>().Data();
-	using namespace DirectX;
-	XMMATRIX transposedProjMat = XMMatrixTranspose(data.projectionMatrix);
-	XMMATRIX transposedViewMat = XMMatrixTranspose(data.viewMatrix);
-	XMFLOAT4X4 fProjMat;
-	XMStoreFloat4x4(&fProjMat, data.projectionMatrix);
-	XMFLOAT4X4 fViewMat;
-	XMStoreFloat4x4(&fViewMat, data.viewMatrix);
-	Effekseer::Matrix44 matProj44 = CnvMat(fProjMat);
-	Effekseer::Matrix44 matView44 = CnvMat(fViewMat);
-	// bool isValid = matView44.
-	//  ビュー、射影行列セット
-	Vec2 SCREEN_SIZE = Get<ScreenSize>();
+	Get<Dx11Manager>().EnqueueTransparent(
+	    [this]()
+	    {
+		    CameraSystemData& data = Get<CameraSystem>().Data();
+		    using namespace DirectX;
+		    XMFLOAT4X4 fProjMat;
+		    XMStoreFloat4x4(&fProjMat, XMMatrixTranspose(data.projectionMatrix));
+		    XMFLOAT4X4 fViewMat;
+		    XMStoreFloat4x4(&fViewMat, XMMatrixTranspose(data.viewMatrix));
 
-	matView44 = matView44.LookAtLH(Vector3D(0.0f, 0.0f, -5.0f), Vector3D(0.0f, 0.0f, 0.0f), Vector3D(0.0f, 1.0f, 0.0f));
-	matProj44 = matProj44.PerspectiveFovLH(
-	    data.fieldOfViewRad, SCREEN_SIZE.x / SCREEN_SIZE.y, data.nearClipDistance, data.farClipDistance);
-
-	rendererRef_->SetProjectionMatrix(matProj44);
-	rendererRef_->SetCameraMatrix(matView44);
-	// Effekseerの描画パラメーターを作成
-	// Effekseerによる描画
-	rendererRef_->BeginRendering();
-	Effekseer::Manager::DrawParameter drawParameter;
-	drawParameter.ZNear = 0.0f;
-	drawParameter.ZFar = data.farClipDistance;
-	drawParameter.ViewProjectionMatrix = rendererRef_->GetCameraProjectionMatrix();
-	managerRef_->Draw(drawParameter);
-	rendererRef_->EndRendering();
+		    rendererRef_->SetProjectionMatrix(CnvMat(fProjMat));
+		    rendererRef_->SetCameraMatrix(CnvMat(fViewMat));
+		    // Effekseerの描画パラメーターを作成
+		    // Effekseerによる描画
+		    rendererRef_->BeginRendering();
+		    Effekseer::Manager::DrawParameter drawParameter;
+		    drawParameter.ZNear = 0.0f;
+		    drawParameter.ZFar = data.farClipDistance;
+		    drawParameter.ViewProjectionMatrix = rendererRef_->GetCameraProjectionMatrix();
+		    managerRef_->Draw(drawParameter);
+		    rendererRef_->EndRendering();
+	    });
 }
 
-std::shared_ptr<ParticleInstance> ParticleSystem::Play(cha::Resource<ResourceType::Particle>& _resource)
+std::shared_ptr<EffectInstance> EffectSystem::Play(cha::Resource<ResourceType::Effect>& _resource)
 {
 	// インスタンス作成
-	std::shared_ptr<ParticleInstance> instance = CreateInstance();
+	std::shared_ptr<EffectInstance> instance = CreateInstance();
 	if (instance == nullptr)
 	{
 		return nullptr;
 	}
 
-	ParticleResource& particle = _resource.Get();
+	EffectResource& particle = _resource.Get();
 	// 該当するエフェクトが作成されていないなら、新規作成
 	if (particle.ref == nullptr)
 	{
@@ -273,34 +256,30 @@ std::shared_ptr<ParticleInstance> ParticleSystem::Play(cha::Resource<ResourceTyp
 			particle.ref = Effekseer::Effect::Create(managerRef_, u16Char);
 		}
 	}
-	// パーティクルの再生開始
-	// XYZの座標を0指定
-	Effekseer::Handle handle = managerRef_->Play(particle.ref, 0, 0, 0);
 
-	// インスタンスに、パーティクルの元データへのハンドル、参照を渡す
-	instance->handle = handle;
+	// インスタンスに、エフェクトの元データへの参照を渡す
 	instance->ref = particle.ref;
 	return instance;
 }
 
-std::shared_ptr<ParticleInstance> ParticleSystem::CreateInstance()
+std::shared_ptr<EffectInstance> EffectSystem::CreateInstance()
 {
 	// 空きスロットを探す
-	for (auto& slot : particleInstanceList_)
+	for (auto& slot : effectInstanceList_)
 	{
 		// 空きスロット発見、再利用!
 		if (slot == nullptr)
 		{
-			slot = std::make_shared<ParticleInstance>();
+			slot = std::make_shared<EffectInstance>();
 			return slot;
 		}
 	}
 	// 空きスロットがなかった
 
 	// 容量に余裕があるなら、新規追加
-	if (particleInstanceList_.size() < PARTICLE_POOL_CAPACITY)
+	if (effectInstanceList_.size() < PARTICLE_POOL_CAPACITY)
 	{
-		return particleInstanceList_.emplace_back(std::make_shared<ParticleInstance>());
+		return effectInstanceList_.emplace_back(std::make_shared<EffectInstance>());
 	}
 
 	// 空きスロットなし!容量に余裕もなし!作れません!

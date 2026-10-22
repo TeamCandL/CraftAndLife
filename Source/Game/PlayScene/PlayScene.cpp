@@ -21,7 +21,6 @@ void PlayScene::Start()
 	Instantiate<OtherPlayer>("てすとん");
 
 	Instantiate<OtherPlayerController>();
-	Instantiate<ParticleSystem>();
 
 	Instantiate<Enemy>(); // 仮設置
 	Instantiate<Reticle>();

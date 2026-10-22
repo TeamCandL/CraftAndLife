@@ -7,7 +7,7 @@
 void MainCamera::Start()
 {
 	objUpdater = GetScene().Instantiate<GhostCamera>();
-	position = {0.0f, 0.0f, -5.0f};
+	position = {0.0f, 0.0f, -10.0f};
 }
 
 void MainCamera::Update()
@@ -67,10 +67,10 @@ void MainCamera::Update()
 		return;
 	}
 
-	if (cursor.IsVisible())
-	{
-		return; // カーソルが表示されているなら操作しない
-	}
+	// if (cursor.IsVisible())
+	//{
+	//	return; // カーソルが表示されているなら操作しない
+	// }
 
 	if (objUpdater)
 	{
