@@ -16,11 +16,7 @@ void EnemyAttackColl::Update()
 		///	※ここでは、それがプレイヤーであるかを判定している。
 		if (Get<Name>(info.gameObject).content == "Player")
 		{
-			SendDamage(Get<Player>(info.gameObject), damage);
-			//触れているプレイヤーに対してダメージを与える
-			/*
-			SendDamage();
-			*/
+			// SendDamage(Get<Player>(info.gameObject), damage);
 		}
 	}
 }

@@ -11,6 +11,12 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	ImGui::Begin("Enemy");
+	ImGui::DragFloat3("position", transform.position.v);
+	ImGui::DragFloat3("scale", transform.scale.v);
+	ImGui::InputFloat("coolTime", &nowAttackCoolTime);
+	ImGui::End();
+
 	// 徘徊チェックポイントとの距離(差分)
 	float distX = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x - transform.position.x;
 	float distZ = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().z - transform.position.z;
