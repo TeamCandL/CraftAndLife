@@ -6,7 +6,7 @@ namespace cha
 	/// @brief 音声リソース
 	struct FontResource
 	{
-
+		ComPtr<IDWriteTextFormat> pTextFormat{};
 		HashValue GetHash() const;
 	};
 
@@ -24,10 +24,13 @@ namespace cha
 		{
 		}
 
-		fs::path file{};                     ///< フォントファイルのパス
-		std::wstring familyName{};           ///< フォントファミリー名
-		std::wstring localName{ L"ja-jp" };  ///< ja-jp
-		float fontSize{};                    ///< フォントサイズ
+		fs::path file{};                                            ///< フォントファイルのパス
+		std::wstring familyName{};                                  ///< フォントファミリー名
+		std::wstring localName{ L"ja-jp" };                         ///< ja-jp
+		float fontSize{};                                           ///< フォントサイズ
+		DWRITE_FONT_WEIGHT weight{ DWRITE_FONT_WEIGHT_NORMAL };     ///< 幅
+		DWRITE_FONT_STYLE style{ DWRITE_FONT_STYLE_NORMAL };        ///<
+		DWRITE_FONT_STRETCH stretch{ DWRITE_FONT_STRETCH_NORMAL };  ///<
 	};
 
 	/// @brief 音声リソースを格納
