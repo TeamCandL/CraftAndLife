@@ -390,6 +390,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Base\Core\ResourceManager.cpp" />
     <ClCompile Include="Source\Base\Core\ResourceTraits.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Audio.cpp" />
+    <ClCompile Include="Source\Base\Core\Resource\Font.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Material.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model\ModelMaterial.cpp" />
@@ -572,6 +573,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Base\Core\ResourceManagerInstance.h" />
     <ClInclude Include="Source\Base\Core\ResourceTraits.h" />
     <ClInclude Include="Source\Base\Core\Resource\Audio.h" />
+    <ClInclude Include="Source\Base\Core\Resource\Font.h" />
     <ClInclude Include="Source\Base\Core\Resource\IResourceRegistry.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material\IMaterialProperty.h" />
