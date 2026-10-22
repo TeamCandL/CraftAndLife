@@ -20,6 +20,7 @@ struct EnemyAttackCollData
 	    lifeTime{ lifeTime_ }
 	{
 	}
+
 	Component<Transform> transform{};      ///< 座標系
 	Component<RigidBody> rigidBody{};      ///< 剛体
 	Component<DynamicOBB> obb{};           ///< OBB当たり判定
