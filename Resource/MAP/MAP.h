@@ -49,22 +49,29 @@ namespace MapConfig
 	// ========================================================
 	// 6. 川と階段状の滝 (River & Waterfall)
 	// ========================================================
+	// 川の幅
 	constexpr float RIVER_WIDTH = 5.0f;
-	constexpr float RIVER_CENTER_X = 0.0f;
-	constexpr float RIVER_FREQUENCY_A = 0.025f;
-	constexpr float RIVER_BEND_A = 22.0f;
-	constexpr float RIVER_FREQUENCY_B = 0.060f;
-	constexpr float RIVER_PHASE_B = 1.5f;
-	constexpr float RIVER_BEND_B = 8.0f;
-	constexpr float RIVER_VALLEY_WIDTH = 10.0f;
-	constexpr float RIVER_VALLEY_DEPTH = 4.0f;
 
-	// 滝の範囲（北から一気に落ちる）
-	constexpr float WATERFALL_TOP_Z = 65.0f;
-	constexpr float WATERFALL_BOTTOM_Z = 20.0f;
-	constexpr int32_t WATERFALL_TIERS = 4; // 4段の滝
+	// 川の中心
+	constexpr float RIVER_CENTER_X = 0.0f;
+
+	// 川の蛇行
+	constexpr float RIVER_FREQUENCY_A = 0.025f;
+	constexpr float RIVER_BEND_A      = 22.0f;
+	constexpr float RIVER_FREQUENCY_B = 0.060f;
+	constexpr float RIVER_PHASE_B     = 1.5f;
+	constexpr float RIVER_BEND_B      = 8.0f;
+
+	// 川岸の谷
+	constexpr float RIVER_VALLEY_WIDTH = 8.0f;
+	constexpr float RIVER_VALLEY_DEPTH = 1.5f;
+
+	// 滝の設定は使わない
+	constexpr float WATERFALL_TOP_Z       = 65.0f;
+	constexpr float WATERFALL_BOTTOM_Z    = 20.0f;
+	constexpr int32_t WATERFALL_TIERS     = 4;
 	constexpr float WATERFALL_STEP_HEIGHT = 2.0f;
-	constexpr float WATER_SURFACE_OFFSET = 0.15f;
+	constexpr float WATER_SURFACE_OFFSET  = 0.15f;
 
 } // namespace MapConfig
 

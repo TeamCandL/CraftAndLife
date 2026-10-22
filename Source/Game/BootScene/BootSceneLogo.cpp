@@ -6,8 +6,8 @@
 void BootSceneLogo::Start()
 {
 	const Vec2 SCREEN_SIZE = Get<ScreenSize>();
-	transform.position = (SCREEN_SIZE - transform.scale) * 0.5f;
-	image.texture = texture;
+	transform.position     = (SCREEN_SIZE - transform.scale) * 0.5f;
+	image.texture          = texture;
 }
 
 void BootSceneLogo::Update()
