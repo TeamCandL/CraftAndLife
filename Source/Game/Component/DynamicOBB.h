@@ -7,7 +7,6 @@
 struct DynamicOBB : ComponentBase<DynamicOBB, StaticOBB>
 {
 	using ComponentBase<DynamicOBB, StaticOBB>::ComponentBase;
-
 	// Vec3 position;                     // 位置
 	// std::array<Vec3, 3> normalDirect;  // 各方向へのベクトル
 	// Vec3 axisLength;                   // 各軸方向への長さ

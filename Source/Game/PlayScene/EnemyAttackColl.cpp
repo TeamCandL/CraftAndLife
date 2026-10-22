@@ -4,10 +4,17 @@
 
 void EnemyAttackColl::Start()
 {
+	obb.offset = OBB_OFFSET;
+	obb.scale  = Vec3::One() * OBB_SCALE;
 }
 
 void EnemyAttackColl::Update()
 {
+	lifeTime -= Get<DeltaTime>();
+	if (lifeTime <= 0.0)
+	{
+		DestroyMe();
+	}
 	///	obb.hitGameObjects→このオブジェクトの持つコライダーに触れているオブジェクトの情報が入っている。
 	///	※ただ、これ自体はオブジェクトを取得しているわけではないため、情報に対して『.gameObject』をつけることでオブジェクトを取得する。
 	for (auto& info : obb.hitGameObjects)
@@ -17,11 +24,17 @@ void EnemyAttackColl::Update()
 		if (Get<Name>(info.gameObject).content == "Player")
 		{
 			SendDamage(Get<Player>(info.gameObject), damage);
+			// 触れているプレイヤーに対してダメージを与える
+			/*
+			SendDamage();
+			*/
 		}
 	}
 }
 
-void EnemyAttackColl::SendDamage(Player& player, int32_t damage)
+void EnemyAttackColl::SendDamage(
+    Player& player,
+    int32_t damage)
 {
 	player.Damaged(damage);
 }
