@@ -10,16 +10,18 @@
 #include <Game/Common/GameManager.h>
 #include <Game/Common/Sky.h>
 #include <Game/Terrain/Terrain.h>
+#include "DayController.h"
 
 void PlayScene::Start()
 {
 	Instantiate<GameManager>();
-	Instantiate<Sky>();
+	GameObject objSky = Instantiate<Sky>();
 
 	GameObject objTerrain = Instantiate<Terrain>();
 
 	Instantiate<OtherPlayer>("てすとん");
 
+	Instantiate<DayController>(objSky);
 	Instantiate<Enemy>(); // 仮設置
 	Instantiate<OtherPlayerController>();
 

@@ -125,3 +125,50 @@ bool SessionManager::IsExistPlayer(const std::string& _playerName) const
 {
 	return inSessionStatus_.playersStatus.count(_playerName) != 0;
 }
+
+void SessionManager::UpdateEnemys(
+    SizedBuffer<int>& _enemyIds, SizedBuffer<int>& _enemyTypes, SizedBuffer<float>& _positions,
+    SizedBuffer<float>& _rotations)
+{
+	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
+	auto& enemiesStatus = inSessionStatus_.enemiesStatus;
+
+	size_t count = _enemyIds.Size();
+
+	// 各データの要素数を確認
+	count = std::min(count, _enemyTypes.Size());
+	count = std::min(count, _positions.Size() / Vec3::AT_MAX);
+	count = std::min(count, _rotations.Size() / Vec2::AT_MAX);
+
+	for (size_t i = 0; i < count; i++)
+	{
+		int enemyId = _enemyIds[i];
+
+		auto& enemyStatus = enemiesStatus[enemyId];
+
+		enemyStatus.enemyType = _enemyTypes[i];
+
+		enemyStatus.position = Vec3{
+		    _positions[i * Vec3::AT_MAX + Vec3::AT_X],
+		    _positions[i * Vec3::AT_MAX + Vec3::AT_Y],
+		    _positions[i * Vec3::AT_MAX + Vec3::AT_Z],
+		};
+
+		enemyStatus.rotation = Vec2{
+		    _rotations[i * Vec2::AT_MAX + Vec2::AT_X],
+		    _rotations[i * Vec2::AT_MAX + Vec2::AT_Y],
+		};
+
+		enemyStatus.updatedFlag = inSessionStatus_.updatedFlag;
+	}
+
+	// 今回の受信データに存在しなかった敵を削除
+	std::erase_if(
+	    enemiesStatus,
+	    [this](const auto& idAndStatus) { return idAndStatus.second.updatedFlag != inSessionStatus_.updatedFlag; });
+}
+
+bool SessionManager::IsExistEnemy(int _enemyId) const
+{
+	return inSessionStatus_.enemiesStatus.count(_enemyId) != 0;
+}

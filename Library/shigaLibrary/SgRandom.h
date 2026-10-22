@@ -1,7 +1,7 @@
 #pragma once
 #include <random>
 
-class Random
+struct Random
 {
 public:
 	static int GetRandom(int min, int max)

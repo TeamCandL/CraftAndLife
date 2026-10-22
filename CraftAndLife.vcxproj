@@ -114,6 +114,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -149,6 +153,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -182,6 +190,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -217,6 +229,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Library\enet\enet.c">
@@ -359,6 +375,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="Resource\MAP\MAP.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentBase.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentPool\ComponentPools.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentPool\View.cpp" />
@@ -417,11 +434,13 @@
     <ClCompile Include="Source\Game\LobbyScene\MemberElement.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\MemberList.cpp" />
     <ClCompile Include="Source\Game\Manager\SessionManager.cpp" />
+    <ClCompile Include="Source\Game\MapTestScene\MapTestScene.cpp" />
     <ClCompile Include="Source\Game\Network\ENetTransport.cpp" />
     <ClCompile Include="Source\Game\Network\INetworkMessage.cpp" />
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\DayController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
@@ -431,6 +450,8 @@
     <ClCompile Include="Source\Game\PlayScene\MainCamera\GhostCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\IMainCameraUpdater.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\TPSCamera.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemy.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayer.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player.cpp" />
@@ -471,6 +492,7 @@
     <ClCompile Include="Source\Game\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordInputPanel.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordJoinButton.cpp" />
+    <ClCompile Include="Source\Game\Tool\DebugCamera.cpp" />
     <ClCompile Include="Source\Game\Utility\Algorithm\TopologicalSort.cpp" />
     <ClCompile Include="Source\Game\Utility\File\JsonLoader.cpp" />
     <ClCompile Include="Source\pch\pch.cpp">
@@ -497,8 +519,10 @@
     <ClInclude Include="Library\miniaudio\miniaudio.h" />
     <ClInclude Include="Library\nlohmann-json\json.hpp" />
     <ClInclude Include="Library\nlohmann-json\json_fwd.hpp" />
-    <ClInclude Include="Library\shigaRandom\SgRandom.h" />
+    <ClInclude Include="Library\shigaLibrary\SgMath.h" />
+    <ClInclude Include="Library\shigaLibrary\SgRandom.h" />
     <ClInclude Include="Library\ufbx\ufbx.h" />
+    <ClInclude Include="Resource\MAP\MAP.h" />
     <ClInclude Include="Source\Base\Base.h" />
     <ClInclude Include="Source\Base\BasePch.h" />
     <ClInclude Include="Source\Base\ClientConfig.h" />
@@ -617,10 +641,17 @@
     <ClInclude Include="Source\Game\Common\Sky\SkyMaterial.h" />
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
+    <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
+    <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
+    <ClInclude Include="Source\Game\PlayScene\INetworkActor.h" />
     <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
+    <ClInclude Include="Source\Game\PlayScene\NetworkActorServer.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemy.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
@@ -738,6 +769,7 @@
     <ClInclude Include="Source\Game\TitleScene\TitleScene.h" />
     <ClInclude Include="Source\Game\TitleScene\WordInputPanel.h" />
     <ClInclude Include="Source\Game\TitleScene\WordJoinButton.h" />
+    <ClInclude Include="Source\Game\Tool\DebugCamera.h" />
     <ClInclude Include="Source\Game\Utility\Algorithm\TopologicalSort.h" />
     <ClInclude Include="Source\Game\Utility\File\JsonLoader.h" />
     <ClInclude Include="Source\Library\Library.h" />
