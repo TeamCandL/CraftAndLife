@@ -7,6 +7,8 @@
 
 void Player::Start()
 {
+	obb.isTrigger = true;
+
 	transform.scale = Vec3::One() * 200.0f;
 	obb.offset      = OBB_OFFSET;
 	obb.scale       = Vec3::One() * OBB_SCALE;

@@ -21,7 +21,8 @@ void EnemyAttackColl::Update()
 	{
 		///	取得したオブジェクトの名前を『.content』で取得。
 		///	※ここでは、それがプレイヤーであるかを判定している。
-		if (Get<Name>(info.gameObject).content == "Player")
+		Name* pName = TryGet<Name>(info.gameObject);
+		if (pName && pName->content == "Player")
 		{
 			SendDamage(Get<Player>(info.gameObject), damage);
 			// 触れているプレイヤーに対してダメージを与える
