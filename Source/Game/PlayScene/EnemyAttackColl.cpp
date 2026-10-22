@@ -2,9 +2,7 @@
 #include "EnemyAttackColl.h"
 #include "Player.h"
 
-void EnemyAttackColl::Start()
-{
-}
+void EnemyAttackColl::Start() {}
 
 void EnemyAttackColl::Update()
 {
@@ -27,7 +25,9 @@ void EnemyAttackColl::Update()
 		}
 }
 
-void EnemyAttackColl::SendDamage(Player& player, int32_t damage)
+void EnemyAttackColl::SendDamage(
+    Player& player,
+    int32_t damage)
 {
 	player.Damaged(damage);
 }

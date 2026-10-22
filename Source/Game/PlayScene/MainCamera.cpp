@@ -6,16 +6,16 @@
 
 void MainCamera::Start()
 {
-	objUpdater = GetScene().Instantiate<GhostCamera>();
+	objUpdater = GetScene().Instantiate<TPSCamera>();
 	position = {0.0f, 0.0f, -10.0f};
 }
 
 void MainCamera::Update()
 {
-	RawMouseInputManager &rawMouseInput = Get<cha::RawMouseInputManager>();
-	CursorSystem &cursor = Get<CursorSystem>();
-	InputSystem &input = Get<InputSystem>();
-	CameraSystemData &camera = Get<CameraSystem>().Data();
+	RawMouseInputManager& rawMouseInput = Get<cha::RawMouseInputManager>();
+	CursorSystem& cursor = Get<CursorSystem>();
+	InputSystem& input = Get<InputSystem>();
+	CameraSystemData& camera = Get<CameraSystem>().Data();
 
 	ImGui::Begin("DebugCamera");
 
@@ -25,6 +25,10 @@ void MainCamera::Update()
 
 	ImGui::DragFloat("rotationY", &camera.transform.rotation.y);
 
+	if (ImGui::Button("Clear"))
+	{
+		GetScene().Destroy(objUpdater);
+	}
 	if (ImGui::Button("Ghost"))
 	{
 		GetScene().Destroy(objUpdater);
@@ -39,7 +43,7 @@ void MainCamera::Update()
 	ImGui::End();
 
 	// #ifdef _DEBUG
-	ImGuiIO &io = ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO();
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard)
 	{
 		// ImGui操作中なら無視
@@ -82,7 +86,7 @@ void MainCamera::SetPosition(const Vec3 _worldPosition)
 {
 	position = _worldPosition;
 
-	CameraSystemData &cameraSystemData = Get<CameraSystem>().Data();
+	CameraSystemData& cameraSystemData = Get<CameraSystem>().Data();
 	cameraSystemData.transform.position = position;
 }
 

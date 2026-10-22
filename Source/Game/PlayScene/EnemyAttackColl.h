@@ -5,9 +5,14 @@ struct Player;
 
 struct EnemyAttackCollData
 {
+	/// @brief 攻撃生成(データ指定なし)	ほぼデバック用
 	EnemyAttackCollData()
 	{
 	}
+	/// @brief 攻撃生成(データ指定有)
+	/// @param position_ 生成者の座標を入れてほしいかも
+	/// @param damage_ 生成者のdamageを入れてほしいかも
+	/// @param lifeTime_ 任意の寿命を入れてほしいかも
 	EnemyAttackCollData(const Vec3 position_, const int32_t damage_, const float lifeTime_) :
 	    transform{position_},
 	    damage{damage_},

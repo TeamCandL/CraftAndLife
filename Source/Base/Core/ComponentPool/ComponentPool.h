@@ -7,8 +7,7 @@ namespace cha
 	/// @brief コンポーネントのポインタプール
 	/// @tparam ComponentT 対象のコンポーネント型
 	/// @todo ゲームオブジェクトにつくのではなくプールが所有していたほうがキャッシュ効率いい…
-	template<typename ComponentT>
-	class ComponentPool : public IComponentPool
+	template <typename ComponentT> class ComponentPool : public IComponentPool
 	{
 	public:
 		/// @brief コンポーネントのポインタプールの初期化処理
@@ -21,7 +20,7 @@ namespace cha
 		inline void PaddingSize(const size_t _size) override
 		{
 			// 指定のサイズになるまで nullptrで埋める
-			while (pool_.size() <= _size)
+			while (pool_.size() < _size)
 			{
 				pool_.push_back(nullptr);
 			}
@@ -38,8 +37,7 @@ namespace cha
 				pool_.push_back(nullptr);
 			}
 
-			VCU_ASSERT(pool_[_registryIndex]
-				&& "指定コンポーネントのポインタを持っていない");
+			VCU_ASSERT(pool_[_registryIndex] && "指定コンポーネントのポインタを持っていない");
 			return *pool_[_registryIndex];
 		}
 
@@ -49,9 +47,12 @@ namespace cha
 		{
 			std::swap(pool_[_registryIndex], pool_.back());
 		}
-		
+
 		/// @brief 末端のコンポーネントをポイ捨てする
-		inline void PopBack() override { pool_.pop_back(); }
+		inline void PopBack() override
+		{
+			pool_.pop_back();
+		}
 
 		/// @brief コンポーネントをセットする
 		/// @param _registryIndex レジストリインデクス
@@ -66,6 +67,6 @@ namespace cha
 		}
 
 	private:
-		std::vector<ComponentT*> pool_{};  ///< コンポーネントのポインタプール
+		std::vector<ComponentT*> pool_{}; ///< コンポーネントのポインタプール
 	};
-}
+} // namespace cha

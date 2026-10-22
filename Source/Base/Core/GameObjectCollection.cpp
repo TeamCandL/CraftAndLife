@@ -3,13 +3,12 @@
 #include "SystemRegistry.h"
 #include "ComponentPool/ComponentPools.h"
 
-
 cha::GameObjectCollection::GameObjectCollection() :
-	// NOTE: 外システムの登録が終わったコンストラクタタイミングで取得
-	//     : index == システム数 - 1
-	//     : NullObjectSystemを含め +1 で総数
-	SYSTEM_COUNT_{ SystemRegistry::GetSystemIndex<NullObjectSystem>() + 1 },
-	pComponentPools_{ std::make_unique<ComponentPools>() }
+    // NOTE: 外システムの登録が終わったコンストラクタタイミングで取得
+    //     : index == システム数 - 1
+    //     : NullObjectSystemを含め +1 で総数
+    SYSTEM_COUNT_{SystemRegistry::GetSystemIndex<NullObjectSystem>() + 1},
+    pComponentPools_{std::make_unique<ComponentPools>()}
 {
 	// 各システム分開けておく
 	for (size_t i = 0; i < SYSTEM_COUNT_; i++)
@@ -20,9 +19,9 @@ cha::GameObjectCollection::GameObjectCollection() :
 	registry_.resize(SYSTEM_COUNT_);
 
 	// Id 0 は NullObjectSystem を登録しておく
-	const size_t NULL_OBJECT_SYSTEM_INDEX{ 0 };
-	
-	GameObjectElement& element{ registry_[NULL_OBJECT_SYSTEM_INDEX] };
+	const size_t NULL_OBJECT_SYSTEM_INDEX{0};
+
+	GameObjectElement& element{registry_[NULL_OBJECT_SYSTEM_INDEX]};
 	element.pObject = std::make_unique<NullObjectSystem>();
 	element.typeIndex = typeid(NullObjectSystem);
 	element.componentFlag = 0;
@@ -55,7 +54,7 @@ void cha::GameObjectCollection::Flush()
 		std::vector<GameObjectElement> toAdd = std::move(toAdd_);
 
 		// 追加前のレジストリサイズを持っておく
-		const size_t PREVIOUS_REGISTRY_SIZE{ registry_.size() };
+		const size_t PREVIOUS_REGISTRY_SIZE{registry_.size()};
 
 		// 登録予定のオブジェクトを登録していく
 		for (size_t i = 0; i < toAdd.size(); i++)
@@ -83,7 +82,7 @@ void cha::GameObjectCollection::Flush()
 
 cha::GameObject cha::GameObjectCollection::MakeGameObject(const uint64_t _id)
 {
-	return GameObject{ _id, this };
+	return GameObject{_id, this};
 }
 
 void cha::GameObjectCollection::Remove(const uint64_t _id)
@@ -141,10 +140,9 @@ void cha::GameObjectCollection::Remove(const uint64_t _id)
 }
 #else
 {
-	const size_t INDEX{ IdToRegistryIndex(_id) };
+	const size_t INDEX{IdToRegistryIndex(_id)};
 
-	VCU_ASSERT(INDEX != 0
-		&& "NullObjectSystemは削除しないでください！！");
+	VCU_ASSERT(INDEX != 0 && "NullObjectSystemは削除しないでください！！");
 
 	// もし削除対象がたまたま現在の末尾要素だった場合は、Swapせずにそのまま消すだけでよい
 	const size_t LAST_INDEX = registry_.size() - 1;
@@ -158,11 +156,11 @@ void cha::GameObjectCollection::Remove(const uint64_t _id)
 	}
 
 	const uint64_t LAST_OBJECT_ID = registry_.back().pObject->GetId();
-	indices_[LAST_OBJECT_ID] = INDEX;  // 末端は対象の位置へ
-	indices_[_id] = 0;  // 捨てるものは無効化
+	indices_[LAST_OBJECT_ID] = INDEX; // 末端は対象の位置へ
+	indices_[_id] = 0;                // 捨てるものは無効化
 
 	// レジストリ内入れ替え
-	std::swap(registry_[INDEX], registry_.back());
+	std::swap(registry_[INDEX], registry_.back()); // TODO: ここほんとにムーブしておかしくなってないかチェック
 
 	// コンポーネントを消す
 	pComponentPools_->EraseAt(INDEX);
@@ -197,7 +195,8 @@ void cha::GameObjectCollection::FillComponentRegistry()
 	pComponentPools_->PaddingSize(registry_.size());
 }
 
-void cha::GameObjectCollection::UpdateComponentRegistry(const ComponentFlag _flag, const uint64_t _gameObjectId, const size_t _addedIndex)
+void cha::GameObjectCollection::UpdateComponentRegistry(
+    const ComponentFlag _flag, const uint64_t _gameObjectId, const size_t _addedIndex)
 {
 	// TODO: キャパシティ分線形探索は非効率？
 	for (uint32_t componentIndex = 0; componentIndex < COMPONENT_CAPACITY; componentIndex++)
@@ -206,8 +205,7 @@ void cha::GameObjectCollection::UpdateComponentRegistry(const ComponentFlag _fla
 		{
 			// 指定コンポーネントのフラグが立っているなら登録関数が更新されている
 			PreviousComponentRegister::registry_[_addedIndex][componentIndex](
-				*pComponentPools_.get(),
-				IdToRegistryIndex(_gameObjectId));
+			    *pComponentPools_.get(), IdToRegistryIndex(_gameObjectId));
 		}
 	}
 }
@@ -216,6 +214,7 @@ void cha::GameObjectCollection::DestroyAt(const GameObject _gameObject)
 {
 	// 削除予定リストに入れるだけ
 	toDestroyIds_.insert(_gameObject.id_);
+	At(_gameObject).SetActive(false);
 }
 
 void cha::GameObjectCollection::Clear()
@@ -235,7 +234,7 @@ bool cha::GameObjectCollection::Exist(const GameObject _gameObject) const
 bool cha::GameObjectCollection::Exist(const uint64_t _id) const
 {
 	const size_t REGISTRY_INDEX = IdToRegistryIndex(_id);
-	return REGISTRY_INDEX != 0                 // NullObjectSystemを参照しているわけではない！
-		&& REGISTRY_INDEX < registry_.size()   // レジストリのサイズ内
-		&& registry_[REGISTRY_INDEX].pObject;  // オブジェクトのポインタが存在する
+	return REGISTRY_INDEX != 0                   // NullObjectSystemを参照しているわけではない！
+	       && REGISTRY_INDEX < registry_.size()  // レジストリのサイズ内
+	       && registry_[REGISTRY_INDEX].pObject; // オブジェクトのポインタが存在する
 }
