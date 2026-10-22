@@ -23,6 +23,7 @@ struct PlayerData
 	Component<RigidBody> rigidBody{};
 	Component<DynamicOBB> obb{};
 	Component<OBBRenderer> obbRenderer{};
+	Component<Name> name{};
 
 	GameObject objMainCamera{};
 	GameObject objPlayerController{};
