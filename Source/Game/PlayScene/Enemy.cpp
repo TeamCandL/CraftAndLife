@@ -9,6 +9,8 @@ void Enemy::Start()
 	SetWanderingCheckPoint(transform.position);
 	nowAttackCoolTime  = ATTACK_COOL_TIME;
 	nowDamagedCoolTime = DAMAGED_COOL_TIME;
+
+	obb.isTrigger = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
 }
 
 void Enemy::Update()

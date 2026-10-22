@@ -8,7 +8,7 @@ namespace EnemyParam
 {
 	const std::vector<int32_t> Hp{ 100, 50, 30, 500 };         ///< 体力
 	const std::vector<int32_t> Damage{ 10, 5, 3, 50 };         ///< 攻撃力
-	const std::vector<float> Speed{ 2.5f, 4.0f, 6.0f, 1.5f };  ///< 移動速度
+	const std::vector<float> Speed{ 2.5f, 4.0f, 6.5f, 1.5f };  ///< 移動速度
 }  // namespace EnemyParam
 
 struct EnemyData
