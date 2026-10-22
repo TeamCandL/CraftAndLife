@@ -4,47 +4,33 @@
 
 #include <Game/Game.h>
 
-struct ParticleParameter
-{
-	// パーティクルの位置、回転、スケール
-	Vec3 position;
-	Quaternion rotation;
-	Vec3 scale;
-	// ループするか
-	bool isLoop;
-	// 破棄するか
-	bool destroyMe;
-	// パーティクルの再生速度
-	float playSpeed;
-};
-
 struct ParticleSystemData
 {
 };
 
 struct ParticleResource
 {
-	fs::path filePath;
-	Effekseer::EffectRef ref;
+	fs::path filePath{};
+	Effekseer::EffectRef ref{nullptr};
 };
 struct ParticleInstance
 {
 	friend class ParticleSystem;
 	// パーティクルの位置、回転、スケール
-	Vec3 position;
-	Quaternion rotation;
-	Vec3 scale;
+	Vec3 position{Vec3::Zero()};
+	Quaternion rotation{Quaternion::Identity()};
+	Vec3 scale{Vec3::One()};
 	// ループするか
-	bool isLoop;
+	bool isLoop{false};
 	// 破棄するか
-	bool destroyMe;
+	bool destroyMe{false};
 	// パーティクルの再生速度
-	float playSpeed;
+	float playSpeed{1.0f};
 
 private:
-	Effekseer::Handle handle;
-	Effekseer::EffectRef ref;
-	double elapsedTime;
+	Effekseer::Handle handle{};
+	Effekseer::EffectRef ref{nullptr};
+	double elapsedTime{0.0};
 };
 struct ParticleRegistry : public ResourceRegistryBase<ParticleResource>
 {

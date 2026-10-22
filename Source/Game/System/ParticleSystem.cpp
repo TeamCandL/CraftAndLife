@@ -13,6 +13,19 @@ using namespace EffekseerRendererDX11;
 constexpr int MAX_SQUARE{8192};
 constexpr size_t PARTICLE_POOL_CAPACITY{256};
 
+Effekseer::Matrix43 CnvMat43(DirectX::XMFLOAT4X4 _mat)
+{
+	Effekseer::Matrix43 mat43{};
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			mat43.Value[i][j] = _mat.m[i][j];
+		}
+	}
+	return mat43;
+}
+
 Effekseer::Matrix43 CnvMat43(const Mat4x4& _mat)
 {
 	Effekseer::Matrix43 out;
@@ -51,19 +64,6 @@ Mat4x4 CalculateWorldMat(const ParticleInstance& _instance)
 Effekseer::Matrix43 CalculateMat43(std::shared_ptr<ParticleInstance> _pInstance)
 {
 	return CnvMat43(CalculateWorldMat(*_pInstance.get()));
-}
-
-Effekseer::Matrix43 CnvMat43(DirectX::XMFLOAT4X4 _mat)
-{
-	Effekseer::Matrix43 mat43{};
-	for (int i = 0; i < 4; ++i)
-	{
-		for (int j = 0; j < 3; ++j)
-		{
-			mat43.Value[i][j] = _mat.m[i][j];
-		}
-	}
-	return mat43;
 }
 
 Effekseer::Matrix44 CnvMat(DirectX::XMFLOAT4X4 _mat)
@@ -131,12 +131,12 @@ void ParticleSystem::Start()
 	    });
 
 	// インスタンスプールを確保
-	// effectInstances_.reserve(PARTICLE_POOL_CAPACITY);
+	particleInstanceList_.reserve(PARTICLE_POOL_CAPACITY);
 }
 
 void ParticleSystem::Update()
 {
-	const double deltaTime = 0.03;
+	const double deltaTime = Get<DeltaTime>();
 	const double fps = 60.0;
 	for (auto& instance : particleInstanceList_)
 	{
@@ -196,8 +196,20 @@ void ParticleSystem::Update()
 		{
 			// フレーム数を設定
 			rendererRef_->SetTime(static_cast<float>(instance->elapsedTime));
+			Effekseer::Matrix43 mat = CalculateMat43(instance);
+			Effekseer::Vector3D trans;
+			Effekseer::Matrix43 rot;
+			Effekseer::Vector3D scale;
+			mat.GetTranslation(trans);
+			mat.GetRotation(rot);
+			mat.GetScale(scale);
+			bool valid = mat.IsValid();
 			// エフェクトのインスタンスに対して処理をし、更新速度を設定
-			managerRef_->SetMatrix(handle, CalculateMat43(instance));
+			Matrix43 matWorld;
+			matWorld.Translation(1.0f, 1.0f, 1.0f);
+			matWorld.Scaling(1.0f, 1.0f, 1.0f);
+			// matWorld.Scaling(1.0f, 1.0f, 1.0f);
+			managerRef_->SetMatrix(handle, matWorld);
 			managerRef_->SetSpeed(handle, instance->playSpeed);
 			// 再生時間を増やす
 			instance->elapsedTime += deltaTime;
@@ -213,18 +225,29 @@ void ParticleSystem::Draw()
 	using namespace DirectX;
 	XMMATRIX transposedProjMat = XMMatrixTranspose(data.projectionMatrix);
 	XMMATRIX transposedViewMat = XMMatrixTranspose(data.viewMatrix);
+	XMFLOAT4X4 fProjMat;
+	XMStoreFloat4x4(&fProjMat, data.projectionMatrix);
+	XMFLOAT4X4 fViewMat;
+	XMStoreFloat4x4(&fViewMat, data.viewMatrix);
+	Effekseer::Matrix44 matProj44 = CnvMat(fProjMat);
+	Effekseer::Matrix44 matView44 = CnvMat(fViewMat);
+	// bool isValid = matView44.
+	//  ビュー、射影行列セット
+	Vec2 SCREEN_SIZE = Get<ScreenSize>();
 
-	// ビュー、射影行列セット
-	rendererRef_->SetProjectionMatrix(CnvMat44(transposedProjMat));
-	rendererRef_->SetCameraMatrix(CnvMat44(transposedViewMat));
+	matView44 = matView44.LookAtLH(Vector3D(0.0f, 0.0f, -5.0f), Vector3D(0.0f, 0.0f, 0.0f), Vector3D(0.0f, 1.0f, 0.0f));
+	matProj44 = matProj44.PerspectiveFovLH(
+	    data.fieldOfViewRad, SCREEN_SIZE.x / SCREEN_SIZE.y, data.nearClipDistance, data.farClipDistance);
+
+	rendererRef_->SetProjectionMatrix(matProj44);
+	rendererRef_->SetCameraMatrix(matView44);
 	// Effekseerの描画パラメーターを作成
-	Effekseer::Manager::DrawParameter drawParameter;
-	drawParameter.ZNear = data.nearClipDistance;
-	drawParameter.ZFar = data.farClipDistance;
-	drawParameter.ViewProjectionMatrix = rendererRef_->GetCameraProjectionMatrix();
-
 	// Effekseerによる描画
 	rendererRef_->BeginRendering();
+	Effekseer::Manager::DrawParameter drawParameter;
+	drawParameter.ZNear = 0.0f;
+	drawParameter.ZFar = data.farClipDistance;
+	drawParameter.ViewProjectionMatrix = rendererRef_->GetCameraProjectionMatrix();
 	managerRef_->Draw(drawParameter);
 	rendererRef_->EndRendering();
 }
@@ -242,7 +265,13 @@ std::shared_ptr<ParticleInstance> ParticleSystem::Play(cha::Resource<ResourceTyp
 	// 該当するエフェクトが作成されていないなら、新規作成
 	if (particle.ref == nullptr)
 	{
-		particle.ref = Effekseer::Effect::Create(managerRef_, particle.filePath.u16string().c_str());
+		if (fs::exists(particle.filePath))
+		{
+			fs::path filePath(particle.filePath);
+			auto str = filePath.u16string();
+			auto u16Char = str.c_str();
+			particle.ref = Effekseer::Effect::Create(managerRef_, u16Char);
+		}
 	}
 	// パーティクルの再生開始
 	// XYZの座標を0指定

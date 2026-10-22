@@ -20,9 +20,10 @@ void PlayScene::Start()
 
 	Instantiate<OtherPlayer>("てすとん");
 
-	Instantiate<Enemy>(); // 仮設置
 	Instantiate<OtherPlayerController>();
+	Instantiate<ParticleSystem>();
 
+	Instantiate<Enemy>(); // 仮設置
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer = Instantiate<Player>(objMainCamera);

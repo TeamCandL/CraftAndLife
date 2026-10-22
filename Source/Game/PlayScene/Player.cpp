@@ -49,10 +49,23 @@ void Player::Update()
 
 	// 平行移動
 	transform.position += moveDirection * moveSpeed;
-
-	// if (Get<InputSystem>().GetKeyDown(KeyCode::O)
+	if (sampleParticleInstance)
 	{
-		// Get<ParticleSystem>
+		sampleParticleInstance->position = transform.WorldPosition();
+		sampleParticleInstance->rotation = transform.rotation;
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	{
+		if (sampleParticleInstance)
+		{
+			sampleParticleInstance->destroyMe = true;
+		}
+
+		sampleParticleInstance = Get<ParticleSystem>().Play(sampleParticle);
+		sampleParticleInstance->position = transform.WorldPosition();
+		sampleParticleInstance->scale = Vec3{10.0f, 10.0f, 10.0f};
+
+		sampleParticleInstance->isLoop = true;
 	}
 }
 

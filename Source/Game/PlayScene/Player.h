@@ -18,7 +18,8 @@ struct PlayerData
 	    {"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}};
 	Resource<Shader> shader{"Shader/Unlit.hlsl"};                                                         ///< シェーダ
 	Resource<Model> model{"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx"}; ///< モデル
-	// Resource<Particle> sampleParticle{"Particle/Sample01.efkefc"};
+	Resource<Particle> sampleParticle{"Particle/Laser01.efkefc"};
+	std::shared_ptr<ParticleInstance> sampleParticleInstance;
 	Component<Transform> transform{}; ///< 座標系
 	Component<RigidBody> rigidBody{}; ///< 剛体
 	Component<DynamicOBB> obb{};      ///< OBB当たり判定

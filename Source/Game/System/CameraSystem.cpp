@@ -14,21 +14,15 @@ void CameraSystem::Start()
 	// 投影モードによる分岐
 	switch (projectionMode)
 	{
-	case CameraSystemProjectionMode::Orthographic:  // 並行投影
-		projectionMatrix = XMMatrixOrthographicLH(
-			orthographicSize.x,
-			orthographicSize.y,
-			nearClipDistance,
-			farClipDistance);
+	case CameraSystemProjectionMode::Orthographic: // 並行投影
+		projectionMatrix =
+		    XMMatrixOrthographicLH(orthographicSize.x, orthographicSize.y, nearClipDistance, farClipDistance);
 		break;
-	case CameraSystemProjectionMode::Perspective:  // 透視投影
-		projectionMatrix = XMMatrixPerspectiveFovLH(
-			fieldOfViewRad,
-			SCREEN_SIZE.x / SCREEN_SIZE.y,
-			nearClipDistance,
-			farClipDistance);
+	case CameraSystemProjectionMode::Perspective: // 透視投影
+		projectionMatrix =
+		    XMMatrixPerspectiveFovLH(fieldOfViewRad, SCREEN_SIZE.x / SCREEN_SIZE.y, nearClipDistance, farClipDistance);
 		break;
-	default:  // 知らない投影
+	default: // 知らない投影
 		assert(false && "知らない投影方法");
 		break;
 	}
@@ -42,15 +36,11 @@ void CameraSystem::Update()
 {
 	using namespace DirectX;
 
-	viewMatrix = XMMatrixLookAtLH(
-		transform.position,
-		transform.position + transform.Forward(),
-		Vec3::Up());
+	viewMatrix = XMMatrixLookAtLH(transform.position, transform.position + transform.Forward() * 5.0f, Vec3::Up());
 
 	MaterialResource& material = cameraMaterial.Get();
 
-	CameraMaterialProperty* pCameraMaterialProperty =
-		static_cast<CameraMaterialProperty*>(material.pProperty.get());
+	CameraMaterialProperty* pCameraMaterialProperty = static_cast<CameraMaterialProperty*>(material.pProperty.get());
 
 	(*pCameraMaterialProperty)->viewProjectionMatrix = viewMatrix * projectionMatrix;
 	(*pCameraMaterialProperty)->position = transform.position;
