@@ -15,10 +15,14 @@ void OtherEnemy::Update()
 
 		// 座標と角度の更新
 		transform.position = status.position;
-		transform.rotation = Quaternion::FromEuler(Vec3{0.0f, status.rotation.y, 0.0f});
+		transform.rotation = Quaternion::FromEuler(Vec3{ 0.0f, status.rotation.y, 0.0f });
 		VCU_LOG(
-		    "{}の更新！座標({}, {}, {}) 回転y:{}", enemyId, transform.position.x, transform.position.y,
-		    transform.position.z, transform.rotation.y);
+		    "{}の更新！座標({}, {}, {}) 回転y:{}",
+		    enemyId,
+		    transform.position.x,
+		    transform.position.y,
+		    transform.position.z,
+		    transform.rotation.y);
 	}
 	else
 	{
@@ -29,13 +33,13 @@ void OtherEnemy::Update()
 void OtherEnemy::Draw()
 {
 	transform.UpdateFamily();
-	
-		Get<Dx11Manager>().SetShader(shader);
+
+	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
 	models[enemyType].Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto& subParts{models[enemyType].Get().subParts};
+	const auto& subParts{ models[enemyType].Get().subParts };
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
@@ -43,4 +47,14 @@ void OtherEnemy::Draw()
 		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
 		Get<Dx11Manager>().Draw();
 	}
+}
+
+Vec3 OtherEnemy::GetPosition() const
+{
+	return transform.position;
+}
+
+float OtherEnemy::GetAngleY() const
+{
+	return Vec3{ transform.rotation.ToEuler() }.y;
 }
