@@ -21,8 +21,9 @@ struct PlayerData
 
 	Component<Transform> transform{};
 	Component<RigidBody> rigidBody{};
-	Component<DynamicOBB> obb{};
+	Component<StaticOBB> obb{};
 	Component<OBBRenderer> obbRenderer{};
+	Component<Name> name{ "Player" };
 
 	GameObject objMainCamera{};
 	GameObject objPlayerController{};

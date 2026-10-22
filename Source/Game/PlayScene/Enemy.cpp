@@ -26,7 +26,7 @@ void Enemy::Update()
 	// 差分を基に移動方向の計算
 	float angleY = Math::GetAngle(distX, distZ);
 
-	// Move(vecX, vecZ, speed, angleY);
+	Move(vecX, vecZ, speed, angleY);
 
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
@@ -117,7 +117,7 @@ void Enemy::SetWanderingCheckPoint(
 		GetScene().Destroy(objWanderingCheckPoint);
 	}
 
-	Vec3 range_{ WAN_REFERENCE - Random::GetRandom(WAN_RANGE), 0, WAN_REFERENCE - Random::GetRandom(WAN_RANGE) };
+	Vec3 range_{ WAN_REFERENCE - Random::GetRandom(WAN_RANGE), 0.0f, WAN_REFERENCE - Random::GetRandom(WAN_RANGE) };
 
 	position_ += range_;
 
