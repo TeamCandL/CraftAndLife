@@ -5,15 +5,15 @@
 namespace cha
 {
 	/// @brief コンポーネントの基底クラス
-	template<typename ComponentT, typename BaseComponentT = IComponent>
-	class ComponentBase : public BaseComponentT
+	template <typename ComponentT, typename BaseComponentT = IComponent> class ComponentBase : public BaseComponentT
 	{
-	public:
-		ComponentBase() = default;
+	  public:
+		using BaseComponentT::BaseComponentT;
+		ComponentBase()          = default;
 		virtual ~ComponentBase() = default;
 
-	private:
+	  private:
 		// コンポーネントのインデクス
 		inline static uint64_t COMPONENT_INDEX = ComponentRegistry::GetComponentIndex<ComponentT>();
 	};
-}
+}  // namespace cha

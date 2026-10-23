@@ -6,8 +6,8 @@
 void BootSceneLogo::Start()
 {
 	const Vec2 SCREEN_SIZE = Get<ScreenSize>();
-	transform.position = (SCREEN_SIZE - transform.scale) * 0.5f;
-	image.texture = texture;
+	transform.position     = (SCREEN_SIZE - transform.scale) * 0.5f;
+	image.texture          = texture;
 }
 
 void BootSceneLogo::Update()
@@ -21,9 +21,9 @@ void BootSceneLogo::Update()
 	if (last <= 0.0f)
 	{
 		// ロゴの表示が終わったためシーン遷移する
-		 //Get<SceneManager>().Move<TitleScene>();
+		// Get<SceneManager>().Move<TitleScene>();
 		Get<SceneManager>().Move<MapTestScene>();
-		 //Get<SceneManager>().Move<PlayScene>();
+		// Get<SceneManager>().Move<PlayScene>();
 		return;
 	}
 

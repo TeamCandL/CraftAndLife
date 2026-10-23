@@ -3,8 +3,8 @@
 
 enum struct ProtocolType : uint8_t
 {
-	JoinRoom = 0,    ///< 部屋を作成・参加 (部屋名)
-	JoinOK,          ///< 部屋の参加ok (プレイヤー名)
+	JoinRoom = 0,  ///< 部屋を作成・参加 (部屋名)
+	JoinOK,        ///< 部屋の参加ok (プレイヤー名)
 	JoinNG,
 	LobbyMembers,    ///< ロビー内メンバー一覧
 	ReadySelf,       ///< ロビー内で準備ok
@@ -12,6 +12,8 @@ enum struct ProtocolType : uint8_t
 	StartedGame,     ///< ゲームが開始された
 	UpdatePlayer,    ///< プレイヤーの情報更新
 	UpdatedPlayers,  ///< 全プレイヤーの更新情報
+	UpdateEnemy,     ///< 敵の情報更新
+	UpdatedEnemies,  ///< すべての敵の情報更新
 	LoadedTerrain,   ///< 地形のチャンク情報を取得
 	FinishGame,      ///< ゲームが終わった
 	ResultInfo,      ///< 結果情報

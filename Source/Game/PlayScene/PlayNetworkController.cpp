@@ -5,6 +5,8 @@
 #include <Game/Network/NetworkSessionManager.h>
 #include <Game/Network/Protocols/UpdatePlayer.h>
 #include <Game/Network/Protocols/UpdatedPlayers.h>
+#include <Game/Network/Protocols/UpdateEnemy.h>
+#include <Game/Network/Protocols/UpdatedEnemies.h>
 
 #include "../TitleScene/TitleScene.h"
 
@@ -37,7 +39,7 @@ void PlayNetworkController::Update()
 			    if (_event.type == ENetTransport::EventType::Disconnected)
 			    {
 				    Get<SceneManager>().Move<TitleScene>();
-				    return; // 通信切断
+				    return;  // 通信切断
 			    }
 
 			    ProtocolType protocolType = converter.GetProtocolType(_event.data);
@@ -54,6 +56,23 @@ void PlayNetworkController::Update()
 				    VCU_LOG("Receive UpdatedPlayers:{}", message.flag);
 				    break;
 			    }
+			    case ProtocolType::UpdatedEnemies:
+			    {
+				    VCU_LOG("UpdatedEnemiesを受信した！");
+				    Protocol::UpdatedEnemies message{};
+				    converter.ToMessage(_event.data, message);
+
+				    // 受信した敵データの数を確認
+				    VCU_LOG("敵ID数: {}", message.enemyIds.Size());
+				    VCU_LOG("敵種類数: {}", message.enemyTypes.Size());
+				    VCU_LOG("座標データ数: {}", message.positions.Size());
+				    VCU_LOG("回転データ数: {}", message.rotations.Size());
+
+				    Get<SessionManager>()
+				        .UpdateEnemies(message.enemyIds, message.enemyTypes, message.positions, message.rotations);
+
+				    break;
+			    }
 			    default:
 				    VCU_LOG("想定外の謎プロトコルを取得:{}", static_cast<int>(protocolType));
 				    break;
@@ -61,7 +80,7 @@ void PlayNetworkController::Update()
 		    });
 
 		Transform& playerTransform = Get<Transform>(objPlayer);
-		IMainCamera& mainCamera = Get<IMainCamera>(objCamera);
+		IMainCamera& mainCamera    = Get<IMainCamera>(objCamera);
 
 		Protocol::UpdatePlayer message{};
 		message.positionX = playerTransform.position.x;
