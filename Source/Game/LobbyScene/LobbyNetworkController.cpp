@@ -31,7 +31,7 @@ void LobbyNetworkController::Update()
 			    if (_event.type == ENetTransport::EventType::Disconnected)
 			    {
 				    Get<SceneManager>().Move<TitleScene>();
-				    return; // 通信切断
+				    return;  // 通信切断
 			    }
 
 			    ProtocolType protocolType = converter.GetProtocolType(_event.data);

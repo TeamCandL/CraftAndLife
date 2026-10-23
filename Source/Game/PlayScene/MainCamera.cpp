@@ -7,15 +7,15 @@
 void MainCamera::Start()
 {
 	objUpdater = GetScene().Instantiate<TPSCamera>();
-	position = {0.0f, 0.0f, -10.0f};
+	position   = { 0.0f, 0.0f, -10.0f };
 }
 
 void MainCamera::Update()
 {
 	RawMouseInputManager& rawMouseInput = Get<cha::RawMouseInputManager>();
-	CursorSystem& cursor = Get<CursorSystem>();
-	InputSystem& input = Get<InputSystem>();
-	CameraSystemData& camera = Get<CameraSystem>().Data();
+	CursorSystem& cursor                = Get<CursorSystem>();
+	InputSystem& input                  = Get<InputSystem>();
+	CameraSystemData& camera            = Get<CameraSystem>().Data();
 
 	ImGui::Begin("DebugCamera");
 
@@ -54,7 +54,7 @@ void MainCamera::Update()
 	if (rawMouseInput.GetMouseDown(MouseCode_Left))
 	{
 		isHideCursor = true;
-		cursor.SetVisible(false); // 非表示に
+		cursor.SetVisible(false);  // 非表示に
 		cursor.ChangeMode(CursorMode_CenterLock);
 	}
 
@@ -66,7 +66,7 @@ void MainCamera::Update()
 	if (input.GetKeyDown(KeyCode::Escape))
 	{
 		isHideCursor = false;
-		cursor.SetVisible(true); // 表示する
+		cursor.SetVisible(true);  // 表示する
 		cursor.ChangeMode(CursorMode_Free);
 		return;
 	}
@@ -82,15 +82,17 @@ void MainCamera::Update()
 	}
 }
 
-void MainCamera::SetPosition(const Vec3 _worldPosition)
+void MainCamera::SetPosition(
+    const Vec3 _worldPosition)
 {
 	position = _worldPosition;
 
-	CameraSystemData& cameraSystemData = Get<CameraSystem>().Data();
+	CameraSystemData& cameraSystemData  = Get<CameraSystem>().Data();
 	cameraSystemData.transform.position = position;
 }
 
-void MainCamera::ChangeUpdater(const GameObject _objUpdater)
+void MainCamera::ChangeUpdater(
+    const GameObject _objUpdater)
 {
 	VCU_ASSERT(_objUpdater.IsEmpty() && "渡された更新処理オブジェクトが空っぽであった");
 
@@ -98,7 +100,8 @@ void MainCamera::ChangeUpdater(const GameObject _objUpdater)
 	objUpdater = _objUpdater;
 }
 
-void MainCamera::UpdatePositionFromTarget(const GameObject _objTarget)
+void MainCamera::UpdatePositionFromTarget(
+    const GameObject _objTarget)
 {
 	if (!objUpdater.IsEmpty())
 	{

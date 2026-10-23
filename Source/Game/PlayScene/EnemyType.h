@@ -10,15 +10,20 @@ enum EnemyType
 	EnemyType_Max,
 };
 
-inline EnemyType ToEnemyType(int typeId)
+inline EnemyType ToEnemyType(
+    int typeId)
 {
-    switch (typeId)
-    {
-    case 0: return EnemyType::Skeleton;
-    case 1: return EnemyType::Spider;
-    case 2: return EnemyType::Bat;
-    case 3: return EnemyType::Dragon;
-    default:
-        throw std::invalid_argument("不正なEnemyType ID");
-    }
+	switch (typeId)
+	{
+	case 0:
+		return EnemyType::Skeleton;
+	case 1:
+		return EnemyType::Spider;
+	case 2:
+		return EnemyType::Bat;
+	case 3:
+		return EnemyType::Dragon;
+	default:
+		throw std::invalid_argument("不正なEnemyType ID");
+	}
 }

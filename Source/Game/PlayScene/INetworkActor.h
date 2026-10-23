@@ -4,8 +4,8 @@
 /// @brief ネットワークアクターのインタフェース
 class INetworkActor
 {
-public:
-	INetworkActor() = default;
+  public:
+	INetworkActor()          = default;
 	virtual ~INetworkActor() = default;
 
 	/// @brief このネットワークアクターがホストであるか

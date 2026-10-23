@@ -14,14 +14,18 @@ void DayController::Update()
 
 	if (currentTimeSec <= FLT_EPSILON || boost <= FLT_EPSILON)
 	{
-		return; // 0 なら無視
+		return;  // 0 なら無視
 	}
 
 	currentTimeSec = std::fmodf(currentTimeSec, skyAnimKeys.back().timeSec);
 
 	auto itr = std::find_if(
-	    skyAnimKeys.begin(), skyAnimKeys.end(),
-	    [this](const SkyAnimKey& _key) { return currentTimeSec <= _key.timeSec; });
+	    skyAnimKeys.begin(),
+	    skyAnimKeys.end(),
+	    [this](const SkyAnimKey& _key)
+	    {
+		    return currentTimeSec <= _key.timeSec;
+	    });
 
 	if (itr == skyAnimKeys.end())
 	{
@@ -32,6 +36,6 @@ void DayController::Update()
 	itr--;
 	SkyAnimKey& begin = *itr;
 
-	const float RATIO = (currentTimeSec - begin.timeSec) / (end.timeSec - begin.timeSec);
+	const float RATIO               = (currentTimeSec - begin.timeSec) / (end.timeSec - begin.timeSec);
 	Get<Sky>(objSky).Data().skyTime = Float4::Lerp(begin.skyParam, end.skyParam, RATIO);
 }

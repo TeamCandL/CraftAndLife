@@ -3,7 +3,7 @@
 
 struct OtherEnemyControllerData
 {
-	std::unordered_map<int, GameObject> idToObjOtherEnemy{}; ///< ほかの敵オブジェクト
+	std::unordered_map<int, GameObject> idToObjOtherEnemy{};  ///< ほかの敵オブジェクト
 };
 
 /// @brief ほか敵オブジェクトを操作する

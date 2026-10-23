@@ -11,5 +11,5 @@ struct ItemInfo
 {
 	ItemInfo();
 
-	int32_t id{};					///<	アイテムID
+	int32_t id{};  ///<	アイテムID
 };

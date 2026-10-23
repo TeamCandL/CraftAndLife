@@ -3,7 +3,7 @@
 
 struct OtherPlayerControllerData
 {
-	std::map<std::string, GameObject> nameToObjOtherPlayer{}; ///< ほかプレイヤーのオブジェクト
+	std::map<std::string, GameObject> nameToObjOtherPlayer{};  ///< ほかプレイヤーのオブジェクト
 };
 
 /// @brief ほかプレイヤーオブジェクトを操作する

@@ -15,7 +15,8 @@ namespace Protocol
 
 		/// @brief メンバーをロードする
 		/// @param _registry メンバーを登録するやつ
-		void LoadMembers(MessageRegistry& _registry) override
+		void LoadMembers(
+		    MessageRegistry& _registry) override
 		{
 			_registry.AddMember(positionX)
 			    .AddMember(positionY)
@@ -46,4 +47,4 @@ namespace Protocol
 
 		int flag{};
 	};
-} // namespace Protocol
+}  // namespace Protocol

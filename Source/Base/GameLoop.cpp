@@ -37,18 +37,20 @@
 
 #include "ManagerRegistry.h"
 
-cha::GameLoop::GameLoop(const ClientConfig _clientConfig) :
-    clientConfig_{_clientConfig}
+cha::GameLoop::GameLoop(
+    const ClientConfig _clientConfig) :
+    clientConfig_{ _clientConfig }
 {
 }
 
-void cha::GameLoop::Run(const HINSTANCE _hInstance)
+void cha::GameLoop::Run(
+    const HINSTANCE _hInstance)
 {
 	HRESULT hResult = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	VCU_ASSERT(SUCCEEDED(hResult) && "CoInitializeExに失敗");
 	if (FAILED(hResult))
 	{
-		return; // 失敗なら即リターン
+		return;  // 失敗なら即リターン
 	}
 
 	IssueManager& issueManager = ManagerRegistry::Add<IssueManager>();
@@ -58,7 +60,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 
 	WinMessageManager& winMessage = ManagerRegistry::Add<WinMessageManager>(_hInstance);
 
-	constexpr size_t MAX_LOADSTRING{100};
+	constexpr size_t MAX_LOADSTRING{ 100 };
 
 	std::array<wchar_t, MAX_LOADSTRING> titleWStringBuffer{};
 	std::array<wchar_t, MAX_LOADSTRING> appNameWStringBuffer{};
@@ -70,8 +72,12 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	ManagerRegistry::Add<ScreenSize>(clientConfig_.clientSize);
 
 	WinWindowManager& winWindow = ManagerRegistry::Add<WinWindowManager>(
-	    clientConfig_.clientSize, clientConfig_.isWindow, _hInstance, winMessage.GetWndProc(),
-	    titleWStringBuffer.data(), appNameWStringBuffer.data());
+	    clientConfig_.clientSize,
+	    clientConfig_.isWindow,
+	    _hInstance,
+	    winMessage.GetWndProc(),
+	    titleWStringBuffer.data(),
+	    appNameWStringBuffer.data());
 
 	succeed = winWindow.Show();
 	if (!succeed)
@@ -81,7 +87,10 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	}
 
 	Dx11Manager& dx11Manager = ManagerRegistry::Add<Dx11Manager>(
-	    winWindow.GetWndHandle(), clientConfig_.clientSize, clientConfig_.shadowMapSize, clientConfig_.isWindow);
+	    winWindow.GetWndHandle(),
+	    clientConfig_.clientSize,
+	    clientConfig_.shadowMapSize,
+	    clientConfig_.isWindow);
 
 	succeed = dx11Manager.Initialize();
 	if (!succeed)
@@ -104,7 +113,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	UIManager& uiManager = ManagerRegistry::Add<UIManager>();
 
 	D2DManager& d2dManager = ManagerRegistry::Add<D2DManager>(dx11Manager);
-	succeed = d2dManager.Initialize();
+	succeed                = d2dManager.Initialize();
 	if (!succeed)
 	{
 		VCU_ASSERT(!succeed && "D2Dの初期化処理に失敗");
@@ -121,7 +130,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	}
 
 	VirtualInputManager& virtualInputManager = ManagerRegistry::Add<VirtualInputManager>();
-	succeed = virtualInputManager.Initialize();
+	succeed                                  = virtualInputManager.Initialize();
 	if (!succeed)
 	{
 		VCU_ASSERT(!succeed && "ボタン入力マネージャーの初期化に失敗");
@@ -144,7 +153,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 
 #ifdef USE_DISCORD_RPC
 	DiscordManager& discordManager = ManagerRegistry::Add<DiscordManager>();
-	succeed = discordManager.Initialize();
+	succeed                        = discordManager.Initialize();
 	if (!succeed)
 	{
 		VCU_ASSERT(!succeed && "DiscordManagerの初期化に失敗");
@@ -152,7 +161,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	}
 #endif
 
-	IGameLoopCallable& callableSceneManager{sceneManager};
+	IGameLoopCallable& callableSceneManager{ sceneManager };
 
 	while (true)
 	{
@@ -161,13 +170,15 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 			const std::wstring_view LAST_ERROR_MESSAGE = issueManager.GetLastErrorMessage();
 			if (LAST_ERROR_MESSAGE == L"ゲーム終了")
 			{
-				break; // 安全に終了
+				break;  // 安全に終了
 			}
 
 			int a = MessageBox(
-			    nullptr, std::format(L"{}", LAST_ERROR_MESSAGE).c_str(), VCU_WIDE("ゲームが異常終了しました！"),
+			    nullptr,
+			    std::format(L"{}", LAST_ERROR_MESSAGE).c_str(),
+			    VCU_WIDE("ゲームが異常終了しました！"),
 			    MB_OK | MB_ICONERROR);
-			break; // エラーを表示して終了
+			break;  // エラーを表示して終了
 		}
 
 		// ウィンドウメッセージを確認
@@ -179,7 +190,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 		if (!gameTime.Update())
 		{
 			Sleep(0);
-			continue; // フレーム更新がされなかったなら回帰
+			continue;  // フレーム更新がされなかったなら回帰
 		}
 
 		callableSceneManager.Refresh();

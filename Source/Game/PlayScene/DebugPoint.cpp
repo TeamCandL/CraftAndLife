@@ -10,7 +10,7 @@ void DebugPoint::Draw()
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	const auto& subParts{model.Get().subParts};
+	const auto& subParts{ model.Get().subParts };
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
@@ -20,6 +20,4 @@ void DebugPoint::Draw()
 	}
 }
 
-void DebugPoint::OnDestroy()
-{
-}
+void DebugPoint::OnDestroy() {}

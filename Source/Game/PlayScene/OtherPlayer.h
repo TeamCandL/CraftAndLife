@@ -5,26 +5,27 @@
 
 struct OtherPlayerData
 {
-	OtherPlayerData(const std::string& _name) :
-	    name{_name}
+	OtherPlayerData(
+	    const std::string& _name) :
+	    name{ _name }
 	{
 	}
 
-	Resource<Shader> shader{"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}}; ///< シェーダ
+	Resource<Shader> shader{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };  ///< シェーダ
 
-	Component<Name> name{};                                             ///< プレイヤー名
-	Component<Transform> transform{Vec3::Zero(), Vec3::One() * 200.0f}; ///< 座標系
+	Component<Name> name{};                                                ///< プレイヤー名
+	Component<Transform> transform{ Vec3::Zero(), Vec3::One() * 200.0f };  ///< 座標系
 
-	Resource<Model> aModel{"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-c.fbx"};
+	Resource<Model> aModel{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-c.fbx" };
 
 	std::array<Resource<Model>, PlayerRoleType_Max> models{
-	    Resource<Model>{"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx"},
-	    Resource<Model>{"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx"},
-	    Resource<Model>{"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx"},
-	    Resource<Model>{"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx"},
+		Resource<Model>{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx" },
+		Resource<Model>{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx" },
+		Resource<Model>{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx" },
+		Resource<Model>{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx" },
 	};
 
-	PlayerRoleType role{PlayerRoleType_Healer};
+	PlayerRoleType role{ PlayerRoleType_Healer };
 
 	int32_t animIndex{};
 };

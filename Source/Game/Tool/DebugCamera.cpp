@@ -2,9 +2,7 @@
 #include "DebugCamera.h"
 #include <Game/System/AbstructInputSystem.h>
 
-void DebugCamera::Start()
-{
-}
+void DebugCamera::Start() {}
 
 void DebugCamera::Update()
 {
@@ -15,12 +13,12 @@ void DebugCamera::Update()
 	CameraSystemData& camera = Get<CameraSystem>().Data();
 
 	AbstructInputSystem& input = Get<AbstructInputSystem>();
-	auto pPlayerInput = input.GetPlayerInput();
+	auto pPlayerInput          = input.GetPlayerInput();
 
 	// 回転スピード
-	const float ROTATE_SPEED{rotateSpeedPerSec * DELTA_TIME};
+	const float ROTATE_SPEED{ rotateSpeedPerSec * DELTA_TIME };
 	// 移動スピード
-	const float MOVE_SPEED{moveSpeedPerSec * DELTA_TIME};
+	const float MOVE_SPEED{ moveSpeedPerSec * DELTA_TIME };
 
 #pragma region カメラの回転処理
 	// カメラ移動をカメラの回転に適用

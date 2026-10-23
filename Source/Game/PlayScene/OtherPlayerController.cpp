@@ -2,9 +2,7 @@
 #include "OtherPlayer.h"
 #include <Game/Manager/SessionManager.h>
 
-void OtherPlayerController::Start()
-{
-}
+void OtherPlayerController::Start() {}
 
 void OtherPlayerController::Update()
 {
@@ -18,7 +16,12 @@ void OtherPlayerController::Update()
 		}
 	}
 
-	std::erase_if(nameToObjOtherPlayer, [this](const auto& nameAndObj) { return nameAndObj.second.IsEmpty(); });
+	std::erase_if(
+	    nameToObjOtherPlayer,
+	    [this](const auto& nameAndObj)
+	    {
+		    return nameAndObj.second.IsEmpty();
+	    });
 
 	sessionManager.ForeachPlayerStatus(
 	    [this, &sessionManager](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
