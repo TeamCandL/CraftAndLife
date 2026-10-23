@@ -7,6 +7,10 @@
 void Enemy::Start()
 {
 	SetWanderingCheckPoint(transform.position);
+	nowAttackCoolTime  = ATTACK_COOL_TIME;
+	nowDamagedCoolTime = DAMAGED_COOL_TIME;
+
+	obb.isTrigger = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
 }
 
 void Enemy::Update()
@@ -25,8 +29,8 @@ void Enemy::Update()
 	// 徘徊チェックポイントとの距離(差分)
 	float distX = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x - transform.position.x;
 	float distZ = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().z - transform.position.z;
-	float vecX = Math::GetSquareVec(distX, distZ);
-	float vecZ = Math::GetSquareVec(distZ, distX);
+	float vecX  = Math::GetSquareVec(distX, distZ);
+	float vecZ  = Math::GetSquareVec(distZ, distX);
 	// 差分を基に移動方向の計算
 	float angleY = Math::GetAngle(distX, distZ);
 
@@ -59,9 +63,18 @@ void Enemy::Update()
 	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
 
 	ImGui::End();
+
+	if (hp <= 0)
+	{
+		DestroyMe();
+	}
 }
 
-void Enemy::Move(float vecX_, float vecZ_, float spd_, float angleY_)
+void Enemy::Move(
+    float vecX_,
+    float vecZ_,
+    float spd_,
+    float angleY_)
 {
 	
 	transform.rotation = Quaternion::FromEuler(Vec3{-DirectX::XM_PIDIV2, angleY_, 0.0f});
@@ -76,7 +89,7 @@ void Enemy::Draw()
 
 	models[modelIndex].Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto& subParts{models[modelIndex].Get().subParts};
+	const auto& subParts{ models[modelIndex].Get().subParts };
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
@@ -95,7 +108,8 @@ void Enemy::AttackCollider()
 	}
 }
 
-void Enemy::Damaged(int32_t damage)
+void Enemy::Damaged(
+    int32_t damage)
 {
 	if (nowDamagedCoolTime <= 0.0)
 	{
@@ -104,16 +118,15 @@ void Enemy::Damaged(int32_t damage)
 	}
 }
 
-void Enemy::SetWanderingCheckPoint(Vec3 position_)
+void Enemy::SetWanderingCheckPoint(
+    Vec3 position_)
 {
 	if (objWanderingCheckPoint)
 	{
 		GetScene().Destroy(objWanderingCheckPoint);
 	}
 
-	Vec3 range_{
-	    WAN_REFERENCE - Random::GetRandom(WAN_RANGE), 0,
-	    WAN_REFERENCE - Random::GetRandom(WAN_RANGE)};
+	Vec3 range_{ WAN_REFERENCE - Random::GetRandom(WAN_RANGE), 0.0f, WAN_REFERENCE - Random::GetRandom(WAN_RANGE) };
 
 	position_ += range_;
 

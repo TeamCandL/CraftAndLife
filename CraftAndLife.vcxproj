@@ -114,6 +114,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -149,6 +153,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -182,6 +190,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -217,6 +229,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Library\enet\enet.c">
@@ -424,6 +440,7 @@
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\DayController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
@@ -434,6 +451,8 @@
     <ClCompile Include="Source\Game\PlayScene\MainCamera\GhostCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\IMainCameraUpdater.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\TPSCamera.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemy.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayer.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player.cpp" />
@@ -624,12 +643,18 @@
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
+    <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
+    <ClInclude Include="Source\Game\PlayScene\INetworkActor.h" />
     <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
-    <ClInclude Include="Source\Game\PlayScene\ItemInfo.h" />
-    <ClInclude Include="Source\Game\PlayScene\ItemSystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\NetworkActorServer.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemy.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
