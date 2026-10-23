@@ -25,14 +25,18 @@ void MainCamera::Update()
 
 	ImGui::DragFloat("rotationY", &camera.transform.rotation.y);
 
-	if (ImGui::Button("Ghost"))
+	if (ImGui::Button("Clear"))
 	{
 		GetScene().Destroy(objUpdater);
+	}
+	if (ImGui::Button("Ghost"))
+	{
+		//GetScene().Destroy(objUpdater);
 		objUpdater = GetScene().Instantiate<GhostCamera>();
 	}
 	if (ImGui::Button("TPS"))
 	{
-		GetScene().Destroy(objUpdater);
+		//GetScene().Destroy(objUpdater);
 		objUpdater = GetScene().Instantiate<TPSCamera>();
 	}
 

@@ -23,7 +23,7 @@ void BootSceneLogo::Update()
 		// ロゴの表示が終わったためシーン遷移する
 		 //Get<SceneManager>().Move<TitleScene>();
 		Get<SceneManager>().Move<MapTestScene>();
-		// Get<SceneManager>().Move<PlayScene>();
+		 //Get<SceneManager>().Move<PlayScene>();
 		return;
 	}
 
