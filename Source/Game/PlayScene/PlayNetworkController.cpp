@@ -58,14 +58,19 @@ void PlayNetworkController::Update()
 			    }
 			    case ProtocolType::UpdatedEnemies:
 			    {
+				    VCU_LOG("UpdatedEnemiesを受信した！");
 				    Protocol::UpdatedEnemies message{};
 				    converter.ToMessage(_event.data, message);
+
+				    // 受信した敵データの数を確認
+				    VCU_LOG("敵ID数: {}", message.enemyIds.Size());
+				    VCU_LOG("敵種類数: {}", message.enemyTypes.Size());
+				    VCU_LOG("座標データ数: {}", message.positions.Size());
+				    VCU_LOG("回転データ数: {}", message.rotations.Size());
 
 				    Get<SessionManager>()
 				        .UpdateEnemies(message.enemyIds, message.enemyTypes, message.positions, message.rotations);
 
-				    // VCU_LOG("Recive UpdatedEnemies:{}", message.flag);
-				    // VCU_LOG("よばれた");
 				    break;
 			    }
 			    default:

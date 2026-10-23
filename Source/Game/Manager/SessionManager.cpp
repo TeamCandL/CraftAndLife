@@ -156,6 +156,12 @@ void SessionManager::UpdateEnemies(
 
 		enemyStatus.enemyType = _enemyTypes[i];
 
+		if (_enemyTypes.Size() < count)
+		{
+			VCU_LOG("敵の種類データが不足しています。ID数: {}, 種類数: {}", count, _enemyTypes.Size());
+			return;
+		}
+
 		if (Vec3::AT_MAX * i >= _positions.Size())
 		{
 			VCU_LOG("取得した名前分の座標データのサイズが足りない({}個以上必要)", Vec3::AT_MAX * i);
