@@ -33,7 +33,8 @@ void PlayScene::Start()
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
-	Instantiate<PlayNetworkController>(objPlayer, objMainCamera);
+	GameObject objEnemy      = Instantiate<Enemy>();
+	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objEnemy);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>();
 }

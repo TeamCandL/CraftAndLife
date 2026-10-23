@@ -7,6 +7,6 @@ struct EnemyStatus
 {
 	int enemyId;
 	EnemyType enemyType;
-	Transform enemyPosition;
+	Vec3 enemyPosition;
 	float enemyAngleY;
 };
