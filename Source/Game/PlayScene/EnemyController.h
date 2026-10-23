@@ -1,11 +1,9 @@
 #pragma once
 #include <Game/Game.h>
 
-struct Enemy;
-
 struct EnemyControllerData
 {
-	std::vector<Enemy> allEnemys;  ///< 全ての敵の情報を格納する
+	std::vector<GameObject> allEnemys;  ///< 全ての敵の情報を格納する
 };
 
 struct EnemyController : ObjectBase<EnemyControllerData>
@@ -20,7 +18,7 @@ struct EnemyController : ObjectBase<EnemyControllerData>
 
 	/// @brief 全ての敵の座標を取得する
 	/// @return 座標一覧を返す
-	std::vector<Vec3> GetAllEnemyPosition() const;
-	std::vector<float> GetAllEnemyAngleY() const;
-	std::vector<int32_t> GetAllEnemyId() const;
+	std::vector<Vec3> GetAllEnemyPosition();
+	std::vector<float> GetAllEnemyAngleY();
+	std::vector<int32_t> GetAllEnemyId();
 };

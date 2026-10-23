@@ -5,40 +5,40 @@
 void EnemyController::AddEnemy(
     const GameObject _enemy)
 {
-	allEnemys.push_back(Get<Enemy>(_enemy));
+	allEnemys.push_back(_enemy);
 }
 
-std::vector<Vec3> EnemyController::GetAllEnemyPosition() const
+std::vector<Vec3> EnemyController::GetAllEnemyPosition()
 {
 	std::vector<Vec3> enemyPositions;
 
-	for (const Enemy& enemy : allEnemys)
+	for (const GameObject obj : allEnemys)
 	{
-		enemyPositions.push_back(enemy.GetPosition());
+		enemyPositions.push_back(Get<Enemy>(obj).GetPosition());
 	}
 
 	return enemyPositions;
 }
 
-std::vector<float> EnemyController::GetAllEnemyAngleY() const
+std::vector<float> EnemyController::GetAllEnemyAngleY()
 {
 	std::vector<float> enemyAngles;
 
-	for (const Enemy& enemy : allEnemys)
+	for (const GameObject obj : allEnemys)
 	{
-		enemyAngles.push_back(enemy.GetAngleY());
+		enemyAngles.push_back(Get<Enemy>(obj).GetAngleY());
 	}
 
 	return enemyAngles;
 }
 
-std::vector<int32_t> EnemyController::GetAllEnemyId() const
+std::vector<int32_t> EnemyController::GetAllEnemyId()
 {
 	std::vector<int32_t> enemyIds;
 
-	for (const Enemy& enemy : allEnemys)
+	for (const GameObject obj : allEnemys)
 	{
-		enemyIds.push_back(enemy.GetID());
+		enemyIds.push_back(Get<Enemy>(obj).GetID());
 	}
 
 	return enemyIds;

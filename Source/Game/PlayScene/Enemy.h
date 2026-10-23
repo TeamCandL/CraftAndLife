@@ -88,8 +88,11 @@ struct EnemyData
 
 	// Resource<Model> model{"Model/Enemy/Bat.fbx"};
 
-	Resource<Audio> attackSE{ "Sound/DoorChime2.wav" };  ///< 攻撃SE
-	Resource<Audio> damagedSE{ "Sound/Damaged.wav" };    ///< 被ダメージSE
+	//----------------------//
+	//---------/SE/---------//
+	//----------------------//
+	Resource<Audio> attackSE{ "Sound/Striking the enemy.mp3" };  ///< 攻撃SE
+	Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
 
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
