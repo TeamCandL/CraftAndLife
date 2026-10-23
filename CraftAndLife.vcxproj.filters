@@ -1247,6 +1247,9 @@
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyController.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\UI\TackBackground.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Base\Core\ComponentPool\ComponentPools.inl">
