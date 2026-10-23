@@ -6,8 +6,8 @@
 /// @brief 部屋に入ってからのプレイヤーとしてのセッションを管理する
 class SessionManager : public IManager
 {
-public:
-	SessionManager() = default;
+  public:
+	SessionManager()  = default;
 	~SessionManager() = default;
 
 	/// @brief セッション情報をリセットする
@@ -62,7 +62,11 @@ public:
 	/// @param _ememyTypes 敵の種類
 	/// @param _positions  座標情報
 	/// @param _rotations  回転情報
-	void UpdateEnemys(SizedBuffer<int>& _enemyIds, SizedBuffer<int>& _enemyTypes, SizedBuffer<float>& _positions, SizedBuffer<float>& _rotations);
+	void UpdateEnemies(
+	    SizedBuffer<int>& _enemyIds,
+	    SizedBuffer<int>& _enemyTypes,
+	    SizedBuffer<float>& _positions,
+	    SizedBuffer<float>& _rotations);
 
 	/// @brief 指定した敵が存在するか
 	/// @param _enemyId ステージに存在してる敵のID
@@ -77,17 +81,19 @@ public:
 	/// @brief 敵IDを参照する
 	/// @param _enemyId ステージに存在してる敵のID
 	/// @return 敵のステータスの参照
-	const InSessionStatus::EnemyStatus& RefEnemyStatus(int _enemyId) const
+	const InSessionStatus::EnemyStatus& RefEnemyStatus(
+	    int _enemyId) const
 	{
 		return inSessionStatus_.enemiesStatus.at(_enemyId);
 	}
 
-
-private:
-	InSessionStatus inSessionStatus_{}; ///< セッション内のステータス
+  private:
+	InSessionStatus inSessionStatus_{};  ///< セッション内のステータス
 };
 
-template <typename Func> inline void SessionManager::ForeachPlayerStatus(Func&& _func)
+template <typename Func>
+inline void SessionManager::ForeachPlayerStatus(
+    Func&& _func)
 {
 	for (const auto& [name, status] : inSessionStatus_.playersStatus)
 	{
@@ -95,7 +101,9 @@ template <typename Func> inline void SessionManager::ForeachPlayerStatus(Func&& 
 	}
 }
 
-template <typename Func> inline void SessionManager::ForeachEnemyStatus(Func&& _func)
+template <typename Func>
+inline void SessionManager::ForeachEnemyStatus(
+    Func&& _func)
 {
 	for (const auto& [id, status] : inSessionStatus_.enemiesStatus)
 	{

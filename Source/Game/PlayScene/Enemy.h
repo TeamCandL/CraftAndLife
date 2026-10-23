@@ -8,7 +8,7 @@ namespace EnemyParam
 {
 	const std::vector<int32_t> Hp{ 100, 50, 30, 500 };         ///< 体力
 	const std::vector<int32_t> Damage{ 10, 5, 3, 50 };         ///< 攻撃力
-	const std::vector<float> Speed{ 2.5f, 4.0f, 6.0f, 1.5f };  ///< 移動速度
+	const std::vector<float> Speed{ 2.5f, 4.0f, 6.5f, 1.5f };  ///< 移動速度
 }  // namespace EnemyParam
 
 struct EnemyData
@@ -119,6 +119,7 @@ struct EnemyData
 	const float ATTACK_COLL_LIFE_TIME{ 1.0f };  ///< 攻撃判定の寿命
 	const float DAMAGED_COOL_TIME{ 1.0f };      ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
+	bool alive{ true };
 
 	const float WAN_RANGE{ 15.0f };  ///< 徘徊範囲
 	const float WAN_REFERENCE{
@@ -153,6 +154,9 @@ struct Enemy : ObjectBase<EnemyData>
 	/// @brief
 	/// @param damage 受けるダメージ量
 	void Damaged(int32_t damage);
+	/// @brief 生死を設定
+	/// @param alive_ 生死の状態
+	void SetAlive(bool alive_);
 	/// @brief アニメーション再生(仮)
 	/// @param animIndex_ アニメーション番号
 	/// @param state_ アニメーションの状態

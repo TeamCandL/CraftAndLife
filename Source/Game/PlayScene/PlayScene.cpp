@@ -11,6 +11,8 @@
 #include <Game/Common/Sky.h>
 #include <Game/Terrain/Terrain.h>
 #include "DayController.h"
+#include "OtherEnemy.h"
+#include "OtherEnemyController.h"
 #include "PlaySceneUIController.h"
 
 void PlayScene::Start()
@@ -24,7 +26,9 @@ void PlayScene::Start()
 
 	Instantiate<DayController>(objSky);
 	Instantiate<Enemy>();  // 仮設置
+	Instantiate<OtherEnemy>(1, EnemyType::Skeleton);
 	Instantiate<OtherPlayerController>();
+	Instantiate<OtherEnemyController>();
 
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();

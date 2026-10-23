@@ -9,6 +9,8 @@ void Enemy::Start()
 	SetWanderingCheckPoint(transform.position);
 	nowAttackCoolTime  = ATTACK_COOL_TIME;
 	nowDamagedCoolTime = DAMAGED_COOL_TIME;
+
+	obb.isTrigger = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
 }
 
 void Enemy::Update()
@@ -17,6 +19,12 @@ void Enemy::Update()
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
 	ImGui::End();
+
+	if (hp <= 0)
+	{
+		SetAlive(false);
+	}
+
 
 	// 徘徊チェックポイントとの距離(差分)
 	float distX = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x - transform.position.x;
@@ -68,7 +76,8 @@ void Enemy::Move(
     float spd_,
     float angleY_)
 {
-	transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, angleY_, 0.0f });
+	
+	transform.rotation = Quaternion::FromEuler(Vec3{-DirectX::XM_PIDIV2, angleY_, 0.0f});
 	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
 	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
 }

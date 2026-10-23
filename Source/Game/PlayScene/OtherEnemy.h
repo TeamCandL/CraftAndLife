@@ -5,30 +5,33 @@
 
 struct OtherEnemyData
 {
-	OtherEnemyData(int _enemyId, EnemyType _enemyType) :
-	    enemyId{_enemyId},
-	    enemyType{_enemyType}
+	OtherEnemyData(
+	    int _enemyId,
+	    EnemyType _enemyType) :
+	    enemyId{ _enemyId },
+	    enemyType{ _enemyType }
 	{
 	}
 
-	Resource<Shader> shader{"Shader/Unlit.hlsl", RasterizerConfig{.cullMode = D3D11_CULL_FRONT}}; ///< シェーダ
+	Resource<Shader> shader{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };  ///< シェーダ
 
-	int enemyId{}; ///< 敵ID
-	EnemyType enemyType{}; ///<今の敵の種類
+	int enemyId{};          ///< 敵ID
+	EnemyType enemyType{};  ///< 今の敵の種類
 
 	std::array<Resource<Model>, EnemyType_Max> models{
-	    Resource<Model>{"Model/Enemy/Skeleton.fbx"},
-	    Resource<Model>{"Model/Enemy/Spider.fbx"},
-	    Resource<Model>{"Model/Enemy/Bat.fbx"},
-	    Resource<Model>{"Model/Enemy/Dragon.fbx"},
+		Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
+		Resource<Model>{ "Model/Enemy/Spider.fbx" },
+		Resource<Model>{ "Model/Enemy/Bat.fbx" },
+		Resource<Model>{ "Model/Enemy/Dragon.fbx" },
 	};
-	
-	Component<Transform> transform{Vec3{}, Quaternion::FromEuler(Vec3{-DirectX::XM_PIDIV2, 0.0f, 0.0f})}; ///< 座標系
+
+	Component<Transform> transform{ Vec3{},
+		                            Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, 0.0f, 0.0f }) };  ///< 座標系
 
 	int32_t animIndex{};
 };
 
-struct OtherEnemy : ObjectBase<OtherEnemyData>
+struct OtherEnemy : ObjectBase<OtherEnemyData>, IPlayer
 {
 	using ObjectBase<OtherEnemyData>::ObjectBase;
 
@@ -38,4 +41,7 @@ struct OtherEnemy : ObjectBase<OtherEnemyData>
 	void Update() override;
 	/// @brief 描画処理
 	void Draw() override;
+
+	Vec3 GetPosition() const override;
+	float GetAngleY() const override;
 };

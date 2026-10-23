@@ -1232,9 +1232,7 @@
     <ClInclude Include="Source\Base\Core\Resource\Font.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\PlayScene\EnemyType.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
+    
     <ClInclude Include="Source\Game\PlayScene\INetworkActor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -1248,6 +1246,18 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\PlayScene\UI\TackBackground.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\EnemyType.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\NetworkActorServer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
