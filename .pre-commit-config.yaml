@@ -3,5 +3,5 @@ repos:
     rev: v19.1.0
     hooks:
       - id: clang-format
-        types_or: [c++, c, objective-c++]
+        types_or: [c++, c]
         files: '^(?:Source)/.*\.(cpp|c|h|hpp|inl)$'
