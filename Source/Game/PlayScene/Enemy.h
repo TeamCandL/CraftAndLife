@@ -88,7 +88,11 @@ struct EnemyData
 
 	// Resource<Model> model{"Model/Enemy/Bat.fbx"};
 
-	Resource<Audio> attackSE{ "../Resource/Sound/DoorChime2" };  ///< 攻撃SE
+	//----------------------//
+	//---------/SE/---------//
+	//----------------------//
+	Resource<Audio> attackSE{ "Sound/Striking the enemy.mp3" };  ///< 攻撃SE
+	Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
 
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
@@ -109,9 +113,13 @@ struct EnemyData
 
 	int animIndex{};  ///< アニメーションのインデクス
 
+	GameObject objOtherPlayerController{};  ///< 他プレイヤーのオブジェクト
+	GameObject objEnemyController{};        ///< 敵一覧
+
 	//-----------------------------------------//
 	// パラメータ//-----------------------------//
 	//-----------------------------------------//
+	int32_t id{};                               ///< ID
 	int32_t hp{};                               ///< 体力
 	int32_t damage{};                           ///< 攻撃力
 	float speed{};                              ///< 移動速度
@@ -150,6 +158,21 @@ struct Enemy : ObjectBase<EnemyData>
 
 	/// @brief 描画処理
 	void Draw() override;
+
+	/// @brief 現在地の座標を返すよ
+	/// @return
+	Vec3 GetPosition() const
+	{
+		return transform.position;
+	}
+	float GetAngleY() const
+	{
+		return angleY;
+	}
+	int32_t GetID() const
+	{
+		return id;
+	}
 
 	/// @brief 攻撃判定の生成
 	void AttackCollider();
