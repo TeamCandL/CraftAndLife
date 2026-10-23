@@ -8,7 +8,8 @@ struct UIImage : ComponentBase<UIImage>
 
 	UIImage(
 	    const Resource<ResourceType::Texture>& _texture) :
-	    texture{ _texture }
+	    texture{ _texture },
+	    baseColor{ Color::WHITE }
 	{
 	}
 

@@ -31,11 +31,6 @@ void Transform::UpdateFamily()
 		normal = localNormal;
 		world  = local;
 	}
-	else
-	{
-		normal = localNormal;
-		world  = local;
-	}
 }
 
 void Transform::UpdateSelf()

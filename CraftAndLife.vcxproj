@@ -660,6 +660,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus .h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Entity.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\INetworkActor.h" />
     <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
