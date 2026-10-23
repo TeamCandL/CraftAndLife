@@ -1,11 +1,18 @@
 #include "Enemy.h"
 #include "EnemyAttackColl.h"
 #include "pch\pch.h"
+#include <Game/System/AudioSystem.h>
 #include <shigaLibrary/SgRandom.h>
 #include <shigaLibrary/SgMath.h>
 
+#include "OtherPlayerController.h"
+#include "OtherPlayer.h"
+#include "EnemyController.h"
+
 void Enemy::Start()
 {
+	Get<EnemyController>(objEnemyController).AddEnemy(ToGameObject());
+
 	SetWanderingCheckPoint(transform.position);
 	nowAttackCoolTime  = ATTACK_COOL_TIME;
 	nowDamagedCoolTime = DAMAGED_COOL_TIME;
@@ -19,6 +26,11 @@ void Enemy::Update()
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
 	ImGui::End();
+
+	if (hp <= 0)
+	{
+		SetAlive(false);
+	}
 
 	// 徘徊チェックポイントとの距離(差分)
 	float distX = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x - transform.position.x;
@@ -73,6 +85,11 @@ void Enemy::Move(
 	transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, angleY_, 0.0f });
 	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
 	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
+
+	for (auto& [name, obj] : Get<OtherPlayerController>(objOtherPlayerController).Data().nameToObjOtherPlayer)
+	{
+		Vec3 distToTarget = Get<OtherPlayer>(obj).GetPosition();
+	}
 }
 
 void Enemy::Draw()
@@ -96,6 +113,8 @@ void Enemy::AttackCollider()
 {
 	if (nowAttackCoolTime <= 0.0f)
 	{
+		Get<AudioSystem>().Play(attackSE);
+
 		GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
 		nowAttackCoolTime = ATTACK_COOL_TIME;
 	}

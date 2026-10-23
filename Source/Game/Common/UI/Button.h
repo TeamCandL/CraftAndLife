@@ -12,25 +12,28 @@ namespace UI
 			const std::string_view _push,
 			const std::string_view _content,
 			const Vec2 _begin,
-			const Vec2 _scale
+			const Vec2 _scale,
+			Resource<ResourceType::Font> _font = {}
 		) :
 			textureNormal{ _normal },
 			textureHover{ _hover },
 			texturePush{ _push },
 			transform{ _begin, _scale },
-			text{ _content }
+			text{ font, _content }
 		{}
 	
-		std::string_view content{};  // 表示内容
+
+		Resource<ResourceType::Font> font{};    // ボタンの文字フォント
+		Resource<ResourceType::Texture> textureNormal{};  // 普通のボタン
+		Resource<ResourceType::Texture> textureHover{};   // カーソルが当たってるボタン
+		Resource<ResourceType::Texture> texturePush{};    // 押されたボタン
 
 		Component<UITransform> transform{};   // UI座標系
 		Component<UIImage> sprite{};          // UI画像
 		Component<UIRaycastTarget> target{};  // 当たり判定用
-		Component<UIText> text{};             // ボタンのテキスト
+		Component<UIText> text;             // ボタンのテキスト
 	
-		Resource<ResourceType::Texture> textureNormal{};  // 普通のボタン
-		Resource<ResourceType::Texture> textureHover{};   // カーソルが当たってるボタン
-		Resource<ResourceType::Texture> texturePush{};    // 押されたボタン
+		std::string_view content{};  // 表示内容
 	};
 	
 	/// @brief ボタンUIオブジェクト

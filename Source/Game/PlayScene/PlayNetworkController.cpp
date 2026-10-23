@@ -7,6 +7,7 @@
 #include <Game/Network/Protocols/UpdatedPlayers.h>
 #include <Game/Network/Protocols/UpdateEnemy.h>
 #include <Game/Network/Protocols/UpdatedEnemies.h>
+#include <Game/PlayScene/Enemy.h>
 
 #include "../TitleScene/TitleScene.h"
 
@@ -59,17 +60,20 @@ void PlayNetworkController::Update()
 			    case ProtocolType::UpdatedEnemies:
 			    {
 				    VCU_LOG("UpdatedEnemiesを受信した！");
-				    Protocol::UpdatedEnemies message{};
-				    converter.ToMessage(_event.data, message);
+				    Protocol::UpdatedEnemies enemyMessage{};
+				    converter.ToMessage(_event.data, enemyMessage);
 
 				    // 受信した敵データの数を確認
-				    VCU_LOG("敵ID数: {}", message.enemyIds.Size());
-				    VCU_LOG("敵種類数: {}", message.enemyTypes.Size());
-				    VCU_LOG("座標データ数: {}", message.positions.Size());
-				    VCU_LOG("回転データ数: {}", message.rotations.Size());
+				    VCU_LOG("敵ID数: {}", enemyMessage.enemyIds.Size());
+				    VCU_LOG("敵種類数: {}", enemyMessage.enemyTypes.Size());
+				    VCU_LOG("座標データ数: {}", enemyMessage.positions.Size());
+				    VCU_LOG("回転データ数: {}", enemyMessage.rotations.Size());
 
-				    Get<SessionManager>()
-				        .UpdateEnemies(message.enemyIds, message.enemyTypes, message.positions, message.rotations);
+				    Get<SessionManager>().UpdateEnemies(
+				        enemyMessage.enemyIds,
+				        enemyMessage.enemyTypes,
+				        enemyMessage.positions,
+				        enemyMessage.rotations);
 
 				    break;
 			    }
@@ -93,8 +97,24 @@ void PlayNetworkController::Update()
 		static int32_t counter{};
 		message.flag = counter++;
 
-		networkSessionManager.Send(message);
 		VCU_LOG("更新処理送信: {}", counter);
+
+		networkSessionManager.Send(message);
+
+		Transform& enemyTransform = Get<Transform>(objEnemy);
+		Quaternion& enemyRotation = Get<Quaternion>(objEnemy);
+		Protocol::UpdateEnemy enemyMessage{};
+		enemyMessage.positionX = enemyTransform.position.x;
+		enemyMessage.positionY = enemyTransform.position.y;
+		enemyMessage.positionZ = enemyTransform.position.z;
+
+		enemyMessage.rotationX = enemyTransform.rotation.x;
+		enemyMessage.rotationY = enemyTransform.rotation.y;
+
+		static int32_t eCount{};
+		networkSessionManager.Send(enemyMessage);
+
+		VCU_LOG("敵更新処理送信: {}", eCount);
 	}
 	break;
 	default:
