@@ -446,6 +446,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\FPSCamera.cpp" />
@@ -652,6 +653,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\INetworkActor.h" />

@@ -5,8 +5,14 @@
 #include <shigaLibrary/SgRandom.h>
 #include <shigaLibrary/SgMath.h>
 
+#include "OtherPlayerController.h"
+#include "OtherPlayer.h"
+#include "EnemyController.h"
+
 void Enemy::Start()
 {
+	Get<EnemyController>(objEnemyController).AddEnemy(ToGameObject());
+
 	SetWanderingCheckPoint(transform.position);
 	nowAttackCoolTime  = ATTACK_COOL_TIME;
 	nowDamagedCoolTime = DAMAGED_COOL_TIME;
@@ -76,10 +82,14 @@ void Enemy::Move(
     float spd_,
     float angleY_)
 {
-
 	transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, angleY_, 0.0f });
 	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
 	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
+
+	for (auto& [name, obj] : Get<OtherPlayerController>(objOtherPlayerController).Data().nameToObjOtherPlayer)
+	{
+		Vec3 distToTarget = Get<OtherPlayer>(obj).GetPosition();
+	}
 }
 
 void Enemy::Draw()
