@@ -122,6 +122,7 @@ struct EnemyData
 	const float ATTACK_COLL_LIFE_TIME{1.0f}; ///< 攻撃判定の寿命
 	const float DAMAGED_COOL_TIME{1.0f};     ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{0.0f};          ///< 現在の被ダメージクールタイム
+	bool alive{true};
 
 	const int WAN_RANGE{100};               ///< 徘徊範囲
 	const int WAN_REFERENCE{WAN_RANGE / 2}; ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する
@@ -154,6 +155,9 @@ struct Enemy : ObjectBase<EnemyData>
 	/// @brief
 	/// @param damage 受けるダメージ量
 	void Damaged(int32_t damage);
+	/// @brief 生死を設定
+	/// @param alive_ 生死の状態
+	void SetAlive(bool alive_);
 	/// @brief アニメーション再生(仮)
 	/// @param animIndex_ アニメーション番号
 	/// @param state_ アニメーションの状態

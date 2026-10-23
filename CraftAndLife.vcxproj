@@ -428,6 +428,7 @@
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\FPSCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\GhostCamera.cpp" />
@@ -627,6 +628,8 @@
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemSystem.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
