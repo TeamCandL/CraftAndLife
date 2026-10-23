@@ -1,6 +1,6 @@
 #include "pch/pch.h"
 #include "MapTestScene.h"
-#include <..//Resource/MAP/MAP.h>
+#include <../Resource/MAP/MAP.h>
 #include <Game/Common/GameManager.h>
 #include <Game/Common/Sky.h>
 #include <Game/Tool/DebugCamera.h>
