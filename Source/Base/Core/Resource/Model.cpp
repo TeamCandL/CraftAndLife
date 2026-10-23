@@ -13,31 +13,37 @@ namespace
 	/// </summary>
 	/// <param name="_from">ufbx_matrix</param>
 	/// <returns>Mat4x4</returns>
-	static inline cha::Mat4x4 ConvertToMat4x4(const ufbx_matrix &_from)
+	static inline cha::Mat4x4 ConvertToMat4x4(
+	    const ufbx_matrix& _from)
 	{
 		return cha::Mat4x4{
-		    static_cast<float>(_from.m00), static_cast<float>(_from.m10),
-		    static_cast<float>(_from.m20), 0.0f, // 1行目: X軸
-		    static_cast<float>(_from.m01), static_cast<float>(_from.m11),
-		    static_cast<float>(_from.m21), 0.0f, // 2行目: Y軸
-		    static_cast<float>(_from.m02), static_cast<float>(_from.m12),
-		    static_cast<float>(_from.m22), 0.0f, // 3行目: Z軸
-		    static_cast<float>(_from.m03), static_cast<float>(_from.m13),
-		    static_cast<float>(_from.m23), 1.0f, // 4行目: 移動(Translation)
+			static_cast<float>(_from.m00), static_cast<float>(_from.m10),
+			static_cast<float>(_from.m20), 0.0f,  // 1行目: X軸
+			static_cast<float>(_from.m01), static_cast<float>(_from.m11),
+			static_cast<float>(_from.m21), 0.0f,  // 2行目: Y軸
+			static_cast<float>(_from.m02), static_cast<float>(_from.m12),
+			static_cast<float>(_from.m22), 0.0f,  // 3行目: Z軸
+			static_cast<float>(_from.m03), static_cast<float>(_from.m13),
+			static_cast<float>(_from.m23), 1.0f,  // 4行目: 移動(Translation)
 		};
 	}
 
 	/// @brief ufbx_vec4をfloat4に変換
 	/// @param _from ufbx_vec4
 	/// @return cha::Float4
-	static inline cha::Float4 ConvertToFloat4(const ufbx_vec4 &_from)
+	static inline cha::Float4 ConvertToFloat4(
+	    const ufbx_vec4& _from)
 	{
-		return cha::Float4{static_cast<float>(_from.x), static_cast<float>(_from.y), static_cast<float>(_from.z),
-		                   static_cast<float>(_from.w)};
+		return cha::Float4{ static_cast<float>(_from.x),
+			                static_cast<float>(_from.y),
+			                static_cast<float>(_from.z),
+			                static_cast<float>(_from.w) };
 	}
-} // namespace
+}  // namespace
 
-bool cha::ModelRegistry::TryLoad(fs::path &&_file, ModelResource &_out)
+bool cha::ModelRegistry::TryLoad(
+    fs::path&& _file,
+    ModelResource& _out)
 {
 	if (_file.extension() == ".fbx")
 	{
@@ -48,16 +54,18 @@ bool cha::ModelRegistry::TryLoad(fs::path &&_file, ModelResource &_out)
 	return false;
 }
 
-bool cha::ModelRegistry::TryLoadFbx(const fs::path &_file, ModelResource &_out)
+bool cha::ModelRegistry::TryLoadFbx(
+    const fs::path& _file,
+    ModelResource& _out)
 {
 	ufbx_error error{};
 	ufbx_load_opts options{};
 
-	options.target_axes = ufbx_axes_left_handed_y_up; // 左手座標系
+	options.target_axes = ufbx_axes_left_handed_y_up;  // 左手座標系
 
 	options.target_unit_meters = 1.0f;
 
-	ufbx_scene *pScene{ufbx_load_file(_file.string().c_str(), &options, &error)};
+	ufbx_scene* pScene{ ufbx_load_file(_file.string().c_str(), &options, &error) };
 	VCU_ASSERT(pScene && "FBXシーンの読み込みに失敗");
 	if (!pScene)
 	{
@@ -66,13 +74,13 @@ bool cha::ModelRegistry::TryLoadFbx(const fs::path &_file, ModelResource &_out)
 
 	_out.file = _file;
 
-	for (ufbx_node *pNode : pScene->nodes)
+	for (ufbx_node* pNode : pScene->nodes)
 	{
 		VCU_LOG("{}", pNode->name.data);
 
-		if (ufbx_mesh * pMesh{pNode->mesh}; pMesh)
+		if (ufbx_mesh * pMesh{ pNode->mesh }; pMesh)
 		{
-			for (auto &part : pMesh->material_parts)
+			for (auto& part : pMesh->material_parts)
 			{
 				ModelParts parts{};
 				parts.name = pNode->name.data;
@@ -83,20 +91,20 @@ bool cha::ModelRegistry::TryLoadFbx(const fs::path &_file, ModelResource &_out)
 					return false;
 				}
 
-				{ // マテリアル作成
+				{  // マテリアル作成
 					MaterialResource material{};
 
 					std::unique_ptr<ModelMaterialProperty> pModelProperty = std::make_unique<ModelMaterialProperty>();
-					pModelProperty->Get().toWorldMatrix = ConvertToMat4x4(pNode->node_to_parent);
+					pModelProperty->Get().toWorldMatrix                   = ConvertToMat4x4(pNode->node_to_parent);
 
 					// TODO: もしかしたら part.index が不適正かも
 
 					if (pNode->materials.count == 0)
 					{
-						continue; // マテリアル 0 なら無視
+						continue;  // マテリアル 0 なら無視
 					}
 
-					ufbx_material *pUfbxMaterial{pNode->materials[part.index]};
+					ufbx_material* pUfbxMaterial{ pNode->materials[part.index] };
 
 					pModelProperty->Get().hasTextureSkinAnim.x = FALSE;
 					pModelProperty->Get().hasTextureSkinAnim.y = pScene->skin_deformers.count > 0;
@@ -108,8 +116,8 @@ bool cha::ModelRegistry::TryLoadFbx(const fs::path &_file, ModelResource &_out)
 					    VCU_LOG("prop name :{}", prop.name.data);
 					}*/
 
-					{ // ディフューズカラー
-						ufbx_prop *pProp = ufbx_find_prop(&pUfbxMaterial->props, "DiffuseColor");
+					{  // ディフューズカラー
+						ufbx_prop* pProp = ufbx_find_prop(&pUfbxMaterial->props, "DiffuseColor");
 						if (pProp)
 						{
 							pModelProperty->Get().baseColor = ConvertToFloat4(pProp->value_vec4);
@@ -119,29 +127,30 @@ bool cha::ModelRegistry::TryLoadFbx(const fs::path &_file, ModelResource &_out)
 					// テクスチャがあるなら探す
 					if (pUfbxMaterial->textures.count > 0)
 					{
-						ufbx_material_texture textureInMaterial{pUfbxMaterial->textures[0]};
-						ufbx_texture *pTexture = textureInMaterial.texture;
+						ufbx_material_texture textureInMaterial{ pUfbxMaterial->textures[0] };
+						ufbx_texture* pTexture = textureInMaterial.texture;
 
 						if (pTexture && pTexture->filename.length > 0)
 						{
 							pModelProperty->Get().hasTextureSkinAnim.x = TRUE;
 
-							std::string_view textureFileName{pTexture->filename.data};
+							std::string_view textureFileName{ pTexture->filename.data };
 
 							// 埋め込みテクスチャ（Embedded）データが存在するかチェック
 							if (pTexture->content.size > 0 && pTexture->content.data != nullptr)
 							{
 								// 埋め込みデータの場合はメモリからテクスチャを作成する
 								// ※必要に応じて、独自マテリアルクラスにメモリからのロード機能を追加してください
-								material.texture = {TextureLoadConfig{
-								    pTexture->content.data, pTexture->content.size,
-								    textureFileName // 拡張子を判別するために元のファイル名も渡す
-								}};
+								material.texture = { TextureLoadConfig{
+									pTexture->content.data,
+									pTexture->content.size,
+									textureFileName  // 拡張子を判別するために元のファイル名も渡す
+								} };
 							}
 							else
 							{
 								// 【既存の処理】外部ファイル名からロードする
-								material.texture = {textureFileName};
+								material.texture = { textureFileName };
 							}
 						}
 					}
@@ -151,13 +160,13 @@ bool cha::ModelRegistry::TryLoadFbx(const fs::path &_file, ModelResource &_out)
 
 					material.TryLoad(std::move(pModelProperty));
 
-					parts.material = Resource<ResourceType::Material>{std::move(material)};
+					parts.material = Resource<ResourceType::Material>{ std::move(material) };
 				}
 
-				MaterialResource &transformMaterial = parts.transformMaterial.Get();
-				transformMaterial.slot = 3;
-				ModelTransformMaterialProperty *pProperty =
-				    static_cast<ModelTransformMaterialProperty *>(transformMaterial.pProperty.get());
+				MaterialResource& transformMaterial = parts.transformMaterial.Get();
+				transformMaterial.slot              = 3;
+				ModelTransformMaterialProperty* pProperty =
+				    static_cast<ModelTransformMaterialProperty*>(transformMaterial.pProperty.get());
 
 				(*pProperty)->toWorldMatrix =
 				    // cha::Mathf::RemoveScale(
@@ -180,14 +189,17 @@ bool cha::ModelRegistry::TryLoadFbx(const fs::path &_file, ModelResource &_out)
 		_out.isSkinnedModel = true;
 		if (!TryCreateBoneBuffer(_out.pBoneConstantBuffer))
 		{
-			return false; // 作成失敗
+			return false;  // 作成失敗
 		}
 	}
 
 	return true;
 }
 
-bool cha::ModelRegistry::TryLoadParts(ufbx_mesh *_pMesh, ufbx_mesh_part *_pPart, ModelParts &_out) const
+bool cha::ModelRegistry::TryLoadParts(
+    ufbx_mesh* _pMesh,
+    ufbx_mesh_part* _pPart,
+    ModelParts& _out) const
 {
 	std::vector<ModelVertex> vertices{};
 	std::vector<uint32_t> polyIndices;
@@ -196,39 +208,39 @@ bool cha::ModelRegistry::TryLoadParts(ufbx_mesh *_pMesh, ufbx_mesh_part *_pPart,
 	// 各マテリアルごとにポリゴンを処理
 	for (uint32_t polyIndex : _pPart->face_indices)
 	{
-		ufbx_face poly{_pMesh->faces[polyIndex]};
+		ufbx_face poly{ _pMesh->faces[polyIndex] };
 
 		// 面を三角化する
-		uint32_t polyCount{ufbx_triangulate_face(polyIndices.data(), polyIndices.size(), _pMesh, poly)};
+		uint32_t polyCount{ ufbx_triangulate_face(polyIndices.data(), polyIndices.size(), _pMesh, poly) };
 
 		for (uint32_t i = 0; i < polyCount * 3; i++)
 		{
-			uint32_t index{polyIndices[i]};
+			uint32_t index{ polyIndices[i] };
 
 			ModelVertex v{};
 
 			// 頂点の座標を取得
-			v.position = Vec3{_pMesh->vertex_position[index].v};
+			v.position = Vec3{ _pMesh->vertex_position[index].v };
 
 			// 頂点の法線を取得（存在しない場合はゼロベクトルを使用）
 			if (_pMesh->vertex_normal.indices.count > index && _pMesh->vertex_normal.values.count > 0)
 			{
-				v.normal = Vec3{ufbx_get_vertex_vec3(&_pMesh->vertex_normal, index).v};
+				v.normal = Vec3{ ufbx_get_vertex_vec3(&_pMesh->vertex_normal, index).v };
 			}
 			else
 			{
-				v.normal = Vec3{0.0f, 0.0f, 0.0f};
+				v.normal = Vec3{ 0.0f, 0.0f, 0.0f };
 			}
 
 			// 頂点のUVを取得（存在しない場合はデフォルト(0,0)を使用）
 			if (_pMesh->vertex_uv.indices.count > index && _pMesh->vertex_uv.values.count > 0)
 			{
-				v.uv = Vec2{ufbx_get_vertex_vec2(&_pMesh->vertex_uv, index).v};
+				v.uv   = Vec2{ ufbx_get_vertex_vec2(&_pMesh->vertex_uv, index).v };
 				v.uv.y = 1.0f - v.uv.y;
 			}
 			else
 			{
-				v.uv = Vec2{0.0f, 0.0f};
+				v.uv = Vec2{ 0.0f, 0.0f };
 			}
 
 			// 頂点にスキンメッシュアニメーション用のウェイトインデックスとウェイトを割り当てる
@@ -245,25 +257,25 @@ bool cha::ModelRegistry::TryLoadParts(ufbx_mesh *_pMesh, ufbx_mesh_part *_pPart,
 			if (_pMesh->skin_deformers.count > 0)
 			{
 				// TODO: 理論頂点ってなんぞや
-				ufbx_skin_deformer *pSkin = _pMesh->skin_deformers.data[0]; // でフォーマーは(理論頂点?)を0として取得
+				ufbx_skin_deformer* pSkin = _pMesh->skin_deformers.data[0];  // でフォーマーは(理論頂点?)を0として取得
 
 				if (pSkin)
 				{
 					// 各頂点に対してどのweightがついているかの範囲
 					ufbx_skin_vertex skinVertex = pSkin->vertices[originalVertexIndex];
 
-					uint32_t numWeights = skinVertex.num_weights;   // 頂点が影響するウェイトの数
-					uint32_t useWeights = std::min(numWeights, 4u); // 最大4つに制限
+					uint32_t numWeights = skinVertex.num_weights;    // 頂点が影響するウェイトの数
+					uint32_t useWeights = std::min(numWeights, 4u);  // 最大4つに制限
 
-					float weightSum = 0.0f; // ウェイトの影響度の合計
+					float weightSum = 0.0f;  // ウェイトの影響度の合計
 					for (uint32_t b = 0; b < useWeights; b++)
 					{
-						uint32_t weightIdx = skinVertex.weight_begin + b;             // ウェイトのインデクス
-						ufbx_skin_weight skinWeight = pSkin->weights.data[weightIdx]; // ウェイトを参照
+						uint32_t weightIdx          = skinVertex.weight_begin + b;     // ウェイトのインデクス
+						ufbx_skin_weight skinWeight = pSkin->weights.data[weightIdx];  // ウェイトを参照
 
 						v.boneIndices[b] = skinWeight.cluster_index;
-						v.boneWeights[b] = static_cast<float>(skinWeight.weight); // 影響度
-						weightSum += v.boneWeights[b];                            // 影響度を加算
+						v.boneWeights[b] = static_cast<float>(skinWeight.weight);  // 影響度
+						weightSum += v.boneWeights[b];                             // 影響度を加算
 					}
 
 					// ウェイトの影響度合計を1に正規化する
@@ -271,15 +283,15 @@ bool cha::ModelRegistry::TryLoadParts(ufbx_mesh *_pMesh, ufbx_mesh_part *_pPart,
 					{
 						for (uint32_t b = 0; b < 4; b++)
 						{
-							v.boneWeights[b] /= weightSum; // 正規化！
+							v.boneWeights[b] /= weightSum;  // 正規化！
 						}
 					}
-					else // もしウェイトの影響度合計が0なら割れないため1.0fする
+					else  // もしウェイトの影響度合計が0なら割れないため1.0fする
 					{
 						v.boneWeights[0] /= 1.0f;
 					}
 				}
-				else // もしスキン情報がないなら 1.0f をべた張り
+				else  // もしスキン情報がないなら 1.0f をべた張り
 				{
 					v.boneWeights[0] = 1.0f;
 				}
@@ -293,14 +305,14 @@ bool cha::ModelRegistry::TryLoadParts(ufbx_mesh *_pMesh, ufbx_mesh_part *_pPart,
 
 	// 頂点ストリーム
 	ufbx_vertex_stream streams[]{
-	    {vertices.data(), vertices.size(), sizeof(ModelVertex)},
+		{ vertices.data(), vertices.size(), sizeof(ModelVertex) },
 	};
 
 	std::vector<uint32_t> indices{};
 	indices.resize(_pPart->num_triangles * 3);
 
 	// 頂点重複を削除し、インデックスを作成
-	size_t verticesCount{ufbx_generate_indices(streams, 1, indices.data(), indices.size(), nullptr, nullptr)};
+	size_t verticesCount{ ufbx_generate_indices(streams, 1, indices.data(), indices.size(), nullptr, nullptr) };
 
 	// 前詰めされたからリサイズする
 	vertices.resize(verticesCount);
@@ -309,34 +321,39 @@ bool cha::ModelRegistry::TryLoadParts(ufbx_mesh *_pMesh, ufbx_mesh_part *_pPart,
 
 	if (TryCreateVertexBuffer(mesh.pVertexBuffer, vertices) && TryCreateIndexBuffer(mesh.pIndexBuffer, indices))
 	{
-		mesh.size = sizeof(ModelVertex);
+		mesh.size        = sizeof(ModelVertex);
 		mesh.vertexCount = static_cast<UINT>(vertices.size());
-		mesh.indexCount = static_cast<UINT>(indices.size());
-		_out.mesh = {std::move(mesh)};
-		return true; // 成功
+		mesh.indexCount  = static_cast<UINT>(indices.size());
+		_out.mesh        = { std::move(mesh) };
+		return true;  // 成功
 	}
 
-	return false; // どちらかバッファ作成失敗
+	return false;  // どちらかバッファ作成失敗
 }
 
-bool cha::ModelRegistry::TryCreateVertexBuffer(ComPtr<ID3D11Buffer> &_p, const std::vector<ModelVertex> _vertices) const
+bool cha::ModelRegistry::TryCreateVertexBuffer(
+    ComPtr<ID3D11Buffer>& _p,
+    const std::vector<ModelVertex> _vertices) const
 {
 	const D3D11_BUFFER_DESC DESC{
-	    .ByteWidth = static_cast<UINT>(sizeof(ModelVertex) * _vertices.size()),
-	    .Usage = D3D11_USAGE_DYNAMIC,
-	    .BindFlags = D3D11_BIND_VERTEX_BUFFER,
-	    .CPUAccessFlags = D3D11_CPU_ACCESS_WRITE,
-	    .MiscFlags = NULL,
-	    .StructureByteStride = 0,
+		.ByteWidth           = static_cast<UINT>(sizeof(ModelVertex) * _vertices.size()),
+		.Usage               = D3D11_USAGE_DYNAMIC,
+		.BindFlags           = D3D11_BIND_VERTEX_BUFFER,
+		.CPUAccessFlags      = D3D11_CPU_ACCESS_WRITE,
+		.MiscFlags           = NULL,
+		.StructureByteStride = 0,
 	};
 
 	D3D11_SUBRESOURCE_DATA data{
-	    .pSysMem = _vertices.data(),
+		.pSysMem = _vertices.data(),
 	};
 
 	HRESULT hResult{};
-	ManagerRegistry::Ref<Dx11Manager>().Ref([&hResult, &_p, DESC, data](const ComPtr<ID3D11Device> _pDevice)
-	{ hResult = _pDevice->CreateBuffer(&DESC, &data, _p.GetAddressOf()); });
+	ManagerRegistry::Ref<Dx11Manager>().Ref(
+	    [&hResult, &_p, DESC, data](const ComPtr<ID3D11Device> _pDevice)
+	    {
+		    hResult = _pDevice->CreateBuffer(&DESC, &data, _p.GetAddressOf());
+	    });
 	VCU_ASSERT(SUCCEEDED(hResult) && "FbxLoadで頂点バッファの作成に失敗");
 	if (FAILED(hResult))
 	{
@@ -346,24 +363,29 @@ bool cha::ModelRegistry::TryCreateVertexBuffer(ComPtr<ID3D11Buffer> &_p, const s
 	return true;
 }
 
-bool cha::ModelRegistry::TryCreateIndexBuffer(ComPtr<ID3D11Buffer> &_p, const std::vector<uint32_t> _indices) const
+bool cha::ModelRegistry::TryCreateIndexBuffer(
+    ComPtr<ID3D11Buffer>& _p,
+    const std::vector<uint32_t> _indices) const
 {
 	const D3D11_BUFFER_DESC DESC{
-	    .ByteWidth = static_cast<UINT>(sizeof(uint32_t) * _indices.size()),
-	    .Usage = D3D11_USAGE_DEFAULT,
-	    .BindFlags = D3D11_BIND_INDEX_BUFFER,
-	    .CPUAccessFlags = 0,
-	    .MiscFlags = NULL,
-	    .StructureByteStride = 0,
+		.ByteWidth           = static_cast<UINT>(sizeof(uint32_t) * _indices.size()),
+		.Usage               = D3D11_USAGE_DEFAULT,
+		.BindFlags           = D3D11_BIND_INDEX_BUFFER,
+		.CPUAccessFlags      = 0,
+		.MiscFlags           = NULL,
+		.StructureByteStride = 0,
 	};
 
 	D3D11_SUBRESOURCE_DATA data{
-	    .pSysMem = _indices.data(),
+		.pSysMem = _indices.data(),
 	};
 
 	HRESULT hResult{};
-	ManagerRegistry::Ref<Dx11Manager>().Ref([&hResult, &_p, DESC, data](const ComPtr<ID3D11Device> _pDevice)
-	{ hResult = _pDevice->CreateBuffer(&DESC, &data, _p.GetAddressOf()); });
+	ManagerRegistry::Ref<Dx11Manager>().Ref(
+	    [&hResult, &_p, DESC, data](const ComPtr<ID3D11Device> _pDevice)
+	    {
+		    hResult = _pDevice->CreateBuffer(&DESC, &data, _p.GetAddressOf());
+	    });
 	VCU_ASSERT(SUCCEEDED(hResult) && "FbxLoadでインデックスバッファの作成に失敗");
 	if (FAILED(hResult))
 	{
@@ -373,26 +395,28 @@ bool cha::ModelRegistry::TryCreateIndexBuffer(ComPtr<ID3D11Buffer> &_p, const st
 	return true;
 }
 
-bool cha::ModelRegistry::TryCreateBoneBuffer(ComPtr<ID3D11Buffer> &_p) const
+bool cha::ModelRegistry::TryCreateBoneBuffer(
+    ComPtr<ID3D11Buffer>& _p) const
 {
 	// シェーダー側の MAX_BONES (256) と完全にサイズを合わせる
 	const UINT bufferSize = sizeof(Mat4x4) * 256;
 
 	const D3D11_BUFFER_DESC DESC{
-	    .ByteWidth = bufferSize,
-	    .Usage = D3D11_USAGE_DYNAMIC,             // 毎フレーム書き換える
-	    .BindFlags = D3D11_BIND_CONSTANT_BUFFER,  // 定数バッファとしてバインド
-	    .CPUAccessFlags = D3D11_CPU_ACCESS_WRITE, // CPUからの書き込みを許可
-	    .MiscFlags = NULL,
-	    .StructureByteStride = 0,
+		.ByteWidth           = bufferSize,
+		.Usage               = D3D11_USAGE_DYNAMIC,         // 毎フレーム書き換える
+		.BindFlags           = D3D11_BIND_CONSTANT_BUFFER,  // 定数バッファとしてバインド
+		.CPUAccessFlags      = D3D11_CPU_ACCESS_WRITE,      // CPUからの書き込みを許可
+		.MiscFlags           = NULL,
+		.StructureByteStride = 0,
 	};
 
 	HRESULT hResult{};
-	ManagerRegistry::Ref<Dx11Manager>().Ref([&hResult, &_p, DESC](const ComPtr<ID3D11Device> _pDevice)
-	{
-		// 初期データは無し（nullptr）で空のバッファを作る
-		hResult = _pDevice->CreateBuffer(&DESC, nullptr, _p.GetAddressOf());
-	});
+	ManagerRegistry::Ref<Dx11Manager>().Ref(
+	    [&hResult, &_p, DESC](const ComPtr<ID3D11Device> _pDevice)
+	    {
+		    // 初期データは無し（nullptr）で空のバッファを作る
+		    hResult = _pDevice->CreateBuffer(&DESC, nullptr, _p.GetAddressOf());
+	    });
 
 	VCU_ASSERT(SUCCEEDED(hResult) && "ボーン用定数バッファの作成に失敗");
 	if (FAILED(hResult))
@@ -403,18 +427,20 @@ bool cha::ModelRegistry::TryCreateBoneBuffer(ComPtr<ID3D11Buffer> &_p) const
 	return true;
 }
 
-void cha::ModelResource::Draw(const float _deltaTime, const size_t _animIndex)
+void cha::ModelResource::Draw(
+    const float _deltaTime,
+    const size_t _animIndex)
 {
-	ModelResource &_model = *this;
+	ModelResource& _model = *this;
 
-	ufbx_scene *scene = _model.pRawScene;
+	ufbx_scene* scene = _model.pRawScene;
 	if (!scene || scene->anim_stacks.count == 0)
 		return;
 
-	const size_t PREV_PLAYING_ANIM_INDEX{_model.playingAnimIndex};
+	const size_t PREV_PLAYING_ANIM_INDEX{ _model.playingAnimIndex };
 	_model.playingAnimIndex = std::min(_animIndex, scene->anim_stacks.count - 1);
 
-	ufbx_anim_stack *stack = scene->anim_stacks.data[_model.playingAnimIndex]; // ひとまず0番目のモーション
+	ufbx_anim_stack* stack = scene->anim_stacks.data[_model.playingAnimIndex];  // ひとまず0番目のモーション
 
 	// アニメーションが変更されたなら再生時間を戻す
 	if (PREV_PLAYING_ANIM_INDEX != _model.playingAnimIndex)
@@ -426,25 +452,25 @@ void cha::ModelResource::Draw(const float _deltaTime, const size_t _animIndex)
 	// fmod を直接使うと currentAnimTime が大きくなると丸め誤差や大きなジャンプの原因になるため
 	// 細かく時間をラップしておく（ループ時の不連続なジャンプを緩和する）
 	_model.currentAnimTime += _deltaTime;
-	double duration = stack->time_end - stack->time_begin; // 総再生時間
+	double duration = stack->time_end - stack->time_begin;  // 総再生時間
 	double evalTime = stack->time_begin;
 	if (duration > 0.0)
 	{
 		// currentAnimTime を [0, duration) の範囲に保つ
 		while (_model.currentAnimTime >= duration)
 		{
-			_model.currentAnimTime -= duration;
+			_model.currentAnimTime -= static_cast<float>(duration);
 		}
 		while (_model.currentAnimTime < 0.0)
 		{
-			_model.currentAnimTime += duration;
+			_model.currentAnimTime += static_cast<float>(duration);
 		}
 
 		// 評価時間を決定
 		evalTime = _model.currentAnimTime + stack->time_begin;
 	}
 
-	ufbx_anim *anim = stack->anim;
+	ufbx_anim* anim = stack->anim;
 
 	// 確保サイズは elements.count のままにする（安全のため）
 	std::vector<DirectX::XMMATRIX> worldMatrices(scene->elements.count, DirectX::XMMatrixIdentity());
@@ -452,14 +478,20 @@ void cha::ModelResource::Draw(const float _deltaTime, const size_t _animIndex)
 	// 階層順にノードのワールド行列を計算
 	for (size_t i = 0; i < scene->nodes.count; ++i)
 	{
-		ufbx_node *node = scene->nodes.data[i];
+		ufbx_node* node         = scene->nodes.data[i];
 		ufbx_transform localTRS = ufbx_evaluate_transform(anim, node, evalTime);
 
 		// DirectXMathの型に変換してローカル行列を作成
-		DirectX::XMVECTOR t = DirectX::XMVectorSet((float)localTRS.translation.x, (float)localTRS.translation.y,
-		                                           (float)localTRS.translation.z, 1.0f);
-		DirectX::XMVECTOR r = DirectX::XMVectorSet((float)localTRS.rotation.x, (float)localTRS.rotation.y,
-		                                           (float)localTRS.rotation.z, (float)localTRS.rotation.w);
+		DirectX::XMVECTOR t = DirectX::XMVectorSet(
+		    (float)localTRS.translation.x,
+		    (float)localTRS.translation.y,
+		    (float)localTRS.translation.z,
+		    1.0f);
+		DirectX::XMVECTOR r = DirectX::XMVectorSet(
+		    (float)localTRS.rotation.x,
+		    (float)localTRS.rotation.y,
+		    (float)localTRS.rotation.z,
+		    (float)localTRS.rotation.w);
 		DirectX::XMVECTOR s =
 		    DirectX::XMVectorSet((float)localTRS.scale.x, (float)localTRS.scale.y, (float)localTRS.scale.z, 0.0f);
 		//{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -483,22 +515,36 @@ void cha::ModelResource::Draw(const float _deltaTime, const size_t _animIndex)
 	// -------------------------------------------------------------
 	if (scene->skin_deformers.count == 0)
 		return;
-	ufbx_skin_deformer *skin = scene->skin_deformers.data[0];
+	ufbx_skin_deformer* skin = scene->skin_deformers.data[0];
 
 	std::vector<cha::Mat4x4> skinningMatrices(256);
 	size_t numBones = std::min(skin->clusters.count, size_t(256));
 
 	for (size_t i = 0; i < numBones; ++i)
 	{
-		ufbx_skin_cluster *cluster = skin->clusters.data[i];
+		ufbx_skin_cluster* cluster = skin->clusters.data[i];
 
 		// ufbxから逆バインド行列を取得
 		ufbx_matrix m = cluster->geometry_to_bone;
 
 		// ヘルパー関数を変更できないため、ufbx の行列並びのまま初期化する
 		DirectX::XMMATRIX invBind = DirectX::XMMatrixSet(
-		    (float)m.v[0], (float)m.v[1], (float)m.v[2], 0.0f, (float)m.v[3], (float)m.v[4], (float)m.v[5], 0.0f,
-		    (float)m.v[6], (float)m.v[7], (float)m.v[8], 0.0f, (float)m.v[9], (float)m.v[10], (float)m.v[11], 1.0f);
+		    (float)m.v[0],
+		    (float)m.v[1],
+		    (float)m.v[2],
+		    0.0f,
+		    (float)m.v[3],
+		    (float)m.v[4],
+		    (float)m.v[5],
+		    0.0f,
+		    (float)m.v[6],
+		    (float)m.v[7],
+		    (float)m.v[8],
+		    0.0f,
+		    (float)m.v[9],
+		    (float)m.v[10],
+		    (float)m.v[11],
+		    1.0f);
 		// 注意: 前回追加したTransposeを削除（従来の挙動に合わせる）
 
 		// 安全対策: element_id を使って現在のワールド行列を取得
@@ -515,34 +561,38 @@ void cha::ModelResource::Draw(const float _deltaTime, const size_t _animIndex)
 		// HLSL の定数バッファ用に転置を行う（シェーダの要求に合わせる）
 		finalSkinMatrix = DirectX::XMMatrixTranspose(finalSkinMatrix);
 
-		DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4 *>(&skinningMatrices[i]), finalSkinMatrix);
+		DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&skinningMatrices[i]), finalSkinMatrix);
 	}
 
 	// -------------------------------------------------------------
 	// ③ 作成した行列配列を、Modelが持つ専用定数バッファへ転送＆バインド
 	// -------------------------------------------------------------
-	ManagerRegistry::Ref<Dx11Manager>().Ref([&](const ComPtr<ID3D11DeviceContext> _pContext)
-	{
-		D3D11_MAPPED_SUBRESOURCE mappedResource{};
-		HRESULT hr = _pContext->Map(_model.pBoneConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	ManagerRegistry::Ref<Dx11Manager>().Ref(
+	    [&](const ComPtr<ID3D11DeviceContext> _pContext)
+	    {
+		    D3D11_MAPPED_SUBRESOURCE mappedResource{};
+		    HRESULT hr =
+		        _pContext->Map(_model.pBoneConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-		if (SUCCEEDED(hr))
-		{
-			memcpy(mappedResource.pData, skinningMatrices.data(), sizeof(cha::Mat4x4) * 256);
-			_pContext->Unmap(_model.pBoneConstantBuffer.Get(), 0);
-		}
+		    if (SUCCEEDED(hr))
+		    {
+			    memcpy(mappedResource.pData, skinningMatrices.data(), sizeof(cha::Mat4x4) * 256);
+			    _pContext->Unmap(_model.pBoneConstantBuffer.Get(), 0);
+		    }
 
-		_pContext->VSSetConstantBuffers(4, 1, _model.pBoneConstantBuffer.GetAddressOf());
-	});
+		    _pContext->VSSetConstantBuffers(4, 1, _model.pBoneConstantBuffer.GetAddressOf());
+	    });
 }
 
-void cha::ModelResource::UpdateAnim(const float _deltaTime, const int _animIndex)
+void cha::ModelResource::UpdateAnim(
+    const float _deltaTime,
+    const int _animIndex)
 {
 	playingAnimIndex = _animIndex;
 
-	ModelResource &_model = *this;
+	ModelResource& _model = *this;
 
-	ufbx_scene *pScene = _model.pRawScene;
+	ufbx_scene* pScene = _model.pRawScene;
 	// アニメーションスタックがないなら無視
 	if (!pScene || pScene->anim_stacks.count == 0)
 	{
@@ -552,7 +602,7 @@ void cha::ModelResource::UpdateAnim(const float _deltaTime, const int _animIndex
 	// 現在再生中のアニメーションを取得
 	if (playingAnimIndex >= pScene->anim_stacks.count)
 		return;
-	ufbx_anim_stack *pAnimStack = pScene->anim_stacks[playingAnimIndex];
+	ufbx_anim_stack* pAnimStack = pScene->anim_stacks[playingAnimIndex];
 
 	// 再生時間進める
 	_model.currentAnimTime += _deltaTime;
@@ -568,7 +618,7 @@ void cha::ModelResource::UpdateAnim(const float _deltaTime, const int _animIndex
 
 	// 指定時間に置けるアニメーション状態をサンプリング
 	ufbx_error error{};
-	ufbx_scene *pEvaluatedScene = ufbx_evaluate_scene(pRawScene, pAnimStack->anim, evalTime, nullptr, &error);
+	ufbx_scene* pEvaluatedScene = ufbx_evaluate_scene(pRawScene, pAnimStack->anim, evalTime, nullptr, &error);
 	if (!pEvaluatedScene)
 	{
 		// エラー処理（必要に応じてログ出力など）
@@ -580,14 +630,14 @@ void cha::ModelResource::UpdateAnim(const float _deltaTime, const int _animIndex
 		// 評価されたシーンの各ノードをループ
 		for (size_t i = 0; i < pEvaluatedScene->nodes.count; ++i)
 		{
-			ufbx_node *pEvalNode = pEvaluatedScene->nodes[i];
+			ufbx_node* pEvalNode = pEvaluatedScene->nodes[i];
 			if (!pEvalNode->mesh)
 				continue;
 
 			// ufbxのノード名と一致する subParts を探す
 			// (Setup時の name の入れ方に応じて、pEvalNode->name.data または pEvalNode->mesh->name.data
 			// と比較してください)
-			for (auto &part : subParts)
+			for (auto& part : subParts)
 			{
 				if (part.name == pEvalNode->name.data)
 				{
@@ -598,8 +648,8 @@ void cha::ModelResource::UpdateAnim(const float _deltaTime, const int _animIndex
 					cha::Mat4x4 localWorldMatrix = ConvertToMat4x4(rawWorldMat);
 
 					// transformMaterial のプロパティを書き換える
-					ModelTransformMaterialProperty *pProp =
-					    static_cast<ModelTransformMaterialProperty *>(part.transformMaterial.Get().pProperty.get());
+					ModelTransformMaterialProperty* pProp =
+					    static_cast<ModelTransformMaterialProperty*>(part.transformMaterial.Get().pProperty.get());
 
 					pProp->Get().toWorldMatrix = localWorldMatrix;
 					break;

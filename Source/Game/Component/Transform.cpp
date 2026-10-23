@@ -24,7 +24,12 @@ void Transform::UpdateFamily()
 	{
 		// 親がいるなら親の行列を掛ける
 		normal = localNormal * pParentTransform->normal;
-		world = local * pParentTransform->world;
+		world  = local * pParentTransform->world;
+	}
+	else
+	{
+		normal = localNormal;
+		world  = local;
 	}
 }
 
@@ -33,12 +38,9 @@ void Transform::UpdateSelf()
 	using namespace DirectX;
 
 	// 法線方向の行列を計算する
-	localNormal = XMMatrixIdentity()
-		* XMMatrixRotationQuaternion(rotation);
+	localNormal = XMMatrixIdentity() * XMMatrixRotationQuaternion(rotation);
 
 	// 座標変換行列を計算する
-	local = XMMatrixIdentity()
-		* XMMatrixScalingFromVector(scale)
-		* XMMatrixRotationQuaternion(rotation)
-		* XMMatrixTranslationFromVector(position);
+	local = XMMatrixIdentity() * XMMatrixScalingFromVector(scale) * XMMatrixRotationQuaternion(rotation) *
+	        XMMatrixTranslationFromVector(position);
 }

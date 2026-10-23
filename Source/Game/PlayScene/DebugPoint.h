@@ -14,4 +14,6 @@ struct DebugPoint : ObjectBase<DebugPointData>
 {
 	/// @brief 描画処理
 	void Draw() override;
+	/// @brief 削除されたよおお
+	void OnDestroy() override;
 };

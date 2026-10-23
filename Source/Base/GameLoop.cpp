@@ -21,6 +21,7 @@
 #include "../Resource.h"
 
 #include "../Game/BootScene/BootScene.h"
+#include "../Game/PlayScene/PlayScene.h"
 #include "../Game/Common/VirtualInputManager.h"
 #include "../Game/Common/ScoreManager.h"
 
@@ -28,7 +29,7 @@
 #include "../Game/Manager/SessionManager.h"
 
 // Discord RPC機能使うならマクロ定義する
-//#define USE_DISCORD_RPC
+// #define USE_DISCORD_RPC
 
 #ifdef USE_DISCORD_RPC
 #include "../Game/Manager/DiscordRPC/DiscordManager.h"
@@ -36,12 +37,14 @@
 
 #include "ManagerRegistry.h"
 
-cha::GameLoop::GameLoop(const ClientConfig _clientConfig) :
-	clientConfig_{ _clientConfig }
+cha::GameLoop::GameLoop(
+    const ClientConfig _clientConfig) :
+    clientConfig_{ _clientConfig }
 {
 }
 
-void cha::GameLoop::Run(const HINSTANCE _hInstance)
+void cha::GameLoop::Run(
+    const HINSTANCE _hInstance)
 {
 	HRESULT hResult = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	VCU_ASSERT(SUCCEEDED(hResult) && "CoInitializeExに失敗");
@@ -52,12 +55,10 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 
 	IssueManager& issueManager = ManagerRegistry::Add<IssueManager>();
 
-	GameTimeManager& gameTime = ManagerRegistry::Add<GameTimeManager>(
-		clientConfig_.targetFPS,
-		ManagerRegistry::Add<DeltaTime>());
+	GameTimeManager& gameTime =
+	    ManagerRegistry::Add<GameTimeManager>(clientConfig_.targetFPS, ManagerRegistry::Add<DeltaTime>());
 
-	WinMessageManager& winMessage = ManagerRegistry::Add<WinMessageManager>(
-		_hInstance);
+	WinMessageManager& winMessage = ManagerRegistry::Add<WinMessageManager>(_hInstance);
 
 	constexpr size_t MAX_LOADSTRING{ 100 };
 
@@ -71,12 +72,12 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	ManagerRegistry::Add<ScreenSize>(clientConfig_.clientSize);
 
 	WinWindowManager& winWindow = ManagerRegistry::Add<WinWindowManager>(
-		clientConfig_.clientSize,
-		clientConfig_.isWindow,
-		_hInstance,
-		winMessage.GetWndProc(),
-		titleWStringBuffer.data(),
-		appNameWStringBuffer.data());
+	    clientConfig_.clientSize,
+	    clientConfig_.isWindow,
+	    _hInstance,
+	    winMessage.GetWndProc(),
+	    titleWStringBuffer.data(),
+	    appNameWStringBuffer.data());
 
 	succeed = winWindow.Show();
 	if (!succeed)
@@ -86,10 +87,10 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	}
 
 	Dx11Manager& dx11Manager = ManagerRegistry::Add<Dx11Manager>(
-		winWindow.GetWndHandle(),
-		clientConfig_.clientSize,
-		clientConfig_.shadowMapSize,
-		clientConfig_.isWindow);
+	    winWindow.GetWndHandle(),
+	    clientConfig_.clientSize,
+	    clientConfig_.shadowMapSize,
+	    clientConfig_.isWindow);
 
 	succeed = dx11Manager.Initialize();
 	if (!succeed)
@@ -107,22 +108,19 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 		return;
 	}
 
-	LightManager& lightManager = ManagerRegistry::Add<LightManager>(
-		dx11Manager);
+	LightManager& lightManager = ManagerRegistry::Add<LightManager>(dx11Manager);
 
 	UIManager& uiManager = ManagerRegistry::Add<UIManager>();
 
 	D2DManager& d2dManager = ManagerRegistry::Add<D2DManager>(dx11Manager);
-	succeed = d2dManager.Initialize();
+	succeed                = d2dManager.Initialize();
 	if (!succeed)
 	{
 		VCU_ASSERT(!succeed && "D2Dの初期化処理に失敗");
 		return;
 	}
 
-	ImGuiManager& imguiManager = ManagerRegistry::Add<ImGuiManager>(
-		winWindow,
-		dx11Manager);
+	ImGuiManager& imguiManager = ManagerRegistry::Add<ImGuiManager>(winWindow, dx11Manager);
 
 	succeed = imguiManager.Initialize();
 	if (!succeed)
@@ -132,7 +130,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	}
 
 	VirtualInputManager& virtualInputManager = ManagerRegistry::Add<VirtualInputManager>();
-	succeed = virtualInputManager.Initialize();
+	succeed                                  = virtualInputManager.Initialize();
 	if (!succeed)
 	{
 		VCU_ASSERT(!succeed && "ボタン入力マネージャーの初期化に失敗");
@@ -143,10 +141,10 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 	// ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 	// 最初に遷移するシーンはここで変更
 	sceneManager.Move<BootScene>();
-	// ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+	// sceneManager.Move<PlayScene>();
+	//  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-	ScoreManager& scoreManager = ManagerRegistry::Add<ScoreManager>(
-		"./score.json");
+	ScoreManager& scoreManager = ManagerRegistry::Add<ScoreManager>("./score.json");
 	scoreManager.Load();
 
 	NetworkSessionManager& networkSessionManager = ManagerRegistry::Add<NetworkSessionManager>();
@@ -155,7 +153,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 
 #ifdef USE_DISCORD_RPC
 	DiscordManager& discordManager = ManagerRegistry::Add<DiscordManager>();
-	succeed = discordManager.Initialize();
+	succeed                        = discordManager.Initialize();
 	if (!succeed)
 	{
 		VCU_ASSERT(!succeed && "DiscordManagerの初期化に失敗");
@@ -176,10 +174,10 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 			}
 
 			int a = MessageBox(
-				nullptr,
-				std::format(L"{}", LAST_ERROR_MESSAGE).c_str(),
-				VCU_WIDE("ゲームが異常終了しました！"),
-				MB_OK | MB_ICONERROR);
+			    nullptr,
+			    std::format(L"{}", LAST_ERROR_MESSAGE).c_str(),
+			    VCU_WIDE("ゲームが異常終了しました！"),
+			    MB_OK | MB_ICONERROR);
 			break;  // エラーを表示して終了
 		}
 
@@ -225,7 +223,7 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 
 		// 各オブジェクトにシャドウマップ作ってもらう
 		callableSceneManager.Draw(true);
-		
+
 		// シャドウマップの描画を終了していつもの描画へ変更
 		dx11Manager.ResetViewport(clientConfig_.clientSize);
 		dx11Manager.ResetRenderTargets();
@@ -234,10 +232,10 @@ void cha::GameLoop::Run(const HINSTANCE _hInstance)
 #pragma region いつもの描画
 		// 出来上がったシャドウマップを使えるようにする
 		dx11Manager.BindShadowMap();
-		
+
 		// ライトの view proj を使えるようにする
 		lightManager.Bind();
-		
+
 		// いつも通りの描画バッファクリア
 		dx11Manager.Clear();
 

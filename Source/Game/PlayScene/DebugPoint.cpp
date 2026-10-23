@@ -2,7 +2,7 @@
 
 void DebugPoint::Draw()
 {
-return;
+	return;
 	ImGui::Begin("DebugPoint");
 	ImGui::InputFloat3("focusPoint", transform.position.v);
 	ImGui::End();
@@ -19,3 +19,5 @@ return;
 		Get<Dx11Manager>().Draw();
 	}
 }
+
+void DebugPoint::OnDestroy() {}

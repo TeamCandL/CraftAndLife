@@ -1,6 +1,9 @@
 #include "PlayScene.h"
 #include "Enemy.h"
+#include "EnemyController.h"
 #include "MainCamera.h"
+#include "OtherPlayer.h"
+#include "OtherPlayerController.h"
 #include "PlayNetworkController.h"
 #include "Player.h"
 #include "UI/Reticle.h"
@@ -8,18 +11,31 @@
 #include <Game/Common/GameManager.h>
 #include <Game/Common/Sky.h>
 #include <Game/Terrain/Terrain.h>
+#include "DayController.h"
+#include "OtherEnemy.h"
+#include "OtherEnemyController.h"
+#include "PlaySceneUIController.h"
 
 void PlayScene::Start()
 {
 	Instantiate<GameManager>();
-	Instantiate<Sky>();
+	GameObject objSky = Instantiate<Sky>();
 
 	GameObject objTerrain = Instantiate<Terrain>();
 
-	Instantiate<Enemy>();
+	Instantiate<OtherPlayer>("てすとん");
+
+	Instantiate<DayController>(objSky);
+	GameObject objEnemyController = Instantiate<EnemyController>();
+	GameObject objEnemy           = Instantiate<Enemy>(objEnemyController);  // 仮設置
+	Instantiate<OtherEnemy>(1, EnemyType::Skeleton);
+	Instantiate<OtherPlayerController>();
+	Instantiate<OtherEnemyController>();
 
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
-	GameObject objPlayer = Instantiate<Player>(objMainCamera);
-	Instantiate<PlayNetworkController>(objPlayer);
+	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
+	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objEnemy);
+
+	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>();
 }
