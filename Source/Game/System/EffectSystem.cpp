@@ -1,4 +1,5 @@
 #include "EffectSystem.h"
+#include <Game/Game.h>
 #include "pch\pch.h"
 
 #ifdef _DEBUG
@@ -10,10 +11,11 @@
 #endif
 using namespace Effekseer;
 using namespace EffekseerRendererDX11;
-constexpr int MAX_SQUARE{8192};
-constexpr size_t PARTICLE_POOL_CAPACITY{256};
+constexpr int MAX_SQUARE{ 8192 };
+constexpr size_t PARTICLE_POOL_CAPACITY{ 256 };
 
-Effekseer::Matrix43 CnvMat43(DirectX::XMFLOAT4X4 _mat)
+Effekseer::Matrix43 CnvMat43(
+    DirectX::XMFLOAT4X4 _mat)
 {
 	Effekseer::Matrix43 mat43{};
 	for (int i = 0; i < 4; ++i)
@@ -26,7 +28,8 @@ Effekseer::Matrix43 CnvMat43(DirectX::XMFLOAT4X4 _mat)
 	return mat43;
 }
 
-Effekseer::Matrix43 CnvMat43(const Mat4x4& _mat)
+Effekseer::Matrix43 CnvMat43(
+    const Mat4x4& _mat)
 {
 	Effekseer::Matrix43 out;
 	for (int i = 0; i < 4; i++)
@@ -39,7 +42,8 @@ Effekseer::Matrix43 CnvMat43(const Mat4x4& _mat)
 	return out;
 }
 
-Effekseer::Matrix44 CnvMat44(const Mat4x4& _mat)
+Effekseer::Matrix44 CnvMat44(
+    const Mat4x4& _mat)
 {
 	Effekseer::Matrix44 out;
 	for (int i = 0; i < 4; i++)
@@ -52,21 +56,8 @@ Effekseer::Matrix44 CnvMat44(const Mat4x4& _mat)
 	return out;
 }
 
-Mat4x4 CalculateWorldMat(const EffectInstance& _instance)
-{
-	using namespace DirectX;
-
-	Mat4x4 out = XMMatrixIdentity() * XMMatrixScalingFromVector(_instance.scale) *
-	             XMMatrixRotationQuaternion(_instance.rotation) * XMMatrixTranslationFromVector(_instance.position);
-	return out;
-}
-
-Effekseer::Matrix43 CalculateMat43(std::shared_ptr<EffectInstance> _pInstance)
-{
-	return CnvMat43(CalculateWorldMat(*_pInstance.get()));
-}
-
-Effekseer::Matrix44 CnvMat(DirectX::XMFLOAT4X4 _mat)
+Effekseer::Matrix44 CnvMat(
+    DirectX::XMFLOAT4X4 _mat)
 {
 	Effekseer::Matrix44 out;
 
@@ -94,7 +85,9 @@ EffectRegistry::EffectRegistry() :
 {
 }
 
-bool EffectRegistry::TryLoad(fs::path&& _file, EffectResource& _out)
+bool EffectRegistry::TryLoad(
+    fs::path&& _file,
+    EffectResource& _out)
 {
 	if (_file.extension() != ".efkefc")
 	{
@@ -129,82 +122,80 @@ void EffectSystem::Start()
 		    managerRef_->SetMaterialLoader(rendererRef_->CreateMaterialLoader());
 		    managerRef_->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 	    });
-
-	// インスタンスプールを確保
-	effectInstanceList_.reserve(PARTICLE_POOL_CAPACITY);
 }
 
 void EffectSystem::Update()
 {
 	const double deltaTime = Get<DeltaTime>();
-	const double fps = 60.0;
-	for (auto& instance : effectInstanceList_)
-	{
-		// 未使用のデータは更新しない
-		if (instance == nullptr)
-		{
-			continue;
-		}
+	const double fps       = 60.0;
+	auto view              = GetView<Transform, EffectPlayer>();
+	view.ForEach(
+	    [this, deltaTime, fps](IObject& _object, Transform& _transform, EffectPlayer& _effect)
+	    {
+		    // 未使用のデータは更新しない
+		    if (_effect.ref == nullptr || _effect.handle == -1)
+		    {
+			    return;
+		    }
 
-		Effekseer::Handle& handle = instance->handle;
-		// 破棄フラグが立っているか
-		if (instance->destroyMe)
-		{
-			// エフェクトの再生を停止
-			if (handle >= 0)
-			{
-				managerRef_->StopEffect(handle);
-			}
-			// インスタンスを解放
-			instance.reset();
-			continue;
-		}
+		    Effekseer::Handle& handle = _effect.handle;
+		    // 破棄フラグが立っているか
+		    if (_effect.destroyMe)
+		    {
+			    // エフェクトの再生を停止
+			    if (handle >= 0)
+			    {
+				    managerRef_->StopEffect(handle);
+			    }
+			    // インスタンスを解放
+			    return;
+		    }
 
-		// 再生時間が0の場合、再生を始める
-		if (instance->elapsedTime == 0)
-		{
-			handle = managerRef_->Play(instance->ref, 0, 0, 0);
-		}
+		    // 再生時間が0の場合、再生を始める
+		    if (_effect.elapsedTime == 0)
+		    {
+			    handle = managerRef_->Play(_effect.ref, 0, 0, 0);
+		    }
 
-		// エフェクトの最大フレームを取得
-		int32_t maxFrame = instance->ref->CalculateTerm().TermMax;
+		    // エフェクトの最大フレームを取得
+		    int32_t maxFrame = _effect.ref->CalculateTerm().TermMax;
 
-		// 再生終了
-		double duration = maxFrame / fps;
-		if (instance->elapsedTime > duration)
-		{
-			if (handle >= 0)
-			{
-				// エフェクトの再生を停止
-				managerRef_->StopEffect(handle);
-			}
+		    // 再生終了
+		    double duration = maxFrame / fps;
+		    if (_effect.elapsedTime > duration)
+		    {
+			    if (handle >= 0)
+			    {
+				    // エフェクトの再生を停止
+				    managerRef_->StopEffect(handle);
+			    }
 
-			// ループ再生するかどうか
-			if (instance->isLoop)
-			{
-				// 再生時間を0にして、再び再生できるように設定
-				instance->elapsedTime = 0;
-			}
-			else
-			{
-				// ループ再生しない場合、未使用状態に戻す
-				instance.reset();
-			}
-		}
-		// エフェクトの更新を行う
-		else
-		{
-			// フレーム数を設定
-			rendererRef_->SetTime(static_cast<float>(instance->elapsedTime));
-			Effekseer::Matrix43 mat = CalculateMat43(instance);
-			// エフェクトのインスタンスに対して処理をし、更新速度を設定
+			    // ループ再生するかどうか
+			    if (_effect.isLoop)
+			    {
+				    // 再生時間を0にして、再び再生できるように設定
+				    _effect.elapsedTime = 0;
+			    }
+			    else
+			    {
+				    // ループ再生しない場合、未使用状態に戻す
+				    _effect.Reset();
+			    }
+		    }
+		    // エフェクトの更新を行う
+		    else
+		    {
+			    // フレーム数を設定
+			    rendererRef_->SetTime(static_cast<float>(_effect.elapsedTime));
+			    Effekseer::Matrix43 mat = CnvMat43(_transform.world);
+			    // エフェクトのインスタンスに対して処理をし、更新速度を設定
 
-			managerRef_->SetMatrix(handle, mat);
-			managerRef_->SetSpeed(handle, instance->playSpeed);
-			// 再生時間を増やす
-			instance->elapsedTime += deltaTime;
-		}
-	}
+			    managerRef_->SetMatrix(handle, mat);
+			    managerRef_->SetSpeed(handle, _effect.playSpeed);
+			    // 再生時間を増やす
+			    _effect.elapsedTime += deltaTime;
+		    }
+	    });
 
 	managerRef_->Update(static_cast<float>(deltaTime * fps));
 }
@@ -227,23 +218,17 @@ void EffectSystem::Draw()
 		    // Effekseerによる描画
 		    rendererRef_->BeginRendering();
 		    Effekseer::Manager::DrawParameter drawParameter;
-		    drawParameter.ZNear = 0.0f;
-		    drawParameter.ZFar = data.farClipDistance;
+		    drawParameter.ZNear                = 0.0f;
+		    drawParameter.ZFar                 = data.farClipDistance;
 		    drawParameter.ViewProjectionMatrix = rendererRef_->GetCameraProjectionMatrix();
 		    managerRef_->Draw(drawParameter);
 		    rendererRef_->EndRendering();
 	    });
 }
 
-std::shared_ptr<EffectInstance> EffectSystem::Play(cha::Resource<ResourceType::Effect>& _resource)
+Effekseer::EffectRef EffectSystem::Play(
+    cha::Resource<ResourceType::Effect>& _resource)
 {
-	// インスタンス作成
-	std::shared_ptr<EffectInstance> instance = CreateInstance();
-	if (instance == nullptr)
-	{
-		return nullptr;
-	}
-
 	EffectResource& particle = _resource.Get();
 	// 該当するエフェクトが作成されていないなら、新規作成
 	if (particle.ref == nullptr)
@@ -251,37 +236,12 @@ std::shared_ptr<EffectInstance> EffectSystem::Play(cha::Resource<ResourceType::E
 		if (fs::exists(particle.filePath))
 		{
 			fs::path filePath(particle.filePath);
-			auto str = filePath.u16string();
+			auto str     = filePath.u16string();
 			auto u16Char = str.c_str();
 			particle.ref = Effekseer::Effect::Create(managerRef_, u16Char);
 		}
 	}
 
-	// インスタンスに、エフェクトの元データへの参照を渡す
-	instance->ref = particle.ref;
-	return instance;
-}
-
-std::shared_ptr<EffectInstance> EffectSystem::CreateInstance()
-{
-	// 空きスロットを探す
-	for (auto& slot : effectInstanceList_)
-	{
-		// 空きスロット発見、再利用!
-		if (slot == nullptr)
-		{
-			slot = std::make_shared<EffectInstance>();
-			return slot;
-		}
-	}
-	// 空きスロットがなかった
-
-	// 容量に余裕があるなら、新規追加
-	if (effectInstanceList_.size() < PARTICLE_POOL_CAPACITY)
-	{
-		return effectInstanceList_.emplace_back(std::make_shared<EffectInstance>());
-	}
-
-	// 空きスロットなし!容量に余裕もなし!作れません!
-	return nullptr;
+	// エフェクトの元データへの参照
+	return particle.ref;
 }

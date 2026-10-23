@@ -403,6 +403,7 @@
     <ClCompile Include="Source\Game\BootScene\BootSceneBackground.cpp" />
     <ClCompile Include="Source\Game\BootScene\BootSceneLogo.cpp" />
     <ClCompile Include="Source\Game\Common\Canvas.cpp" />
+    <ClCompile Include="Source\Game\Common\EffectObject.cpp" />
     <ClCompile Include="Source\Game\Common\GameManager.cpp" />
     <ClCompile Include="Source\Game\Common\ScoreManager.cpp" />
     <ClCompile Include="Source\Game\Common\Sky.cpp" />
@@ -410,6 +411,7 @@
     <ClCompile Include="Source\Game\Common\UI\Button.cpp" />
     <ClCompile Include="Source\Game\Common\UI\Image.cpp" />
     <ClCompile Include="Source\Game\Common\VirtualInputManager.cpp" />
+    <ClCompile Include="Source\Game\Component\EffectPlayer\EffectPlayer.cpp" />
     <ClCompile Include="Source\Game\Component\SoundManager.cpp" />
     <ClCompile Include="Source\Game\Component\Transform.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyNetworkController.cpp" />
@@ -613,6 +615,7 @@
     <ClInclude Include="Source\Game\BootScene\BootSceneLogo.h" />
     <ClInclude Include="Source\Game\Common\Canvas.h" />
     <ClInclude Include="Source\Game\Common\ChunkLoader\IWorldLoader.h" />
+    <ClInclude Include="Source\Game\Common\EffectObject.h" />
     <ClInclude Include="Source\Game\Common\GameManager.h" />
     <ClInclude Include="Source\Game\Common\PerlinNoise.h" />
     <ClInclude Include="Source\Game\Common\SceneType.h" />
@@ -621,6 +624,7 @@
     <ClInclude Include="Source\Game\Common\Sky\SkyMaterial.h" />
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
+    <ClInclude Include="Source\Game\Component\EffectPlayer\EffectPlayer.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />

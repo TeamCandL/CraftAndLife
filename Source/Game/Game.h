@@ -20,6 +20,7 @@
 #include "Component/UI/UIImage.h"
 #include "Component/UI/UIText.h"
 #include "Component/UI/UIRaycastTarget.h"
+#include "Component/EffectPlayer/EffectPlayer.h"
 #include "Component/ImTransform.h"
 #include "Component/StaticOBB.h"
 #include "Component/DynamicOBB.h"
@@ -28,4 +29,4 @@
 
 #include "Utility/File/JsonLoader.h"
 
-using enum ResourceType; // ResourceType::と書かなくて良い
+using enum ResourceType;  // ResourceType::と書かなくて良い

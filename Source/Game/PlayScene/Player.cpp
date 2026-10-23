@@ -6,8 +6,9 @@
 
 void Player::Start()
 {
-	transform.scale = Vec3::One() * 200.0f;
+	transform.scale     = Vec3::One() * 200.0f;
 	objPlayerController = GetScene().Instantiate<PlayerControllerNormal>();
+	laserEffect         = GetScene().Instantiate<EffectObject>("Effect/Laser01.efkefc");
 }
 
 void Player::Update()
@@ -30,8 +31,8 @@ void Player::Update()
 	});
 
 	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
-	auto pPlayerInput = inputSystem.GetPlayerInput();
-	Vec2 bodyMove = pPlayerInput->GetMoveBody();
+	auto pPlayerInput                = inputSystem.GetPlayerInput();
+	Vec2 bodyMove                    = pPlayerInput->GetMoveBody();
 
 	float moveSpeed = 0.1f;
 
@@ -39,44 +40,27 @@ void Player::Update()
 	float angleY = Get<IMainCamera>(objMainCamera).GetAngleY();
 
 	// カメラの向きから前方向を計算
-	Vec3 forward = Vec3{sinf(angleY), 0.0f, cosf(angleY)};
+	Vec3 forward = Vec3{ sinf(angleY), 0.0f, cosf(angleY) };
 
 	// カメラの向きから右方向を計算
-	Vec3 right = Vec3{cosf(angleY), 0.0f, -sinf(angleY)};
+	Vec3 right = Vec3{ cosf(angleY), 0.0f, -sinf(angleY) };
 
 	// 入力に応じて移動方向を計算
 	Vec3 moveDirection = right * bodyMove.x + forward * bodyMove.y;
 
 	// 平行移動
 	transform.position += moveDirection * moveSpeed;
-	if (sampleEffectInstance)
-	{
-		sampleEffectInstance->position = transform.WorldPosition();
-	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::H))
-	{
-		if (hitEffectInstance)
-		{
-			hitEffectInstance->destroyMe = true;
-			hitEffectInstance = Get<EffectSystem>().Play(hitEffect);
-			hitEffectInstance->position = transform.WorldPosition();
-			sampleEffectInstance->rotation = Quaternion::FromLookAtQuaternion(
-			    sampleEffectInstance->position, sampleEffectInstance->position + transform.Back(), transform.Up());
-			hitEffectInstance->scale = Vec3{1.0f, 1.0f, 1.0f};
-		}
-	}
+
+	auto& data                                               = Get<EffectObject>(laserEffect).Data();
+	Get<EffectObject>(laserEffect).Data().transform.position = transform.Forward() * 1.0f;
+
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-		if (sampleEffectInstance)
-		{
-			sampleEffectInstance->destroyMe = true;
-		}
-		sampleEffectInstance = Get<EffectSystem>().Play(sampleEffect);
-		sampleEffectInstance->position = transform.WorldPosition();
-		sampleEffectInstance->scale = Vec3{1.0f, 1.0f, 1.0f};
-		sampleEffectInstance->rotation = Quaternion::FromLookAtQuaternion(
-		    sampleEffectInstance->position, sampleEffectInstance->position + transform.Back(), transform.Up());
-		sampleEffectInstance->isLoop = true;
+
+		Get<EffectObject>(laserEffect).Play();
+		Get<EffectObject>(laserEffect).Data().effectPlayer.isLoop = true;
+		Get<EffectObject>(laserEffect).Data().transform.parent    = ToGameObject();
+		Get<EffectObject>(laserEffect).Data().transform.scale     = Vec3::One() * 0.02f;
 	}
 }
 
@@ -87,7 +71,7 @@ void Player::Draw()
 
 	model.Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto& subParts{model.Get().subParts};
+	const auto& subParts{ model.Get().subParts };
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
@@ -102,7 +86,8 @@ void Player::AttackCollider()
 	// new PlayerAttackColl();
 }
 
-void Player::Damaged(int32_t damage)
+void Player::Damaged(
+    int32_t damage)
 {
 	hp -= damage;
 }
@@ -114,5 +99,5 @@ Vec3 Player::GetPosition() const
 
 float Player::GetAngleY() const
 {
-	return Vec3{transform.rotation.ToEuler()}.y;
+	return Vec3{ transform.rotation.ToEuler() }.y;
 }
