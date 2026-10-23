@@ -1,5 +1,6 @@
 #pragma once
 #include <Game/Game.h>
+#include "EnemyStatus.h"
 
 struct EnemyControllerData
 {
@@ -21,4 +22,5 @@ struct EnemyController : ObjectBase<EnemyControllerData>
 	std::vector<Vec3> GetAllEnemyPosition();
 	std::vector<float> GetAllEnemyAngleY();
 	std::vector<int32_t> GetAllEnemyId();
+	std::vector<EnemyStatus> GetAllEnemyStatus();
 };

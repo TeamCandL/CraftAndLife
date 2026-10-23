@@ -47,3 +47,15 @@ std::vector<int32_t> EnemyController::GetAllEnemyId()
 
 	return enemyIds;
 }
+
+std::vector<EnemyStatus> EnemyController::GetAllEnemyStatus()
+{
+	std::vector<EnemyStatus> allStatus;
+
+	for (const GameObject obj : allEnemys)
+	{
+		allStatus.push_back(Get<Enemy>(obj).GetStatus());
+	}
+
+	return allStatus;
+}
