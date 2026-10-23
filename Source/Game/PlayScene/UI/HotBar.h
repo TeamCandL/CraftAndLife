@@ -9,7 +9,7 @@ struct HotBarData
 	Component<UIImage> image{ texture };
 };
 
-struct TaskBackground : ObjectBase<HotBarData>
+struct HotBar : ObjectBase<HotBarData>
 {
 	/// @brief 開始処理
 	void Start() override;

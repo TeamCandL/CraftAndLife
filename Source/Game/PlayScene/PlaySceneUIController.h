@@ -6,6 +6,10 @@ struct PlaySceneUIControllerData
 {
 	GameObject objTaskBackground{};  ///< タスク情報の背景
 	GameObject objTaskText{};        ///< タスク情報のテキスト
+	GameObject objBossInfo{};        ///< ボスの体力ゲージUI
+	GameObject objHotBar{};          ///< アイテムのホットスロットバーUI
+	GameObject objMiniMap{};         ///< ミニマップUI
+	GameObject objOtherInfo{};       ///< 自分の体力ゲージ
 };
 
 /// @brief プレイシーンのUI操作

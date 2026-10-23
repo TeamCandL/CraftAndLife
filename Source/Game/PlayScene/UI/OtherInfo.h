@@ -9,11 +9,10 @@ struct OtherInfoData
 	Component<UIImage> image{ texture };
 };
 
-struct TaskBackground : ObjectBase<OtherInfoData>
+struct OtherInfo : ObjectBase<OtherInfoData>
 {
 	/// @brief 開始処理
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
 };
-#pragma once
