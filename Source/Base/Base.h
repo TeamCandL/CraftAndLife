@@ -24,6 +24,7 @@
 #include "Core/Resource/Texture.h"
 #include "Core/Resource/Model.h"
 #include "Core/Resource/ShaderPro.h"
+#include "Core/Resource/Font.h"
 
 #include "Core/Resource/ShaderPro/ShaderProBuilder.h"
 
@@ -32,11 +33,30 @@
 // JSONへの変換するやつ
 namespace cha
 {
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Float4, x, y, z, w)
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vec3, x, y, z)
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vec2, x, y)
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vec3Int, x, y, z)
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vec2Int, x, y)
-}
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+	    Float4,
+	    x,
+	    y,
+	    z,
+	    w)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+	    Vec3,
+	    x,
+	    y,
+	    z)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+	    Vec2,
+	    x,
+	    y)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+	    Vec3Int,
+	    x,
+	    y,
+	    z)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+	    Vec2Int,
+	    x,
+	    y)
+}  // namespace cha
 
 using namespace cha;

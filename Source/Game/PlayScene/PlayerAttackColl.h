@@ -15,6 +15,15 @@ struct PlayerAttackCollData
 	    lifeTime{ lifeTime_ }
 	{
 	}
+	PlayerAttackCollData(
+	    const Vec3 position_,
+	    const int32_t damage_,
+	    const float lifeTime_) :
+	    transform{ position_ },
+	    damage{ damage_ },
+	    lifeTime{ lifeTime_ }
+	{
+	}
 
 	/*Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
 	{

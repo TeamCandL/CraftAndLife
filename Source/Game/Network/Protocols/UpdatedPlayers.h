@@ -27,6 +27,15 @@ namespace Protocol
 		}
 		ENetSendMode GetSendMode() const override
 		{
+			_registry.AddMember(playerNames).AddMember(positions).AddMember(rotations).AddMember(flag);
+		}
+
+		uint8_t GetChannel() const override
+		{
+			return 1;
+		}
+		ENetSendMode GetSendMode() const override
+		{
 			return ENetSendMode::Unreliable;
 		}
 
