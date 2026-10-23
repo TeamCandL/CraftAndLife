@@ -2,6 +2,10 @@
 #include "EnemyController.h"
 #include "Enemy.h"
 
+void EnemyController::Start() {}
+
+void EnemyController::Update() {}
+
 void EnemyController::AddEnemy(
     const GameObject _enemy)
 {

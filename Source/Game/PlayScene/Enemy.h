@@ -14,8 +14,11 @@ namespace EnemyParam
 struct EnemyData
 {
 	/// @brief 指定なし生成
-	EnemyData()
+	EnemyData(
+	    GameObject objEnemyController_)
 	{
+		objEnemyController = objEnemyController_;
+
 		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
 		enemyType          = EnemyType::Skeleton;
 
@@ -26,9 +29,12 @@ struct EnemyData
 	/// @brief 位置指定生成
 	/// @param position_ 位置
 	EnemyData(
+	    GameObject objEnemyController_,
 	    const Vec3 position_) :
 	    transform{ position_ }
 	{
+		objEnemyController = objEnemyController_;
+
 		enemyType = EnemyType::Skeleton;
 
 		hp     = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
@@ -38,9 +44,12 @@ struct EnemyData
 	/// @brief 種類指定生成
 	/// @param enemyType_ 敵の種類(Skeleton, Spider, Bat, Dragon)
 	EnemyData(
+	    GameObject objEnemyController_,
 	    const int enemyType_) :
 	    enemyType{ static_cast<EnemyType>(enemyType_) }
 	{
+		objEnemyController = objEnemyController_;
+
 		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
 
 		hp     = EnemyParam::Hp[enemyType_];
@@ -51,11 +60,14 @@ struct EnemyData
 	/// @param position_ 位置
 	/// @param enemyType_ 種類
 	EnemyData(
+	    GameObject objEnemyController_,
 	    const Vec3 position_,
 	    int enemyType_) :
 	    transform{ position_ },
 	    enemyType{ static_cast<EnemyType>(enemyType_) }
 	{
+		objEnemyController = objEnemyController_;
+
 		hp     = EnemyParam::Hp[enemyType_];
 		damage = EnemyParam::Damage[enemyType_];
 		speed  = EnemyParam::Speed[enemyType_];
@@ -91,8 +103,8 @@ struct EnemyData
 	//----------------------//
 	//---------/SE/---------//
 	//----------------------//
-	Resource<Audio> attackSE{ "Sound/Striking the enemy.mp3" };  ///< 攻撃SE
-	Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
+	Resource<Audio> attackSE{ "BGM_SE/Striking the enemy.mp3" };  ///< 攻撃SE
+	// Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
 
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" },

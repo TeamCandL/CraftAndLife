@@ -1,5 +1,6 @@
 #include "PlayScene.h"
 #include "Enemy.h"
+#include "EnemyController.h"
 #include "MainCamera.h"
 #include "OtherPlayer.h"
 #include "OtherPlayerController.h"
@@ -25,7 +26,8 @@ void PlayScene::Start()
 	Instantiate<OtherPlayer>("てすとん");
 
 	Instantiate<DayController>(objSky);
-	Instantiate<Enemy>();  // 仮設置
+	GameObject objEnemyController = Instantiate<EnemyController>();
+	GameObject objEnemy           = Instantiate<Enemy>(objEnemyController);  // 仮設置
 	Instantiate<OtherEnemy>(1, EnemyType::Skeleton);
 	Instantiate<OtherPlayerController>();
 	Instantiate<OtherEnemyController>();
@@ -33,7 +35,6 @@ void PlayScene::Start()
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
-	GameObject objEnemy      = Instantiate<Enemy>();
 	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objEnemy);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>();

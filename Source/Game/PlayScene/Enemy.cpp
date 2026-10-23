@@ -86,10 +86,10 @@ void Enemy::Move(
 	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
 	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
 
-	for (auto& [name, obj] : Get<OtherPlayerController>(objOtherPlayerController).Data().nameToObjOtherPlayer)
-	{
-		Vec3 distToTarget = Get<OtherPlayer>(obj).GetPosition();
-	}
+	// for (auto& [name, obj] : Get<OtherPlayerController>(objOtherPlayerController).Data().nameToObjOtherPlayer)
+	//{
+	//	Vec3 distToTarget = Get<OtherPlayer>(obj).GetPosition();
+	// }
 }
 
 void Enemy::Draw()
