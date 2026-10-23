@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
+#include <cstdio>
 
 namespace
 {
@@ -485,6 +486,24 @@ Vec3 MapData::GetGoalPosition() const
 	const float Z = MapConfig::PATH_GOAL_Z;
 
 	return Vec3{ X, GetHeight(X, Z), Z };
+}
+
+Vec3 MapData::GetBeginPosision() const
+{
+	float x = MapConfig::PATH_START_X;
+	float z = MapConfig::PATH_START_Z;
+	float y = GetHeight(x, z);
+
+	return Vec3();
+}
+
+Vec3 MapData::GetEndPosision() const
+{
+	float x = MapConfig::PATH_GOAL_X;
+	float z = MapConfig::PATH_GOAL_Z;
+	float y = GetHeight(x, z);
+
+	return Vec3();
 }
 
 // ============================================================
