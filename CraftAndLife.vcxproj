@@ -463,6 +463,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\PlayScene.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlaySceneUIController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\HotBar.h" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\TaskBackground.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem.cpp" />
@@ -663,6 +664,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
