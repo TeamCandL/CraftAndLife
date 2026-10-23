@@ -11,8 +11,8 @@ void Main(
 	cha::GameLoop gameLoop{ {
 #if 0
 		.clientSize = { 1920, 1080 },
-		.targetFPS = 60,
-		.isWindow = false,
+		.targetFPS  = 60,
+		.isWindow   = false,
 #elif 0
 		.clientSize = { 1920, 1080 },
 		.targetFPS  = 60,
