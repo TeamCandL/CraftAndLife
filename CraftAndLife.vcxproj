@@ -390,6 +390,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Base\Core\ResourceManager.cpp" />
     <ClCompile Include="Source\Base\Core\ResourceTraits.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Audio.cpp" />
+    <ClCompile Include="Source\Base\Core\Resource\Font.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Material.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model\ModelMaterial.cpp" />
@@ -445,6 +446,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\FPSCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\GhostCamera.cpp" />
@@ -459,8 +461,11 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerControllerNormal.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayNetworkController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayScene.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\PlaySceneUIController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\HotBar.h" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\TaskBackground.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalPlayerInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalUIInput.cpp" />
@@ -572,6 +577,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Base\Core\ResourceManagerInstance.h" />
     <ClInclude Include="Source\Base\Core\ResourceTraits.h" />
     <ClInclude Include="Source\Base\Core\Resource\Audio.h" />
+    <ClInclude Include="Source\Base\Core\Resource\Font.h" />
     <ClInclude Include="Source\Base\Core\Resource\IResourceRegistry.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material\IMaterialProperty.h" />
@@ -652,12 +658,17 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\INetworkActor.h" />
     <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemSystem.h" />
     <ClInclude Include="Source\Game\PlayScene\NetworkActorServer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemy.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />

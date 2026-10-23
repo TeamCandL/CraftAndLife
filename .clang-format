@@ -130,3 +130,131 @@ BreakFunctionDefinitionParameters: true
 # ==========================================
 LambdaBodyIndentation: Signature
 
+# Objective-C用の設定
+---
+Language: ObjC
+BasedOnStyle: LLVM
+
+SortIncludes: Never
+# ==========================================
+# インデントとタブ
+# ==========================================
+UseTab: ForIndentation
+TabWidth: 4
+IndentWidth: 4
+ContinuationIndentWidth: 4
+
+# 名前空間のインデント
+NamespaceIndentation: All
+
+# ==========================================
+# ブレース（波括弧）の配置
+# ==========================================
+# ブレース{}のスタイル
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterObjCDeclaration: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  # Before<> : <>の前で改行するか
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: true
+  # ブレースをインデントするか
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+
+# ==========================================
+# ポインタと参照の配置
+# ==========================================
+#DerivePointerAlignment: false
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# ==========================================
+# 改行と折り返し
+# ==========================================
+ColumnLimit: 120
+
+# 改行設定
+BinPackParameters: false
+BinPackArguments: false
+
+# 関数宣言・呼び出し時、一行に収まりきらない場合は複数行に並べるか
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+# 短いブロックでも一行にまとめない
+AllowShortLambdasOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: false
+# 短い関数を一行にまとめるかどうか
+AllowShortFunctionsOnASingleLine: Empty
+# ==========================================
+# アクセス指定子（public/private等）のインデント
+# ==========================================
+#AccessModifierOffset: -4
+
+
+
+# ==========================================
+# コメントとアライメント
+# ==========================================
+AlignTrailingComments: true
+AlignConsecutiveAssignments: true
+# マクロの改行バックスラッシュの整列
+AlignEscapedNewlines: LeftWithLastLine
+# 開始括弧を置いた後の引数の並べ方
+AlignAfterOpenBracket: AlwaysBreak
+
+# ==========================================
+# スペース（空白）の挿入規則
+# ==========================================
+SpaceAfterCStyleCast: false
+SpacesInAngles: false
+# 開始括弧の前にスペースを入れるか
+SpaceBeforeParens: ControlStatements
+# switch-caseのコロン前にスペースを入れるか
+SpaceBeforeCaseColon: false
+# 初期化子リストの前に空白を入れるか
+SpaceBeforeCpp11BracedList: false
+# メンバ初期化子リストのコロン前に空白を入れるか
+SpaceBeforeCtorInitializerColon : true
+# メンバ初期化子リストの波かっこの前後に空白を入れないか
+# 例 false : vector<int> x{ 1, 2, 3, 4}; となる
+Cpp11BracedListStyle: false
+# コメントの直前に挿入されるスペースの数
+SpacesBeforeTrailingComments: 2
+
+# ==========================================
+# 初期化リストとコンストラクタ
+# ==========================================
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerIndentWidth: 4
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+PackConstructorInitializers: Never
+# # コンセプトの前で改行するか
+BreakBeforeConceptDeclarations: true
+# # caseラベルでインデントするか
+IndentCaseLabels: false
+# 関数定義の引数を改行する
+BreakFunctionDefinitionParameters: true
+
+# ==========================================
+# 名前空間のインデント
+# ==========================================
+# IndentNamespaces: false
+
+# ==========================================
+# ラムダ式
+# ==========================================
+LambdaBodyIndentation: Signature

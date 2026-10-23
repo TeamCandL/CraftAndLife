@@ -13,5 +13,6 @@ namespace cha
 		Audio,      ///< 音声
 		Material,   ///< コンスタントバッファへ送る素材データ
 		ShaderPro,  ///< 高自由度なシェーダ
+		Font,       ///< フォントリソース
 	};
-}
+}  // namespace cha
