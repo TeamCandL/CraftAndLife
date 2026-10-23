@@ -88,6 +88,8 @@ struct EnemyData
 
 	// Resource<Model> model{"Model/Enemy/Bat.fbx"};
 
+	Resource<Audio> attackSE{ "../Resource/Sound/DoorChime2" };  ///< 攻撃SE
+
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
 		Resource<Model>{ "Model/Enemy/Spider.fbx" },
@@ -156,7 +158,11 @@ struct Enemy : ObjectBase<EnemyData>
 	void Damaged(int32_t damage);
 	/// @brief 生死を設定
 	/// @param alive_ 生死の状態
-	void SetAlive(bool alive_);
+	void SetAlive(
+	    bool alive_)
+	{
+		alive = alive_;
+	}
 	/// @brief アニメーション再生(仮)
 	/// @param animIndex_ アニメーション番号
 	/// @param state_ アニメーションの状態

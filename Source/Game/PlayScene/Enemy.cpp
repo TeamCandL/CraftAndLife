@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "EnemyAttackColl.h"
 #include "pch\pch.h"
+#include <Game/System/AudioSystem.h>
 #include <shigaLibrary/SgRandom.h>
 #include <shigaLibrary/SgMath.h>
 
@@ -24,7 +25,6 @@ void Enemy::Update()
 	{
 		SetAlive(false);
 	}
-
 
 	// 徘徊チェックポイントとの距離(差分)
 	float distX = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x - transform.position.x;
@@ -76,8 +76,8 @@ void Enemy::Move(
     float spd_,
     float angleY_)
 {
-	
-	transform.rotation = Quaternion::FromEuler(Vec3{-DirectX::XM_PIDIV2, angleY_, 0.0f});
+
+	transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, angleY_, 0.0f });
 	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
 	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
 }
@@ -103,6 +103,8 @@ void Enemy::AttackCollider()
 {
 	if (nowAttackCoolTime <= 0.0f)
 	{
+		Get<AudioSystem>().Play(attackSE);
+
 		GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
 		nowAttackCoolTime = ATTACK_COOL_TIME;
 	}

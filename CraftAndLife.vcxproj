@@ -657,6 +657,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\INetworkActor.h" />
     <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemSystem.h" />
     <ClInclude Include="Source\Game\PlayScene\NetworkActorServer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemy.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyController.h" />
