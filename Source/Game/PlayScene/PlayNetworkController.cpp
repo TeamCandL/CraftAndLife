@@ -102,7 +102,7 @@ void PlayNetworkController::Update()
 		networkSessionManager.Send(message);
 
 		Transform& enemyTransform = Get<Transform>(objEnemy);
-		Quaternion& enemyRotation = Get<Quaternion>(objEnemy);
+		// Quaternion& enemyRotation = Get<Quaternion>(objEnemy);
 		Protocol::UpdateEnemy enemyMessage{};
 		enemyMessage.positionX = enemyTransform.position.x;
 		enemyMessage.positionY = enemyTransform.position.y;
