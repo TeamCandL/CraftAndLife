@@ -2,7 +2,7 @@
 #include "EnemyType.h"
 #include <Game/Game.h>
 
-/// 敵のID,敵の種類,座標,回転,を入れる構造体
+/// @brief 敵のステータス一覧 id, type, pos, angle
 struct EnemyStatus
 {
 	int enemyId;

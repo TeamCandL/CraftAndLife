@@ -15,13 +15,15 @@
 #include "OtherEnemy.h"
 #include "OtherEnemyController.h"
 #include "PlaySceneUIController.h"
+#include <../Resource/MAP/MAP.h>
 
 void PlayScene::Start()
 {
 	Instantiate<GameManager>();
 	GameObject objSky = Instantiate<Sky>();
 
-	GameObject objTerrain = Instantiate<Terrain>();
+	GameObject objTerrain = Instantiate<MAP>();
+	// GameObject objTerrain = Instantiate<Terrain>();
 
 	Instantiate<OtherPlayer>("てすとん");
 

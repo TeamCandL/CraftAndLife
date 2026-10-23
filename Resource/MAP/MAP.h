@@ -109,6 +109,11 @@ struct MapData
 	Vec3 GetStartPosition() const;
 	Vec3 GetGoalPosition() const;
 
+	Vec3 GetBeginPosision() const;
+	Vec3 GetEndPosision() const;
+
+
+
 private:
 	float CalculateRawHeight(float x, float z) const;
 };

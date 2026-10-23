@@ -2,6 +2,7 @@
 #include "EnemyAiCheckPoint.h"
 #include <Game/Game.h>
 #include "EnemyType.h"
+#include "EnemyStatus.h"
 
 /// @brief 敵のパラメータ初期値。Skeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
@@ -184,6 +185,10 @@ struct Enemy : ObjectBase<EnemyData>
 	int32_t GetID() const
 	{
 		return id;
+	}
+	EnemyStatus GetStatus() const
+	{
+		return { id, enemyType, transform.position, angleY };
 	}
 
 	/// @brief 攻撃判定の生成
