@@ -1,9 +1,12 @@
 #pragma once
 #include "../BasePch.h"
+#include "../Core/Resource/ResourceType.h"
+#include "../Core/Resource.h"
 #include "IManager.h"
 
 namespace cha
 {
+	template <ResourceType ResourceTypeV> class Resource;
 	class Dx11Manager;
 
 	/// @brief Direct2D のマネージャ
@@ -47,8 +50,23 @@ namespace cha
 		    const Vec2 _begin,
 		    const Vec2 _size);
 
-		/// @brief ローカルフォルダにあるフォントを読み込む
-		HRESULT InitializeLocalFont();
+		/// @brief Direct Write Factoryを参照する
+		/// @tparam Func auto(ComPtr<IDWriteFactory3>&)
+		/// @param _func
+		/// @return
+		template <typename Func>
+		inline decltype(auto) RefWriteFactory(
+		    Func&& _func)
+		{
+			if constexpr (std::is_invocable_v<Func, decltype(pDWriteFactory_)>)
+			{
+				return _func(pDWriteFactory_);
+			}
+			else
+			{
+				static_assert(dependent_false<Func>, "ComPtr<IDWriteFactory3>を受け取る引数を用意してください。");
+			}
+		}
 
 		/// @brief ID2D1Factory1 / ID2D1DeviceContext を参照する
 		/// @tparam Func Any(const ComPtr<ID2D1Factory1>&, const ComPtr<ID2D1DeviceContext>&)

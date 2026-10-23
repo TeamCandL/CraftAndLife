@@ -1,6 +1,9 @@
 
 #include "D2DManager.h"
 #include <Base/Manager/Dx11Manager.h>
+#include "../Core/Resource.h"
+
+#include "../Core/Resource/Font.h"
 
 cha::D2DManager::D2DManager(
     Dx11Manager& _dx11) :
@@ -103,35 +106,6 @@ bool cha::D2DManager::Initialize()
 	// D2Dの描画先を設定
 	pD2DContext_->SetTarget(pD2DTargetBitmap_.Get());
 
-	//// 7. DirectWrite テキストフォーマットの作成 (フォント名、サイズ等の指定)
-	// HRESULT hResult = pDWriteFactory_->CreateTextFormat(
-	//	L"Meiryo",                // フォントファミリ名
-	//	nullptr,                  // フォントコレクション (nullptrでシステムフォント)
-	//	DWRITE_FONT_WEIGHT_NORMAL,
-	//	DWRITE_FONT_STYLE_NORMAL,
-	//	DWRITE_FONT_STRETCH_NORMAL,
-	//	24.0f,                    // フォントサイズ (DIP単位)
-	//	L"ja-jp",                 // ロケール
-	//	&pTextFormat_
-	//);
-	// if (FAILED(hResult))
-	//{
-	//	VCU_ASSERT(SUCCEEDED(hResult) && "CreateTextFormatに失敗");
-	//	return hResult;
-	// }
-	//  フォントの設定
-	hResult = InitializeLocalFont();
-	if (FAILED(hResult))
-	{
-		VCU_ASSERT(SUCCEEDED(hResult) && "InitializeLocalFontに失敗");
-		return false;
-	}
-
-	// テキストの整列設定
-	pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	// pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-
 	InitializeBrushes();
 
 	return true;
@@ -198,8 +172,12 @@ void cha::D2DManager::DrawString(
 	D2D1_RECT_F renderRect = D2D1::RectF(_begin.x, _begin.y, _begin.x + _size.x, _begin.y + _size.y);
 
 	// いざ描画
-	pD2DContext_
-	    ->DrawTextW(_text.data(), static_cast<UINT32>(_text.size()), pTextFormat_.Get(), renderRect, pTextBrush_.Get());
+	pD2DContext_->DrawTextW(
+	    _text.data(),
+	    static_cast<UINT32>(_text.size()),
+	    _font.Get().pTextFormat.Get(),
+	    renderRect,
+	    pTextBrush_.Get());
 }
 
 void cha::D2DManager::DrawString(
@@ -220,75 +198,5 @@ void cha::D2DManager::DrawString(
 
 	MultiByteToWideChar(CP_UTF8, 0, _text.data(), static_cast<int>(_text.size()), &wstr[0], neededSize);
 
-	DrawString(wstr, _begin, _size);
-}
-
-HRESULT cha::D2DManager::InitializeLocalFont()
-{
-	HRESULT hResult = S_OK;
-
-	// TODO: マジックを消す
-	const fs::path FONT_FILE{ "Font/YuseiMagic/YuseiMagic-Regular.ttf" };
-
-	// 1. フォントファイルの参照を作成 (例: 実行ファイルと同じ場所の "myfont.ttf")
-	ComPtr<IDWriteFontFile> pFontFile{};
-	hResult = pDWriteFactory_->CreateFontFileReference(FONT_FILE.c_str(), nullptr, &pFontFile);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	ComPtr<IDWriteFontFaceReference> pFontFaceReference{};
-	hResult = pDWriteFactory_->CreateFontFaceReference(
-	    pFontFile.Get(),
-	    0,                             // faceIndex (通常は0)
-	    DWRITE_FONT_SIMULATIONS_NONE,  // フォントのシミュレーション（斜体や太字の強制変形なし）
-	    &pFontFaceReference);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	// 2. フォントセットビルダーを使って、このファイルを含むフォントセットを作成
-	ComPtr<IDWriteFontSetBuilder> pFontSetBuilder{};
-	hResult = pDWriteFactory_->CreateFontSetBuilder(&pFontSetBuilder);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = pFontSetBuilder->AddFontFaceReference(pFontFaceReference.Get());
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	ComPtr<IDWriteFontSet> pFontSet{};
-	hResult = pFontSetBuilder->CreateFontSet(&pFontSet);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	// 3. フォントセットからフォントコレクションを作成
-	ComPtr<IDWriteFontCollection1> pFontCollection{};
-	hResult = pDWriteFactory_->CreateFontCollectionFromFontSet(pFontSet.Get(), &pFontCollection);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	// 4. 作成したフォントコレクションを渡して TextFormat を作成
-	// ※フォントファミリ名は、システム名ではなく「フォントファイルが内部で持っている正式名」を指定します
-	hResult = pDWriteFactory_->CreateTextFormat(
-	    L"Yusei Magic",  // NOTE: フォント内の正確なファミリ名でなければいけない
-	    pFontCollection.Get(),
-	    DWRITE_FONT_WEIGHT_NORMAL,
-	    DWRITE_FONT_STYLE_NORMAL,
-	    DWRITE_FONT_STRETCH_NORMAL,
-	    32.0f,
-	    L"ja-jp",
-	    pTextFormat_.GetAddressOf());
-
-	return hResult;
+	DrawString(_font, wstr, _begin, _size);
 }

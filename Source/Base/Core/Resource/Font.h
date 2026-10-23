@@ -13,21 +13,21 @@ namespace cha
 	struct FontLoadConfig
 	{
 		FontLoadConfig(
-		    const fs::path& _file,
-		    const std::wstring& _familyName,
-		    const std::wstring& _localName,
-		    const float _fontSize) :
+		    const fs::path& _file           = "Font/YuseiMagic/YuseiMagic-Regular.ttf",
+		    const std::wstring& _familyName = L"Yusei Magic",
+		    const float _fontSize           = 32.0f,
+		    const std::wstring& _localName  = L"ja-jp") :
+		    fontSize{ _fontSize },
 		    file{ _file },
 		    familyName{ _familyName },
-		    localName{ _localName },
-		    fontSize{ _fontSize }
+		    localName{ _localName }
 		{
 		}
 
+		float fontSize{};                                           ///< フォントサイズ
 		fs::path file{};                                            ///< フォントファイルのパス
 		std::wstring familyName{};                                  ///< フォントファミリー名
 		std::wstring localName{ L"ja-jp" };                         ///< ja-jp
-		float fontSize{};                                           ///< フォントサイズ
 		DWRITE_FONT_WEIGHT weight{ DWRITE_FONT_WEIGHT_NORMAL };     ///< 幅
 		DWRITE_FONT_STYLE style{ DWRITE_FONT_STYLE_NORMAL };        ///<
 		DWRITE_FONT_STRETCH stretch{ DWRITE_FONT_STRETCH_NORMAL };  ///<
@@ -51,6 +51,6 @@ namespace cha
 	{
 		using DataT       = FontResource;
 		using RegistryT   = FontRegistry;
-		using LoadConfigT = fs::path;
+		using LoadConfigT = FontLoadConfig;
 	};
 }  // namespace cha
