@@ -188,9 +188,13 @@ void EffectSystem::Update()
 			    // フレーム数を設定
 			    rendererRef_->SetTime(static_cast<float>(_effect.elapsedTime));
 			    Effekseer::Matrix43 mat = CnvMat43(_transform.world);
-			    // エフェクトのインスタンスに対して処理をし、更新速度を設定
+			    // 180度回転させる
+			    Quaternion quat           = Quaternion::FromEuler({ 0.0f, DirectX::XMConvertToRadians(180.0f), 0.0f });
+			    DirectX::XMMATRIX quatMat = DirectX::XMMatrixRotationQuaternion(quat);
+			    Mat4x4 finalMat           = DirectX::XMMatrixMultiply(quatMat, _transform.world);
 
-			    managerRef_->SetMatrix(handle, mat);
+			    // エフェクトのインスタンスに対して処理をし、更新速度を設定
+			    managerRef_->SetMatrix(handle, CnvMat43(finalMat));
 			    managerRef_->SetSpeed(handle, _effect.playSpeed);
 			    // 再生時間を増やす
 			    _effect.elapsedTime += deltaTime;
