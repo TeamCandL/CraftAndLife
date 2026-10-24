@@ -19,22 +19,27 @@ namespace cha
 	struct ShaderLoadConfig
 	{
 		inline ShaderLoadConfig(
-			const fs::path& _file,
-			const RasterizerConfig _rasterizerConfig = {}) :
-			file{ _file },
-			rasterizerConfig{ _rasterizerConfig }
+		    const fs::path& _file,
+		    const RasterizerConfig _rasterizerConfig = {}) :
+		    file{ _file },
+		    rasterizerConfig{ _rasterizerConfig }
 		{
 		}
 
 		fs::path file{};
 		RasterizerConfig rasterizerConfig{};
+
+		HashValue GetHash() const
+		{
+			return 0;
+		}
 	};
 
 	/// @brief シェーダリソースを格納
 	class ShaderRegistry : public ResourceRegistryBase<ShaderResource, ShaderLoadConfig>
 	{
-	public:
-		ShaderRegistry() = default;
+	  public:
+		ShaderRegistry()  = default;
 		~ShaderRegistry() = default;
 
 		/// @brief 試しにシェーダをロードする
@@ -43,14 +48,14 @@ namespace cha
 		/// @return ロードに成功 true / false
 		bool TryLoad(ShaderLoadConfig&& _config, ShaderResource& _out) override;
 
-	private:
+	  private:
 		ShaderCompileConfig compileConfig_{};  // コンパイル時の設定
 	};
 
-	template<> struct ResourceTraits<ResourceType::Shader>
+	template <> struct ResourceTraits<ResourceType::Shader>
 	{
-		using DataT = ShaderResource;
-		using RegistryT = ShaderRegistry;
+		using DataT       = ShaderResource;
+		using RegistryT   = ShaderRegistry;
 		using LoadConfigT = fs::path;
 	};
-}
+}  // namespace cha

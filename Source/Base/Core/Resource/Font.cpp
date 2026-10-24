@@ -81,3 +81,8 @@ bool cha::FontRegistry::TryLoad(
 
 	return hResult == S_OK;
 }
+
+cha::HashValue cha::FontResource::GetHash() const
+{
+	return HashValue{};
+}

@@ -9,7 +9,8 @@ struct UIText : ComponentBase<UIText>
 {
 	UIText(
 	    const std::string_view _content = "") :
-	    content{ _content }
+	    content{ _content },
+	    font{ "Font/YuseiMagic/YuseiMagic-Regular.ttf", L"Yusei Magic", 32.0f, L"ja-jp" }
 	{
 	}
 
@@ -21,11 +22,6 @@ struct UIText : ComponentBase<UIText>
 	{
 	}
 
-	Resource<ResourceType::Font> font{ "Font/YuseiMagic/YuseiMagic-Regular.ttf",
-		                               L"Yusei Magic",
-		                               32.0f,
-		                               L"ja-jp" };  ///< 表示するテキストのフォント
-	std::string content{};                          ///< 表示したいテキスト
-
-	static inline Resource<ResourceType::Font> defaultFont{};
+	Resource<ResourceType::Font> font{};  ///< 表示するテキストのフォント
+	std::string content{};                ///< 表示したいテキスト
 };

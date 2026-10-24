@@ -37,6 +37,11 @@ namespace cha
 			VCU_LOG("フォント作成size:{}, file:{}", fontSize, file.string());
 		}
 
+		HashValue GetHash() const
+		{
+			return 0;
+		}
+
 		float fontSize{};                                           ///< フォントサイズ
 		fs::path file{};                                            ///< フォントファイルのパス
 		std::wstring familyName{};                                  ///< フォントファミリー名

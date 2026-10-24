@@ -394,6 +394,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Base\Core\Resource\Material.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model\ModelMaterial.cpp" />
+    <ClCompile Include="Source\Base\Core\Resource\ResourceRegistryBase.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Shader.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\ShaderPro.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\ShaderPro\ShaderProBuilder.cpp" />
@@ -447,6 +448,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\FPSCamera.cpp" />
@@ -661,6 +663,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
     <ClInclude Include="Source\Game\PlayScene\Entity.h" />
+    <ClInclude Include="Source\Game\PlayScene\IEntity.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
     <ClInclude Include="Source\Game\PlayScene\INetworkActor.h" />
     <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
@@ -851,9 +854,11 @@ pre-commit install</Command>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\DebugLine.hlsl" />
+    <FxCompile Include="Resource\Shader\Toon.hlsl" />
     <FxCompile Include="Resource\Shader\ShadowMap.hlsl" />
     <FxCompile Include="Resource\Shader\SkyBox.hlsl" />
     <FxCompile Include="Resource\Shader\Terrain.hlsl" />
+    <FxCompile Include="Resource\Shader\ToonEdge.hlsl" />
     <FxCompile Include="Resource\Shader\UI.hlsl" />
     <FxCompile Include="Resource\Shader\UICircleImage.hlsl" />
     <FxCompile Include="Resource\Shader\Unlit.hlsl" />
