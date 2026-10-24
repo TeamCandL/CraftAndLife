@@ -12,6 +12,18 @@ namespace cha
 
 	struct FontLoadConfig
 	{
+		/*FontLoadConfig() :
+		    FontLoadConfig
+		    {
+		        "Font/YuseiMagic/YuseiMagic-Regular.ttf",
+		        L"Yusei Magic",
+		        32.0f,
+		        L"ja-jp"
+		    }
+		{
+
+		}*/
+
 		FontLoadConfig(
 		    const fs::path& _file           = "Font/YuseiMagic/YuseiMagic-Regular.ttf",
 		    const std::wstring& _familyName = L"Yusei Magic",
@@ -22,6 +34,7 @@ namespace cha
 		    familyName{ _familyName },
 		    localName{ _localName }
 		{
+			VCU_LOG("フォント作成size:{}, file:{}", fontSize, file.string());
 		}
 
 		float fontSize{};                                           ///< フォントサイズ
