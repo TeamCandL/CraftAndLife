@@ -25,8 +25,6 @@ void PlayScene::Start()
 	GameObject objTerrain = Instantiate<MAP>();
 	// GameObject objTerrain = Instantiate<Terrain>();
 
-	Instantiate<OtherPlayer>("てすとん");
-
 	Instantiate<DayController>(objSky);
 	GameObject objEnemyController = Instantiate<EnemyController>();
 	GameObject objEnemy           = Instantiate<Enemy>(objEnemyController);  // 仮設置

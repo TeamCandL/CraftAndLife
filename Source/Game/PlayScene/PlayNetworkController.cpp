@@ -97,7 +97,7 @@ void PlayNetworkController::Update()
 		static int32_t counter{};
 		message.flag = counter++;
 
-		VCU_LOG("更新処理送信: {}", counter);
+		// VCU_LOG("更新処理送信: {}", counter);
 
 		networkSessionManager.Send(message);
 
@@ -114,7 +114,7 @@ void PlayNetworkController::Update()
 		static int32_t eCount{};
 		networkSessionManager.Send(enemyMessage);
 
-		VCU_LOG("敵更新処理送信: {}", eCount);
+		// VCU_LOG("敵更新処理送信: {}", eCount);
 	}
 	break;
 	default:

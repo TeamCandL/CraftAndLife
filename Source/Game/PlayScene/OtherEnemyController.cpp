@@ -6,7 +6,7 @@ void OtherEnemyController::Start() {}
 
 void OtherEnemyController::Update()
 {
-	VCU_LOG("OtherEnemyController Update!");
+	// VCU_LOG("OtherEnemyController Update!");
 	SessionManager& sessionManager = Get<SessionManager>();
 
 	for (auto& [enemyId, obj] : idToObjOtherEnemy)

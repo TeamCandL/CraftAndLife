@@ -16,17 +16,10 @@ void OtherEnemy::Update()
 		// 座標と角度の更新
 		transform.position = status.position;
 		transform.rotation = Quaternion::FromEuler(Vec3{ 0.0f, status.rotation.y, 0.0f });
-		VCU_LOG(
-		    "{}の更新！座標({}, {}, {}) 回転y:{}",
-		    enemyId,
-		    transform.position.x,
-		    transform.position.y,
-		    transform.position.z,
-		    transform.rotation.y);
 	}
 	else
 	{
-		VCU_LOG("{}がない！", enemyId);
+		// VCU_LOG("{}がない！", enemyId);
 	}
 }
 
