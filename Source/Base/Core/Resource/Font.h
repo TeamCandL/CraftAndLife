@@ -7,39 +7,39 @@ namespace cha
 	struct FontResource
 	{
 		ComPtr<IDWriteTextFormat> pTextFormat{};
-		HashValue GetHash() const;
 	};
 
 	struct FontLoadConfig
 	{
-		/*FontLoadConfig() :
-		    FontLoadConfig
-		    {
-		        "Font/YuseiMagic/YuseiMagic-Regular.ttf",
-		        L"Yusei Magic",
-		        32.0f,
-		        L"ja-jp"
-		    }
-		{
-
-		}*/
-
 		FontLoadConfig(
 		    const fs::path& _file           = "Font/YuseiMagic/YuseiMagic-Regular.ttf",
 		    const std::wstring& _familyName = L"Yusei Magic",
 		    const float _fontSize           = 32.0f,
-		    const std::wstring& _localName  = L"ja-jp") :
+		    const std::wstring& _localName  = L"ja-jp",
+		    const bool _isUniqueLoad        = false) :
 		    fontSize{ _fontSize },
 		    file{ _file },
 		    familyName{ _familyName },
-		    localName{ _localName }
+		    localName{ _localName },
+		    isUniqueLoad{ _isUniqueLoad }
 		{
-			VCU_LOG("フォント作成size:{}, file:{}", fontSize, file.string());
 		}
 
 		HashValue GetHash() const
 		{
-			return 0;
+			if (isUniqueLoad)
+			{
+				return 0;  // ユニークロードが指定されているなら必ず読み込むように0を返しちゃう
+			}
+			HashValue hashValue{};
+			HashCombine(hashValue, fontSize);
+			HashCombine(hashValue, file.string());
+			HashCombine(hashValue, familyName);
+			HashCombine(hashValue, localName);
+			HashCombine(hashValue, weight);
+			HashCombine(hashValue, style);
+			HashCombine(hashValue, stretch);
+			return hashValue;
 		}
 
 		float fontSize{};                                           ///< フォントサイズ
@@ -49,6 +49,7 @@ namespace cha
 		DWRITE_FONT_WEIGHT weight{ DWRITE_FONT_WEIGHT_NORMAL };     ///< 幅
 		DWRITE_FONT_STYLE style{ DWRITE_FONT_STYLE_NORMAL };        ///<
 		DWRITE_FONT_STRETCH stretch{ DWRITE_FONT_STRETCH_NORMAL };  ///<
+		bool isUniqueLoad{ false };                                 ///< リソース
 	};
 
 	/// @brief 音声リソースを格納

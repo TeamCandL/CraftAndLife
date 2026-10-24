@@ -12,6 +12,8 @@ bool cha::FontRegistry::TryLoad(
 	ManagerRegistry::Ref<D2DManager>().RefWriteFactory(
 	    [&_config, &_out, &hResult](const ComPtr<IDWriteFactory3>& _pDWriteFactory) -> HRESULT
 	    {
+		    VCU_LOG("フォント読み込み:{}", _config.file.string());
+
 		    // 1. フォントファイルの参照を作成 (例: 実行ファイルと同じ場所の "myfont.ttf")
 		    ComPtr<IDWriteFontFile> pFontFile{};
 		    hResult = _pDWriteFactory->CreateFontFileReference(_config.file.c_str(), nullptr, &pFontFile);
@@ -80,9 +82,4 @@ bool cha::FontRegistry::TryLoad(
 	    });
 
 	return hResult == S_OK;
-}
-
-cha::HashValue cha::FontResource::GetHash() const
-{
-	return HashValue{};
 }
