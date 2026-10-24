@@ -9,6 +9,7 @@ void Player::Start()
 	transform.scale     = Vec3::One() * 200.0f;
 	objPlayerController = GetScene().Instantiate<PlayerControllerNormal>();
 	laserEffect         = GetScene().Instantiate<EffectObject>("Effect/Laser01.efkefc");
+	laserEffect2        = GetScene().Instantiate<EffectObject>("Effect/ScoreItem.efkefc");
 }
 
 void Player::Update()
@@ -51,16 +52,20 @@ void Player::Update()
 	// 平行移動
 	transform.position += moveDirection * moveSpeed;
 
-	auto& data                                               = Get<EffectObject>(laserEffect).Data();
-	Get<EffectObject>(laserEffect).Data().transform.position = transform.Forward() * 1.0f;
-
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-
 		Get<EffectObject>(laserEffect).Play();
-		Get<EffectObject>(laserEffect).Data().effectPlayer.isLoop = true;
+		Get<EffectObject>(laserEffect).Data().effectPlayer.isLoop = false;
 		Get<EffectObject>(laserEffect).Data().transform.parent    = ToGameObject();
-		Get<EffectObject>(laserEffect).Data().transform.scale     = Vec3::One() * 0.02f;
+		Get<EffectObject>(laserEffect).Data().transform.scale     = Vec3::One() * 0.04f;
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::P))
+	{
+
+		Get<EffectObject>(laserEffect2).Play();
+		Get<EffectObject>(laserEffect2).Data().effectPlayer.isLoop = false;
+		Get<EffectObject>(laserEffect2).Data().transform.parent    = ToGameObject();
+		Get<EffectObject>(laserEffect2).Data().transform.scale     = Vec3::One() * 0.01f;
 	}
 }
 

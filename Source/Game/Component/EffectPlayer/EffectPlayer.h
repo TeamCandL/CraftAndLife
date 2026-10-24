@@ -5,10 +5,6 @@ struct EffectPlayer : ComponentBase<EffectPlayer>
 {
 	/// @brief デフォルトのコンストラクタ
 	EffectPlayer() = default;
-	// エフェクトの位置、回転、スケール
-	Vec3 position{ Vec3::Zero() };
-	Quaternion rotation{ Quaternion::Identity() };
-	Vec3 scale{ Vec3::One() };
 	// ループするか
 	bool isLoop{ false };
 	// 破棄するか

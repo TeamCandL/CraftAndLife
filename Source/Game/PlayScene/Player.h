@@ -22,6 +22,7 @@ struct PlayerData
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };  ///< シェーダ
 	Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };  ///< モデル
 	GameObject laserEffect{};
+	GameObject laserEffect2{};
 
 	Component<Transform> transform{};  ///< 座標系
 	Component<RigidBody> rigidBody{};  ///< 剛体

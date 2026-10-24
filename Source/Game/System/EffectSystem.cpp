@@ -133,7 +133,7 @@ void EffectSystem::Update()
 	    [this, deltaTime, fps](IObject& _object, Transform& _transform, EffectPlayer& _effect)
 	    {
 		    // 未使用のデータは更新しない
-		    if (_effect.ref == nullptr || _effect.handle == -1)
+		    if (_effect.ref == nullptr)
 		    {
 			    return;
 		    }
@@ -152,7 +152,7 @@ void EffectSystem::Update()
 		    }
 
 		    // 再生時間が0の場合、再生を始める
-		    if (_effect.elapsedTime == 0)
+		    if (_effect.elapsedTime == 0 || _effect.handle == -1)
 		    {
 			    handle = managerRef_->Play(_effect.ref, 0, 0, 0);
 		    }

@@ -2,6 +2,7 @@
 
 void EffectPlayer::Reset()
 {
-	ref    = nullptr;
-	handle = -1;
+	ref         = nullptr;
+	handle      = -1;
+	elapsedTime = 0.0;
 }
