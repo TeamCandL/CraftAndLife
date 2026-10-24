@@ -1,5 +1,6 @@
 #pragma once
 #include <Game/Game.h>
+#include "ItemId.h"
 
 enum ItemType
 {
@@ -34,9 +35,17 @@ struct ItemSystemData
 {
 	/// @brief すべてのアイテムの全情報を格納する
 	std::vector<ItemAllInfo> allItemList{};
+};
 
+struct ItemSystem : SystemObjectBase<ItemSystemData>
+{
 	/// @brief ItemInfo格納用の情報を取得する
 	/// @param id_ 情報を取得したいアイテムのID
 	/// @return
-	void GetInfo(int32_t id_);
+	void GetInfo(const ItemId _id);
+
+	/// @brief
+	/// @param _id
+	/// @return
+	Resource<Model>& GetModel(const ItemId _id);
 };
