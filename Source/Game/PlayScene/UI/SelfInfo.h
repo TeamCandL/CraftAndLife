@@ -9,7 +9,7 @@ struct SelfInfoData
 	Component<UIImage> image{ texture };
 };
 
-struct TaskBackground : ObjectBase<SelfInfoData>
+struct SelfInfo : ObjectBase<SelfInfoData>
 {
 	/// @brief 開始処理
 	void Start() override;

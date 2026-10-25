@@ -13,12 +13,13 @@ namespace UI
 		    const std::string_view _content,
 		    const Vec2 _begin,
 		    const Vec2 _scale,
-		    Resource<ResourceType::Font> _font = {}) :
+		    Resource<ResourceType::Font> _font = {},
+		    const Color _color                 = Color::BLACK) :
 		    textureNormal{ _normal },
 		    textureHover{ _hover },
 		    texturePush{ _push },
 		    transform{ _begin, _scale },
-		    text{ font, _content }
+		    text{ font, _color, _content }
 		{
 		}
 

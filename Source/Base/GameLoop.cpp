@@ -140,8 +140,8 @@ void cha::GameLoop::Run(
 	SceneManager& sceneManager = ManagerRegistry::Add<SceneManager>();
 	// ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 	// 最初に遷移するシーンはここで変更
-	sceneManager.Move<BootScene>();
-	// sceneManager.Move<PlayScene>();
+	// sceneManager.Move<BootScene>();
+	sceneManager.Move<PlayScene>();
 	//  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 	ScoreManager& scoreManager = ManagerRegistry::Add<ScoreManager>("./score.json");

@@ -75,8 +75,8 @@ bool cha::FontRegistry::TryLoad(
 		        _out.pTextFormat.GetAddressOf());
 
 		    // テキストの整列設定
-		    _out.pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-		    _out.pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		    _out.pTextFormat->SetTextAlignment(_config.textAlignment);
+		    _out.pTextFormat->SetParagraphAlignment(_config.paragraphAlignment);
 
 		    return hResult;
 	    });

@@ -157,7 +157,8 @@ void cha::D2DManager::DrawString(
     const Resource<ResourceType::Font>& _font,
     const std::wstring_view _text,
     const Vec2 _begin,
-    const Vec2 _size)
+    const Vec2 _size,
+    const Color _color)
 {
 	if (!pD2DContext_)
 	{
@@ -170,6 +171,10 @@ void cha::D2DManager::DrawString(
 	}
 
 	D2D1_RECT_F renderRect = D2D1::RectF(_begin.x, _begin.y, _begin.x + _size.x, _begin.y + _size.y);
+
+	pTextBrush_->SetColor(D2D1::ColorF(_color.r, _color.g, _color.b, _color.a));
+
+	VCU_LOG("Color:{}, {}, {}, {}", _color.r, _color.g, _color.b, _color.a);
 
 	// いざ描画
 	pD2DContext_->DrawTextW(
@@ -184,7 +189,8 @@ void cha::D2DManager::DrawString(
     const Resource<ResourceType::Font>& _font,
     const std::string_view _text,
     const Vec2 _begin,
-    const Vec2 _size)
+    const Vec2 _size,
+    const Color _color)
 {
 	if (_text.empty())
 	{
@@ -198,5 +204,5 @@ void cha::D2DManager::DrawString(
 
 	MultiByteToWideChar(CP_UTF8, 0, _text.data(), static_cast<int>(_text.size()), &wstr[0], neededSize);
 
-	DrawString(_font, wstr, _begin, _size);
+	DrawString(_font, wstr, _begin, _size, _color);
 }

@@ -475,6 +475,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMap.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\OtherInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\TaskBackground.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalPlayerInput.cpp" />
