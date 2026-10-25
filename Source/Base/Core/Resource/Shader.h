@@ -31,7 +31,12 @@ namespace cha
 
 		HashValue GetHash() const
 		{
-			return 0;
+			HashValue hashValue{};
+			HashCombine(hashValue, file.string());
+			HashCombine(hashValue, rasterizerConfig.cullMode);
+			HashCombine(hashValue, rasterizerConfig.fillMode);
+			HashCombine(hashValue, rasterizerConfig.frontCounterClockwise);
+			return hashValue;
 		}
 	};
 
