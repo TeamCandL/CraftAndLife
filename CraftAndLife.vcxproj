@@ -171,6 +171,7 @@ pre-commit install</Command>
       <PrecompiledHeaderFile>pch\pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>pch\pch.h</ForcedIncludeFiles>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
