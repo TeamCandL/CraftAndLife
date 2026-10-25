@@ -22,7 +22,7 @@
 #include <Game/System/IMESystem.h>
 #include <Game/System/PadInputSystem.h>
 #include <Game/System/AbstructInputSystem.h>
-
+#include <Game/PlayScene/TerrainSystem.h>
 
 void GameManager::Start()
 {
@@ -31,7 +31,7 @@ void GameManager::Start()
 	GetScene().Instantiate<AbstructInputSystem>();
 	GetScene().Instantiate<CursorSystem>();
 	GetScene().Instantiate<AudioSystem>();
-	//GetScene().Instantiate<DiscordSystem>();
+	// GetScene().Instantiate<DiscordSystem>();
 	GetScene().Instantiate<TranslationSystem>();
 	GetScene().Instantiate<PhysicsSystem>();
 	GetScene().Instantiate<RaycastSystem>();
@@ -41,16 +41,16 @@ void GameManager::Start()
 	GetScene().Instantiate<OBBRenderSystem>();
 
 	GetScene().Instantiate<UITranslationSystem>();
-	
-	GetScene().Instantiate<UISystem>();
-	
-	GetScene().Instantiate<Canvas>();
 
+	GetScene().Instantiate<UISystem>();
+
+	GetScene().Instantiate<Canvas>();
 
 	GetScene().Instantiate<ImGuiRenderingSystem>();
 
-
 	GetScene().Instantiate<IMESystem>();
+
+	GetScene().Instantiate<TerrainSystem>();
 }
 
 void GameManager::Update()
@@ -58,8 +58,7 @@ void GameManager::Update()
 	InputSystem& input = Get<InputSystem>();
 
 	// Escapeキーが押されたらゲームを終了する
-	if (input.GetKey(KeyCode::Escape)
-		&& input.GetKey(KeyCode::LeftShift))
+	if (input.GetKey(KeyCode::Escape) && input.GetKey(KeyCode::LeftShift))
 	{
 		Get<IssueManager>().Error(L"ゲーム終了");
 	}
