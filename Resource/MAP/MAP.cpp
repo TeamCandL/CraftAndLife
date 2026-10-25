@@ -6,6 +6,7 @@
 #include <Game/Common/Sky.h>
 #include <Game/Tool/DebugCamera.h>
 #include <Game/Terrain/TerrainMaterial.h>
+#include <Game/PlayScene/TerrainSystem.h>
 
 #include <algorithm>
 #include <cmath>
@@ -512,6 +513,7 @@ Vec3 MapData::GetEndPosision() const
 
 void MAP::Start()
 {
+	Get<TerrainSystem>().Register(this -> ToGameObject());
 	MaterialResource materialResource{};
 
 	std::unique_ptr<TerrainMaterialProperty> property = std::make_unique<TerrainMaterialProperty>();
