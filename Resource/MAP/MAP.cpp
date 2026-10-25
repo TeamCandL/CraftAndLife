@@ -626,6 +626,7 @@ void MAP::Start()
 		{ HarvestableType::Rock, 75.0f, 45.0f, 5.0f },
 	};
 
+	for (int i = 0; i < 10; i++)
 	// 配置データを順番に処理する
 	for (const auto& placement : placements)
 	{

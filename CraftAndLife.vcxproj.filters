@@ -1435,7 +1435,7 @@
     <FxCompile Include="Resource\Shader\ToonEdge.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="Library\Debug\DirectXTex.lib" />
     <Library Include="Library\Release\DirectXTex.lib" />
+    <Library Include="Library\Debug\DirectXTex.lib" />
   </ItemGroup>
 </Project>
