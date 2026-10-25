@@ -716,12 +716,14 @@ void MAP::Reload()
 		    // 5. 地形サーフェスを設定
 		    // ------------------------------------------------
 
-		    surface = Resource<Surface>{ SurfaceResource{ .pVertexBuffer = vertexBuffer,
-			                                              .pIndexBuffer  = indexBuffer,
-			                                              .size          = static_cast<UINT>(sizeof(Vertex)),
-			                                              .offset        = 0,
-			                                              .vertexCount   = static_cast<UINT>(vertices.size()),
-			                                              .indexCount    = static_cast<UINT>(indices.size()),
-			                                              .toplogy       = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST } };
+		    surface = Resource<Surface>{ SurfaceResource
+			{ .pVertexBuffer = vertexBuffer,
+			  .pIndexBuffer  = indexBuffer,
+			  .size          = static_cast<UINT>(sizeof(Vertex)),
+			  .offset        = 0,
+			  .vertexCount   = static_cast<UINT>(vertices.size()),
+			  .indexCount    = static_cast<UINT>(indices.size()),
+			  .toplogy       = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST } 
+			};
 	    });
 }
