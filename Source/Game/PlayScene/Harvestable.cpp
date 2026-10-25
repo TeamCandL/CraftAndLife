@@ -19,7 +19,7 @@ void Harvestable::Start()
 		break;
 
 	case HarvestableType::Rock:
-		model         = Resource<Model>{ "Model/Harvestable/Rock.Fbx" };
+		model         = Resource<Model>{ "Model/Harvestable/Rock.fbx" };
 		maxDurability = 5;
 		break;
 

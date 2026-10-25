@@ -41,7 +41,7 @@ struct HarvestableData
 	HarvestableData(
 	    HarvestableType _type,
 	    Vec3 _position,
-	    float _scale = 1.0f) :
+	    float _scale = 5.0f) :
 	    type{ _type }
 	{
 		transform.position = _position;
