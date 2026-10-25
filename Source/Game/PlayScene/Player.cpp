@@ -4,6 +4,7 @@
 #include "Player/PlayerControllerNormal.h"
 #include "pch\pch.h"
 #include <Game/System/AbstructInputSystem.h>
+#include "Entity.h"
 
 void Player::Start()
 {
@@ -105,6 +106,11 @@ void Player::Update()
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
 		}
+	}
+
+	if (pPlayerInput->IsInteractBegin())
+	{
+		GetScene().Instantiate<Entity>(1);
 	}
 }
 
