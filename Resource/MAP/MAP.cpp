@@ -727,3 +727,67 @@ void MAP::Reload()
 			};
 	    });
 }
+
+
+/// @brief 指定したワールド座標の地形の高さを取得する
+/// @param _worldX ワールド座標のX
+/// @param _worldZ ワールド座標のZ
+/// @return 指定位置の地形の高さ
+float MAP::GetHeight(
+    const float _worldX,
+    const float _worldZ)
+{
+	// 地形データが存在しない場合は基準の高さを返す
+	if (heights.empty())
+	{
+		return MapConfig::BASE_HEIGHT;
+	}
+
+	// MapDataの高さ取得関数を利用する
+	return MapData::GetHeight(_worldX, _worldZ);
+}
+
+/// @brief 指定したワールド座標の地形の法線を取得する
+/// @param _worldX ワールド座標のX
+/// @param _worldZ ワールド座標のZ
+/// @return 地表面の法線ベクトル
+Vec3 MAP::GetNormal(
+    const float _worldX,
+    const float _worldZ)
+{
+	// 地形データが存在しない場合は上向きの法線を返す
+	if (heights.empty())
+	{
+		return Vec3::Up();
+	}
+
+	// 高さを調べる間隔
+	// 小さくすると細かい傾斜を取得しやすくなる
+	constexpr float SAMPLE_DISTANCE = MapConfig::TILE_SIZE;
+
+	// 周囲4方向の地形の高さを取得する
+	const float LEFT_HEIGHT = MapData::GetHeight(_worldX - SAMPLE_DISTANCE, _worldZ);
+
+	const float RIGHT_HEIGHT = MapData::GetHeight(_worldX + SAMPLE_DISTANCE, _worldZ);
+
+	const float BACK_HEIGHT = MapData::GetHeight(_worldX, _worldZ - SAMPLE_DISTANCE);
+
+	const float FRONT_HEIGHT = MapData::GetHeight(_worldX, _worldZ + SAMPLE_DISTANCE);
+
+	// 高さの差から法線ベクトルを計算する
+	const Vec3 NORMAL{ LEFT_HEIGHT - RIGHT_HEIGHT, 2.0f * SAMPLE_DISTANCE, BACK_HEIGHT - FRONT_HEIGHT };
+
+	// 法線の長さを計算する
+	const float NORMAL_LENGTH = std::sqrt(NORMAL.x * NORMAL.x + NORMAL.y * NORMAL.y + NORMAL.z * NORMAL.z);
+
+	// ゼロ除算を防止する
+	constexpr float EPSILON = 0.0001f;
+
+	if (NORMAL_LENGTH <= EPSILON)
+	{
+		return Vec3::Up();
+	}
+
+	// 法線の長さを1にそろえて返す
+	return Vec3{ NORMAL.x / NORMAL_LENGTH, NORMAL.y / NORMAL_LENGTH, NORMAL.z / NORMAL_LENGTH };
+}

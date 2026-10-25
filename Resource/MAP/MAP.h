@@ -3,6 +3,7 @@
 #include <Game/Game.h>
 #include <cstdint>
 #include <vector>
+#include <Game/PlayScene/ITerrain.h>
 
 /// @brief マップの調整値（設計図「滝と川のボクセル地形マップ」完全準拠）
 namespace MapConfig
@@ -119,7 +120,7 @@ private:
 };
 
 /// @brief マップオブジェクト
-struct MAP : ObjectBase<MapData>
+struct MAP : ObjectBase<MapData>,  ITerrain
 {
 	using ObjectBase<MapData>::ObjectBase;
 
@@ -129,4 +130,8 @@ struct MAP : ObjectBase<MapData>
 
 private:
 	void Reload();
+
+  // ITerrain を介して継承されました
+  float GetHeight(const float _worldX, const float _worldZ) override;
+	Vec3 GetNormal(const float _worldX, const float _worldZ) override;
 };
