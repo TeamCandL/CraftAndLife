@@ -16,6 +16,7 @@
 #include "OtherEnemyController.h"
 #include "PlaySceneUIController.h"
 #include <../Resource/MAP/MAP.h>
+#include "Harvestable.h"
 
 void PlayScene::Start()
 {
@@ -38,4 +39,6 @@ void PlayScene::Start()
 	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objEnemy);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>();
+
+	Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f);
 }

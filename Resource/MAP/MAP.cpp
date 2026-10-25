@@ -15,6 +15,8 @@
 #include <vector>
 #include <cstdio>
 
+#include <Game/PlayScene/Harvestable.h>
+
 namespace
 {
 	// 円周率（角度をラジアンで扱う計算に使用）
@@ -504,7 +506,7 @@ Vec3 MapData::GetEndPosision() const
 	float z = MapConfig::PATH_GOAL_Z;
 	float y = GetHeight(x, z);
 
-	return Vec3();
+	return Vec3(x, y, z);
 }
 
 // ============================================================
@@ -527,6 +529,82 @@ void MAP::Start()
 	material = Resource<Material>{ std::move(materialResource) };
 
 	Reload();
+
+	
+    // ========================================================
+	// 採取できる木・岩の配置
+	// ========================================================
+
+	// 配置座標はマップ中心を原点とするワールド座標
+	struct HarvestablePlacement
+	{
+		HarvestableType type;
+		float x;
+		float z;
+		float scale;
+	};
+
+	// 木・岩の配置座標
+	// Y座標は地形から取得するため、XとZだけ指定する
+	const HarvestablePlacement placements[] = {
+		// 通常の木
+		{ HarvestableType::Tree, -85.0f, -65.0f, 1.0f },
+		{ HarvestableType::Tree, -65.0f, -55.0f, 1.0f },
+		{ HarvestableType::Tree, -50.0f, -70.0f, 1.0f },
+		{ HarvestableType::Tree, -30.0f, -45.0f, 1.0f },
+		{ HarvestableType::Tree, 10.0f, -60.0f, 1.0f },
+		{ HarvestableType::Tree, 30.0f, -40.0f, 1.0f },
+		{ HarvestableType::Tree, -80.0f, -20.0f, 1.0f },
+		{ HarvestableType::Tree, -55.0f, 0.0f, 1.0f },
+		{ HarvestableType::Tree, 15.0f, 10.0f, 1.0f },
+		{ HarvestableType::Tree, 45.0f, 30.0f, 1.0f },
+
+		// 背の高い木
+		{ HarvestableType::TreeHigh, -75.0f, -40.0f, 1.2f },
+		{ HarvestableType::TreeHigh, -35.0f, -65.0f, 1.2f },
+		{ HarvestableType::TreeHigh, 25.0f, -20.0f, 1.2f },
+		{ HarvestableType::TreeHigh, -75.0f, 15.0f, 1.2f },
+
+		// 岩
+		{ HarvestableType::Rock, -90.0f, -45.0f, 1.0f },
+		{ HarvestableType::Rock, -60.0f, -25.0f, 1.0f },
+		{ HarvestableType::Rock, -30.0f, -80.0f, 1.0f },
+		{ HarvestableType::Rock, 0.0f, -35.0f, 1.0f },
+		{ HarvestableType::Rock, 35.0f, -60.0f, 1.0f },
+		{ HarvestableType::Rock, 55.0f, 15.0f, 1.0f },
+		{ HarvestableType::Rock, 75.0f, 45.0f, 1.0f },
+	};
+
+	// 配置データを順番に処理する
+	for (const auto& placement : placements)
+	{
+		// マップの外には配置しない
+		if (!IsInsideMap(placement.x, placement.z))
+		{
+			continue;
+		}
+
+		// 道の上には配置しない
+		if (IsPath(placement.x, placement.z))
+		{
+			continue;
+		}
+
+		// 川の上には配置しない
+		if (IsRiver(placement.x, placement.z))
+		{
+			continue;
+		}
+
+		// 地形の高さを取得する
+		const float groundY = GetHeight(placement.x, placement.z);
+
+		// 地面の高さに合わせて配置する
+		const Vec3 position{ placement.x, groundY, placement.z };
+
+		// 採取可能なものをシーンに生成する
+		GetScene().Instantiate<Harvestable>(placement.type, position, placement.scale);
+	}
 }
 
 void MAP::Update() {}
