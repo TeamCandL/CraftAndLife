@@ -37,7 +37,7 @@ struct ItemSystemData
 	std::vector<ItemAllInfo> allItemList{};
 };
 
-struct ItemSystem : SystemObjectBase<ItemSystemData>
+struct ItemSystem : SystemObjectBase<ItemSystem, ItemSystemData>
 {
 	/// @brief ItemInfo格納用の情報を取得する
 	/// @param id_ 情報を取得したいアイテムのID
