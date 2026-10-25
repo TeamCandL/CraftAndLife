@@ -40,5 +40,5 @@ void PlayScene::Start()
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>();
 
-	Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 5.0f);
+	Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f);
 }
