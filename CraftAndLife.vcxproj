@@ -458,6 +458,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\MainCamera\GhostCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\IMainCameraUpdater.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\TPSCamera.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\NetworkActorServer.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherEnemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherEnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayer.cpp" />
