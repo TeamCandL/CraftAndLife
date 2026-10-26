@@ -4,6 +4,7 @@
 /// @brief サーバー側のネットワークアクターのデータ
 struct NetworkActorServerData
 {
+	bool isHost{ false };
 };
 
 /// @brief サーバー側のネットワークアクター
