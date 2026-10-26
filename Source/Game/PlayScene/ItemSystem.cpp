@@ -54,7 +54,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "弓",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        true,
 	                        craft,
@@ -68,7 +68,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "剣",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        true,
 	                        craft,
@@ -82,7 +82,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "ハンマー",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        true,
 	                        craft,
@@ -96,7 +96,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "斧",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        true,
 	                        craft,
@@ -107,7 +107,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "石",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -118,7 +118,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "木材",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -129,7 +129,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "骨",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -140,7 +140,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "蜘蛛の糸",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -151,7 +151,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "生肉",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -162,7 +162,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "爪",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -173,7 +173,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Consumables,
 	                        "焼肉",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -184,7 +184,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Consumables,
 	                        "キノコ",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -198,7 +198,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Consumables,
 	                        "矢",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        true,
 	                        craft,
