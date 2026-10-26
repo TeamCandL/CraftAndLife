@@ -4,6 +4,7 @@
 #include <Game/System/AudioSystem.h>
 #include <shigaLibrary/SgRandom.h>
 #include <shigaLibrary/SgMath.h>
+#include <Game/PlayScene/TerrainSystem.h>
 
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
@@ -82,6 +83,8 @@ void Enemy::Move(
     float spd_,
     float angleY_)
 {
+	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
 	transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, angleY_, 0.0f });
 	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
 	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
