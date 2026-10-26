@@ -16,4 +16,10 @@ struct TerrainSystem : SystemObjectBase<TerrainSystem, TerrainSystemData>
 	/// @brief 地形を登録する
 	/// @param _objTerrain 地形オブジェクト
 	void Register(const GameObject _objTerrain);
+
+	/// @brief 地形の高さを取得する
+	/// @param _worldX ワールド座標x
+	/// @param _worldZ ワールド座標z
+	/// @return ワールド座標y
+	float GetHeight(const float _worldX, const float _worldZ);
 };
