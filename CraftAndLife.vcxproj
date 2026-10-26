@@ -458,6 +458,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\MainCamera\GhostCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\IMainCameraUpdater.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\TPSCamera.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\NetworkActorServer.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherEnemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherEnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayer.cpp" />
@@ -472,8 +473,10 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\TerrainController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfo.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\HotBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMap.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\MiniMapPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\OtherInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
@@ -688,8 +691,10 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\HotBar.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\MiniMapPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />

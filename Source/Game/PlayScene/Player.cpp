@@ -5,6 +5,7 @@
 #include "pch\pch.h"
 #include <Game/System/AbstructInputSystem.h>
 #include "Entity.h"
+#include <Game/PlayScene/TerrainSystem.h>
 
 void Player::Start()
 {
@@ -21,8 +22,8 @@ void Player::Start()
 	jumpVelocity = 0.0f;
 	isJumping    = false;
 
-	// 地面の高さを0にする
-	transform.position.y = GROUND_HEIGHT;
+	// 初期位置の地面の高さを取得
+	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 }
 
 void Player::Update()
@@ -69,8 +70,41 @@ void Player::Update()
 	// 入力に応じて移動方向を計算
 	Vec3 moveDirection = right * bodyMove.x + forward * bodyMove.y;
 
-	// 平行移動（既存処理）
-	transform.position += moveDirection * moveSpeed;
+	// 地形に沿った移動
+	Vec3 nextPosition = transform.position;
+	nextPosition += moveDirection * moveSpeed;
+
+	// 移動前と移動先の地面の高さを取得
+	float currentHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	float nextHeight = Get<TerrainSystem>().GetHeight(nextPosition.x, nextPosition.z);
+
+	// 登れる段差の高さ
+	const float MAX_STEP_HEIGHT = 1.0f;
+
+	// 高低差が大きすぎなければ移動する
+	if (nextHeight - currentHeight <= MAX_STEP_HEIGHT)
+	{
+		transform.position.x = nextPosition.x;
+		transform.position.z = nextPosition.z;
+	}
+
+	// ジャンプしていないときは地面に合わせる
+	if (!isJumping)
+	{
+		float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+		transform.position.y = groundHeight;
+	}
+
+	// 現在位置の地面の高さを取得
+	float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	// ジャンプしていないときは地面の高さに合わせる
+	if (!isJumping)
+	{
+		transform.position.y = groundHeight;
+	}
 
 	// ジャンプ処理
 
@@ -100,9 +134,11 @@ void Player::Update()
 		transform.position.y += jumpVelocity * deltaTime;
 
 		// 地面に着地したら停止
-		if (transform.position.y <= GROUND_HEIGHT)
+		float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+		if (transform.position.y <= groundHeight)
 		{
-			transform.position.y = GROUND_HEIGHT;
+			transform.position.y = groundHeight;
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
 		}

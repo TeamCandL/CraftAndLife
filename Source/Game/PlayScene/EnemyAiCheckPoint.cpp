@@ -1,5 +1,6 @@
 #include "EnemyAiCheckPoint.h"
 #include "pch\pch.h"
+#include <Game/PlayScene/TerrainSystem.h>
 
 void EnemyCheckPoint::Start()
 {
@@ -9,4 +10,7 @@ void EnemyCheckPoint::Start()
 	obb.isTrigger = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
 }
 
-void EnemyCheckPoint::Update() {}
+void EnemyCheckPoint::Update()
+{
+	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+}

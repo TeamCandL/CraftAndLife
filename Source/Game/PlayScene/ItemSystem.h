@@ -12,17 +12,30 @@ enum ItemType
 
 struct CraftInfo
 {
-	const int32_t id{};     ///<	クラフトに必要なアイテムID
-	const int32_t value{};  ///<	クラフトに必要なアイテムの個数
+	ItemId _id{};      ///<	クラフトに必要なアイテムID
+	int32_t _value{};  ///<	クラフトに必要なアイテムの個数
+};
+struct ItemInfo
+{
+	ItemId _id{};
+	ItemType _type{};
+	std::string _name{};
+	Resource<Texture> _imageId{};
+
+	bool _isCraftable{};
+	std::vector<CraftInfo> _craftInfo{};
+
+	float _coolTime{};
+	int32_t _damage{};
 };
 
 struct ItemAllInfo
 {
-	const int32_t _id{};             ///<	アイテムID
-	const ItemType _type{};          ///<	アイテムの種類
-	const std::string _name{};       ///<	アイテム名
-	const int _imageId{};            ///<	アイテム画像ID
-	const Resource<Model> _model{};  ///<	アイテム画像
+	const ItemId _id{};                  ///<	アイテムID
+	const ItemType _type{};              ///<	アイテムの種類
+	const std::string _name{};           ///<	アイテム名
+	const Resource<Texture> _imageId{};  ///<	アイテム画像ID
+	const Resource<Model> _model{};      ///<	アイテムモデル
 
 	const bool _isCraftable{};                  ///<	クラフト可能か
 	const std::vector<CraftInfo> _craftInfo{};  ///<	クラフトに必要なアイテムの情報
@@ -33,6 +46,7 @@ struct ItemAllInfo
 
 struct ItemSystemData
 {
+	ItemSystemData();
 	/// @brief すべてのアイテムの全情報を格納する
 	std::vector<ItemAllInfo> allItemList{};
 };
@@ -42,7 +56,7 @@ struct ItemSystem : SystemObjectBase<ItemSystem, ItemSystemData>
 	/// @brief ItemInfo格納用の情報を取得する
 	/// @param id_ 情報を取得したいアイテムのID
 	/// @return
-	void GetInfo(const ItemId _id);
+	ItemInfo GetInfo(const ItemId id);
 
 	/// @brief
 	/// @param _id
