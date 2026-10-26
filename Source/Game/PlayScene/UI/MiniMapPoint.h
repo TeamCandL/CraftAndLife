@@ -6,15 +6,17 @@ struct MiniMapPointData
 {
 	MiniMapPointData(
 	    const Vec2 _imageSize,
-	    const fs::path& _imagePath) :
+	    const fs::path& _imagePath,
+	    const Vec2 _miniMapCenterPosition) :
 	    transform{ Vec2::Zero(), _imageSize },
-	    image{ _imagePath }
+	    image{ _imagePath },
+	    miniMapCenterPosition{ _miniMapCenterPosition }
 	{
 	}
 
 	Component<UITransform> transform{};  ///< UI座標系
 	Component<UIImage> image{};          ///< UI画像
-	                                     // Vec2
+	Vec2 miniMapCenterPosition{};        ///< ミニマップの中心座標
 };
 
 /// @brief ミニマップ上のポイントマーク
