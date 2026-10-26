@@ -7,7 +7,31 @@ void Entity::Start()
 	model = Get<ItemSystem>().GetModel(itemId);
 }
 
-void Entity::Update() {}
+void Entity::Update()
+{
+	bool isHitCollider{ false };
+
+	const float DELTA_TIME = Get<DeltaTime>();
+
+	// 移動量y
+	float deltaY = velocity.y * DELTA_TIME;
+
+	const float HEIGHT = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	if (HEIGHT >= transform.position.y + deltaY)
+	{
+		velocity.y           = 0.0f;
+		transform.position.y = HEIGHT;
+	}
+	else
+	{
+		// 落下していく
+		velocity.y -= gravityPerSec * DELTA_TIME;
+	}
+
+	transform.position = transform.position + velocity * DELTA_TIME;
+	velocity *= std::pow(friction, DELTA_TIME);
+}
 
 void Entity::Draw()
 {

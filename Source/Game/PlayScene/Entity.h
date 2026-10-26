@@ -23,6 +23,9 @@ struct EntityData
 
 	Vec3 velocity{};  ///< 速度
 	ItemId itemId{};  ///< このエンティティをアイテム化したときのId
+
+	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
+	float friction{ 0.9f };       ///< 摩擦力
 };
 
 /// @brief エンティティ
@@ -35,12 +38,12 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	void Draw() override;
 
 	void SetPosition(
-	    const Vec3 _position)
+	    const Vec3 _position) override
 	{
 		transform.position = _position;
 	}
 	void SetVelocity(
-	    const Vec3 _velocity)
+	    const Vec3 _velocity) override
 	{
 		velocity = _velocity;
 	}

@@ -450,7 +450,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
-    <ClCompile Include="Source\Game\PlayScene\EntityController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Harvestable.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
@@ -671,7 +671,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
     <ClInclude Include="Source\Game\PlayScene\Entity.h" />
-    <ClInclude Include="Source\Game\PlayScene\EntityController.h" />
+    <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
     <ClInclude Include="Source\Game\PlayScene\Harvestable.h" />
     <ClInclude Include="Source\Game\PlayScene\IEntity.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />

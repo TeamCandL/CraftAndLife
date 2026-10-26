@@ -3,7 +3,7 @@
 #include "ItemId.h"
 
 /// @brief エンティティ操作のデータ
-struct EntityControllerData
+struct EntitySystemData
 {
 	/// @brief エンティティのコレクション用情報
 	struct EntityInfo
@@ -17,7 +17,7 @@ struct EntityControllerData
 };
 
 /// @brief エンティティ操作
-struct EntityController : ObjectBase<EntityControllerData>
+struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>
 {
 	/// @brief 開始処理
 	void Start() override;
