@@ -1,3 +1,3 @@
 #include "BossInfoText.h"
 
-void BossInfoText::Strat() {}
+// void BossInfoText::Strat() {}
