@@ -13,8 +13,8 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 0,
 	                        ItemType::Materials,
 	                        "",
-	                        "",
-	                        "",
+	                        "Image/EmptyItem.png",
+	                        {},
 
 	                        false,
 	                        craft,
@@ -26,7 +26,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "さんぷる１",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sampe/Sword.fbx",
+	                        "Model/Sample/Sword.fbx",
 
 	                        true,
 	                        craft,
@@ -38,7 +38,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "さんぷる２",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sampe/Axe.fbx",
+	                        "Model/Sample/Axe.fbx",
 
 	                        true,
 	                        craft,
