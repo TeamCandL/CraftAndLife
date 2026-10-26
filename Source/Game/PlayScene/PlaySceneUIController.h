@@ -9,7 +9,8 @@ struct PlaySceneUIControllerData
 	GameObject objBossInfo{};        ///< ボスの体力ゲージUI
 	GameObject objHotBar{};          ///< アイテムのホットスロットバーUI
 	GameObject objMiniMap{};         ///< ミニマップUI
-	GameObject objOtherInfo{};       ///< 自分の体力ゲージ
+	GameObject objOtherInfo{};       ///< 味方の体力ゲージ
+	GameObject objSelfInfo{};        ///< 自分の体力ゲージ
 };
 
 /// @brief プレイシーンのUI操作

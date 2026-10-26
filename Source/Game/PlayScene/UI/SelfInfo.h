@@ -3,7 +3,7 @@
 
 struct SelfInfoData
 {
-	Resource<Texture> texture{ "Image/UI/hot_bar.png" };
+	Resource<Texture> texture{ "Image/UI/Self_info.png" };
 
 	Component<UITransform> transform{ Vec2{ 245, 917 }, Vec2{ 464, 120 } };
 	Component<UIImage> image{ texture };
