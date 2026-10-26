@@ -28,7 +28,7 @@ ItemSystemData::ItemSystemData()
 	                        "Image/EmptyItem.png",
 	                        "Model/Sample/Sword.fbx",
 
-	                        true,
+	                        false,
 	                        craft,
 
 	                        1.0f,
@@ -40,11 +40,169 @@ ItemSystemData::ItemSystemData()
 	                        "Image/EmptyItem.png",
 	                        "Model/Sample/Axe.fbx",
 
-	                        true,
+	                        false,
 	                        craft,
 
 	                        2.0f,
 	                        25 });
+	craft.clear();
+	craft.push_back({ 8, 3 });
+	craft.push_back({ 10, 2 });
+	allItemList.push_back({ 3,
+	                        ItemType::Weapons,
+	                        "弓",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.5f,
+	                        8 });
+	craft.clear();
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 2 });
+	allItemList.push_back({ 4,
+	                        ItemType::Weapons,
+	                        "剣",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.6f,
+	                        12 });
+	craft.clear();
+	craft.push_back({ 7, 5 });
+	craft.push_back({ 8, 3 });
+	allItemList.push_back({ 5,
+	                        ItemType::Weapons,
+	                        "ハンマー",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        true,
+	                        craft,
+
+	                        1.0f,
+	                        20 });
+	craft.clear();
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 3 });
+	allItemList.push_back({ 6,
+	                        ItemType::Weapons,
+	                        "斧",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.8f,
+	                        10 });
+	allItemList.push_back({ 7,
+	                        ItemType::Materials,
+	                        "石",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
+	allItemList.push_back({ 8,
+	                        ItemType::Materials,
+	                        "木材",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
+	allItemList.push_back({ 9,
+	                        ItemType::Materials,
+	                        "骨",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
+	allItemList.push_back({ 10,
+	                        ItemType::Materials,
+	                        "蜘蛛の糸",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
+	allItemList.push_back({ 11,
+	                        ItemType::Materials,
+	                        "生肉",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
+	allItemList.push_back({ 12,
+	                        ItemType::Materials,
+	                        "爪",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
+	allItemList.push_back({ 13,
+	                        ItemType::Consumables,
+	                        "焼肉",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
+	allItemList.push_back({ 14,
+	                        ItemType::Consumables,
+	                        "キノコ",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
+	craft.clear();
+	craft.push_back({ 7, 1 });
+	craft.push_back({ 8, 2 });
+	allItemList.push_back({ 15,
+	                        ItemType::Consumables,
+	                        "矢",
+	                        "Image/EmptyItem.png",
+	                        "Model/Sample/Axe.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.0f,
+	                        0 });
 }
 
 ItemInfo ItemSystem::GetInfo(
