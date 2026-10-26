@@ -471,6 +471,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\TerrainController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfo.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\HotBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMap.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\OtherInfo.cpp" />
@@ -686,6 +687,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\HotBar.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
