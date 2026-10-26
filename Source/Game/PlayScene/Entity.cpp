@@ -22,6 +22,7 @@ void Entity::Update()
 	{
 		velocity.y           = 0.0f;
 		transform.position.y = HEIGHT;
+		isHitCollider        = true;
 	}
 	else
 	{
@@ -30,7 +31,15 @@ void Entity::Update()
 	}
 
 	transform.position = transform.position + velocity * DELTA_TIME;
-	velocity *= std::pow(friction, DELTA_TIME);
+
+	if (isHitCollider)
+	{
+		velocity *= std::pow(friction * 0.01f, DELTA_TIME);
+	}
+	else
+	{
+		velocity *= std::pow(friction, DELTA_TIME);
+	}
 }
 
 void Entity::Draw()
