@@ -70,8 +70,32 @@ void Player::Update()
 	// 入力に応じて移動方向を計算
 	Vec3 moveDirection = right * bodyMove.x + forward * bodyMove.y;
 
-	// 平行移動
-	transform.position += moveDirection * moveSpeed;
+	// 地形に沿った移動
+	Vec3 nextPosition = transform.position;
+	nextPosition += moveDirection * moveSpeed;
+
+	// 移動前と移動先の地面の高さを取得
+	float currentHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	float nextHeight = Get<TerrainSystem>().GetHeight(nextPosition.x, nextPosition.z);
+
+	// 登れる段差の高さ
+	const float MAX_STEP_HEIGHT = 1.0f;
+
+	// 高低差が大きすぎなければ移動する
+	if (nextHeight - currentHeight <= MAX_STEP_HEIGHT)
+	{
+		transform.position.x = nextPosition.x;
+		transform.position.z = nextPosition.z;
+	}
+
+	// ジャンプしていないときは地面に合わせる
+	if (!isJumping)
+	{
+		float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+		transform.position.y = groundHeight;
+	}
 
 	// 現在位置の地面の高さを取得
 	float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
