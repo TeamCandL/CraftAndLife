@@ -7,6 +7,7 @@ struct DebugCameraData
 	Vec3 position{};                  ///< 現在のカメラの座標
 	float moveSpeedPerSec{ 0.01f };   ///< カメラの移動スピード(/秒)
 	float rotateSpeedPerSec{ 1.0f };  ///< カメラの回転スピード(/秒)
+	GameObject objDebugPoint{};       ///< デバッグポイントのオブジェクト
 };
 
 struct DebugCamera : ObjectBase<DebugCameraData>
