@@ -5,6 +5,7 @@
 #include "UI/HotBar.h"
 #include "UI/MiniMap.h"
 #include "UI/OtherInfo.h"
+#include "UI/SelfInfo.h"
 
 void PlaySceneUIController::Start()
 {
@@ -13,4 +14,5 @@ void PlaySceneUIController::Start()
 	objHotBar         = GetScene().Instantiate<HotBar>();
 	objMiniMap        = GetScene().Instantiate<MiniMap>();
 	objOtherInfo      = GetScene().Instantiate<OtherInfo>();
+	objSelfInfo       = GetScene().Instantiate<SelfInfo>();
 }
