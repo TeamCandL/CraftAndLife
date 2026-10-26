@@ -63,3 +63,9 @@ ItemInfo ItemSystem::GetInfo(
 	info._damage   = allItemList[id]._damage;
 	return info;
 }
+
+Resource<Model> ItemSystem::GetModel(
+    const ItemId _id)
+{
+	return allItemList[_id]._model;
+}
