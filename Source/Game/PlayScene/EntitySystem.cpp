@@ -22,5 +22,17 @@ GameObject EntitySystem::PickNearest(
     Vec3 _pos,
     float _radius)
 {
-	return GameObject();
+	float minDistance{ _radius };
+	GameObject minGameObject{};
+	for (auto& obj : entities)
+	{
+		Vec3 entityPosition = Get<Transform>(entities[obj]).position;
+
+		if ((entityPosition - _pos).Length() <= minDistance)
+		{
+			minGameObject = obj;
+		}
+	}
+
+	return minGameObject;
 }
