@@ -3,10 +3,12 @@
 
 struct MiniMapData
 {
-	Resource<Texture> texture{ "Image/UI/mini_map.png" };
+	Resource<Texture> texture{ "Image/UI/mini_map.png" };  ///< ミニマップの背景画像
 
-	Component<UITransform> transform{ Vec2{ 1572, 0 }, Vec2{ 348, 348 } };
-	Component<UIImage> image{ texture };
+	Component<UITransform> transform{ Vec2{ 1572, 0 }, Vec2{ 348, 348 } };  ///< UI座標系
+	Component<UIImage> image{ texture };                                    ///< 画像テクスチャ
+
+	std::vector<GameObject> points{};  ///< ミニマップに表示するマーク
 };
 
 struct MiniMap : ObjectBase<MiniMapData>
