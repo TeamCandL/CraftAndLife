@@ -2,12 +2,13 @@
 
 namespace
 {
+	// テスト用のクラフトアイテム
 	ItemAllInfo woodAllInfo{ ._id        = 1,
 		                     ._type      = ItemType::Materials,
 		                     ._name      = "Wood",
 		                     ._imageId   = 0,
 		                     ._craftInfo = { { .id = 3, .value = 2 }, { .id = 4, .value = 4 } } };
-}
+}  // namespace
 PlayerBagData::PlayerBagData()
 {
 	items.resize(initialCapacity, ItemStack::EmptyStack());
@@ -19,6 +20,8 @@ void PlayerBag::Update()
 {
 	static ItemId id{ 0 };
 	static int count{ 1 };
+
+	// デバッグ用のUI
 	ImGui::Begin("Bag");
 	if (ImGui::Button("ExpansiionCapa"))
 	{
@@ -28,6 +31,7 @@ void PlayerBag::Update()
 	{
 		Craft(woodAllInfo._id);
 	}
+	// アイテム追加用のUI(デバッグ)
 	ImGui::InputInt("ID", &id);
 	ImGui::InputInt("Count", &count);
 	if (ImGui::Button("Add Item"))
@@ -50,14 +54,9 @@ void PlayerBag::Update()
 }
 
 void PlayerBag::ExpansionCapacity(
-    const int _capacity)
+    const unsigned _capacity)
 {
-	if (_capacity < 0)
-	{
-		// assert(false);
-		return;
-	}
-
+	// バッグの容量を拡張。新規スロットは空の状態で追加する
 	items.resize(items.size() + _capacity, ItemStack::EmptyStack());
 }
 
@@ -70,7 +69,7 @@ bool PlayerBag::CanCraft(
 
 	for (const CraftInfo& craftInfo : craftInfos)
 	{
-		size_t idx = GetUseItemIdx(craftInfo);
+		int idx = FindCraftMaterialSlot(craftInfo);
 		if (idx == -1)
 			return false;
 	}
@@ -83,24 +82,36 @@ void PlayerBag::Craft(
 	// ItemAllInfo itemInfo = Get<ItemSystem>().GetInfo(_id);
 	ItemAllInfo itemInfo{ woodAllInfo };
 	const auto& craftInfos = itemInfo._craftInfo;
-	struct UsingItemReservation
+
+	// クラフトで消費するアイテム
+	struct ItemConsumption
 	{
-		size_t idxToBag;
+		int slotIndex;
 		int useItemCount;
 	};
-	std::vector<UsingItemReservation> stackUsedCraftTmps;
+	std::vector<ItemConsumption> stackUsedCraftTmps;
 
+	// クラフトに必要なアイテムが揃っているか確認
 	for (const CraftInfo& craftInfo : craftInfos)
 	{
-		size_t idx = GetUseItemIdx(craftInfo);
-
-		stackUsedCraftTmps.push_back(UsingItemReservation{ .idxToBag = idx, .useItemCount = craftInfo.value });
+		int idx = FindCraftMaterialSlot(craftInfo);
+		if (idx == -1)
+		{
+			// assert(false);
+			return;
+		}
+		stackUsedCraftTmps.push_back(ItemConsumption{ .slotIndex = idx, .useItemCount = craftInfo.value });
 	}
 
-	// 実際に作成
+	// 実際に作成(消費を反映)
 	for (auto& reservation : stackUsedCraftTmps)
 	{
-		ItemStack& slot = items[reservation.idxToBag];
+		if (reservation.slotIndex < 0 || reservation.slotIndex >= items.size())
+		{
+			// assert(false);
+			return;
+		}
+		ItemStack& slot = items[reservation.slotIndex];
 		slot.count -= reservation.useItemCount;
 
 		if (slot.count == 0)
@@ -108,7 +119,7 @@ void PlayerBag::Craft(
 			slot = ItemStack::EmptyStack();
 		}
 	}
-	// TODO: 作成されてバッグに追加される個数は1固定。今後、一つ以上作れるようにするならばここを修正
+	// クラフトによって作成されるアイテム数は1個
 	AddItem(_id, 1);
 
 	Sort();
@@ -116,8 +127,11 @@ void PlayerBag::Craft(
 
 void PlayerBag::AddItem(
     const ItemId _id,
-    const int _count)
+    const unsigned _count)
 {
+	// 既に同じIDのアイテムが存在する場合は、スタック可能なスロットに追加する
+
+	// 同じIDのアイテムの範囲を取得
 	auto [begin, end] = std::equal_range(
 	    items.begin(),
 	    items.end(),
@@ -127,7 +141,10 @@ void PlayerBag::AddItem(
 		    return _a.id < _b.id;
 	    });
 
+	// 追加するアイテムの残り個数
 	int remain = _count;
+
+	// 同じIDのアイテムのスロットを走査
 	for (auto itr = begin; itr != end; itr++)
 	{
 		if (remain == 0)
@@ -142,11 +159,14 @@ void PlayerBag::AddItem(
 			continue;
 		}
 
+		// スロットのスタック数 + 追加分が 最大スタック数を超える場合は
+		// 最大数まで追加して、残りを次のスロットに追加する
 		if (currentCount + remain > max)
 		{
 			itr->count = max;
 			remain -= max - currentCount;
 		}
+		// スロットのスタック数 + 追加分が 最大スタック数を超えないのでそのまま追加
 		else
 		{
 			itr->count += remain;
@@ -154,16 +174,19 @@ void PlayerBag::AddItem(
 		}
 	}
 
-	// 既存のアイテムスロットに入りきらなかった場合
+	// 追加するアイテムの残り個数がある場合は、空のスロットに追加する
 	if (remain > 0)
 	{
+		// 空スロットの位置を取得
 		auto emptySlotBegin = std::find(items.begin(), items.end(), ItemStack::EmptyStack());
+		// 先頭の空スロットから順に追加していく
 		for (auto itr = emptySlotBegin; itr != items.end(); itr++)
 		{
 			if (remain == 0)
 				break;
 
 			itr->id = _id;
+			// スロットの最大スタック数を超える場合は、最大数まで追加して残りは次スロットに追加
 			if (remain > itr->maxStack)
 			{
 				itr->count = itr->maxStack;
@@ -181,6 +204,7 @@ void PlayerBag::AddItem(
 
 void PlayerBag::Sort()
 {
+	// アイテムIDの昇順でソート、同じIDの場合は個数の降順でソート
 	std::sort(
 	    items.begin(),
 	    items.end(),
@@ -202,7 +226,7 @@ void PlayerBag::Sort()
 	    });
 }
 
-size_t PlayerBag::GetUseItemIdx(
+int PlayerBag::FindCraftMaterialSlot(
     const CraftInfo& _craftInfo) const
 {
 	auto foundItemStack = std::find_if(
@@ -225,5 +249,5 @@ size_t PlayerBag::GetUseItemIdx(
 		return -1;
 	}
 	auto idx = std::distance(items.begin(), foundItemStack);
-	return static_cast<size_t>(idx);
+	return static_cast<int>(idx);
 }

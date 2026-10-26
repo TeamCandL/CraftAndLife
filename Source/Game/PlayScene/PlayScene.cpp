@@ -29,7 +29,7 @@ void PlayScene::Start()
 
 	Instantiate<DayController>(objSky);
 	GameObject objEnemyController = Instantiate<EnemyController>();
-	GameObject objEnemy           = Instantiate<Enemy>(objEnemyController);  // Й╝Р▌Тu
+	GameObject objEnemy           = Instantiate<Enemy>(objEnemyController);  // ф╗ошинч╜о
 	Instantiate<OtherEnemy>(1, EnemyType::Skeleton);
 	Instantiate<OtherPlayerController>();
 	Instantiate<OtherEnemyController>();
