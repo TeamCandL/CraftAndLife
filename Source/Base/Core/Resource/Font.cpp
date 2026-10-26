@@ -12,6 +12,8 @@ bool cha::FontRegistry::TryLoad(
 	ManagerRegistry::Ref<D2DManager>().RefWriteFactory(
 	    [&_config, &_out, &hResult](const ComPtr<IDWriteFactory3>& _pDWriteFactory) -> HRESULT
 	    {
+		    VCU_LOG("フォント読み込み:{}", _config.file.string());
+
 		    // 1. フォントファイルの参照を作成 (例: 実行ファイルと同じ場所の "myfont.ttf")
 		    ComPtr<IDWriteFontFile> pFontFile{};
 		    hResult = _pDWriteFactory->CreateFontFileReference(_config.file.c_str(), nullptr, &pFontFile);
@@ -73,8 +75,8 @@ bool cha::FontRegistry::TryLoad(
 		        _out.pTextFormat.GetAddressOf());
 
 		    // テキストの整列設定
-		    _out.pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-		    _out.pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		    _out.pTextFormat->SetTextAlignment(_config.textAlignment);
+		    _out.pTextFormat->SetParagraphAlignment(_config.paragraphAlignment);
 
 		    return hResult;
 	    });

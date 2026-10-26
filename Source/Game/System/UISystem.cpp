@@ -148,7 +148,7 @@ void UISystem::UpdateText()
 		        [this, pTransform, pText]
 		        {
 			        D2DManager& d2d = Get<D2DManager>();
-			        d2d.DrawString(pText->font, pText->content, pTransform->position, pTransform->scale);
+			        d2d.DrawString(pText->font, pText->content, pTransform->position, pTransform->scale, pText->color);
 		        },
 		        pTransform->layerOrder.WithUIType(UILayerOrder::UIType_Text),
 		        true);

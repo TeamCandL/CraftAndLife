@@ -119,8 +119,6 @@ void SessionManager::UpdatePlayers(
 	    inSessionStatus_.playersStatus,
 	    [this](const auto& nameAndStatus)
 	    {
-		    if (nameAndStatus.second.updatedFlag != inSessionStatus_.updatedFlag)
-			    VCU_LOG("削除オオオ{}", nameAndStatus.first);
 		    return nameAndStatus.second.updatedFlag != inSessionStatus_.updatedFlag;
 	    });
 }

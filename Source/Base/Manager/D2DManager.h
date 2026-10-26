@@ -34,21 +34,25 @@ namespace cha
 		/// @param _text 文字列
 		/// @param _begin 左上の座標
 		/// @param _size 左上からのサイズ
+		/// @param _color 文字の色
 		void DrawString(
 		    const Resource<ResourceType::Font>& _font,
 		    const std::wstring_view _text,
 		    const Vec2 _begin,
-		    const Vec2 _size);
+		    const Vec2 _size,
+		    const Color _color = Color::BLACK);
 		/// @brief 文字列を描画する
 		/// @param _font フォント
 		/// @param _text 文字列
 		/// @param _begin 左上の座標
 		/// @param _size 左上からのサイズ
+		/// @param _color 文字の色
 		void DrawString(
 		    const Resource<ResourceType::Font>& _font,
 		    const std::string_view _text,
 		    const Vec2 _begin,
-		    const Vec2 _size);
+		    const Vec2 _size,
+		    const Color _color = Color::BLACK);
 
 		/// @brief Direct Write Factoryを参照する
 		/// @tparam Func auto(ComPtr<IDWriteFactory3>&)
