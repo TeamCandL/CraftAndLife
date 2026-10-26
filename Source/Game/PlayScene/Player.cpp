@@ -80,7 +80,7 @@ void Player::Update()
 	float nextHeight = Get<TerrainSystem>().GetHeight(nextPosition.x, nextPosition.z);
 
 	// 登れる段差の高さ
-	const float MAX_STEP_HEIGHT = 1.0f;
+	const float MAX_STEP_HEIGHT = 0.1f;
 
 	// 高低差が大きすぎなければ移動する
 	if (nextHeight - currentHeight <= MAX_STEP_HEIGHT)
