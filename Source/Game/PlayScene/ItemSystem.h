@@ -12,8 +12,8 @@ enum ItemType
 
 struct CraftInfo
 {
-	const ItemId _id{};      ///<	クラフトに必要なアイテムID
-	const int32_t _value{};  ///<	クラフトに必要なアイテムの個数
+	ItemId _id{};      ///<	クラフトに必要なアイテムID
+	int32_t _value{};  ///<	クラフトに必要なアイテムの個数
 };
 struct ItemInfo
 {

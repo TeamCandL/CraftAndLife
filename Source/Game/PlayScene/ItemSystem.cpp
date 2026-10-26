@@ -8,8 +8,8 @@
 
 ItemSystemData::ItemSystemData()
 {
-	std::vector<CraftInfo> info;
-	info.push_back({ 0, 0 });
+	std::vector<CraftInfo> craft;
+	craft.push_back({ 0, 0 });
 	allItemList.push_back({ 0,
 	                        ItemType::Materials,
 	                        "",
@@ -17,24 +17,34 @@ ItemSystemData::ItemSystemData()
 	                        "",
 
 	                        false,
-	                        info,
+	                        craft,
 
 	                        0.0f,
 	                        0 });
 
-	info.clear();
-	info.push_back({ 0, 1 });
 	allItemList.push_back({ 1,
 	                        ItemType::Weapons,
-	                        "サンプル",
+	                        "さんぷる１",
 	                        "",
-	                        "",
+	                        "Model/Sampe/Sword.fbx",
 
 	                        true,
-	                        info,
+	                        craft,
 
 	                        1.0f,
 	                        10 });
+
+	allItemList.push_back({ 1,
+	                        ItemType::Weapons,
+	                        "さんぷる２",
+	                        "",
+	                        "Model/Sampe/Axe.fbx",
+
+	                        true,
+	                        craft,
+
+	                        2.0f,
+	                        25 });
 }
 
 ItemInfo ItemSystem::GetInfo(
