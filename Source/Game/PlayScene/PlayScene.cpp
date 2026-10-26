@@ -28,20 +28,9 @@ void PlayScene::Start()
 	// GameObject objTerrain = Instantiate<Terrain>();
 
 	Instantiate<DayController>(objSky);
+
 	// ホスト判定オブジェクトを生成
 	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>();
-
-	// NetworkActorServerを取得
-	auto& networkActorServer = RefGameObjectCollection().At<NetworkActorServer>(objNetworkActorServer);
-
-	// ホストなら敵を生成
-	GameObject objEnemyController{};
-
-	if (networkActorServer.IsHost())
-	{
-		objEnemyController = Instantiate<EnemyController>();
-		Instantiate<Enemy>(objEnemyController);
-	}
 
 	Instantiate<OtherPlayerController>();
 	Instantiate<OtherEnemyController>();
@@ -49,7 +38,7 @@ void PlayScene::Start()
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
-	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objEnemyController);
+	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>();
 

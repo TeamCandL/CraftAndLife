@@ -9,8 +9,8 @@
 #include <Game/Network/Protocols/UpdatedEnemies.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
-
-#include "../TitleScene/TitleScene.h"
+#include "NetworkActorServer.h"
+#include <unordered_set>
 
 using enum NetworkSessionManager::State;
 
@@ -102,14 +102,25 @@ void PlayNetworkController::Update()
 
 		networkSessionManager.Send(message);
 
-		if (Get<SessionManager>().RefStatus().imLobbyHost)
-		{
-			// EnemyControllerから全敵のステータスを取得
-			auto enemyStatuses = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
+		NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
 
-			// 敵1体ずつ情報を送信
+		if (actorServer.IsHost() && actorServer.IsInitialized())
+		{
+			GameObject objEnemyController = actorServer.GetEnemyController();
+			auto enemyStatuses            = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
+
+			// 送信済みの敵IDを記録する
+			std::unordered_set<int> enemyIds;
+
 			for (const EnemyStatus& enemy : enemyStatuses)
 			{
+				// 同じIDがすでに登録されていたら送信しない
+				if (!enemyIds.insert(enemy.enemyId).second)
+				{
+					VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
+					continue;
+				}
+
 				Protocol::UpdateEnemy enemyMessage{};
 
 				enemyMessage.enemyId   = enemy.enemyId;
