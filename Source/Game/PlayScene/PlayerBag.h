@@ -58,7 +58,7 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	/// @brief バッグにアイテムを追加する
 	/// @param _id 追加するID
 	/// @param _count 追加するアイテムの個数
-	void AddItem(const ItemId _id, const unsigned int _count);
+	void AddItem(const ItemId _id, const unsigned int _count = 1);
 
   private:
 	void Sort();

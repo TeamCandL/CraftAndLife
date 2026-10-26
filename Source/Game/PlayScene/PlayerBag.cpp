@@ -3,11 +3,10 @@
 namespace
 {
 	// テスト用のクラフトアイテム
-	ItemAllInfo woodAllInfo{ ._id        = 1,
-		                     ._type      = ItemType::Materials,
-		                     ._name      = "Wood",
-		                     ._imageId   = 0,
-		                     ._craftInfo = { { .id = 3, .value = 2 }, { .id = 4, .value = 4 } } };
+	ItemInfo woodAllInfo{ ._id        = 1,
+		                  ._type      = ItemType::Materials,
+		                  ._name      = "Wood",
+		                  ._craftInfo = { { ._id = 3, ._value = 2 }, { ._id = 4, ._value = 4 } } };
 }  // namespace
 PlayerBagData::PlayerBagData()
 {
@@ -63,8 +62,7 @@ void PlayerBag::ExpansionCapacity(
 bool PlayerBag::CanCraft(
     const ItemId _id)
 {
-	// ItemAllInfo itemInfo = Get<ItemSystem>().GetInfo(_id);
-	ItemAllInfo itemInfo{ woodAllInfo };
+	ItemInfo itemInfo      = Get<ItemSystem>().GetInfo(_id);
 	const auto& craftInfos = itemInfo._craftInfo;
 
 	for (const CraftInfo& craftInfo : craftInfos)
@@ -79,8 +77,7 @@ bool PlayerBag::CanCraft(
 void PlayerBag::Craft(
     const ItemId _id)
 {
-	// ItemAllInfo itemInfo = Get<ItemSystem>().GetInfo(_id);
-	ItemAllInfo itemInfo{ woodAllInfo };
+	ItemInfo itemInfo      = Get<ItemSystem>().GetInfo(_id);
 	const auto& craftInfos = itemInfo._craftInfo;
 
 	// クラフトで消費するアイテム
@@ -100,7 +97,7 @@ void PlayerBag::Craft(
 			// assert(false);
 			return;
 		}
-		stackUsedCraftTmps.push_back(ItemConsumption{ .slotIndex = idx, .useItemCount = craftInfo.value });
+		stackUsedCraftTmps.push_back(ItemConsumption{ .slotIndex = idx, .useItemCount = craftInfo._value });
 	}
 
 	// 実際に作成(消費を反映)
@@ -234,7 +231,7 @@ int PlayerBag::FindCraftMaterialSlot(
 	    items.end(),
 	    [_craftInfo](const ItemStack& _itemStack)
 	    {
-		    return _craftInfo.id == _itemStack.id;
+		    return _craftInfo._id == _itemStack.id;
 	    });
 
 	// アイテム持ってない
@@ -244,7 +241,7 @@ int PlayerBag::FindCraftMaterialSlot(
 	}
 
 	// 個数が足らない
-	if (foundItemStack->count < _craftInfo.value)
+	if (foundItemStack->count < _craftInfo._value)
 	{
 		return -1;
 	}
