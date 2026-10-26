@@ -453,27 +453,59 @@ void MapData::Generate()
 // MapData：指定位置の地形の高さを取得する
 // ============================================================
 
+
 float MapData::GetHeight(
     float x,
     float z) const
 {
-	if (!IsInsideMap(x, z) || heights.empty())
+	// 地形データが存在しない場合
+	if (heights.empty())
 	{
 		return MapConfig::BASE_HEIGHT;
 	}
 
+	// マップの中心からの座標を、グリッド座標に変換する
 	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
 
 	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
 
-	const int32_t GRID_X = static_cast<int32_t>(
-	    ClampValue((x + HALF_WIDTH) / MapConfig::TILE_SIZE, 0.0f, static_cast<float>(MapConfig::MAP_WIDTH)));
+	const float GRID_X =
+	    ClampValue((x + HALF_WIDTH) / MapConfig::TILE_SIZE, 0.0f, static_cast<float>(MapConfig::MAP_WIDTH));
 
-	const int32_t GRID_Z = static_cast<int32_t>(
-	    ClampValue((z + HALF_DEPTH) / MapConfig::TILE_SIZE, 0.0f, static_cast<float>(MapConfig::MAP_DEPTH)));
+	const float GRID_Z =
+	    ClampValue((z + HALF_DEPTH) / MapConfig::TILE_SIZE, 0.0f, static_cast<float>(MapConfig::MAP_DEPTH));
 
-	return heights[GetIndex(GRID_X, GRID_Z)];
+	// 対象位置を囲む4つの頂点を取得する
+	const int32_t X0 = static_cast<int32_t>(std::floor(GRID_X));
+	const int32_t Z0 = static_cast<int32_t>(std::floor(GRID_Z));
+
+	const int32_t X1 = std::min(X0 + 1, MapConfig::MAP_WIDTH);
+
+	const int32_t Z1 = std::min(Z0 + 1, MapConfig::MAP_DEPTH);
+
+	// グリッド内での相対位置（0～1）
+	const float FX = GRID_X - static_cast<float>(X0);
+	const float FZ = GRID_Z - static_cast<float>(Z0);
+
+	// 4頂点の高さ
+	const float H00 = heights[GetIndex(X0, Z0)];
+	const float H10 = heights[GetIndex(X1, Z0)];
+	const float H01 = heights[GetIndex(X0, Z1)];
+	const float H11 = heights[GetIndex(X1, Z1)];
+
+	// 描画メッシュと同じ三角形分割で高さを計算する
+	if (FX + FZ <= 1.0f)
+	{
+		// 左上・右上・左下の三角形
+		return H00 + FX * (H10 - H00) + FZ * (H01 - H00);
+	}
+	else
+	{
+		// 右上・右下・左下の三角形
+		return H10 * (1.0f - FZ) + H11 * (FX + FZ - 1.0f) + H01 * (1.0f - FX);
+	}
 }
+
 
 // ============================================================
 // MapData：指定位置が道か判定する
