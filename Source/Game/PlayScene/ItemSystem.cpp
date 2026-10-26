@@ -25,7 +25,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 1,
 	                        ItemType::Weapons,
 	                        "さんぷる１",
-	                        "",
+	                        "Image/EmptyItem.png",
 	                        "Model/Sampe/Sword.fbx",
 
 	                        true,
@@ -37,7 +37,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 1,
 	                        ItemType::Weapons,
 	                        "さんぷる２",
-	                        "",
+	                        "Image/EmptyItem.png",
 	                        "Model/Sampe/Axe.fbx",
 
 	                        true,
