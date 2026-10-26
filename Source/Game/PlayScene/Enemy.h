@@ -210,4 +210,10 @@ struct Enemy : ObjectBase<EnemyData>
 
 	/// @brief 徘徊時のチェックポイント設定
 	void SetWanderingCheckPoint(Vec3 position_);
+
+	void SetID(
+	    int32_t id_)
+	{
+		id = id_;
+	};
 };

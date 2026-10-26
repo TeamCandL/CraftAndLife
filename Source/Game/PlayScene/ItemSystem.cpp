@@ -34,7 +34,7 @@ ItemSystemData::ItemSystemData()
 	                        1.0f,
 	                        10 });
 
-	allItemList.push_back({ 1,
+	allItemList.push_back({ 2,
 	                        ItemType::Weapons,
 	                        "さんぷる２",
 	                        "Image/EmptyItem.png",
