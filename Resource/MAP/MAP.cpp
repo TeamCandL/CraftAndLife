@@ -455,9 +455,7 @@ void MapData::Generate()
 
 
 
-float MapData::GetHeight(
-    float x,
-    float z) const
+float MapData::GetHeight(float x,float z) const
 {
 	// =========================================================
 	// 1. 地形データの確認
