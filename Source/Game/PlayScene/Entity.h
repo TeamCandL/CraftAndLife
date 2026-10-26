@@ -14,6 +14,7 @@ struct EntityData
 
 	Resource<Shader> mainShader{};  ///< メインのモデル描画用シェーダ
 	Resource<Shader> edgeShader{};  ///< エッジ(輪郭)描画用シェーダ
+	Resource<Model> model{};        ///< モデル
 
 	Component<Transform> transform{};      ///< 座標系
 	Component<RigidBody> rigidbody{};      ///< 剛体
@@ -33,6 +34,8 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	void Update() override;
 	void Draw() override;
 
+	/// @brief このエンティティのアイテムIdを取得する
+	/// @return アイテムId
 	ItemId GetItemId() const override
 	{
 		return itemId;
