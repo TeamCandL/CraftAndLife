@@ -26,7 +26,8 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "さんぷる１",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Sword.fbx",
+	                        //"Model/Sample/Sword.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        true,
 	                        craft,
@@ -38,7 +39,8 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "さんぷる２",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Axe.fbx",
+	                        //"Model/Sample/Axe.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        true,
 	                        craft,

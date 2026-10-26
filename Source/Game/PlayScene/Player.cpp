@@ -144,9 +144,12 @@ void Player::Update()
 		}
 	}
 
+	// お試しで出してるエンティティ
 	if (pPlayerInput->IsInteractBegin())
 	{
-		GetScene().Instantiate<Entity>(1);
+		GameObject e = GetScene().Instantiate<Entity>(1);
+		Get<Entity>(e).SetPosition(transform.position + Vec3::Up() * 2.0f);
+		Get<Entity>(e).SetVelocity(transform.Forward());
 	}
 }
 
