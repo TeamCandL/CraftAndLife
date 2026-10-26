@@ -459,6 +459,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayerAttackColl.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\PlayerBag.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerControllerNormal.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayNetworkController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayScene.cpp" />
@@ -671,6 +672,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlayerBag.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />

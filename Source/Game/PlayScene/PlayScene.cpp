@@ -15,6 +15,7 @@
 #include "OtherEnemy.h"
 #include "OtherEnemyController.h"
 #include "PlaySceneUIController.h"
+#include "PlayerBag.h"
 #include <../Resource/MAP/MAP.h>
 
 void PlayScene::Start()
@@ -38,4 +39,6 @@ void PlayScene::Start()
 	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objEnemy);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>();
+
+	Instantiate<PlayerBag>();
 }

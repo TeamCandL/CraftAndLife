@@ -1,0 +1,229 @@
+#include "PlayerBag.h"
+
+namespace
+{
+	ItemAllInfo woodAllInfo{ ._id        = 1,
+		                     ._type      = ItemType::Materials,
+		                     ._name      = "Wood",
+		                     ._imageId   = 0,
+		                     ._craftInfo = { { .id = 3, .value = 2 }, { .id = 4, .value = 4 } } };
+}
+PlayerBagData::PlayerBagData()
+{
+	items.resize(initialCapacity, ItemStack::EmptyStack());
+}
+
+void PlayerBag::Start() {}
+
+void PlayerBag::Update()
+{
+	static ItemId id{ 0 };
+	static int count{ 1 };
+	ImGui::Begin("Bag");
+	if (ImGui::Button("ExpansiionCapa"))
+	{
+		ExpansionCapacity(10);
+	}
+	if (ImGui::Button("Craft"))
+	{
+		Craft(woodAllInfo._id);
+	}
+	ImGui::InputInt("ID", &id);
+	ImGui::InputInt("Count", &count);
+	if (ImGui::Button("Add Item"))
+	{
+		AddItem(id, count);
+	}
+
+	for (int i = 0; i < items.size(); i++)
+	{
+		if (items[i].id == EMPTY_ITEM_ID)
+		{
+			ImGui::Text("%d: empty, %d", i, items[i].count);
+		}
+		else
+		{
+			ImGui::Text("%d: %d, %d", i, items[i].id, items[i].count);
+		}
+	}
+	ImGui::End();
+}
+
+void PlayerBag::ExpansionCapacity(
+    const int _capacity)
+{
+	if (_capacity < 0)
+	{
+		// assert(false);
+		return;
+	}
+
+	items.resize(items.size() + _capacity, ItemStack::EmptyStack());
+}
+
+bool PlayerBag::CanCraft(
+    const ItemId _id)
+{
+	// ItemAllInfo itemInfo = Get<ItemSystem>().GetInfo(_id);
+	ItemAllInfo itemInfo{ woodAllInfo };
+	const auto& craftInfos = itemInfo._craftInfo;
+
+	for (const CraftInfo& craftInfo : craftInfos)
+	{
+		size_t idx = GetUseItemIdx(craftInfo);
+		if (idx == -1)
+			return false;
+	}
+	return true;
+}
+
+void PlayerBag::Craft(
+    const ItemId _id)
+{
+	// ItemAllInfo itemInfo = Get<ItemSystem>().GetInfo(_id);
+	ItemAllInfo itemInfo{ woodAllInfo };
+	const auto& craftInfos = itemInfo._craftInfo;
+	struct UsingItemReservation
+	{
+		size_t idxToBag;
+		int useItemCount;
+	};
+	std::vector<UsingItemReservation> stackUsedCraftTmps;
+
+	for (const CraftInfo& craftInfo : craftInfos)
+	{
+		size_t idx = GetUseItemIdx(craftInfo);
+
+		stackUsedCraftTmps.push_back(UsingItemReservation{ .idxToBag = idx, .useItemCount = craftInfo.value });
+	}
+
+	// 実際に作成
+	for (auto& reservation : stackUsedCraftTmps)
+	{
+		ItemStack& slot = items[reservation.idxToBag];
+		slot.count -= reservation.useItemCount;
+
+		if (slot.count == 0)
+		{
+			slot = ItemStack::EmptyStack();
+		}
+	}
+	// TODO: 作成されてバッグに追加される個数は1固定。今後、一つ以上作れるようにするならばここを修正
+	AddItem(_id, 1);
+
+	Sort();
+}
+
+void PlayerBag::AddItem(
+    const ItemId _id,
+    const int _count)
+{
+	auto [begin, end] = std::equal_range(
+	    items.begin(),
+	    items.end(),
+	    ItemStack{ .id = _id },
+	    [](const ItemStack& _a, const ItemStack& _b)
+	    {
+		    return _a.id < _b.id;
+	    });
+
+	int remain = _count;
+	for (auto itr = begin; itr != end; itr++)
+	{
+		if (remain == 0)
+		{
+			break;
+		}
+
+		const int max          = itr->maxStack;
+		const int currentCount = itr->count;
+		if (itr->maxStack == itr->count)
+		{
+			continue;
+		}
+
+		if (currentCount + remain > max)
+		{
+			itr->count = max;
+			remain -= max - currentCount;
+		}
+		else
+		{
+			itr->count += remain;
+			remain = 0;
+		}
+	}
+
+	// 既存のアイテムスロットに入りきらなかった場合
+	if (remain > 0)
+	{
+		auto emptySlotBegin = std::find(items.begin(), items.end(), ItemStack::EmptyStack());
+		for (auto itr = emptySlotBegin; itr != items.end(); itr++)
+		{
+			if (remain == 0)
+				break;
+
+			itr->id = _id;
+			if (remain > itr->maxStack)
+			{
+				itr->count = itr->maxStack;
+				remain -= itr->maxStack;
+			}
+			else
+			{
+				itr->count += remain;
+				remain = 0;
+			}
+		}
+	}
+	Sort();
+}
+
+void PlayerBag::Sort()
+{
+	std::sort(
+	    items.begin(),
+	    items.end(),
+	    [](const ItemStack& _a, const ItemStack& _b)
+	    {
+		    if (_a.id == _b.id)
+		    {
+			    if (_a.count > _b.count)
+			    {
+				    return true;
+			    }
+			    else
+			    {
+				    return false;
+			    }
+		    }
+
+		    return _a.id < _b.id;
+	    });
+}
+
+size_t PlayerBag::GetUseItemIdx(
+    const CraftInfo& _craftInfo) const
+{
+	auto foundItemStack = std::find_if(
+	    items.begin(),
+	    items.end(),
+	    [_craftInfo](const ItemStack& _itemStack)
+	    {
+		    return _craftInfo.id == _itemStack.id;
+	    });
+
+	// アイテム持ってない
+	if (foundItemStack == items.end())
+	{
+		return -1;
+	}
+
+	// 個数が足らない
+	if (foundItemStack->count < _craftInfo.value)
+	{
+		return -1;
+	}
+	auto idx = std::distance(items.begin(), foundItemStack);
+	return static_cast<size_t>(idx);
+}
