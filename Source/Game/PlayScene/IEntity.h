@@ -14,4 +14,11 @@ class IEntity
 	/// @brief アイテムIdを取得する
 	/// @return アイテムId
 	virtual ItemId GetItemId() const = 0;
+
+	/// @brief エンティティの座標をセットする
+	/// @param _position 座標
+	virtual void SetPosition(const Vec3 _position) = 0;
+	/// @brief エンティティの速度をセットする
+	/// @param _velocity 速度
+	virtual void SetVelocity(const Vec3 _velocity) = 0;
 };

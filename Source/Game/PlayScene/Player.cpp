@@ -6,6 +6,7 @@
 #include <Game/System/AbstructInputSystem.h>
 #include "Entity.h"
 #include <Game/PlayScene/TerrainSystem.h>
+#include <Game/PlayScene/EntitySystem.h>
 
 void Player::Start()
 {
@@ -147,9 +148,10 @@ void Player::Update()
 	// お試しで出してるエンティティ
 	if (pPlayerInput->IsInteractBegin())
 	{
-		GameObject e = GetScene().Instantiate<Entity>(1);
-		Get<Entity>(e).SetPosition(transform.position + Vec3::Up() * 2.0f);
-		Get<Entity>(e).SetVelocity(transform.Forward());
+		Get<EntitySystem>().Spawn(
+		    1,
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 	}
 }
 
