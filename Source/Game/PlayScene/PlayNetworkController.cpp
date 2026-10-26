@@ -8,6 +8,7 @@
 #include <Game/Network/Protocols/UpdateEnemy.h>
 #include <Game/Network/Protocols/UpdatedEnemies.h>
 #include <Game/PlayScene/Enemy.h>
+#include <Game/PlayScene/EnemyController.h>
 
 #include "../TitleScene/TitleScene.h"
 
@@ -101,18 +102,29 @@ void PlayNetworkController::Update()
 
 		networkSessionManager.Send(message);
 
-		Transform& enemyTransform = Get<Transform>(objEnemy);
-		// Quaternion& enemyRotation = Get<Quaternion>(objEnemy);
-		Protocol::UpdateEnemy enemyMessage{};
-		enemyMessage.positionX = enemyTransform.position.x;
-		enemyMessage.positionY = enemyTransform.position.y;
-		enemyMessage.positionZ = enemyTransform.position.z;
+		if (Get<SessionManager>().RefStatus().imLobbyHost)
+		{
+			// EnemyControllerから全敵のステータスを取得
+			auto enemyStatuses = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
 
-		enemyMessage.rotationX = enemyTransform.rotation.x;
-		enemyMessage.rotationY = enemyTransform.rotation.y;
+			// 敵1体ずつ情報を送信
+			for (const EnemyStatus& enemy : enemyStatuses)
+			{
+				Protocol::UpdateEnemy enemyMessage{};
 
-		static int32_t eCount{};
-		networkSessionManager.Send(enemyMessage);
+				enemyMessage.enemyId   = enemy.enemyId;
+				enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
+
+				enemyMessage.positionX = enemy.enemyPosition.x;
+				enemyMessage.positionY = enemy.enemyPosition.y;
+				enemyMessage.positionZ = enemy.enemyPosition.z;
+
+				enemyMessage.rotationX = 0.0f;
+				enemyMessage.rotationY = enemy.enemyAngleY;
+
+				networkSessionManager.Send(enemyMessage);
+			}
+		}
 
 		// VCU_LOG("敵更新処理送信: {}", eCount);
 	}

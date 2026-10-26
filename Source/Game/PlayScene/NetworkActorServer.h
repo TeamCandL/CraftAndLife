@@ -12,4 +12,9 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 {
 	void Start() override;
 	void Update() override;
+
+	bool IsHost() const
+	{
+		return Data().isHost;
+	}
 };

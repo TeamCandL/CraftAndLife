@@ -6,16 +6,16 @@ struct PlayNetworkControllerData
 	PlayNetworkControllerData(
 	    const GameObject _objPlayer,
 	    const GameObject _objCamera,
-	    const GameObject _objEnemy) :
+	    const GameObject _objEnemyController) :
 	    objPlayer{ _objPlayer },
 	    objCamera{ _objCamera },
-	    objEnemy{ _objEnemy }
+	    objEnemyController{ _objEnemyController }
 	{
 	}
 
-	GameObject objPlayer{};  ///< プレイヤーのオブジェクト
-	GameObject objCamera{};  ///< メインカメラ
-	GameObject objEnemy{};   ///< 敵のオブジェクト
+	GameObject objPlayer{};           ///< プレイヤーのオブジェクト
+	GameObject objCamera{};           ///< メインカメラ
+	GameObject objEnemyController{};  ///< 敵のオブジェクト
 };
 
 struct PlayNetworkController : ObjectBase<PlayNetworkControllerData>
