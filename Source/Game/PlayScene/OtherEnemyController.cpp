@@ -27,12 +27,17 @@ void OtherEnemyController::Update()
 	sessionManager.ForeachEnemyStatus(
 	    [this](int enemyId, const InSessionStatus::EnemyStatus& status)
 	    {
-		    VCU_LOG("敵ステータスあり: ID={}", enemyId);
 		    if (idToObjOtherEnemy.count(enemyId) == 0)
 		    {
-			    EnemyType type             = ToEnemyType(status.enemyType);
-			    idToObjOtherEnemy[enemyId] = GetScene().Instantiate<OtherEnemy>(enemyId, type);
-			    VCU_LOG("OtherEnemy生成: ID={}", enemyId);
+			    EnemyType type = ToEnemyType(status.enemyType);
+
+			    VCU_LOG("OtherEnemy生成開始: ID={}", enemyId);
+
+			    GameObject obj = GetScene().Instantiate<OtherEnemy>(enemyId, type);
+
+			    VCU_LOG("生成後のオブジェクトが空？ {}", obj.IsEmpty());
+
+			    idToObjOtherEnemy[enemyId] = obj;
 		    }
 	    });
 }

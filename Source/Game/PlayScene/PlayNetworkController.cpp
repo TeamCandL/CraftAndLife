@@ -112,6 +112,8 @@ void PlayNetworkController::Update()
 			// 送信済みの敵IDを記録する
 			std::unordered_set<int> enemyIds;
 
+			VCU_LOG("ホスト呼ばれたよ!!!!!!!!！");
+
 			for (const EnemyStatus& enemy : enemyStatuses)
 			{
 				// 同じIDがすでに登録されていたら送信しない
@@ -133,8 +135,19 @@ void PlayNetworkController::Update()
 				enemyMessage.rotationX = 0.0f;
 				enemyMessage.rotationY = enemy.enemyAngleY;
 
+				VCU_LOG(
+				    "送信前の敵座標 ID={}: ({}, {}, {})",
+				    enemy.enemyId,
+				    enemy.enemyPosition.x,
+				    enemy.enemyPosition.y,
+				    enemy.enemyPosition.z);
+
 				networkSessionManager.Send(enemyMessage);
 			}
+		}
+		else
+		{
+			VCU_LOG("まだホスト呼ばれてないよ～");
 		}
 
 		// VCU_LOG("敵更新処理送信: {}", eCount);

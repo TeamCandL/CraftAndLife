@@ -17,10 +17,6 @@ void OtherEnemy::Update()
 		transform.position = status.position;
 		transform.rotation = Quaternion::FromEuler(Vec3{ 0.0f, status.rotation.y, 0.0f });
 	}
-	else
-	{
-		// VCU_LOG("{}がない！", enemyId);
-	}
 }
 
 void OtherEnemy::Draw()
@@ -40,14 +36,4 @@ void OtherEnemy::Draw()
 		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
 		Get<Dx11Manager>().Draw();
 	}
-}
-
-Vec3 OtherEnemy::GetPosition() const
-{
-	return transform.position;
-}
-
-float OtherEnemy::GetAngleY() const
-{
-	return Vec3{ transform.rotation.ToEuler() }.y;
 }
