@@ -14,5 +14,5 @@ void PlaySceneUIController::Start()
 	objHotBar         = GetScene().Instantiate<HotBar>();
 	objMiniMap        = GetScene().Instantiate<MiniMap>();
 	objOtherInfo      = GetScene().Instantiate<OtherInfo>();
-	objOtherInfo      = GetScene().Instantiate<SelfInfo>();
+	objSelfInfo       = GetScene().Instantiate<SelfInfo>();
 }
