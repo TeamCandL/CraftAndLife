@@ -26,7 +26,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "さんぷる１",
 	                        "Image/EmptyItem.png",
-	                        "Model/HandHarvestable/HandWood.fbx",
+	                        "Model/HandMaterial/HandWood.fbx",
 	                        //"Model/Harvestable/Rock.fbx",
 
 	                        false,
@@ -54,7 +54,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "弓",
 	                        "Image/Item/IconBow.png",
-	                        "Model/HandWeapon/Bow.fbx",
+	                        "Model/HandWeapon/HandBow.fbx",
 
 	                        true,
 	                        craft,
@@ -68,7 +68,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "剣",
 	                        "Image/Item/IconSword.png",
-	                        "Model/HandWeapon/Sword.fbx",
+	                        "Model/HandWeapon/HandSword.fbx",
 
 	                        true,
 	                        craft,
@@ -82,7 +82,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "ハンマー",
 	                        "Image/EmptyItem.png",
-	                        "Model/HandWeapon/Axe.fbx",
+	                        "Model/HandWeapon/HandAxe.fbx",
 
 	                        true,
 	                        craft,
@@ -96,7 +96,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "斧",
 	                        "Image/Item/IconAxe.png",
-	                        "Model/HandWeapon/Axe.fbx",
+	                        "Model/HandWeapon/HandAxe.fbx",
 
 	                        true,
 	                        craft,
@@ -140,7 +140,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "蜘蛛の糸",
 	                        "Image/EmptyItem.png",
-	                        "Model/HandMaterial/HandRock.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -162,7 +162,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "爪",
 	                        "Image/EmptyItem.png",
-	                        "Model/HandMaterial/HandRock.fbx",
+	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
@@ -184,7 +184,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Consumables,
 	                        "キノコ",
 	                        "Image/Item/IconMushroom.png",
-	                        "Model/HandFood/HandMashroom.fbx",
+	                        "Model/HandFood/HandMushroom.fbx",
 
 	                        false,
 	                        craft,
