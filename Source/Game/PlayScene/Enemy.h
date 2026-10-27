@@ -17,10 +17,14 @@ namespace EnemyParam
 
 struct EnemyData
 {
+	Component<Name> nameDEB{};
+
 	/// @brief 指定なし生成
 	EnemyData(
-	    GameObject objEnemyController_)
+	    GameObject objEnemyController_,
+	    const std::string& _name = "AAA")
 	{
+		nameDEB            = _name;
 		objEnemyController = objEnemyController_;
 
 		transform.position = Vec3{ 0.0f, 15.0f, 0.0f };
@@ -189,6 +193,8 @@ struct Enemy : ObjectBase<EnemyData>
 
 	/// @brief 描画処理
 	void Draw() override;
+
+	void OnDestroy() override;
 
 	/// @brief 現在地の座標を返すよ
 	/// @return
