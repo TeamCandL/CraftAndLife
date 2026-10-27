@@ -20,7 +20,7 @@ struct EnemyData
 	{
 		objEnemyController = objEnemyController_;
 
-		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
+		transform.position = Vec3{ 0.0f, 15.0f, 0.0f };
 		enemyType          = EnemyType::Skeleton;
 
 		hp     = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
@@ -144,7 +144,7 @@ struct EnemyData
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
 	bool alive{ true };
 
-	const float WAN_RANGE{ 15.0f };  ///< 徘徊範囲
+	const float WAN_RANGE{ 15 };  ///< 徘徊範囲
 	const float WAN_REFERENCE{
 		WAN_RANGE / 2
 	};  ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する

@@ -18,7 +18,7 @@ namespace Protocol
 		void LoadMembers(
 		    MessageRegistry& _registry) override
 		{
-			//_registry.AddMember(imLobbyHost);
+			_registry.AddMember(imLobbyHost);
 		}
 
 		// 以下通信メンバーたち

@@ -31,7 +31,7 @@ struct OtherEnemyData
 	int32_t animIndex{};
 };
 
-struct OtherEnemy : ObjectBase<OtherEnemyData>, IPlayer
+struct OtherEnemy : ObjectBase<OtherEnemyData>
 {
 	using ObjectBase<OtherEnemyData>::ObjectBase;
 
@@ -41,7 +41,4 @@ struct OtherEnemy : ObjectBase<OtherEnemyData>, IPlayer
 	void Update() override;
 	/// @brief 描画処理
 	void Draw() override;
-
-	Vec3 GetPosition() const override;
-	float GetAngleY() const override;
 };

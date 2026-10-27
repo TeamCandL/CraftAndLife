@@ -17,15 +17,28 @@ void OtherEnemy::Update()
 		transform.position = status.position;
 		transform.rotation = Quaternion::FromEuler(Vec3{ 0.0f, status.rotation.y, 0.0f });
 	}
-	else
-	{
-		// VCU_LOG("{}がない！", enemyId);
-	}
 }
 
 void OtherEnemy::Draw()
 {
 	transform.UpdateFamily();
+
+	SessionManager& sessionManager = Get<SessionManager>();
+
+	if (sessionManager.IsExistEnemy(enemyId))
+	{
+		const auto& status = sessionManager.RefEnemyStatus(enemyId);
+
+		VCU_LOG(
+		    "OtherEnemy ID:{} Sync: ({}, {}, {}) Draw: ({}, {}, {})",
+		    enemyId,
+		    status.position.x,
+		    status.position.y,
+		    status.position.z,
+		    transform.position.x,
+		    transform.position.y,
+		    transform.position.z);
+	}
 
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
@@ -40,14 +53,4 @@ void OtherEnemy::Draw()
 		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
 		Get<Dx11Manager>().Draw();
 	}
-}
-
-Vec3 OtherEnemy::GetPosition() const
-{
-	return transform.position;
-}
-
-float OtherEnemy::GetAngleY() const
-{
-	return Vec3{ transform.rotation.ToEuler() }.y;
 }
