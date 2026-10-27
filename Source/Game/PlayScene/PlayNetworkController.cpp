@@ -7,10 +7,13 @@
 #include <Game/Network/Protocols/UpdatedPlayers.h>
 #include <Game/Network/Protocols/UpdateEnemy.h>
 #include <Game/Network/Protocols/UpdatedEnemies.h>
+#include <Game/Network/Protocols/UpdateDayTime.h>
+#include <Game/Network/Protocols/UpdatedDayTime.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
 #include "NetworkActorServer.h"
 #include <unordered_set>
+#include <Game/PlayScene/DayController.h>
 
 using enum NetworkSessionManager::State;
 
@@ -78,12 +81,21 @@ void PlayNetworkController::Update()
 
 				    break;
 			    }
+			    case ProtocolType::UpdatedDayTime:
+			    {
+				    Protocol::UpdatedDayTime dayTimeMessage{};
+				    converter.ToMessage(_event.data, dayTimeMessage);
+				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec);
+
+				    break;
+			    }
 			    default:
 				    VCU_LOG("想定外の謎プロトコルを取得:{}", static_cast<int>(protocolType));
 				    break;
 			    }
 		    });
 
+		// プレイヤーの情報更新
 		Transform& playerTransform = Get<Transform>(objPlayer);
 		IMainCamera& mainCamera    = Get<IMainCamera>(objCamera);
 
@@ -102,6 +114,7 @@ void PlayNetworkController::Update()
 
 		networkSessionManager.Send(message);
 
+		// 敵情報更新
 		NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
 
 		if (actorServer.IsHost() && actorServer.IsInitialized())
@@ -111,8 +124,6 @@ void PlayNetworkController::Update()
 
 			// 送信済みの敵IDを記録する
 			std::unordered_set<int> enemyIds;
-
-			VCU_LOG("ホスト呼ばれたよ!!!!!!!!！");
 
 			for (const EnemyStatus& enemy : enemyStatuses)
 			{
@@ -144,6 +155,22 @@ void PlayNetworkController::Update()
 
 				networkSessionManager.Send(enemyMessage);
 			}
+		}
+
+		// 昼夜サイクルの同期
+		// DayControllerを取得
+		DayController& dayController = Get<DayController>(objDayController);
+
+		// ホストだけ時刻を送信
+		if (actorServer.IsHost())
+		{
+			Protocol::UpdateDayTime dayTimeMessage{};
+
+			dayTimeMessage.currentTimeSec = dayController.GetCurrentTimeSec();
+
+			networkSessionManager.Send(dayTimeMessage);
+
+			VCU_LOG("昼夜時刻送信: {}", dayTimeMessage.currentTimeSec);
 		}
 
 		// VCU_LOG("敵更新処理送信: {}", eCount);

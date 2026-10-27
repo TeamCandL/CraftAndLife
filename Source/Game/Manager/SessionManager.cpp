@@ -209,3 +209,10 @@ bool SessionManager::IsExistEnemy(
 {
 	return inSessionStatus_.enemiesStatus.count(_enemyId) != 0;
 }
+
+void SessionManager::UpdateDayTime(
+    float _currentTimeSec)
+{
+	inSessionStatus_.currentTimeSec     = _currentTimeSec;
+	inSessionStatus_.hasReceivedDayTime = true;
+}
