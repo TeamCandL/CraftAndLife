@@ -24,6 +24,15 @@ struct ItemStack
 	bool operator==(const ItemStack& _other) const = default;
 };
 
+// クラフト時の、素材の充足状況(足りているか、いくら入っているか)をまとめた構造体
+struct CraftMaterialRequirement
+{
+	ItemId id;          // アイテムのID
+	bool isSufficient;  // 個数が足りているか
+	int ownedCount;     // バッグに入っている個数
+	int requiredCount;  // クラフトに必要な個数
+};
+
 struct PlayerBagData
 {
 	PlayerBagData();
@@ -59,6 +68,10 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	/// @param _id 追加するID
 	/// @param _count 追加するアイテムの個数
 	void AddItem(const ItemId _id, const unsigned int _count = 1);
+	/// @brief 指定したアイテムのクラフトに必要な素材の充足状況の配列を返す
+	/// @param _craftItemId
+	/// @return ItemInfoの vector<CraftInfo> _craftInfoと同じ順番で格納された、素材の充足状況
+	std::vector<CraftMaterialRequirement> GetCraftRequirements(const ItemId _craftItemId);
 
   private:
 	void Sort();

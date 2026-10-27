@@ -1,5 +1,5 @@
 #include "PlayerBag.h"
-
+#include <numeric>
 namespace
 {
 	// テスト用のクラフトアイテム
@@ -30,6 +30,15 @@ void PlayerBag::Update()
 	{
 		Craft(woodAllInfo._id);
 	}
+	auto requirements = GetCraftRequirements(woodAllInfo._id);
+	for (auto& requirement : requirements)
+	{
+		ImGui::Text("%d Id", requirement.id);
+		ImGui::Checkbox("IsSuffice", &requirement.isSufficient);
+		ImGui::Text("%d Owned", requirement.ownedCount);
+		ImGui::Text("%d Required", requirement.requiredCount);
+	}
+
 	// アイテム追加用のUI(デバッグ)
 	ImGui::InputInt("ID", &id);
 	ImGui::InputInt("Count", &count);
@@ -77,7 +86,8 @@ bool PlayerBag::CanCraft(
 void PlayerBag::Craft(
     const ItemId _id)
 {
-	ItemInfo itemInfo      = Get<ItemSystem>().GetInfo(_id);
+	ItemInfo itemInfo = woodAllInfo;
+	// ItemInfo itemInfo      = Get<ItemSystem>().GetInfo(_id);
 	const auto& craftInfos = itemInfo._craftInfo;
 
 	// クラフトで消費するアイテム
@@ -197,6 +207,46 @@ void PlayerBag::AddItem(
 		}
 	}
 	Sort();
+}
+
+std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
+    const ItemId _craftItemId)
+{
+	ItemInfo craftItemInfo = woodAllInfo;
+	// ItemInfo craftItemInfo = Get<ItemSystem>().GetInfo(_craftItemId);
+	auto& craftInfos = craftItemInfo._craftInfo;
+	std::vector<CraftMaterialRequirement> craftMaterials;
+
+	for (auto& craftInfo : craftInfos)
+	{
+		// バッグ内から、アイテムの所持数を計算
+		auto range = std::equal_range(
+		    items.begin(),
+		    items.end(),
+		    ItemStack{ .id = craftInfo._id },
+		    [](const ItemStack& _a, const ItemStack& _b)
+		    {
+			    return _a.id < _b.id;
+		    });
+
+		int totalOwnCount = std::accumulate(
+		    range.first,
+		    range.second,
+		    0,
+		    [](int sum, const ItemStack& _stack)
+		    {
+			    return sum + _stack.count;
+		    });
+
+		// 足りているか、いくつ持っているかなど返す
+		CraftMaterialRequirement material{ .id            = craftInfo._id,
+			                               .isSufficient  = (totalOwnCount >= craftInfo._value),
+			                               .ownedCount    = totalOwnCount,
+			                               .requiredCount = craftInfo._value };
+		craftMaterials.push_back(material);
+	}
+
+	return craftMaterials;
 }
 
 void PlayerBag::Sort()
