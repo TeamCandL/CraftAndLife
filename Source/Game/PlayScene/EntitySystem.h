@@ -32,5 +32,5 @@ struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>
 	/// @param pos 回収する座標
 	/// @param radius 回収可能な半径
 	/// @return 拾えたエンティティのGameObject / 拾えなければIsEmptyなGameObject
-	GameObject PickNearest(Vec3 _pos, float _radius);
+	GameObject PickNearest(const Vec3 _pos, const float _radius);
 };
