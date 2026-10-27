@@ -186,9 +186,15 @@ void Player::AttackCollider()
 void Player::Damaged(
     int32_t damage)
 {
-	if (nowDamagedCoolTime <= 0.0f)
+	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
 		hp -= damage;
+
+		if (hp < 0)
+		{
+			hp = 0;
+		}
+
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
 }

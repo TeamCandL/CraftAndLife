@@ -6,6 +6,7 @@
 #include "UI/MiniMap.h"
 #include "UI/OtherInfo.h"
 #include "UI/SelfInfo.h"
+#include "UI/MyGage.h"
 
 void PlaySceneUIController::Start()
 {
@@ -15,4 +16,5 @@ void PlaySceneUIController::Start()
 	objMiniMap        = GetScene().Instantiate<MiniMap>();
 	objOtherInfo      = GetScene().Instantiate<OtherInfo>();
 	objSelfInfo       = GetScene().Instantiate<SelfInfo>();
+	objMyGage         = GetScene().Instantiate<MyGage>(objPlayer);
 }
