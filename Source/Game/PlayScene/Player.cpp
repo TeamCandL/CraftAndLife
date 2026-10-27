@@ -7,6 +7,8 @@
 #include "Entity.h"
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/Manager/SessionManager.h>
+#include <string>
 
 void Player::Start()
 {
@@ -29,10 +31,14 @@ void Player::Start()
 
 void Player::Update()
 {
+	SessionManager& sessionManager = Get<SessionManager>();
+	std::string playerName         = sessionManager.RefStatus().name;
+
 	ImGui::Begin("Player");
 	ImGui::DragInt("anim", &animIndex, 1, 0);
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
+	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::End();
 
 	nowAttackCoolTime -= Get<DeltaTime>();
