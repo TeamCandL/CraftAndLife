@@ -26,7 +26,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "さんぷる１",
 	                        "Image/EmptyItem.png",
-	                        "Model/Sample/Sword.fbx",
+	                        "Model/HandHarvestable/HandWood.fbx",
 	                        //"Model/Harvestable/Rock.fbx",
 
 	                        false,

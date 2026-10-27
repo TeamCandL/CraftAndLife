@@ -19,8 +19,8 @@ void EntitySystem::Spawn(
 }
 
 GameObject EntitySystem::PickNearest(
-    Vec3 _pos,
-    float _radius)
+    const Vec3 _pos,
+    const float _radius)
 {
 	float minDistance{ _radius };
 	GameObject minGameObject{};
