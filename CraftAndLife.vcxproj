@@ -481,6 +481,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMap.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMapPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MyGage.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\MyName.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\OtherInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
@@ -703,6 +704,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMapPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MyGage.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\MyName.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
