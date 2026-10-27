@@ -54,7 +54,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "弓",
 	                        "Image/EmptyItem.png",
-	                        "Model/Weapon/Bow.fbx",
+	                        "Model/HandWeapon/Bow.fbx",
 
 	                        true,
 	                        craft,
@@ -68,7 +68,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "剣",
 	                        "Image/EmptyItem.png",
-	                        "Model/Weapon/Sword.fbx",
+	                        "Model/HandWeapon/Sword.fbx",
 
 	                        true,
 	                        craft,
@@ -82,7 +82,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "ハンマー",
 	                        "Image/EmptyItem.png",
-	                        "Model/Weapon/Axe.fbx",
+	                        "Model/HandWeapon/Axe.fbx",
 
 	                        true,
 	                        craft,
@@ -96,7 +96,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "斧",
 	                        "Image/EmptyItem.png",
-	                        "Model/Weapon/Axe.fbx",
+	                        "Model/HandWeapon/Axe.fbx",
 
 	                        true,
 	                        craft,
@@ -198,7 +198,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Consumables,
 	                        "矢",
 	                        "Image/EmptyItem.png",
-	                        "Model/Weapon/Arrow.fbx",
+	                        "Model/HandWeapon/Arrow.fbx",
 
 	                        true,
 	                        craft,
