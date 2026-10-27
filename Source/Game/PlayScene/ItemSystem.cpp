@@ -26,7 +26,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "さんぷる１",
 	                        "Image/EmptyItem.png",
-	                        "Model/HandHarvestable/HandWood.fbx",
+	                        "Model/HandMaterial/HandWood.fbx",
 	                        //"Model/Harvestable/Rock.fbx",
 
 	                        false,
@@ -53,8 +53,8 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 3,
 	                        ItemType::Weapons,
 	                        "弓",
-	                        "Image/EmptyItem.png",
-	                        "Model/HandWeapon/Bow.fbx",
+	                        "Image/Item/IconBow.png",
+	                        "Model/HandWeapon/HandBow.fbx",
 
 	                        true,
 	                        craft,
@@ -67,8 +67,8 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 4,
 	                        ItemType::Weapons,
 	                        "剣",
-	                        "Image/EmptyItem.png",
-	                        "Model/HandWeapon/Sword.fbx",
+	                        "Image/Item/IconSword.png",
+	                        "Model/HandWeapon/HandSword.fbx",
 
 	                        true,
 	                        craft,
@@ -82,7 +82,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Weapons,
 	                        "ハンマー",
 	                        "Image/EmptyItem.png",
-	                        "Model/HandWeapon/Axe.fbx",
+	                        "Model/HandWeapon/HandAxe.fbx",
 
 	                        true,
 	                        craft,
@@ -95,8 +95,8 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 6,
 	                        ItemType::Weapons,
 	                        "斧",
-	                        "Image/EmptyItem.png",
-	                        "Model/HandWeapon/Axe.fbx",
+	                        "Image/Item/IconAxe.png",
+	                        "Model/HandWeapon/HandAxe.fbx",
 
 	                        true,
 	                        craft,
@@ -107,7 +107,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "石",
 	                        "Image/EmptyItem.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "Model/HandMaterial/HandRock.fbx",
 
 	                        false,
 	                        craft,
@@ -118,7 +118,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "木材",
 	                        "Image/EmptyItem.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "Model/HandMaterial/HandWood.fbx",
 
 	                        false,
 	                        craft,
@@ -129,7 +129,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "骨",
 	                        "Image/EmptyItem.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "Model/HandMaterial/HandRock.fbx",
 
 	                        false,
 	                        craft,
@@ -151,7 +151,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "生肉",
 	                        "Image/EmptyItem.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "Model/HandFood/HandMeat.fbx",
 
 	                        false,
 	                        craft,
@@ -183,8 +183,8 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 14,
 	                        ItemType::Consumables,
 	                        "キノコ",
-	                        "Image/EmptyItem.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "Image/Item/IconMushroom.png",
+	                        "Model/HandFood/HandMushroom.fbx",
 
 	                        false,
 	                        craft,
@@ -197,7 +197,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 15,
 	                        ItemType::Consumables,
 	                        "矢",
-	                        "Image/EmptyItem.png",
+	                        "Image/Item/IconArrow.png",
 	                        "Model/HandWeapon/Arrow.fbx",
 
 	                        true,
