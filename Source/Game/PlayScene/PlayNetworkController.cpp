@@ -8,8 +8,9 @@
 #include <Game/Network/Protocols/UpdateEnemy.h>
 #include <Game/Network/Protocols/UpdatedEnemies.h>
 #include <Game/PlayScene/Enemy.h>
-
-#include "../TitleScene/TitleScene.h"
+#include <Game/PlayScene/EnemyController.h>
+#include "NetworkActorServer.h"
+#include <unordered_set>
 
 using enum NetworkSessionManager::State;
 
@@ -101,18 +102,49 @@ void PlayNetworkController::Update()
 
 		networkSessionManager.Send(message);
 
-		Transform& enemyTransform = Get<Transform>(objEnemy);
-		// Quaternion& enemyRotation = Get<Quaternion>(objEnemy);
-		Protocol::UpdateEnemy enemyMessage{};
-		enemyMessage.positionX = enemyTransform.position.x;
-		enemyMessage.positionY = enemyTransform.position.y;
-		enemyMessage.positionZ = enemyTransform.position.z;
+		NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
 
-		enemyMessage.rotationX = enemyTransform.rotation.x;
-		enemyMessage.rotationY = enemyTransform.rotation.y;
+		if (actorServer.IsHost() && actorServer.IsInitialized())
+		{
+			GameObject objEnemyController = actorServer.GetEnemyController();
+			auto enemyStatuses            = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
 
-		static int32_t eCount{};
-		networkSessionManager.Send(enemyMessage);
+			// 送信済みの敵IDを記録する
+			std::unordered_set<int> enemyIds;
+
+			VCU_LOG("ホスト呼ばれたよ!!!!!!!!！");
+
+			for (const EnemyStatus& enemy : enemyStatuses)
+			{
+				// 同じIDがすでに登録されていたら送信しない
+				if (!enemyIds.insert(enemy.enemyId).second)
+				{
+					VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
+					continue;
+				}
+
+				Protocol::UpdateEnemy enemyMessage{};
+
+				enemyMessage.enemyId   = enemy.enemyId;
+				enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
+
+				enemyMessage.positionX = enemy.enemyPosition.x;
+				enemyMessage.positionY = enemy.enemyPosition.y;
+				enemyMessage.positionZ = enemy.enemyPosition.z;
+
+				enemyMessage.rotationX = 0.0f;
+				enemyMessage.rotationY = enemy.enemyAngleY;
+
+				VCU_LOG(
+				    "送信前の敵座標 ID={}: ({}, {}, {})",
+				    enemy.enemyId,
+				    enemy.enemyPosition.x,
+				    enemy.enemyPosition.y,
+				    enemy.enemyPosition.z);
+
+				networkSessionManager.Send(enemyMessage);
+			}
+		}
 
 		// VCU_LOG("敵更新処理送信: {}", eCount);
 	}

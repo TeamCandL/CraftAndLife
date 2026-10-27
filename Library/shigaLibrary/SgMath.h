@@ -18,7 +18,15 @@ struct Math
 	/// @return 辺１の変化の割合
 	static float GetSquareVec(float num1, float num2)
 	{
-		return num1 / GetThreeSquares(num1, num2);
+		float length = GetThreeSquares(num1, num2);
+
+		// 長さが0なら、方向ベクトルを0にする
+		if (length <= 0.00001f)
+		{
+			return 0.0f;
+		}
+
+		return num1 / length;
 	}
 
 	/// @brief 角度を求める。
