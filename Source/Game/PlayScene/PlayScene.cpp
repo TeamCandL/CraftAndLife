@@ -18,6 +18,8 @@
 #include "PlayerBag.h"
 #include <../Resource/MAP/MAP.h>
 #include "Harvestable.h"
+#include "UI/MyGage.h"
+#include "NetworkActorServer.h"
 
 void PlayScene::Start()
 {
@@ -28,18 +30,19 @@ void PlayScene::Start()
 	// GameObject objTerrain = Instantiate<Terrain>();
 
 	Instantiate<DayController>(objSky);
-	GameObject objEnemyController = Instantiate<EnemyController>();
-	GameObject objEnemy           = Instantiate<Enemy>(objEnemyController);  // 仮設置
-	Instantiate<OtherEnemy>(1, EnemyType::Skeleton);
+
+	// ホスト判定オブジェクトを生成
+	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>();
+
 	Instantiate<OtherPlayerController>();
-	Instantiate<OtherEnemyController>();
+	// Instantiate<OtherEnemyController>();
 
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
-	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objEnemy);
+	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer);
 
-	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>();
+	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer);
 
 	Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f);
 

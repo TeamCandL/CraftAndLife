@@ -1,8 +1,14 @@
 #include "pch\pch.h"
 #include "DebugCamera.h"
 #include <Game/System/AbstructInputSystem.h>
+#include <../Game/PlayScene/DebugPoint.h>
+#include <Game/PlayScene/TerrainSystem.h>
 
-void DebugCamera::Start() {}
+void DebugCamera::Start()
+{
+	// 地形上に表示するデバッグポイントを生成
+	objDebugPoint = GetScene().Instantiate<DebugPoint>();
+}
 
 void DebugCamera::Update()
 {
@@ -57,4 +63,7 @@ void DebugCamera::Update()
 	// 移動した座標をtransformに適用
 	camera.transform.position = position;
 #pragma endregion
+
+	float y                                                  = Get<TerrainSystem>().GetHeight(position.x, position.z);
+	Get<DebugPoint>(objDebugPoint).Data().transform.position = { position.x, y, position.z };
 }

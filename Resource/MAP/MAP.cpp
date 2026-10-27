@@ -453,27 +453,81 @@ void MapData::Generate()
 // MapData：指定位置の地形の高さを取得する
 // ============================================================
 
-float MapData::GetHeight(
-    float x,
-    float z) const
+
+
+float MapData::GetHeight(float x,float z) const
 {
-	if (!IsInsideMap(x, z) || heights.empty())
+	// =========================================================
+	// 1. 地形データの確認
+	// =========================================================
+
+	if (heights.empty())
 	{
 		return MapConfig::BASE_HEIGHT;
 	}
 
-	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+	// =========================================================
+	// 2. 座標変換に使用する定数
+	// =========================================================
 
-	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+	// マップの中心から端までの距離を求める係数
+	constexpr float HALF_SCALE = 0.5f;
 
-	const int32_t GRID_X = static_cast<int32_t>(
-	    ClampValue((x + HALF_WIDTH) / MapConfig::TILE_SIZE, 0.0f, static_cast<float>(MapConfig::MAP_WIDTH)));
+	// グリッド内の相対位置の範囲
+	constexpr float GRID_RATIO_MIN = 0.0f;
+	constexpr float GRID_RATIO_MAX = 1.0f;
 
-	const int32_t GRID_Z = static_cast<int32_t>(
-	    ClampValue((z + HALF_DEPTH) / MapConfig::TILE_SIZE, 0.0f, static_cast<float>(MapConfig::MAP_DEPTH)));
+	// マップの中心を基準に、ワールド座標をグリッド座標へ変換
+	const float HALF_WIDTH = static_cast<float>(MapConfig::MAP_WIDTH) * MapConfig::TILE_SIZE * HALF_SCALE;
 
-	return heights[GetIndex(GRID_X, GRID_Z)];
+	const float HALF_DEPTH = static_cast<float>(MapConfig::MAP_DEPTH) * MapConfig::TILE_SIZE * HALF_SCALE;
+
+	const float GRID_X =
+	    ClampValue((x + HALF_WIDTH) / MapConfig::TILE_SIZE, GRID_RATIO_MIN, static_cast<float>(MapConfig::MAP_WIDTH));
+
+	const float GRID_Z =
+	    ClampValue((z + HALF_DEPTH) / MapConfig::TILE_SIZE, GRID_RATIO_MIN, static_cast<float>(MapConfig::MAP_DEPTH));
+
+	// =========================================================
+	// 3. 周囲の頂点を取得
+	// =========================================================
+
+	const int32_t X0 = static_cast<int32_t>(std::floor(GRID_X));
+	const int32_t Z0 = static_cast<int32_t>(std::floor(GRID_Z));
+
+	// マップの範囲外の頂点を参照しないようにする
+	const int32_t X1 = std::min(X0 + 1, MapConfig::MAP_WIDTH);
+
+	const int32_t Z1 = std::min(Z0 + 1, MapConfig::MAP_DEPTH);
+
+	// グリッド内での相対位置を求める
+	const float FX = GRID_X - static_cast<float>(X0);
+	const float FZ = GRID_Z - static_cast<float>(Z0);
+
+	// 周囲4頂点の高さを取得
+	const float H00 = heights[GetIndex(X0, Z0)];
+	const float H10 = heights[GetIndex(X1, Z0)];
+	const float H01 = heights[GetIndex(X0, Z1)];
+	const float H11 = heights[GetIndex(X1, Z1)];
+
+	// =========================================================
+	// 4. 三角形の分割位置を判定
+	// =========================================================
+
+	// グリッド内の対角線上にあるかを判定する
+	constexpr float TRIANGLE_SPLIT_RATIO = 1.0f;
+
+	if (FX + FZ <= TRIANGLE_SPLIT_RATIO)
+	{
+		// 三角形1：H00、H10、H01
+		return H00 + FX * (H10 - H00) + FZ * (H01 - H00);
+	}
+
+	// 三角形2：H10、H11、H01
+	return H10 * (GRID_RATIO_MAX - FZ) + H11 * (FX + FZ - TRIANGLE_SPLIT_RATIO) + H01 * (GRID_RATIO_MAX - FX);
 }
+
+
 
 // ============================================================
 // MapData：指定位置が道か判定する

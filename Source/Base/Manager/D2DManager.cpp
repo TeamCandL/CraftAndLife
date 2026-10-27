@@ -174,8 +174,6 @@ void cha::D2DManager::DrawString(
 
 	pTextBrush_->SetColor(D2D1::ColorF(_color.r, _color.g, _color.b, _color.a));
 
-	VCU_LOG("Color:{}, {}, {}, {}", _color.r, _color.g, _color.b, _color.a);
-
 	// いざ描画
 	pD2DContext_->DrawTextW(
 	    _text.data(),

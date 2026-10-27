@@ -36,8 +36,9 @@ struct PlayerData
 	int animIndex{};
 
 	// パラメータ
-	int32_t hp{};
-	int32_t damage{};
+	int32_t maxHP{ 100 };  // 最大HP
+	int32_t hp{ 100 };     // 現在HP
+	int32_t damage{ 10 };  // 攻撃力
 
 	const float ATTACK_COOL_TIME{ 5.0f };
 	float nowAttackCoolTime{ 0.0f };

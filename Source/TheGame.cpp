@@ -13,7 +13,7 @@ void Main(
 		.clientSize = { 1920, 1080 },
 		.targetFPS  = 60,
 		.isWindow   = false,
-#elif 0
+#elif 1
 		.clientSize = { 1920, 1080 },
 		.targetFPS  = 60,
 		.isWindow   = true,

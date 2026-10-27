@@ -23,6 +23,8 @@
 #include <Game/System/PadInputSystem.h>
 #include <Game/System/AbstructInputSystem.h>
 #include <Game/PlayScene/TerrainSystem.h>
+#include <Game/PlayScene/ItemSystem.h>
+#include <Game/PlayScene/EntitySystem.h>
 
 void GameManager::Start()
 {
@@ -51,6 +53,8 @@ void GameManager::Start()
 	GetScene().Instantiate<IMESystem>();
 
 	GetScene().Instantiate<TerrainSystem>();
+	GetScene().Instantiate<ItemSystem>();
+	GetScene().Instantiate<EntitySystem>();
 }
 
 void GameManager::Update()

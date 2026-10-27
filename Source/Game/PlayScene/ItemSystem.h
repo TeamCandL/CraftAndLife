@@ -61,5 +61,5 @@ struct ItemSystem : SystemObjectBase<ItemSystem, ItemSystemData>
 	/// @brief
 	/// @param _id
 	/// @return
-	Resource<Model>& GetModel(const ItemId _id);
+	Resource<Model> GetModel(const ItemId _id);
 };

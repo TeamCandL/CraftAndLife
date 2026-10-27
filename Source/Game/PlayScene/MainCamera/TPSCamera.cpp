@@ -9,16 +9,11 @@ void TPSCamera::Start()
 	objDebugPoint = GetScene().Instantiate<DebugPoint>();
 }
 
-void TPSCamera::Update(MainCameraData& _data)
+void TPSCamera::Update(
+    MainCameraData& _data)
 {
 	// _data.hogehogeが面倒なので参照して省略しまくる
-	auto& [
-		angles,
-		position,
-		moveSpeedPerSec,
-		rotateSpeedPerSec,
-		isHideCursor,
-		objUpdater] = _data;
+	auto& [angles, position, moveSpeedPerSec, rotateSpeedPerSec, isHideCursor, objUpdater] = _data;
 
 	// MEMO: これと同じこと
 	//     : Vec2& angles = _data.angles;
@@ -36,7 +31,7 @@ void TPSCamera::Update(MainCameraData& _data)
 
 	// 抽象入力システムから抽象プレイヤー入力を取得
 	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
-	auto pPlayerInput = inputSystem.GetPlayerInput();
+	auto pPlayerInput                = inputSystem.GetPlayerInput();
 
 	// 回転スピード
 	const float ROTATE_SPEED{ rotateSpeedPerSec * DELTA_TIME };
@@ -51,20 +46,19 @@ void TPSCamera::Update(MainCameraData& _data)
 	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED;
 
 	// 角度に制限をつける
-	angles.x = std::clamp(
-		angles.x,
-		angleLimitXMin,
-		angleLimitXMax);
+	angles.x = std::clamp(angles.x, angleLimitXMin, angleLimitXMax);
 #pragma endregion
 }
 
-void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject _objTarget)
+void TPSCamera::UpdatePositionFromTarget(
+    MainCameraData& _data,
+    const GameObject _objTarget)
 {
 	// カメラシステムのデータを参照
 	CameraSystemData& camera = Get<CameraSystem>().Data();
 
 	Vec3 targetPosition = Get<Transform>(_objTarget).position;
-	
+
 	ImGui::Begin("TPS.UpdatePositionFromTarget");
 	ImGui::DragFloat("xRotateAssistRatio", &xRotateAssistRatio, 0.1f);
 	ImGui::DragFloat3("offsetFar", offsetFar.v, 0.1f);
@@ -72,19 +66,19 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 	ImGui::DragFloat3("offsetNearUpper", offsetNearUpper.v, 0.1f);
 	ImGui::DragFloat2("angles", _data.angles.v);
 
-	Mat4x4 rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(
-		_data.angles.x,
-		_data.angles.y,
-		0.0f);
+	Mat4x4 rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(_data.angles.x, _data.angles.y, 0.0f);
 
 	// MEMO: 始点から終点までの線分と地面の平面との交点に移動する
-	struct ClampGroundHeightResult{ Vec3 p; float t; };
-	auto ClampGroundHeight = [](
-		const Vec3 p0,             ///< 視点座標
-		const Vec3 p1,             ///< 終点座標
-		const float groundHeight  ///< 地面の高さ
-		) -> ClampGroundHeightResult
-	{	
+	struct ClampGroundHeightResult
+	{
+		Vec3 p;
+		float t;
+	};
+	auto ClampGroundHeight = [](const Vec3 p0,            ///< 視点座標
+	                            const Vec3 p1,            ///< 終点座標
+	                            const float groundHeight  ///< 地面の高さ
+	                            ) -> ClampGroundHeightResult
+	{
 		// 最終的な点の位置
 		Vec3 p = p1;
 		float t{ 1.0f };
@@ -107,44 +101,42 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 		return { .p = p, .t = t };
 	};
 
-	const float GROUND_HEIGHT{ 0.0f };
+	const float GROUND_HEIGHT{ targetPosition.y };
 
 	// 注視点の終点
-	Vec3 fp1 = DirectX::XMVector3TransformCoord(
-		focusOffsetMax,
-		rotationMatrix);
-	fp1 = targetPosition + fp1;
-	
+	Vec3 fp1 = DirectX::XMVector3TransformCoord(focusOffsetMax, rotationMatrix);
+	fp1      = targetPosition + fp1;
+
 	// 注視点の視点
-	Vec3 fp0 = DirectX::XMVector3TransformCoord(
-		focusOffsetMin,
-		rotationMatrix);
-	fp0 = targetPosition + fp0;
+	Vec3 fp0 = DirectX::XMVector3TransformCoord(focusOffsetMin, rotationMatrix);
+	fp0      = targetPosition + fp0;
 
 	auto [finalFocusPoint, focusPointT] = ClampGroundHeight(
-		fp0,
-		fp1,
-		targetPosition.y + /*targetPosition.y + std::min(focusOffsetMax.y, focusOffsetMin.y) - 0.1f*/0.5f);
+	    fp0,
+	    fp1,
+	    targetPosition.y + /*targetPosition.y + std::min(focusOffsetMax.y, focusOffsetMin.y) - 0.1f*/ 0.5f);
 
 	ImGui::DragFloat("focusPointT", &focusPointT);
 
-	Vec3 localOffset = DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNearLower, offsetFar, focusPointT), rotationMatrix);
+	Vec3 localOffset =
+	    DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNearLower, offsetFar, focusPointT), rotationMatrix);
 
 	auto [finalCameraPosition, finalCameraT] = ClampGroundHeight(
-		targetPosition + axisOffset,    // 線分の始点
-		targetPosition + localOffset,
-		GROUND_HEIGHT);  // 本来のカメラワールド座標 終点
+	    targetPosition + axisOffset,  // 線分の始点
+	    targetPosition + localOffset,
+	    GROUND_HEIGHT);  // 本来のカメラワールド座標 終点
 
 	ImGui::DragFloat("finalCameraT", &finalCameraT);
 
 	if (finalCameraT < 1.0f)  // 上を向いたとき下の地面に当たるなら再計算する
 	{
-		localOffset = DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNearUpper, offsetFar, finalCameraT), rotationMatrix);
+		localOffset =
+		    DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNearUpper, offsetFar, finalCameraT), rotationMatrix);
 
 		auto [p, t] = ClampGroundHeight(
-			targetPosition + axisOffset,    // 線分の始点
-			targetPosition + localOffset,
-			GROUND_HEIGHT);  // 本来のカメラワールド座標 終点
+		    targetPosition + axisOffset,  // 線分の始点
+		    targetPosition + localOffset,
+		    GROUND_HEIGHT);  // 本来のカメラワールド座標 終点
 
 		finalCameraPosition = p;
 	}
@@ -157,10 +149,8 @@ void TPSCamera::UpdatePositionFromTarget(MainCameraData& _data, const GameObject
 		Get<DebugPoint>(objDebugPoint).Data().transform.position = finalFocusPoint;
 	}
 
-	camera.transform.rotation = Quaternion::FromLookAtQuaternion(
-		camera.transform.position,
-		finalFocusPoint,
-		Vec3::Up());
+	camera.transform.rotation =
+	    Quaternion::FromLookAtQuaternion(camera.transform.position, finalFocusPoint, Vec3::Up());
 
 	ImGui::End();
 }

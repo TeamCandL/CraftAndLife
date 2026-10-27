@@ -6,6 +6,7 @@
 #include <Game/System/AbstructInputSystem.h>
 #include "Entity.h"
 #include <Game/PlayScene/TerrainSystem.h>
+#include <Game/PlayScene/EntitySystem.h>
 
 void Player::Start()
 {
@@ -80,7 +81,7 @@ void Player::Update()
 	float nextHeight = Get<TerrainSystem>().GetHeight(nextPosition.x, nextPosition.z);
 
 	// 登れる段差の高さ
-	const float MAX_STEP_HEIGHT = 1.0f;
+	const float MAX_STEP_HEIGHT = 0.1f;
 
 	// 高低差が大きすぎなければ移動する
 	if (nextHeight - currentHeight <= MAX_STEP_HEIGHT)
@@ -144,9 +145,13 @@ void Player::Update()
 		}
 	}
 
+	// お試しで出してるエンティティ
 	if (pPlayerInput->IsInteractBegin())
 	{
-		GetScene().Instantiate<Entity>(1);
+		Get<EntitySystem>().Spawn(
+		    1,
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 	}
 }
 
@@ -181,9 +186,15 @@ void Player::AttackCollider()
 void Player::Damaged(
     int32_t damage)
 {
-	if (nowDamagedCoolTime <= 0.0f)
+	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
 		hp -= damage;
+
+		if (hp < 0)
+		{
+			hp = 0;
+		}
+
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
 }
