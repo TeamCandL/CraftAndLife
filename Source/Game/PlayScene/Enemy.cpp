@@ -63,7 +63,7 @@ void Enemy::Update()
 	{
 	}
 
-	ImGui::Begin("Enemy");
+	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
 	ImGui::DragInt("modelIndex", &modelIndex);
 	modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
@@ -112,6 +112,12 @@ void Enemy::Draw()
 		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
 		Get<Dx11Manager>().Draw();
 	}
+}
+
+void Enemy::OnDestroy()
+{
+	int a = 10;
+	a++;
 }
 
 void Enemy::AttackCollider()
