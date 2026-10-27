@@ -157,6 +157,14 @@ void Player::Update()
 		    1,
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		VCU_LOG("objPawn");
+	}
+
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	if (objPick)
+	{
+		VCU_LOG("objPick");
+		// objPick
 	}
 
 	// HPゲージ動作確認用：1秒ごとに10ダメージ

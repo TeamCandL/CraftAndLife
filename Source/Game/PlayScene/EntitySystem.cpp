@@ -1,6 +1,7 @@
 #include "EntitySystem.h"
 #include "Entity.h"
 #include "IEntity.h"
+#include <Game/PlayScene/ItemSystem.h>
 
 void EntitySystem::Start() {}
 
@@ -34,7 +35,12 @@ void EntitySystem::Spawn(
     const Vec3 _position,
     const Vec3 _velocity)
 {
-	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId));
+	ItemInfo info = Get<ItemSystem>().GetInfo(_itemId);
+
+	// info.
+	// TODO: 自然消滅とかの情報ほしい
+
+	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 3.0f, 60.0f * 5.0f);
 	IEntity& entity = Get<IEntity>(entities.back().obj);
 
 	// TODO: 自然消滅タイムの初期化
