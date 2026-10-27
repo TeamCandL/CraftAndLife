@@ -4,12 +4,15 @@
 #include "EnemyType.h"
 #include "EnemyStatus.h"
 
-/// @brief 敵のパラメータ初期値。Skeleton, Spider, Bat, Dragonの順番でパラメータを格納
+/// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
 {
-	const std::vector<int32_t> Hp{ 100, 50, 30, 500 };         ///< 体力
-	const std::vector<int32_t> Damage{ 10, 5, 3, 50 };         ///< 攻撃力
-	const std::vector<float> Speed{ 2.5f, 4.0f, 6.5f, 1.5f };  ///< 移動速度
+	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };           ///< 体力
+	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };           ///< 攻撃力
+	const std::vector<float> Speed{ 3.0f, 2.5f, 4.0f, 5.0f, 3.5f };  ///< 移動速度
+	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };
+	const std::vector<bool> HasLongAttack{ false, false, false, false, true };
+	const std::vector<float> VisibilityDist{ 12.0f, 20.0f, 10.0f, 8.0f, 30.0f };
 }  // namespace EnemyParam
 
 struct EnemyData
@@ -23,9 +26,12 @@ struct EnemyData
 		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
 		enemyType          = EnemyType::Skeleton;
 
-		hp     = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
-		damage = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
-		speed  = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
+		hp             = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
+		damage         = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
+		speed          = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
+		hasCloseAttack = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
+		hasLongAttack  = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
+		visibilityDist = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
 	}
 	/// @brief 位置指定生成
 	/// @param position_ 位置
@@ -38,9 +44,12 @@ struct EnemyData
 
 		enemyType = EnemyType::Skeleton;
 
-		hp     = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
-		damage = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
-		speed  = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
+		hp             = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
+		damage         = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
+		speed          = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
+		hasCloseAttack = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
+		hasLongAttack  = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
+		visibilityDist = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
 	}
 	/// @brief 種類指定生成
 	/// @param enemyType_ 敵の種類(Skeleton, Spider, Bat, Dragon)
@@ -53,9 +62,12 @@ struct EnemyData
 
 		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
 
-		hp     = EnemyParam::Hp[enemyType_];
-		damage = EnemyParam::Damage[enemyType_];
-		speed  = EnemyParam::Speed[enemyType_];
+		hp             = EnemyParam::Hp[enemyType_];
+		damage         = EnemyParam::Damage[enemyType_];
+		speed          = EnemyParam::Speed[enemyType_];
+		hasCloseAttack = EnemyParam::HasCloseAttack[enemyType_];
+		hasLongAttack  = EnemyParam::HasLongAttack[enemyType_];
+		visibilityDist = EnemyParam::VisibilityDist[enemyType_];
 	}
 	/// @brief 位置、種類指定生成
 	/// @param position_ 位置
@@ -69,9 +81,12 @@ struct EnemyData
 	{
 		objEnemyController = objEnemyController_;
 
-		hp     = EnemyParam::Hp[enemyType_];
-		damage = EnemyParam::Damage[enemyType_];
-		speed  = EnemyParam::Speed[enemyType_];
+		hp             = EnemyParam::Hp[enemyType_];
+		damage         = EnemyParam::Damage[enemyType_];
+		speed          = EnemyParam::Speed[enemyType_];
+		hasCloseAttack = EnemyParam::HasCloseAttack[enemyType_];
+		hasLongAttack  = EnemyParam::HasLongAttack[enemyType_];
+		visibilityDist = EnemyParam::VisibilityDist[enemyType_];
 	}
 
 	/// @brief アニメーションの状態
@@ -136,11 +151,14 @@ struct EnemyData
 	int32_t hp{};                               ///< 体力
 	int32_t damage{};                           ///< 攻撃力
 	float speed{};                              ///< 移動速度
+	bool hasCloseAttack{};                      ///< 近距離攻撃の有無
+	bool hasLongAttack{};                       ///< 遠距離攻撃の有無
+	float visibilityDist{};                     ///< 視認距離
 	EnemyType enemyType{};                      ///< 敵の種類
 	const float ATTACK_COOL_TIME{ 5.0f };       ///< 攻撃クールタイム
 	float nowAttackCoolTime{ 0.0f };            ///< 現在の攻撃クールタイム
-	const float ATTACK_COLL_LIFE_TIME{ 1.0f };  ///< 攻撃判定の寿命
-	const float DAMAGED_COOL_TIME{ 1.0f };      ///< 被ダメージクールタイム
+	const float ATTACK_COLL_LIFE_TIME{ 0.5f };  ///< 攻撃判定の寿命
+	const float DAMAGED_COOL_TIME{ 0.51f };     ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
 	bool alive{ true };
 

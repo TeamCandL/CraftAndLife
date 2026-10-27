@@ -4,6 +4,7 @@
 enum EnemyType
 {
 	Skeleton = 0,
+	BossSkeleton,
 	Spider,
 	Bat,
 	Dragon,
