@@ -163,7 +163,13 @@ void Player::Update()
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
 	if (objPick)
 	{
+		// GetScene().Destroy(objPick);
 		VCU_LOG("objPick");
+
+		Get<EntitySystem>().Spawn(
+		    Get<IEntity>(objPick).GetItemId(),
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 		// objPick
 	}
 

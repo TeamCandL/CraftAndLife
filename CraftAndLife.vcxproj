@@ -797,7 +797,6 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\System\CursorSystem.h" />
     <ClInclude Include="Source\Game\System\DebugSystems\ImGuiRenderingSystem.h" />
     <ClInclude Include="Source\Game\System\DiscordSystem.h" />
-    <ClInclude Include="Source\Game\System\EntitySystem.h" />
     <ClInclude Include="Source\Game\System\IMESystem.h" />
     <ClInclude Include="Source\Game\System\InputSystem.h" />
     <ClInclude Include="Source\Game\System\InputSystem\KeyCode.h" />
