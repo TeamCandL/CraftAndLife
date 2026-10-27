@@ -13,7 +13,7 @@ struct EntitySystemData
 		float despawnTimeLeft{};    ///< 自然消滅までの時間(秒)
 	};
 
-	std::vector<GameObject> entities{};  ///< エンティティ管理用
+	std::vector<EntityInfo> entities{};  ///< エンティティ管理用
 };
 
 /// @brief エンティティ操作
