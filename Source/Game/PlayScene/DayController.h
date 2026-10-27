@@ -47,4 +47,15 @@ struct DayController : ObjectBase<DayControllerData>
 	using ObjectBase<DayControllerData>::ObjectBase;
 
 	void Update() override;
+
+	float GetCurrentTimeSec() const
+	{
+		return Data().currentTimeSec;
+	}
+
+	void SetCurrentTimeSec(
+	    float _timeSec)
+	{
+		Data().currentTimeSec = _timeSec;
+	}
 };

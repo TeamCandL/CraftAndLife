@@ -28,4 +28,7 @@ struct InSessionStatus
 	bool updatedFlag{ false };                                      ///< 更新確認用フラグ false / true 切り替え用
 	std::unordered_map<std::string, PlayerStatus> playersStatus{};  ///< プレイヤーの座標情報
 	std::unordered_map<int, EnemyStatus> enemiesStatus{};           ///< 敵の座標情報
+
+	float currentTimeSec;              ///< 昼夜サイクルの現在時刻
+	bool hasReceivedDayTime{ false };  ///< 昼夜時刻を受信済みか
 };

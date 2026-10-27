@@ -87,6 +87,10 @@ class SessionManager : public IManager
 		return inSessionStatus_.enemiesStatus.at(_enemyId);
 	}
 
+	/// @brief 昼夜サイクルのためのゲーム内時間の更新
+	/// @param _currentTimeSec ホスト側の昼夜サイクルの現在時刻
+	void UpdateDayTime(float _currentTimeSec);
+
   private:
 	InSessionStatus inSessionStatus_{};  ///< セッション内のステータス
 };
