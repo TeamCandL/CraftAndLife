@@ -18,6 +18,7 @@ enum struct ProtocolType : uint8_t
 	FinishGame,      ///< ゲームが終わった
 	ResultInfo,      ///< 結果情報
 	LeaveRoom,       ///< 部屋から離脱
+	FireEnemy,       ///< 敵が攻撃っした
 
 	Idk,
 };
