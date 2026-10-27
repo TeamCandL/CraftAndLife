@@ -473,6 +473,10 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\TerrainSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Gage1.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Gage2.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Gage3.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Gage4.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\HotBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMap.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMapPoint.cpp" />
@@ -691,6 +695,10 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Gage1.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Gage2.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Gage3.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Gage4.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\HotBar.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMapPoint.h" />
