@@ -144,7 +144,7 @@ struct EnemyData
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
 	bool alive{ true };
 
-	const float WAN_RANGE{ 3 };  ///< 徘徊範囲
+	const float WAN_RANGE{ 15 };  ///< 徘徊範囲
 	const float WAN_REFERENCE{
 		WAN_RANGE / 2
 	};  ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する

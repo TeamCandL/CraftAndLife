@@ -8,6 +8,7 @@ struct NetworkActorServerData
 	bool isInitialized{ false };
 
 	GameObject objEnemyController{};
+	GameObject objOtherEnemyController{};
 };
 
 /// @brief サーバー側のネットワークアクター

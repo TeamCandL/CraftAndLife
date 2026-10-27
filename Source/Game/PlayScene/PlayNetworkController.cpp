@@ -145,10 +145,6 @@ void PlayNetworkController::Update()
 				networkSessionManager.Send(enemyMessage);
 			}
 		}
-		else
-		{
-			VCU_LOG("まだホスト呼ばれてないよ～");
-		}
 
 		// VCU_LOG("敵更新処理送信: {}", eCount);
 	}

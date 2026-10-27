@@ -23,6 +23,23 @@ void OtherEnemy::Draw()
 {
 	transform.UpdateFamily();
 
+	SessionManager& sessionManager = Get<SessionManager>();
+
+	if (sessionManager.IsExistEnemy(enemyId))
+	{
+		const auto& status = sessionManager.RefEnemyStatus(enemyId);
+
+		VCU_LOG(
+		    "OtherEnemy ID:{} Sync: ({}, {}, {}) Draw: ({}, {}, {})",
+		    enemyId,
+		    status.position.x,
+		    status.position.y,
+		    status.position.z,
+		    transform.position.x,
+		    transform.position.y,
+		    transform.position.z);
+	}
+
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 

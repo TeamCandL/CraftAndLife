@@ -94,6 +94,8 @@ void Enemy::Move(
 
 void Enemy::Draw()
 {
+	VCU_LOG("hostEnemy Position: ({}, {}, {})", transform.position.x, transform.position.y, transform.position.z);
+
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 

@@ -33,7 +33,7 @@ void PlayScene::Start()
 	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>();
 
 	Instantiate<OtherPlayerController>();
-	Instantiate<OtherEnemyController>();
+	// Instantiate<OtherEnemyController>();
 
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();

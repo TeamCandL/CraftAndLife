@@ -3,6 +3,7 @@
 #include "../Manager/SessionManager.h"
 #include "Enemy.h"
 #include "EnemyController.h"
+#include "OtherEnemyController.h"
 
 void NetworkActorServer::Start()
 {
@@ -28,15 +29,26 @@ void NetworkActorServer::Update()
 	Data().isHost = Get<SessionManager>().RefStatus().imLobbyHost;
 
 	// ホストになったとき、まだ敵を生成していなければ生成
-	if (IsHost() && !IsInitialized())
+	if (IsHost())
 	{
-		// 敵管理オブジェクトを生成して保存
-		Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+		if (!IsInitialized())
+		{
+			// 敵管理オブジェクトを生成して保存
+			Data().objEnemyController = GetScene().Instantiate<EnemyController>();
 
-		// 敵を生成
-		GetScene().Instantiate<Enemy>(Data().objEnemyController);
+			// 敵を生成
+			GetScene().Instantiate<Enemy>(Data().objEnemyController);
 
-		// 生成済みにする
-		Data().isInitialized = true;
+			// 生成済みにする
+			Data().isInitialized = true;
+		}
+	}
+	else
+	{
+		// ゲストなら他の敵を同期するコントローラーを生成
+		if (Data().objOtherEnemyController.IsEmpty())
+		{
+			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>();
+		}
 	}
 }
