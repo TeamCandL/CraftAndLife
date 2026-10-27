@@ -18,7 +18,6 @@ void PlayerBag::Start() {}
 void PlayerBag::Update()
 {
 	static ItemId id{ 0 };
-	static int count{ 1 };
 
 	// デバッグ用のUI
 	ImGui::Begin("Bag");
@@ -41,10 +40,9 @@ void PlayerBag::Update()
 
 	// アイテム追加用のUI(デバッグ)
 	ImGui::InputInt("ID", &id);
-	ImGui::InputInt("Count", &count);
 	if (ImGui::Button("Add Item"))
 	{
-		AddItem(id, count);
+		AddItem(id);
 	}
 
 	for (int i = 0; i < items.size(); i++)
@@ -83,11 +81,50 @@ bool PlayerBag::CanCraft(
 	return true;
 }
 
+bool PlayerBag::CanAddItem(
+    const ItemId _id)
+{
+	// 同じIDのアイテムの範囲を取得
+	auto [begin, end] = std::equal_range(
+	    items.begin(),
+	    items.end(),
+	    ItemStack{ .id = _id },
+	    [](const ItemStack& _a, const ItemStack& _b)
+	    {
+		    return _a.id < _b.id;
+	    });
+
+	// 同じIDのアイテムのスロットを走査
+	for (auto itr = begin; itr != end; itr++)
+	{
+		const int max          = itr->maxStack;
+		const int currentCount = itr->count;
+		if (itr->maxStack == itr->count)
+		{
+			continue;
+		}
+
+		// スロットのスタック数が最大スタック数を超えない
+		if (currentCount < max)
+		{
+			return true;
+		}
+	}
+
+	// 空スロットを検索
+	auto emptySlot = std::find(items.begin(), items.end(), ItemStack::EmptyStack());
+	if (emptySlot != items.end())
+	{
+		return true;
+	}
+	return false;
+}
+
 void PlayerBag::Craft(
     const ItemId _id)
 {
-	ItemInfo itemInfo = woodAllInfo;
-	// ItemInfo itemInfo      = Get<ItemSystem>().GetInfo(_id);
+	// ItemInfo itemInfo = woodAllInfo;
+	ItemInfo itemInfo      = Get<ItemSystem>().GetInfo(_id);
 	const auto& craftInfos = itemInfo._craftInfo;
 
 	// クラフトで消費するアイテム
@@ -127,14 +164,13 @@ void PlayerBag::Craft(
 		}
 	}
 	// クラフトによって作成されるアイテム数は1個
-	AddItem(_id, 1);
+	AddItem(_id);
 
 	Sort();
 }
 
 void PlayerBag::AddItem(
-    const ItemId _id,
-    const unsigned _count)
+    const ItemId _id)
 {
 	// 既に同じIDのアイテムが存在する場合は、スタック可能なスロットに追加する
 
@@ -149,7 +185,7 @@ void PlayerBag::AddItem(
 	    });
 
 	// 追加するアイテムの残り個数
-	int remain = _count;
+	int remain = 1;
 
 	// 同じIDのアイテムのスロットを走査
 	for (auto itr = begin; itr != end; itr++)
@@ -212,9 +248,9 @@ void PlayerBag::AddItem(
 std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
     const ItemId _craftItemId)
 {
-	ItemInfo craftItemInfo = woodAllInfo;
-	// ItemInfo craftItemInfo = Get<ItemSystem>().GetInfo(_craftItemId);
-	auto& craftInfos = craftItemInfo._craftInfo;
+	// ItemInfo craftItemInfo = woodAllInfo;
+	ItemInfo craftItemInfo = Get<ItemSystem>().GetInfo(_craftItemId);
+	auto& craftInfos       = craftItemInfo._craftInfo;
 	std::vector<CraftMaterialRequirement> craftMaterials;
 
 	for (auto& craftInfo : craftInfos)

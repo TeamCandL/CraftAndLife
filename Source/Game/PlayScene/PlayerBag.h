@@ -61,13 +61,17 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	/// @param _id クラフトしたいアイテムのID
 	/// @return クラフト可能ならtrue
 	bool CanCraft(const ItemId _id);
+	/// @brief アイテムが追加可能か判定
+	/// @param _id
+	/// @return
+	bool CanAddItem(const ItemId _id);
 	/// @brief IDを指定してクラフト
 	/// @param _id
 	void Craft(const ItemId _id);
 	/// @brief バッグにアイテムを追加する
 	/// @param _id 追加するID
 	/// @param _count 追加するアイテムの個数
-	void AddItem(const ItemId _id, const unsigned int _count = 1);
+	void AddItem(const ItemId _id);
 	/// @brief 指定したアイテムのクラフトに必要な素材の充足状況の配列を返す
 	/// @param _craftItemId
 	/// @return ItemInfoの vector<CraftInfo> _craftInfoと同じ順番で格納された、素材の充足状況
