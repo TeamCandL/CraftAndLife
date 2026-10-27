@@ -108,7 +108,6 @@ void Player::Update()
 	}
 
 	// ジャンプ処理
-
 	float deltaTime = Get<DeltaTime>();
 
 	// ジャンプボタンを押した瞬間
@@ -152,6 +151,15 @@ void Player::Update()
 		    1,
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+	}
+
+	// HPゲージ動作確認用：1秒ごとに10ダメージ
+	hpTestTimer += Get<DeltaTime>();
+
+	if (hpTestTimer >= 1.0f)
+	{
+		Damaged(10);
+		hpTestTimer = 0.0f;
 	}
 }
 
