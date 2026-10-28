@@ -35,8 +35,12 @@ void Enemy::Update()
 	}
 
 	// 徘徊チェックポイントとの距離(差分)
-	float distX = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x - transform.position.x;
-	float distZ = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().z - transform.position.z;
+	targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition();
+
+	Sensor();
+
+	float distX = targetPos.x - transform.position.x;
+	float distZ = targetPos.z - transform.position.z;
 	float vecX  = Math::GetSquareVec(distX, distZ);
 	float vecZ  = Math::GetSquareVec(distZ, distX);
 	// 差分を基に移動方向の計算
@@ -63,6 +67,7 @@ void Enemy::Update()
 	}
 	else
 	{
+		SetWanderingCheckPoint(transform.position);
 	}
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
@@ -94,6 +99,8 @@ void Enemy::Move(
 
 void Enemy::Sensor()
 {
+	Vec3 targetPos_{ DEFAULT_TARGET_POS };
+	float targetDist;
 	std::vector<Vec3> playerPositions;
 	Get<SessionManager>().ForeachPlayerStatus(
 	    [&playerPositions](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
@@ -102,13 +109,36 @@ void Enemy::Sensor()
 	    });
 	for (Vec3 objPlayerPos : playerPositions)
 	{
-		if ((transform.position - objPlayerPos).Length() <= visibilityDist)
+		float playerDist = (transform.position - objPlayerPos).Length();
+		if (playerDist <= visibilityDist)
 		{
 			Vec2 dist;
 			dist.x      = transform.position.x - objPlayerPos.x;
 			dist.y      = transform.position.z - objPlayerPos.z;
 			float angle = Math::GetDeg(angleY - atan2f(dist.y, dist.x));
+			if (abs(angle) <= visibilityAngle)
+			{
+				if (targetPos_.y < 0)
+				{
+					targetPos_ = objPlayerPos;
+					targetDist = playerDist;
+				}
+				else
+				{
+					if (targetDist > playerDist)
+					{
+						targetPos_ = objPlayerPos;
+						targetDist = playerDist;
+					}
+				}
+			}
 		}
+	}
+	if (targetPos_ != DEFAULT_TARGET_POS)
+	{
+		followed = true;
+		GetScene().Destroy(objWanderingCheckPoint);
+		targetPos = targetPos_;
 	}
 }
 
