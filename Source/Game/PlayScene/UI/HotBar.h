@@ -1,10 +1,12 @@
 #pragma once
 #include <Game/Game.h>
+#include <Game/PlayScene/ItemSystem.h>
 
 struct SlotItemData
 {
 	Component<UITransform> transform{};
 	Component<UIImage> image{};
+	ItemId id{ 0 };
 };
 
 struct SlotItem : ObjectBase<SlotItemData>
@@ -15,14 +17,17 @@ struct SlotItem : ObjectBase<SlotItemData>
 struct SlotData
 {
 	SlotData(
-	    const Resource<Texture> _textureResource) :
-	    image{ _textureResource }
+	    const Resource<Texture> _textureResource,
+	    ItemType _itemType) :
+	    image{ _textureResource },
+	    stackableItemType{ _itemType }
 	{
 	}
 
 	Component<UITransform> transform{};
 	Component<UIImage> image{};
 	GameObject slotItem{};
+	ItemType stackableItemType{};
 	bool selected{ false };
 };
 struct Slot : ObjectBase<SlotData>
@@ -71,6 +76,9 @@ struct HotBar : ObjectBase<HotBarData>
 	void MoveFocusToRight();
 	/// @brief スロットのフォーカスを左に進める
 	void MoveFocusToLeft();
+	/// @brief 現在選択中のスロットのアイテムを返す
+	/// @return
+	ItemId GetSelectedItemId();
 
   private:
 	/// @brief

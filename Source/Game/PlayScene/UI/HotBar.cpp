@@ -1,26 +1,37 @@
-#include "pch\pch.h"
 #include "HotBar.h"
+#include "pch\pch.h"
 #include "MiniMapPoint.h"
+#include <Game/System/AbstructInputSystem.h>
+
 void HotBar::Start()
 {
+	// 武器
+	slots[0] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::Weapons);
+	// 消費アイテム
+	slots[1] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::Consumables);
+	// バッグ
+	slots[2] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::Weapons);
+
 	for (int i = 0; i < slots.size(); i++)
 	{
-		slots[i]                      = GetScene().Instantiate<Slot>(slotEmptyTexture);
 		SlotData& slotData            = Get<Slot>(slots[i]).Data();
 		slotData.transform.layerOrder = 1;
 		slotData.transform.scale      = Vec2{ slotEmptyImageExtents, slotEmptyImageExtents };
 		slotData.selected             = (currentSlotIdx == i);
 		slotData.slotItem             = GetScene().Instantiate<SlotItem>();
+		SlotItemData& itemData        = Get<SlotItem>(slotData.slotItem).Data();
+		itemData.transform.layerOrder = 5;
 	}
 }
 
 void HotBar::Update()
 {
-	if (Get<InputSystem>().GetKeyDown(KeyCode::I))
+	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
+	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
 	{
 		MoveFocusToLeft();
 	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
 	{
 		MoveFocusToRight();
 	}
@@ -56,8 +67,14 @@ void HotBar::Update()
 		// NOTE: ゲームループによる更新順番の関係上、ここでワールド行列を計算する必要あり
 		Get<Slot>(slotGameObj).CalculateUIWorld();
 
-		SlotItemData& itemData = Get<SlotItem>(slotData.slotItem).Data();
-		// itemData.image.texture = Get<>
+		SlotItemData& itemData         = Get<SlotItem>(slotData.slotItem).Data();
+		Resource<Texture> itemImageRes = Get<ItemSystem>().GetInfo(itemData.id)._imageId;
+		itemData.image.texture         = itemImageRes;
+
+		constexpr int itemSize{ 64 };
+		const int itemSizeHalf{ itemSize / 2 };
+		itemData.transform.position = Vec2{ center.x - itemSizeHalf, center.y - itemSizeHalf };
+		itemData.transform.scale    = Vec2{ itemSize, itemSize };
 	}
 }
 
@@ -69,6 +86,11 @@ void HotBar::MoveFocusToRight()
 void HotBar::MoveFocusToLeft()
 {
 	MoveFocusImpl(-1);
+}
+
+ItemId HotBar::GetSelectedItemId()
+{
+	return Get<SlotItem>(Get<Slot>(slots[currentSlotIdx]).Data().slotItem).Data().id;
 }
 
 void HotBar::MoveFocusImpl(
