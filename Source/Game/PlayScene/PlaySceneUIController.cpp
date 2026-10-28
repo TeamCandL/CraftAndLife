@@ -13,6 +13,8 @@
 #include "UI/Gage4.h"
 #include "UI/MyName.h"
 #include "UI/Name1.h"
+#include "UI/BossGageR.h"
+#include "UI/BossGage.h"
 
 void PlaySceneUIController::Start()
 {
@@ -29,4 +31,6 @@ void PlaySceneUIController::Start()
 	objGage4          = GetScene().Instantiate<Gage4>();
 	objMyName         = GetScene().Instantiate<MyName>();
 	objName1          = GetScene().Instantiate<Name1>();
+	objBossGageR      = GetScene().Instantiate<BossGageR>();
+	objBossGage       = GetScene().Instantiate<BossGage>();
 }
