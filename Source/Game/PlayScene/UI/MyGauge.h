@@ -1,9 +1,9 @@
 #pragma once
 #include <Game/Game.h>
 
-struct MyGageData
+struct MyGaugeData
 {
-	MyGageData(
+	MyGaugeData(
 	    GameObject _objPlayer) :
 	    objPlayer{ _objPlayer }
 	{
@@ -11,7 +11,7 @@ struct MyGageData
 
 	GameObject objPlayer{};
 
-	Resource<Texture> texture{ "Image/UI/MyGage.png" };
+	Resource<Texture> texture{ "Image/UI/MyGauge.png" };
 
 	const float maxWidth{ 423.0f };
 
@@ -20,9 +20,9 @@ struct MyGageData
 	Component<UIImage> image{ texture };
 };
 
-struct MyGage : ObjectBase<MyGageData>
+struct MyGauge : ObjectBase<MyGaugeData>
 {
-	using ObjectBase<MyGageData>::ObjectBase;
+	using ObjectBase<MyGaugeData>::ObjectBase;
 
 	void Start() override;
 	void Update() override;

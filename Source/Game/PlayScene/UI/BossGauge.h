@@ -1,15 +1,15 @@
 #pragma once
 #include <Game/Game.h>
 
-struct BossGageData
+struct BossGaugeData
 {
-	Resource<Texture> texture{ "Image/UI/BossGage.png" };
+	Resource<Texture> texture{ "Image/UI/BossGauge.png" };
 
 	Component<UITransform> transform{ Vec2{ 672, 50 }, Vec2{ 547, 38 } };
 	Component<UIImage> image{ texture };
 };
 
-struct BossGage : ObjectBase<BossGageData>
+struct BossGauge : ObjectBase<BossGaugeData>
 {
 	/// @brief 開始処理
 	void Start() override;
