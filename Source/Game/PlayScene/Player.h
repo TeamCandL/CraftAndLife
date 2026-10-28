@@ -4,6 +4,7 @@
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
 #include "Player/PlayerAnimType.h"
+#include "Player/PlayerJobType.h"
 
 /// @brief プレイヤーのデータ
 struct PlayerData
@@ -18,13 +19,21 @@ struct PlayerData
 	Resource<Shader> shaderBack{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
 
-	Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
+	std::array<Resource<Model>, PlayerJobType_Max> models{
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",    // Tank
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",    // Fighter
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-f.fbx",  // Archer
+	};
+	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
 	Component<Transform> transform{};
 	Component<RigidBody> rigidBody{};
 	Component<StaticOBB> obb{};
 	Component<OBBRenderer> obbRenderer{};
 	Component<Name> name{ "Player" };
+
+	PlayerJobType jobType{ PlayerJobType_Healer };  ///< プレイヤーの役職
 
 	GameObject objMainCamera{};
 	GameObject objPlayerController{};

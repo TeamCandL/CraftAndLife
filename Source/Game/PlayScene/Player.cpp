@@ -36,6 +36,7 @@ void Player::Update()
 
 	ImGui::Begin("Player");
 	ImGui::DragInt("anim", &animIndex, 1, 0);
+	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
 	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
@@ -210,9 +211,9 @@ void Player::Draw()
 	Get<Dx11Manager>().SetShader(shaderFront);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	model.Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
 
-	const auto& subParts{ model.Get().subParts };
+	const auto& subParts{ models[jobType].Get().subParts };
 
 	for (const auto& parts : subParts)
 	{
