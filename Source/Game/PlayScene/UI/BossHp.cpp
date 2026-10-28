@@ -6,5 +6,5 @@ void BossHp::Start() {}
 
 void BossHp::Update()
 {
-	text.content = "BossHp";
+	text.content = "1234567890/";
 }

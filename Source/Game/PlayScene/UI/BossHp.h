@@ -9,7 +9,7 @@ struct BossHpData
 		                     .WithFontSize(32)
 		                     .WithFontAlignment(FontAlignment_Center) };
 
-	Component<UITransform> transform{ Vec2{ 657, 0 }, Vec2{ 577, 50 } };
+	Component<UITransform> transform{ Vec2{ 672, 50 }, Vec2{ 547, 38 } };
 	Component<UIText> text{ font, Color::WHITE };
 };
 
