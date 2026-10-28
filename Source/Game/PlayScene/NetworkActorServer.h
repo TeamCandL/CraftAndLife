@@ -1,5 +1,8 @@
 #pragma once
 #include <Game/Game.h>
+#include "EnemyStateRegistry.h"
+#include <optional>
+#include <vector>
 
 /// @brief サーバー側のネットワークアクターのデータ
 struct NetworkActorServerData
@@ -9,6 +12,9 @@ struct NetworkActorServerData
 
 	GameObject objEnemyController{};
 	GameObject objOtherEnemyController{};
+
+	/// @brief 敵IDごとのステート登録情報
+	std::vector<std::optional<EnemyStateRegistry>> enemyStateRegistries;
 };
 
 /// @brief サーバー側のネットワークアクター
@@ -18,6 +24,9 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 
 	void Start() override;
 	void Update() override;
+
+	void CreateEnemies();
+	void EnemyStateRegistries(GameObject objEnemy);
 
 	bool IsHost() const
 	{

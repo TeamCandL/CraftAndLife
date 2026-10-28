@@ -73,6 +73,9 @@ void Enemy::Update()
 
 	if (hp <= 0)
 	{
+		// 敵IDを使って死亡通知を送信キューに登録
+		// Registryの登録を解除
+		// ※上記2つは今後実装する
 		DestroyMe();
 	}
 }
@@ -148,4 +151,10 @@ void Enemy::SetWanderingCheckPoint(
 	position_ += range_;
 
 	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position_);
+}
+
+void Enemy::RegisterStates(
+    EnemyStateRegistry& registry) const
+{
+	registry.Register({ { "alive", std::cref(alive) } });
 }

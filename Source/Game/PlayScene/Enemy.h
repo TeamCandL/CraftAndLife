@@ -3,6 +3,7 @@
 #include <Game/Game.h>
 #include "EnemyType.h"
 #include "EnemyStatus.h"
+#include "EnemyStateRegistry.h"
 
 /// @brief 敵のパラメータ初期値。Skeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
@@ -216,4 +217,6 @@ struct Enemy : ObjectBase<EnemyData>
 	{
 		id = id_;
 	};
+
+	void RegisterStates(EnemyStateRegistry& registry) const;
 };
