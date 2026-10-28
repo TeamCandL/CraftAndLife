@@ -3,6 +3,7 @@
 #include "Player/IPlayerController.h"
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
+#include "Player/PlayerAnimType.h"
 
 /// @brief プレイヤーのデータ
 struct PlayerData
@@ -33,7 +34,8 @@ struct PlayerData
 	float angleX{};
 	float angleY{};
 
-	int animIndex{};
+	PlayerAnimType animIndex{};  ///< アニメーション
+	float animSpeed{ 1.0f };     ///< アニメーションの再生速度 通常が1.0f
 
 	// パラメータ
 	int32_t maxHP{ 100 };  // 最大HP
