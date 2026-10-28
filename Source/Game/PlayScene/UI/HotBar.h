@@ -16,19 +16,22 @@ struct SlotData
 struct Slot : ObjectBase<SlotData>
 {
 	using ObjectBase<SlotData>::ObjectBase;
+	void CalculateUIWorld();
 };
 
 struct HotBarData
 {
-	Resource<Texture> texture{ "Image/UI/slot_panel.png" };
-	Resource<Texture> slotEmpty{ "Image/UI/slot_empty.png" };
-	Resource<Texture> slotSelected{ "Image/UI/slot_selected.png" };
+	Resource<Texture> panelTexture{ "Image/UI/slot_panel.png" };
+	Resource<Texture> slotEmptyTexture{ "Image/UI/slot_empty.png" };
+	Resource<Texture> slotSelectedTexture{ "Image/UI/slot_selected.png" };
 	Component<UITransform> transform{ Vec2{ 1528, 908 }, Vec2{ 350, 128 } };
-	Component<UIImage> image{ texture };
+	Component<UIImage> image{ panelTexture };
 
-	GameObject leftSlot;
+	static constexpr int SLOT_COUNT{ 3 };
+	std::array<GameObject, 3> slots{};
+	int currentSlotIdx{ 0 };
 
-	Vec2 leftSlotTop{ 22, 19 };
+	Vec2 leftSlotCenter{ 67, 64 };
 	int slotEmptyImageExtents{ 90 };
 	int slotSelectedImageExtents{ 110 };
 	int slotMargin{ 18 };
@@ -40,4 +43,9 @@ struct HotBar : ObjectBase<HotBarData>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+	void MoveFocusToRight();
+	void MoveFocusToLeft();
+
+  private:
+	void MoveFocusImpl(int _dir);
 };
