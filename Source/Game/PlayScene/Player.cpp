@@ -124,12 +124,10 @@ void Player::Update()
 		if (transform.position.y - groundHeight > 0.1f)
 		{
 			isJumping = true;
-			VCU_LOG("差あり");
 		}
 		else if (transform.position.y - groundHeight > 0.0f)
 		{
 			transform.position.y = groundHeight;
-			VCU_LOG("0以上だから着地");
 		}
 	}
 
