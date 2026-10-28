@@ -23,7 +23,10 @@ struct PlaySceneUIControllerData
 	GameObject objGage3{};           ///< 他プレイヤー3ゲージ緑
 	GameObject objGage4{};           ///< 他プレイヤー4ゲージ緑
 	GameObject objMyName{};          ///< 自分の名前
-	GameObject objName1{};           ///< 仲間の名前
+	GameObject objName1{};           ///< 仲間の名前上から１
+	GameObject objName2{};           ///< 仲間の名前２
+	GameObject objName3{};           ///< 仲間の名前３
+	GameObject objName4{};           ///< 仲間の名前４
 	GameObject objBossGageR{};       ///< ボスのゲージ、赤
 	GameObject objBossGage{};        ///< ボスのゲージ、オレンジ
 
