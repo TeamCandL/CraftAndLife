@@ -116,7 +116,7 @@ void Enemy::Sensor()
 			dist.x      = transform.position.x - objPlayerPos.x;
 			dist.y      = transform.position.z - objPlayerPos.z;
 			float angle = Math::GetDeg(angleY - atan2f(dist.y, dist.x));
-			if (abs(angle) <= visibilityAngle)
+			if (abs(angle) <= visibilityAngle / 2.0f)
 			{
 				if (targetPos_.y < 0)
 				{
