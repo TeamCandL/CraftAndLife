@@ -35,12 +35,12 @@ void Enemy::Update()
 	}
 
 	// 徘徊チェックポイントとの距離(差分)
-	targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition();
+	targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec2();
 
 	Sensor();
 
 	float distX = targetPos.x - transform.position.x;
-	float distZ = targetPos.z - transform.position.z;
+	float distZ = targetPos.y - transform.position.z;
 	float vecX  = Math::GetSquareVec(distX, distZ);
 	float vecZ  = Math::GetSquareVec(distZ, distX);
 	// 差分を基に移動方向の計算
@@ -60,7 +60,7 @@ void Enemy::Update()
 	if (!objWanderingCheckPoint.IsEmpty())
 	{
 		// チェックポイントに到達したら新しいチェックポイントを生成する
-		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition()).Length() < 1.0f)
+		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3()).Length() < 1.0f)
 		{
 			SetWanderingCheckPoint(transform.position);
 		}
