@@ -16,5 +16,5 @@ void Name1::Update()
 	{
 		return;
 	}
-	text.content = names[0];
+	text.content = "aaaa";
 }
