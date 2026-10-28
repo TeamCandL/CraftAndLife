@@ -171,8 +171,10 @@ struct EnemyData
 	const float ATTACK_COLL_LIFE_TIME{ 0.5f };  ///< 攻撃判定の寿命
 	const float DAMAGED_COOL_TIME{ 0.5f };      ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
-	bool followed{ false };                     ///< 追跡中か
-	bool alive{ true };                         ///< 生きているか
+
+	bool followed{ false };  ///< 追跡中か
+	bool alive{ true };      ///< 生きているか
+	bool attacked{ false };  ///< 攻撃中か
 
 	const float WAN_RANGE{ 15 };  ///< 徘徊範囲
 	const float WAN_REFERENCE{
@@ -199,6 +201,8 @@ struct Enemy : ObjectBase<EnemyData>
 	/// @param spd_ 速度
 	/// @param angleY_	Y軸の回転角度
 	void Move(float vecX_, float vecZ_, float spd_, float angleY_);
+	/// @brief プレイヤーの視認
+	void Sensor();
 
 	/// @brief 描画処理
 	void Draw() override;

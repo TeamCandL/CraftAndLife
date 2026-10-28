@@ -9,6 +9,7 @@
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
 #include "EnemyController.h"
+#include "../Manager/SessionManager.h"
 
 void Enemy::Start()
 {
@@ -43,6 +44,7 @@ void Enemy::Update()
 
 	Move(vecX, vecZ, speed, angleY);
 
+	attacked = false;
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
 	{
@@ -71,7 +73,7 @@ void Enemy::Update()
 
 	ImGui::End();
 
-	if (hp <= 0)
+	if (!alive)
 	{
 		DestroyMe();
 	}
@@ -88,11 +90,26 @@ void Enemy::Move(
 	transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, angleY_, 0.0f });
 	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
 	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
+}
 
-	// for (auto& [name, obj] : Get<OtherPlayerController>(objOtherPlayerController).Data().nameToObjOtherPlayer)
-	//{
-	//	Vec3 distToTarget = Get<OtherPlayer>(obj).GetPosition();
-	// }
+void Enemy::Sensor()
+{
+	std::vector<Vec3> playerPositions;
+	Get<SessionManager>().ForeachPlayerStatus(
+	    [&playerPositions](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
+	    {
+		    playerPositions.push_back(_status.position);
+	    });
+	for (Vec3 objPlayerPos : playerPositions)
+	{
+		if ((transform.position - objPlayerPos).Length() <= visibilityDist)
+		{
+			Vec2 dist;
+			dist.x      = transform.position.x - objPlayerPos.x;
+			dist.y      = transform.position.z - objPlayerPos.z;
+			float angle = Math::GetDeg(angleY - atan2f(dist.y, dist.x));
+		}
+	}
 }
 
 void Enemy::Draw()
@@ -124,6 +141,7 @@ void Enemy::AttackCollider()
 {
 	if (nowAttackCoolTime <= 0.0f)
 	{
+		attacked = true;
 		Get<AudioSystem>().Play(attackSE);
 
 		GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
