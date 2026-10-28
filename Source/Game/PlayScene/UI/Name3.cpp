@@ -12,7 +12,7 @@ void Name3::Update()
 	    {
 		    names.push_back(name);
 	    });
-	if (names.size() <= 0)
+	if (names.size() <= 2)
 	{
 		return;
 	}
