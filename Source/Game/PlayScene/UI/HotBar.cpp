@@ -28,11 +28,15 @@ void HotBar::Update()
 	{
 		SlotData& slotData      = Get<Slot>(slots[i]).Data();
 		GameObject& slotGameObj = slots[i];
-		const int offset        = (slotMargin + slotEmptyImageExtents) * i;
-		const Vec2 center       = { transform.position.x + leftSlotCenter.x + offset,
-			                        transform.position.y + leftSlotCenter.y };
-		slotData.selected       = (currentSlotIdx == i);
+		// i番目のスロット描画位置のオフセット
+		const int offset = (slotMargin + slotEmptyImageExtents) * i;
+		// スロットの中心座標
+		const Vec2 center = { transform.position.x + leftSlotCenter.x + offset,
+			                  transform.position.y + leftSlotCenter.y };
+		// スロットが選択されているか判定
+		slotData.selected = (currentSlotIdx == i);
 
+		// 選択状態によって画像、座標、サイズを変える
 		if (slotData.selected)
 		{
 			Get<UIImage>(slotGameObj).texture = slotSelectedTexture;
@@ -45,9 +49,9 @@ void HotBar::Update()
 			Get<UIImage>(slotGameObj).texture = slotEmptyTexture;
 			const int extentsHalf             = slotEmptyImageExtents / 2;
 			slotData.transform.position       = Vec2{ center.x - extentsHalf, center.y - extentsHalf };
-
-			slotData.transform.scale = Vec2{ slotEmptyImageExtents, slotEmptyImageExtents };
+			slotData.transform.scale          = Vec2{ slotEmptyImageExtents, slotEmptyImageExtents };
 		}
+		// NOTE: ゲームループによる更新順番の関係上、ここでワールド行列を計算する必要あり
 		Get<Slot>(slotGameObj).CalculateUIWorld();
 	}
 }
