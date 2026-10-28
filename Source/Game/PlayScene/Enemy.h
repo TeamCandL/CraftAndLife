@@ -69,6 +69,8 @@ struct EnemyData
 	{
 		objEnemyController = objEnemyController_;
 
+		modelIndex = enemyType_;
+
 		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
 
 		hp             = EnemyParam::Hp[enemyType_];
@@ -133,9 +135,8 @@ struct EnemyData
 	// Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
 
 	std::array<Resource<Model>, EnemyType_Max> models{
-		Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
-		Resource<Model>{ "Model/Enemy/Spider.fbx" },
-		Resource<Model>{ "Model/Enemy/Bat.fbx" },
+		Resource<Model>{ "Model/Enemy/Skeleton.fbx" }, Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
+		Resource<Model>{ "Model/Enemy/Spider.fbx" },   Resource<Model>{ "Model/Enemy/Bat.fbx" },
 		Resource<Model>{ "Model/Enemy/Dragon.fbx" },
 	};
 	int32_t modelIndex{};
