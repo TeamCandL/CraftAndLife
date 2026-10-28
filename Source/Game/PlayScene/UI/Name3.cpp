@@ -2,7 +2,9 @@
 #include "Name3.h"
 #include <Game/Manager/SessionManager.h>
 
-void Name3::Start()
+void Name3::Start() {}
+
+void Name3::Update()
 {
 	std::vector<std::string> names;
 	Get<SessionManager>().ForeachPlayerStatus(
@@ -16,5 +18,3 @@ void Name3::Start()
 	}
 	text.content = names[2];
 }
-
-void Name3::Update() {}
