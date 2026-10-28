@@ -19,10 +19,12 @@ inline EnemyType ToEnemyType(
 	case 0:
 		return EnemyType::Skeleton;
 	case 1:
-		return EnemyType::Spider;
+		return EnemyType::BossSkeleton;
 	case 2:
-		return EnemyType::Bat;
+		return EnemyType::Spider;
 	case 3:
+		return EnemyType::Bat;
+	case 4:
 		return EnemyType::Dragon;
 	default:
 		throw std::invalid_argument("不正なEnemyType ID");
