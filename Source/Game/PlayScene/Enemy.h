@@ -33,12 +33,13 @@ struct EnemyData
 		transform.position = Vec3{ 0.0f, 15.0f, 0.0f };
 		enemyType          = EnemyType::Skeleton;
 
-		hp             = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
-		damage         = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
-		speed          = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
-		hasCloseAttack = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
-		hasLongAttack  = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
-		visibilityDist = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
+		hp              = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
+		damage          = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
+		speed           = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
+		hasCloseAttack  = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
+		hasLongAttack   = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
+		visibilityDist  = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
+		visibilityAngle = EnemyParam::visibilityAngle[static_cast<int>(EnemyType::Skeleton)];
 	}
 	/// @brief 位置指定生成
 	/// @param position_ 位置
@@ -52,12 +53,13 @@ struct EnemyData
 
 		enemyType = EnemyType::Skeleton;
 
-		hp             = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
-		damage         = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
-		speed          = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
-		hasCloseAttack = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
-		hasLongAttack  = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
-		visibilityDist = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
+		hp              = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
+		damage          = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
+		speed           = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
+		hasCloseAttack  = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
+		hasLongAttack   = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
+		visibilityDist  = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
+		visibilityAngle = EnemyParam::visibilityAngle[static_cast<int>(EnemyType::Skeleton)];
 	}
 	/// @brief 種類指定生成
 	/// @param enemyType_ 敵の種類(Skeleton, Spider, Bat, Dragon)
@@ -73,12 +75,13 @@ struct EnemyData
 
 		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
 
-		hp             = EnemyParam::Hp[enemyType_];
-		damage         = EnemyParam::Damage[enemyType_];
-		speed          = EnemyParam::Speed[enemyType_];
-		hasCloseAttack = EnemyParam::HasCloseAttack[enemyType_];
-		hasLongAttack  = EnemyParam::HasLongAttack[enemyType_];
-		visibilityDist = EnemyParam::VisibilityDist[enemyType_];
+		hp              = EnemyParam::Hp[enemyType_];
+		damage          = EnemyParam::Damage[enemyType_];
+		speed           = EnemyParam::Speed[enemyType_];
+		hasCloseAttack  = EnemyParam::HasCloseAttack[enemyType_];
+		hasLongAttack   = EnemyParam::HasLongAttack[enemyType_];
+		visibilityDist  = EnemyParam::VisibilityDist[enemyType_];
+		visibilityAngle = EnemyParam::visibilityAngle[enemyType_];
 	}
 	/// @brief 位置、種類指定生成
 	/// @param position_ 位置
@@ -93,12 +96,13 @@ struct EnemyData
 	{
 		objEnemyController = objEnemyController_;
 
-		hp             = EnemyParam::Hp[enemyType_];
-		damage         = EnemyParam::Damage[enemyType_];
-		speed          = EnemyParam::Speed[enemyType_];
-		hasCloseAttack = EnemyParam::HasCloseAttack[enemyType_];
-		hasLongAttack  = EnemyParam::HasLongAttack[enemyType_];
-		visibilityDist = EnemyParam::VisibilityDist[enemyType_];
+		hp              = EnemyParam::Hp[enemyType_];
+		damage          = EnemyParam::Damage[enemyType_];
+		speed           = EnemyParam::Speed[enemyType_];
+		hasCloseAttack  = EnemyParam::HasCloseAttack[enemyType_];
+		hasLongAttack   = EnemyParam::HasLongAttack[enemyType_];
+		visibilityDist  = EnemyParam::VisibilityDist[enemyType_];
+		visibilityAngle = EnemyParam::visibilityAngle[enemyType_];
 	}
 
 	/// @brief アニメーションの状態
