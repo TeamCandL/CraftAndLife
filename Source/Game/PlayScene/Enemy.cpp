@@ -44,7 +44,7 @@ void Enemy::Update()
 	float vecX  = Math::GetSquareVec(distX, distZ);
 	float vecZ  = Math::GetSquareVec(distZ, distX);
 	// 差分を基に移動方向の計算
-	float angleY = Math::GetAngle(distX, distZ);
+	angleY = Math::GetAngle(distX, distZ);
 
 	Move(vecX, vecZ, speed, angleY);
 
