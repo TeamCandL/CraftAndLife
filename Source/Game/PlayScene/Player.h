@@ -38,6 +38,7 @@ struct PlayerData
 	GameObject objMainCamera{};        ///< プレイヤーのカメラ
 	GameObject objPlayerController{};  ///< プレイヤーの操作
 	GameObject objJobController{};     ///< 役職固有の操作
+	GameObject objPlayerHand{};        ///< プレイヤーの手持ち
 
 	PlayerRoleType role{ PlayerRoleType_Max };
 

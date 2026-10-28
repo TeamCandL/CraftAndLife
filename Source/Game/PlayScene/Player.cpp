@@ -9,6 +9,7 @@
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/Manager/SessionManager.h>
 #include <string>
+#include "PlayerHand.h"
 
 void Player::Start()
 {
@@ -20,6 +21,7 @@ void Player::Start()
 	obb.isTrigger   = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
 
 	objPlayerController = GetScene().Instantiate<PlayerControllerNormal>();
+	objPlayerHand       = GetScene().Instantiate<PlayerHand>(this->ToGameObject());
 
 	// ジャンプの初期化
 	jumpVelocity = 0.0f;
