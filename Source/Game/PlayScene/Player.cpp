@@ -8,6 +8,7 @@
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/PlayerBag.h>
 #include <string>
 
 void Player::Start()
@@ -27,6 +28,9 @@ void Player::Start()
 
 	// 初期位置の地面の高さを取得
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	// バッグ作成
+	objPlayerBag = GetScene().Instantiate<PlayerBag>();
 }
 
 void Player::Update()
@@ -161,16 +165,18 @@ void Player::Update()
 	}
 
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	// エンティティを拾うことができた場合
 	if (objPick)
 	{
-		// GetScene().Destroy(objPick);
-		VCU_LOG("objPick");
+		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
+		PlayerBag& bag      = Get<PlayerBag>(objPlayerBag);
+		// バッグに追加できるなら、追加
+		if (bag.CanAddItem(pickedItemId))
+		{
+			bag.AddItem(pickedItemId);
+		}
 
-		Get<EntitySystem>().Spawn(
-		    Get<IEntity>(objPick).GetItemId(),
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-		// objPick
+		VCU_LOG("objPick");
 	}
 
 	// HPゲージ動作確認用：1秒ごとに10ダメージ

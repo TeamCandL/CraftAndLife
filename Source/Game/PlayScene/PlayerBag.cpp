@@ -84,6 +84,10 @@ bool PlayerBag::CanCraft(
 bool PlayerBag::CanAddItem(
     const ItemId _id)
 {
+	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
+	if (itemType == ItemType::Weapons)
+		return false;
+
 	// 同じIDのアイテムの範囲を取得
 	auto [begin, end] = std::equal_range(
 	    items.begin(),
