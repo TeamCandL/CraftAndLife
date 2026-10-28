@@ -13,5 +13,5 @@ class IPlayerJobController
 	virtual ~IPlayerJobController() = default;
 
 	/// @brief 更新処理
-	virtual void Update(PlayerData&) = 0;
+	virtual void Update(PlayerData& _data) = 0;
 };

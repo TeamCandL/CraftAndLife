@@ -467,6 +467,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\PlayerAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerControllerNormal.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerFighter.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayNetworkController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayScene.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlaySceneUIController.cpp" />
@@ -699,6 +700,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\IPlayerJobController.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerAnimType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerFighter.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobType.h" />
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />

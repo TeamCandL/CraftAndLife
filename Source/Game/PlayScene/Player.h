@@ -35,8 +35,9 @@ struct PlayerData
 
 	PlayerJobType jobType{ PlayerJobType_Healer };  ///< プレイヤーの役職
 
-	GameObject objMainCamera{};
-	GameObject objPlayerController{};
+	GameObject objMainCamera{};        ///< プレイヤーのカメラ
+	GameObject objPlayerController{};  ///< プレイヤーの操作
+	GameObject objJobController{};     ///< 役職固有の操作
 
 	PlayerRoleType role{ PlayerRoleType_Max };
 
