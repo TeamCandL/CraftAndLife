@@ -35,9 +35,14 @@ void Enemy::Update()
 	}
 
 	// 徘徊チェックポイントとの距離(差分)
-	targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec2();
+	if (!followed)
+	{
+		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec2();
+	}
 
 	Sensor();
+
+	VCU_LOG("敵の追跡状況：{}", followed);
 
 	float distX = targetPos.x - transform.position.x;
 	float distZ = targetPos.y - transform.position.z;
@@ -48,7 +53,6 @@ void Enemy::Update()
 
 	Move(vecX, vecZ, speed, angleY);
 
-	attacked = false;
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
 	{
@@ -57,17 +61,20 @@ void Enemy::Update()
 	nowDamagedCoolTime -= Get<DeltaTime>();
 
 	//	徘徊時のチェックポイントの更新
-	if (!objWanderingCheckPoint.IsEmpty())
+	if (!followed)
 	{
-		// チェックポイントに到達したら新しいチェックポイントを生成する
-		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3()).Length() < 1.0f)
+		if (!objWanderingCheckPoint.IsEmpty())
+		{
+			// チェックポイントに到達したら新しいチェックポイントを生成する
+			if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3()).Length() < 1.0f)
+			{
+				SetWanderingCheckPoint(transform.position);
+			}
+		}
+		else
 		{
 			SetWanderingCheckPoint(transform.position);
 		}
-	}
-	else
-	{
-		SetWanderingCheckPoint(transform.position);
 	}
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
@@ -99,7 +106,7 @@ void Enemy::Move(
 
 void Enemy::Sensor()
 {
-	Vec2 nowPos{ transform.position.x, transform.position.z };
+	Vec2 nowVec2Pos{ transform.position.x, transform.position.z };
 	Vec2 targetPos_{ DEFAULT_TARGET_POS };
 	float targetDist{ -1.0f };
 	std::vector<Vec2> playerPositions;
@@ -110,13 +117,14 @@ void Enemy::Sensor()
 	    });
 	for (Vec2 objPlayerPos : playerPositions)
 	{
-		float playerDist = (nowPos - objPlayerPos).Length();
+		float playerDist = (nowVec2Pos - objPlayerPos).Length();
 		if (playerDist <= visibilityDist)
 		{
 			Vec2 dist;
-			dist.x      = nowPos.x - objPlayerPos.x;
-			dist.y      = nowPos.y - objPlayerPos.y;
-			float angle = Math::GetDeg(angleY - atan2f(dist.y, dist.x));
+			dist.x      = nowVec2Pos.x - objPlayerPos.x;
+			dist.y      = nowVec2Pos.y - objPlayerPos.y;
+			float angle = Math::GetDeg(angleY) - Math::GetDeg(atan2f(dist.x, dist.y));
+			VCU_LOG("AngleE : {}, AngleT : {}, angle : {}", angleY, atan2f(dist.x, dist.y), angle);
 			if (abs(angle) <= visibilityAngle / 2.0f)
 			{
 				if (targetDist < 0.0f)
@@ -135,10 +143,15 @@ void Enemy::Sensor()
 			}
 		}
 	}
+	followed = false;
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
 		followed = true;
-		GetScene().Destroy(objWanderingCheckPoint);
+
+		if (!objWanderingCheckPoint.IsEmpty())
+		{
+			GetScene().Destroy(objWanderingCheckPoint);
+		}
 		targetPos = targetPos_;
 	}
 }
