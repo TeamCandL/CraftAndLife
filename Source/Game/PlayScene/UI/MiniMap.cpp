@@ -20,4 +20,11 @@ void MiniMap::Start()
 	}
 }
 
-void MiniMap::Update() {}
+void MiniMap::Update()
+{
+	for (float angle = 0; angle < DirectX::XM_2PI; angle += DirectX::XM_PIDIV2)
+	{
+		Get<MiniMapPoint>(points[static_cast<int>(angle / DirectX::XM_PIDIV2)])
+		    .SetPosition(angle + DirectX::XM_PIDIV2 + DirectX::XM_PIDIV4, 150);
+	}
+}
