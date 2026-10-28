@@ -35,16 +35,16 @@ void Enemy::Update()
 	}
 
 	// 徘徊チェックポイントとの距離(差分)
-	targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition();
+	targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec2();
 
 	Sensor();
 
 	float distX = targetPos.x - transform.position.x;
-	float distZ = targetPos.z - transform.position.z;
+	float distZ = targetPos.y - transform.position.z;
 	float vecX  = Math::GetSquareVec(distX, distZ);
 	float vecZ  = Math::GetSquareVec(distZ, distX);
 	// 差分を基に移動方向の計算
-	float angleY = Math::GetAngle(distX, distZ);
+	angleY = Math::GetAngle(distX, distZ);
 
 	Move(vecX, vecZ, speed, angleY);
 
@@ -60,7 +60,7 @@ void Enemy::Update()
 	if (!objWanderingCheckPoint.IsEmpty())
 	{
 		// チェックポイントに到達したら新しいチェックポイントを生成する
-		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition()).Length() < 1.0f)
+		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3()).Length() < 1.0f)
 		{
 			SetWanderingCheckPoint(transform.position);
 		}
@@ -99,26 +99,27 @@ void Enemy::Move(
 
 void Enemy::Sensor()
 {
-	Vec3 targetPos_{ DEFAULT_TARGET_POS };
-	float targetDist;
-	std::vector<Vec3> playerPositions;
+	Vec2 nowPos{ transform.position.x, transform.position.z };
+	Vec2 targetPos_{ DEFAULT_TARGET_POS };
+	float targetDist{ -1.0f };
+	std::vector<Vec2> playerPositions;
 	Get<SessionManager>().ForeachPlayerStatus(
 	    [&playerPositions](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
 	    {
-		    playerPositions.push_back(_status.position);
+		    playerPositions.push_back({ _status.position.x, _status.position.z });
 	    });
-	for (Vec3 objPlayerPos : playerPositions)
+	for (Vec2 objPlayerPos : playerPositions)
 	{
-		float playerDist = (transform.position - objPlayerPos).Length();
+		float playerDist = (nowPos - objPlayerPos).Length();
 		if (playerDist <= visibilityDist)
 		{
 			Vec2 dist;
-			dist.x      = transform.position.x - objPlayerPos.x;
-			dist.y      = transform.position.z - objPlayerPos.z;
+			dist.x      = nowPos.x - objPlayerPos.x;
+			dist.y      = nowPos.y - objPlayerPos.y;
 			float angle = Math::GetDeg(angleY - atan2f(dist.y, dist.x));
-			if (abs(angle) <= visibilityAngle)
+			if (abs(angle) <= visibilityAngle / 2.0f)
 			{
-				if (targetPos_.y < 0)
+				if (targetDist < 0.0f)
 				{
 					targetPos_ = objPlayerPos;
 					targetDist = playerDist;
