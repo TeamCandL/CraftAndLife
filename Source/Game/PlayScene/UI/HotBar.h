@@ -1,6 +1,17 @@
 #pragma once
 #include <Game/Game.h>
 
+struct SlotItemData
+{
+	Component<UITransform> transform{};
+	Component<UIImage> image{};
+};
+
+struct SlotItem : ObjectBase<SlotItemData>
+{
+	using ObjectBase<SlotItemData>::ObjectBase;
+};
+
 struct SlotData
 {
 	SlotData(
@@ -11,6 +22,7 @@ struct SlotData
 
 	Component<UITransform> transform{};
 	Component<UIImage> image{};
+	GameObject slotItem{};
 	bool selected{ false };
 };
 struct Slot : ObjectBase<SlotData>

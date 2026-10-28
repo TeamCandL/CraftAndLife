@@ -10,6 +10,7 @@ void HotBar::Start()
 		slotData.transform.layerOrder = 1;
 		slotData.transform.scale      = Vec2{ slotEmptyImageExtents, slotEmptyImageExtents };
 		slotData.selected             = (currentSlotIdx == i);
+		slotData.slotItem             = GetScene().Instantiate<SlotItem>();
 	}
 }
 
@@ -51,8 +52,12 @@ void HotBar::Update()
 			slotData.transform.position       = Vec2{ center.x - extentsHalf, center.y - extentsHalf };
 			slotData.transform.scale          = Vec2{ slotEmptyImageExtents, slotEmptyImageExtents };
 		}
+
 		// NOTE: ゲームループによる更新順番の関係上、ここでワールド行列を計算する必要あり
 		Get<Slot>(slotGameObj).CalculateUIWorld();
+
+		SlotItemData& itemData = Get<SlotItem>(slotData.slotItem).Data();
+		// itemData.image.texture = Get<>
 	}
 }
 
