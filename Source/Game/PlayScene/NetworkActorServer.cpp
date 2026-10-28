@@ -54,3 +54,8 @@ void NetworkActorServer::Update()
 		}
 	}
 }
+
+bool NetworkActorServer::IsHost()
+{
+	return Get<SessionManager>().RefStatus().imLobbyHost;
+}
