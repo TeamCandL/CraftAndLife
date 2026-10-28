@@ -115,16 +115,23 @@ void Player::Update()
 		transform.position.z = nextPosition.z;
 	}
 
+	// 現在位置の地面の高さを取得
+	float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
 	// ジャンプしていないときは地面に合わせる
 	if (!isJumping)
 	{
-		float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
-
-		transform.position.y = groundHeight;
+		if (transform.position.y - groundHeight > 0.1f)
+		{
+			isJumping = true;
+			VCU_LOG("差あり");
+		}
+		else if (transform.position.y - groundHeight > 0.0f)
+		{
+			transform.position.y = groundHeight;
+			VCU_LOG("0以上だから着地");
+		}
 	}
-
-	// 現在位置の地面の高さを取得
-	float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 
 	// ジャンプしていないときは地面の高さに合わせる
 	if (!isJumping)
@@ -148,8 +155,6 @@ void Player::Update()
 	{
 		jumpVelocity *= JUMP_CUT_RATE;
 	}
-
-	float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 
 	// 上昇・下降処理
 	if (isJumping)
