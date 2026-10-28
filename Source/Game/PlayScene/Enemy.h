@@ -177,6 +177,8 @@ struct EnemyData
 	bool alive{ true };      ///< 生きているか
 	bool attacked{ false };  ///< 攻撃中か
 
+	const Vec3 DEFAULT_TARGET_POS{ 0.0f, -1.0f, 0.0f };
+
 	const float WAN_RANGE{ 15 };  ///< 徘徊範囲
 	const float WAN_REFERENCE{
 		WAN_RANGE / 2
