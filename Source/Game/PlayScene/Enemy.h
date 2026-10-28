@@ -13,14 +13,21 @@ namespace EnemyParam
 	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };
 	const std::vector<bool> HasLongAttack{ false, false, false, false, true };
 	const std::vector<float> VisibilityDist{ 12.0f, 20.0f, 10.0f, 8.0f, 30.0f };
+	const std::vector<float> visibilityAngle{ 45.0f, 45.0f, 45.0f, 45.0f, 45.0f };
+	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.5f, 1.0f, 3.0f };
 }  // namespace EnemyParam
 
 struct EnemyData
 {
+	Component<Name> nameDEB{};
+
 	/// @brief 指定なし生成
 	EnemyData(
-	    GameObject objEnemyController_)
+	    GameObject objEnemyController_,
+	    const std::string& _name = "AAA") :
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[static_cast<int>(EnemyType::Skeleton)] }
 	{
+		nameDEB            = _name;
 		objEnemyController = objEnemyController_;
 
 		transform.position = Vec3{ 0.0f, 15.0f, 0.0f };
@@ -38,7 +45,8 @@ struct EnemyData
 	EnemyData(
 	    GameObject objEnemyController_,
 	    const Vec3 position_) :
-	    transform{ position_ }
+	    transform{ position_ },
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[static_cast<int>(EnemyType::Skeleton)] }
 	{
 		objEnemyController = objEnemyController_;
 
@@ -56,9 +64,12 @@ struct EnemyData
 	EnemyData(
 	    GameObject objEnemyController_,
 	    const int enemyType_) :
-	    enemyType{ static_cast<EnemyType>(enemyType_) }
+	    enemyType{ static_cast<EnemyType>(enemyType_) },
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] }
 	{
 		objEnemyController = objEnemyController_;
+
+		modelIndex = enemyType_;
 
 		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
 
@@ -77,7 +88,8 @@ struct EnemyData
 	    const Vec3 position_,
 	    int enemyType_) :
 	    transform{ position_ },
-	    enemyType{ static_cast<EnemyType>(enemyType_) }
+	    enemyType{ static_cast<EnemyType>(enemyType_) },
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] }
 	{
 		objEnemyController = objEnemyController_;
 
@@ -123,9 +135,8 @@ struct EnemyData
 	// Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
 
 	std::array<Resource<Model>, EnemyType_Max> models{
-		Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
-		Resource<Model>{ "Model/Enemy/Spider.fbx" },
-		Resource<Model>{ "Model/Enemy/Bat.fbx" },
+		Resource<Model>{ "Model/Enemy/Skeleton.fbx" }, Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
+		Resource<Model>{ "Model/Enemy/Spider.fbx" },   Resource<Model>{ "Model/Enemy/Bat.fbx" },
 		Resource<Model>{ "Model/Enemy/Dragon.fbx" },
 	};
 	int32_t modelIndex{};
@@ -145,7 +156,7 @@ struct EnemyData
 	GameObject objEnemyController{};        ///< 敵一覧
 
 	//-----------------------------------------//
-	// パラメータ//-----------------------------//
+	// パラメータ//----------------------------//
 	//-----------------------------------------//
 	int32_t id{};                               ///< ID
 	int32_t hp{};                               ///< 体力
@@ -154,19 +165,24 @@ struct EnemyData
 	bool hasCloseAttack{};                      ///< 近距離攻撃の有無
 	bool hasLongAttack{};                       ///< 遠距離攻撃の有無
 	float visibilityDist{};                     ///< 視認距離
+	float visibilityAngle{};                    ///< 視認角度
 	EnemyType enemyType{};                      ///< 敵の種類
 	const float ATTACK_COOL_TIME{ 5.0f };       ///< 攻撃クールタイム
 	float nowAttackCoolTime{ 0.0f };            ///< 現在の攻撃クールタイム
 	const float ATTACK_COLL_LIFE_TIME{ 0.5f };  ///< 攻撃判定の寿命
-	const float DAMAGED_COOL_TIME{ 0.51f };     ///< 被ダメージクールタイム
+	const float DAMAGED_COOL_TIME{ 0.5f };      ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
-	bool alive{ true };
+
+	bool followed{ false };  ///< 追跡中か
+	bool alive{ true };      ///< 生きているか
+	bool attacked{ false };  ///< 攻撃中か
 
 	const float WAN_RANGE{ 15 };  ///< 徘徊範囲
 	const float WAN_REFERENCE{
 		WAN_RANGE / 2
 	};  ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する
 
+	Vec3 targetPos{};                     ///< 追跡地点
 	GameObject objWanderingCheckPoint{};  ///< 徘徊時のチェックポイント
 };
 
@@ -186,9 +202,13 @@ struct Enemy : ObjectBase<EnemyData>
 	/// @param spd_ 速度
 	/// @param angleY_	Y軸の回転角度
 	void Move(float vecX_, float vecZ_, float spd_, float angleY_);
+	/// @brief プレイヤーの視認
+	void Sensor();
 
 	/// @brief 描画処理
 	void Draw() override;
+
+	void OnDestroy() override;
 
 	/// @brief 現在地の座標を返すよ
 	/// @return

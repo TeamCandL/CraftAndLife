@@ -1,5 +1,6 @@
 #pragma once
 #include <math.h>
+#include <cmath>
 
 struct Math
 {
@@ -36,5 +37,10 @@ struct Math
 	static float GetAngle(float x, float z)
 	{
 		return atan2f(x, z);
+	}
+
+	static float GetDeg(float angle_)
+	{
+		return angle_ * 180 / DirectX::XM_PI;
 	}
 };

@@ -28,7 +28,7 @@ void PlayScene::Start()
 	GameObject objTerrain = Instantiate<MAP>();
 	// GameObject objTerrain = Instantiate<Terrain>();
 
-	Instantiate<DayController>(objSky);
+	GameObject objDayController = Instantiate<DayController>(objSky);
 
 	// ホスト判定オブジェクトを生成
 	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>();
@@ -39,7 +39,7 @@ void PlayScene::Start()
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
-	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer);
+	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer, objDayController);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer);
 
