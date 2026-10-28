@@ -36,6 +36,8 @@ void Player::Update()
 
 	ImGui::Begin("Player");
 	ImGui::DragInt("anim", &animIndex, 1, 0);
+	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
+	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
@@ -81,6 +83,23 @@ void Player::Update()
 	Vec3 nextPosition = transform.position;
 	nextPosition += moveDirection * moveSpeed;
 
+	animSpeed = (moveDirection * moveSpeed).Length() / 0.1f;
+	if (animSpeed > 0.0f)
+	{
+		animIndex = PlayerAnimType_Walk;
+
+		// 反対方向への入力があったらアニメーションを反転する
+		if (bodyMove.y < 0)
+		{
+			animSpeed *= -1.0f;
+		}
+	}
+	else
+	{
+		animIndex = PlayerAnimType_Idle;
+		animSpeed = 1.0f;
+	}
+
 	// 移動前と移動先の地面の高さを取得
 	float currentHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 
@@ -96,16 +115,21 @@ void Player::Update()
 		transform.position.z = nextPosition.z;
 	}
 
+	// 現在位置の地面の高さを取得
+	float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
 	// ジャンプしていないときは地面に合わせる
 	if (!isJumping)
 	{
-		float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
-
-		transform.position.y = groundHeight;
+		if (transform.position.y - groundHeight > 0.1f)
+		{
+			isJumping = true;
+		}
+		else if (transform.position.y - groundHeight > 0.0f)
+		{
+			transform.position.y = groundHeight;
+		}
 	}
-
-	// 現在位置の地面の高さを取得
-	float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 
 	// ジャンプしていないときは地面の高さに合わせる
 	if (!isJumping)
@@ -140,7 +164,6 @@ void Player::Update()
 		transform.position.y += jumpVelocity * deltaTime;
 
 		// 地面に着地したら停止
-		float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 
 		if (transform.position.y <= groundHeight)
 		{
@@ -148,6 +171,9 @@ void Player::Update()
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
 		}
+	}
+	else
+	{
 	}
 
 	// お試しで出してるエンティティ
@@ -188,9 +214,9 @@ void Player::Draw()
 	Get<Dx11Manager>().SetShader(shaderFront);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	model.Get().Draw(Get<DeltaTime>(), animIndex);
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
 
-	const auto& subParts{ model.Get().subParts };
+	const auto& subParts{ models[jobType].Get().subParts };
 
 	for (const auto& parts : subParts)
 	{

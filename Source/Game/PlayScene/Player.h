@@ -3,6 +3,8 @@
 #include "Player/IPlayerController.h"
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
+#include "Player/PlayerAnimType.h"
+#include "Player/PlayerJobType.h"
 
 /// @brief プレイヤーのデータ
 struct PlayerData
@@ -17,7 +19,13 @@ struct PlayerData
 	Resource<Shader> shaderBack{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
 
-	Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
+	std::array<Resource<Model>, PlayerJobType_Max> models{
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",    // Tank
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",    // Fighter
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-f.fbx",  // Archer
+	};
+	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
 	Component<Transform> transform{};
 	Component<RigidBody> rigidBody{};
@@ -25,15 +33,19 @@ struct PlayerData
 	Component<OBBRenderer> obbRenderer{};
 	Component<Name> name{ "Player" };
 
-	GameObject objMainCamera{};
-	GameObject objPlayerController{};
+	PlayerJobType jobType{ PlayerJobType_Healer };  ///< プレイヤーの役職
+
+	GameObject objMainCamera{};        ///< プレイヤーのカメラ
+	GameObject objPlayerController{};  ///< プレイヤーの操作
+	GameObject objJobController{};     ///< 役職固有の操作
 
 	PlayerRoleType role{ PlayerRoleType_Max };
 
 	float angleX{};
 	float angleY{};
 
-	int animIndex{};
+	PlayerAnimType animIndex{};  ///< アニメーション
+	float animSpeed{ 1.0f };     ///< アニメーションの再生速度 通常が1.0f
 
 	// パラメータ
 	int32_t maxHP{ 100 };  // 最大HP
