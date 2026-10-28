@@ -57,6 +57,9 @@ struct PlayerData
 	const float GROUND_HEIGHT{ 0.0f };  // 地面の高さ
 	const float JUMP_CUT_RATE{ 0.5f };  // ボタンを離したときの速度倍率
 	bool isJumping{ false };            // ジャンプ中かどうか
+
+	// HP減少テスト用
+	float hpTestTimer{ 0.0f };
 };
 
 /// @brief プレイヤー

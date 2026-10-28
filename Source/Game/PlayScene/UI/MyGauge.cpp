@@ -1,14 +1,14 @@
 #include "pch\pch.h"
-#include "MyGage.h"
+#include "MyGauge.h"
 #include "../Player.h"
 
-void MyGage::Start()
+void MyGauge::Start()
 {
 	// ゲージの初期幅を設定
 	transform.scale.x = maxWidth;
 }
 
-void MyGage::Update()
+void MyGauge::Update()
 {
 	// プレイヤーを取得
 	Player& player = Get<Player>(objPlayer);

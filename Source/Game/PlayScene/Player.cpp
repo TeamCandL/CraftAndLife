@@ -7,6 +7,8 @@
 #include "Entity.h"
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/Manager/SessionManager.h>
+#include <string>
 
 void Player::Start()
 {
@@ -29,10 +31,14 @@ void Player::Start()
 
 void Player::Update()
 {
+	SessionManager& sessionManager = Get<SessionManager>();
+	std::string playerName         = sessionManager.RefStatus().name;
+
 	ImGui::Begin("Player");
 	ImGui::DragInt("anim", &animIndex, 1, 0);
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
+	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::End();
 
 	nowAttackCoolTime -= Get<DeltaTime>();
@@ -108,7 +114,6 @@ void Player::Update()
 	}
 
 	// ジャンプ処理
-
 	float deltaTime = Get<DeltaTime>();
 
 	// ジャンプボタンを押した瞬間
@@ -152,6 +157,29 @@ void Player::Update()
 		    1,
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		VCU_LOG("objPawn");
+	}
+
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	if (objPick)
+	{
+		// GetScene().Destroy(objPick);
+		VCU_LOG("objPick");
+
+		Get<EntitySystem>().Spawn(
+		    Get<IEntity>(objPick).GetItemId(),
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		// objPick
+	}
+
+	// HPゲージ動作確認用：1秒ごとに10ダメージ
+	hpTestTimer += Get<DeltaTime>();
+
+	if (hpTestTimer >= 1.0f)
+	{
+		Damaged(10);
+		hpTestTimer = 0.0f;
 	}
 }
 
