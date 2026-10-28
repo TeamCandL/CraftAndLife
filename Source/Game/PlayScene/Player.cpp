@@ -100,19 +100,53 @@ void Player::Update()
 		animSpeed = 1.0f;
 	}
 
-	// 移動前と移動先の地面の高さを取得
-	float currentHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+	// TerrainSystemを取得
+	auto& terrain = Get<TerrainSystem>();
 
-	float nextHeight = Get<TerrainSystem>().GetHeight(nextPosition.x, nextPosition.z);
+	// 許容する傾斜の上限
+	// 数値を大きくすると急な坂も登れる
+	const float MAX_SLOPE = 0.7f;
 
-	// 登れる段差の高さ
-	const float MAX_STEP_HEIGHT = 0.1f;
+	// 移動前の位置
+	Vec3 currentPosition = transform.position;
 
-	// 高低差が大きすぎなければ移動する
-	if (nextHeight - currentHeight <= MAX_STEP_HEIGHT)
+	// ----------------------------------------
+	// X方向の移動判定
+	// ----------------------------------------
+	Vec3 candidateX = transform.position;
+	candidateX.x    = nextPosition.x;
+
+	float currentHeightX = terrain.GetHeight(currentPosition.x, currentPosition.z);
+
+	float nextHeightX = terrain.GetHeight(candidateX.x, candidateX.z);
+
+	float moveDistanceX = fabsf(candidateX.x - currentPosition.x);
+
+	float heightDifferenceX = nextHeightX - currentHeightX;
+
+	// 高さの変化が移動距離に対して大きすぎる場合は移動しない
+	if (heightDifferenceX <= 0.0f || (moveDistanceX > 0.0001f && heightDifferenceX / moveDistanceX <= MAX_SLOPE))
 	{
-		transform.position.x = nextPosition.x;
-		transform.position.z = nextPosition.z;
+		transform.position.x = candidateX.x;
+	}
+
+	// ----------------------------------------
+	// Z方向の移動判定
+	// ----------------------------------------
+	Vec3 candidateZ = transform.position;
+	candidateZ.z    = nextPosition.z;
+
+	float currentHeightZ = terrain.GetHeight(transform.position.x, transform.position.z);
+
+	float nextHeightZ = terrain.GetHeight(candidateZ.x, candidateZ.z);
+
+	float moveDistanceZ = fabsf(candidateZ.z - transform.position.z);
+
+	float heightDifferenceZ = nextHeightZ - currentHeightZ;
+
+	if (heightDifferenceZ <= 0.0f || (moveDistanceZ > 0.0001f && heightDifferenceZ / moveDistanceZ <= MAX_SLOPE))
+	{
+		transform.position.z = candidateZ.z;
 	}
 
 	// 現在位置の地面の高さを取得
