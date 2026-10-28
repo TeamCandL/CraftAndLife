@@ -19,9 +19,8 @@ struct OtherEnemyData
 	EnemyType enemyType{};  ///< 今の敵の種類
 
 	std::array<Resource<Model>, EnemyType_Max> models{
-		Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
-		Resource<Model>{ "Model/Enemy/Spider.fbx" },
-		Resource<Model>{ "Model/Enemy/Bat.fbx" },
+		Resource<Model>{ "Model/Enemy/Skeleton.fbx" }, Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
+		Resource<Model>{ "Model/Enemy/Spider.fbx" },   Resource<Model>{ "Model/Enemy/Bat.fbx" },
 		Resource<Model>{ "Model/Enemy/Dragon.fbx" },
 	};
 
