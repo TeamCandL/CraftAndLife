@@ -157,6 +157,20 @@ void Player::Update()
 		    1,
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		VCU_LOG("objPawn");
+	}
+
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	if (objPick)
+	{
+		// GetScene().Destroy(objPick);
+		VCU_LOG("objPick");
+
+		Get<EntitySystem>().Spawn(
+		    Get<IEntity>(objPick).GetItemId(),
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		// objPick
 	}
 
 	// HPゲージ動作確認用：1秒ごとに10ダメージ

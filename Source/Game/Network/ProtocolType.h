@@ -14,10 +14,13 @@ enum struct ProtocolType : uint8_t
 	UpdatedPlayers,  ///< 全プレイヤーの更新情報
 	UpdateEnemy,     ///< 敵の情報更新
 	UpdatedEnemies,  ///< すべての敵の情報更新
+	UpdateDayTime,   ///< ゲーム内時間の更新要求
+	UpdatedDayTime,  ///< ゲーム内時間の同期情報
 	LoadedTerrain,   ///< 地形のチャンク情報を取得
 	FinishGame,      ///< ゲームが終わった
 	ResultInfo,      ///< 結果情報
 	LeaveRoom,       ///< 部屋から離脱
+	FireEnemy,       ///< 敵が攻撃っした
 
 	Idk,
 };

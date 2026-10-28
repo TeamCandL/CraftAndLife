@@ -482,6 +482,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMapPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MyGage.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MyName.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Name1.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\OtherInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
@@ -668,6 +669,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
@@ -705,6 +708,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMapPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MyGage.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MyName.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Name1.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
@@ -793,7 +797,6 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\System\CursorSystem.h" />
     <ClInclude Include="Source\Game\System\DebugSystems\ImGuiRenderingSystem.h" />
     <ClInclude Include="Source\Game\System\DiscordSystem.h" />
-    <ClInclude Include="Source\Game\System\EntitySystem.h" />
     <ClInclude Include="Source\Game\System\IMESystem.h" />
     <ClInclude Include="Source\Game\System\InputSystem.h" />
     <ClInclude Include="Source\Game\System\InputSystem\KeyCode.h" />

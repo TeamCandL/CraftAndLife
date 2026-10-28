@@ -23,6 +23,7 @@ struct PlaySceneUIControllerData
 	GameObject objGage3{};           ///< 他プレイヤー3ゲージ緑
 	GameObject objGage4{};           ///< 他プレイヤー4ゲージ緑
 	GameObject objMyName{};          ///< 自分の名前
+	GameObject objName1{};           ///< 仲間の名前
 
 	GameObject objPlayer{};  ///< MyGageに渡すプレイヤー
 };
