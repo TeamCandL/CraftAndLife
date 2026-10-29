@@ -9,6 +9,8 @@ void EnemyController::Update() {}
 void EnemyController::AddEnemy(
     const GameObject _enemy)
 {
+	// 敵に固有IDを割り振る
+	Get<Enemy>(_enemy).SetID(nextEnemyId++);
 	allEnemys.push_back(_enemy);
 }
 

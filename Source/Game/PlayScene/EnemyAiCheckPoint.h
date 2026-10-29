@@ -35,7 +35,11 @@ struct EnemyCheckPoint : ObjectBase<EnemyCheckPointData>
 	/// @brief 更新処理
 	void Update() override;
 
-	Vec3 GetPosition()
+	Vec2 GetPositionVec2()
+	{
+		return { transform.position.x, transform.position.z };
+	}
+	Vec3 GetPositionVec3()
 	{
 		return transform.position;
 	}

@@ -5,6 +5,7 @@
 struct EnemyControllerData
 {
 	std::vector<GameObject> allEnemys;  ///< 全ての敵の情報を格納する
+	int32_t nextEnemyId = 0;
 };
 
 struct EnemyController : ObjectBase<EnemyControllerData>

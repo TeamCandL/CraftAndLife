@@ -7,6 +7,8 @@
 #include "Entity.h"
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/Manager/SessionManager.h>
+#include <string>
 
 void Player::Start()
 {
@@ -29,10 +31,16 @@ void Player::Start()
 
 void Player::Update()
 {
+	SessionManager& sessionManager = Get<SessionManager>();
+	std::string playerName         = sessionManager.RefStatus().name;
+
 	ImGui::Begin("Player");
 	ImGui::DragInt("anim", &animIndex, 1, 0);
+	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
+	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
+	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::End();
 
 	nowAttackCoolTime -= Get<DeltaTime>();
@@ -75,31 +83,87 @@ void Player::Update()
 	Vec3 nextPosition = transform.position;
 	nextPosition += moveDirection * moveSpeed;
 
-	// 移動前と移動先の地面の高さを取得
-	float currentHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
-
-	float nextHeight = Get<TerrainSystem>().GetHeight(nextPosition.x, nextPosition.z);
-
-	// 登れる段差の高さ
-	const float MAX_STEP_HEIGHT = 0.1f;
-
-	// 高低差が大きすぎなければ移動する
-	if (nextHeight - currentHeight <= MAX_STEP_HEIGHT)
+	animSpeed = (moveDirection * moveSpeed).Length() / 0.1f;
+	if (animSpeed > 0.0f)
 	{
-		transform.position.x = nextPosition.x;
-		transform.position.z = nextPosition.z;
+		animIndex = PlayerAnimType_Walk;
+
+		// 反対方向への入力があったらアニメーションを反転する
+		if (bodyMove.y < 0)
+		{
+			animSpeed *= -1.0f;
+		}
+	}
+	else
+	{
+		animIndex = PlayerAnimType_Idle;
+		animSpeed = 1.0f;
 	}
 
-	// ジャンプしていないときは地面に合わせる
-	if (!isJumping)
-	{
-		float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+	// TerrainSystemを取得
+	auto& terrain = Get<TerrainSystem>();
 
-		transform.position.y = groundHeight;
+	// 許容する傾斜の上限
+	// 数値を大きくすると急な坂も登れる
+	const float MAX_SLOPE = 0.7f;
+
+	// 移動前の位置
+	Vec3 currentPosition = transform.position;
+
+	// ----------------------------------------
+	// X方向の移動判定
+	// ----------------------------------------
+	Vec3 candidateX = transform.position;
+	candidateX.x    = nextPosition.x;
+
+	float currentHeightX = terrain.GetHeight(currentPosition.x, currentPosition.z);
+
+	float nextHeightX = terrain.GetHeight(candidateX.x, candidateX.z);
+
+	float moveDistanceX = fabsf(candidateX.x - currentPosition.x);
+
+	float heightDifferenceX = nextHeightX - currentHeightX;
+
+	// 高さの変化が移動距離に対して大きすぎる場合は移動しない
+	if (heightDifferenceX <= 0.0f || (moveDistanceX > 0.0001f && heightDifferenceX / moveDistanceX <= MAX_SLOPE))
+	{
+		transform.position.x = candidateX.x;
+	}
+
+	// ----------------------------------------
+	// Z方向の移動判定
+	// ----------------------------------------
+	Vec3 candidateZ = transform.position;
+	candidateZ.z    = nextPosition.z;
+
+	float currentHeightZ = terrain.GetHeight(transform.position.x, transform.position.z);
+
+	float nextHeightZ = terrain.GetHeight(candidateZ.x, candidateZ.z);
+
+	float moveDistanceZ = fabsf(candidateZ.z - transform.position.z);
+
+	float heightDifferenceZ = nextHeightZ - currentHeightZ;
+
+	if (heightDifferenceZ <= 0.0f || (moveDistanceZ > 0.0001f && heightDifferenceZ / moveDistanceZ <= MAX_SLOPE))
+	{
+		transform.position.z = candidateZ.z;
 	}
 
 	// 現在位置の地面の高さを取得
 	float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	// ジャンプしていないときは地面に合わせる
+	if (!isJumping)
+	{
+		if (transform.position.y - groundHeight > 0.1f)
+		{
+			isJumping = true;
+		}
+		else if (transform.position.y - groundHeight > 0.0f)
+		{
+			transform.position.y = groundHeight;
+		}
+	}
 
 	// ジャンプしていないときは地面の高さに合わせる
 	if (!isJumping)
@@ -108,7 +172,6 @@ void Player::Update()
 	}
 
 	// ジャンプ処理
-
 	float deltaTime = Get<DeltaTime>();
 
 	// ジャンプボタンを押した瞬間
@@ -135,7 +198,6 @@ void Player::Update()
 		transform.position.y += jumpVelocity * deltaTime;
 
 		// 地面に着地したら停止
-		float groundHeight = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 
 		if (transform.position.y <= groundHeight)
 		{
@@ -143,6 +205,9 @@ void Player::Update()
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
 		}
+	}
+	else
+	{
 	}
 
 	// お試しで出してるエンティティ
@@ -152,6 +217,29 @@ void Player::Update()
 		    1,
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		VCU_LOG("objPawn");
+	}
+
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	if (objPick)
+	{
+		// GetScene().Destroy(objPick);
+		VCU_LOG("objPick");
+
+		Get<EntitySystem>().Spawn(
+		    Get<IEntity>(objPick).GetItemId(),
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		// objPick
+	}
+
+	// HPゲージ動作確認用：1秒ごとに10ダメージ
+	hpTestTimer += Get<DeltaTime>();
+
+	if (hpTestTimer >= 1.0f)
+	{
+		Damaged(10);
+		hpTestTimer = 0.0f;
 	}
 }
 
@@ -160,9 +248,9 @@ void Player::Draw()
 	Get<Dx11Manager>().SetShader(shaderFront);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	model.Get().Draw(Get<DeltaTime>(), animIndex);
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
 
-	const auto& subParts{ model.Get().subParts };
+	const auto& subParts{ models[jobType].Get().subParts };
 
 	for (const auto& parts : subParts)
 	{
@@ -186,9 +274,15 @@ void Player::AttackCollider()
 void Player::Damaged(
     int32_t damage)
 {
-	if (nowDamagedCoolTime <= 0.0f)
+	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
 		hp -= damage;
+
+		if (hp < 0)
+		{
+			hp = 0;
+		}
+
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
 }
