@@ -77,3 +77,9 @@ void PlayerHand::Draw()
 		Get<Dx11Manager>().Draw();
 	}
 }
+
+void PlayerHand::SetItem(
+    const ItemId _itemId)
+{
+	haveItemId = _itemId;
+}

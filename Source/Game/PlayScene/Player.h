@@ -5,6 +5,7 @@
 #include <Game/Game.h>
 #include "Player/PlayerAnimType.h"
 #include "Player/PlayerJobType.h"
+#include "Player/HelthState.h"
 
 /// @brief プレイヤーのデータ
 struct PlayerData
@@ -27,6 +28,8 @@ struct PlayerData
 	};
 	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
+	Component<TransformAnimator> transformAnimator{};
+
 	Component<Transform> transform{};
 	Component<RigidBody> rigidBody{};
 	Component<StaticOBB> obb{};
@@ -34,6 +37,7 @@ struct PlayerData
 	Component<Name> name{ "Player" };
 
 	PlayerJobType jobType{ PlayerJobType_Healer };  ///< プレイヤーの役職
+	HelthState helthState{ HelthState_Live };       ///< プレイヤーの生存ステータス
 
 	GameObject objMainCamera{};        ///< プレイヤーのカメラ
 	GameObject objPlayerController{};  ///< プレイヤーの操作
@@ -73,6 +77,11 @@ struct PlayerData
 
 	// HP減少テスト用
 	float hpTestTimer{ 0.0f };
+
+	struct JobStatus
+	{
+		float moveSpeed{ 0.1f };
+	} jobStatus;  ///< プレイヤーの役職固有のステータス
 };
 
 /// @brief プレイヤー

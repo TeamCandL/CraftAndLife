@@ -18,7 +18,7 @@ struct TransformAnimation
 
 struct TransformAnimator : ComponentBase<TransformAnimator>
 {
-	TransformAnimator(std::initializer_list<std::pair<std::string, TransformAnimation>>&& _animations);
+	TransformAnimator() = default;
 
-	std::unordered_map<std::string, TransformAnimation> animations{};
+	std::unordered_map<std::string, std::vector<TransformAnimationKey>> animations{};
 };

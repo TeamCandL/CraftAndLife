@@ -10,4 +10,7 @@ struct PlayerJobControllerFighter : ObjectBase<PlayerJobControllerFighterData>, 
 {
 	// IPlayerJobController を介して継承されました
 	void Update(PlayerData& _data) override;
+
+	// IPlayerJobController を介して継承されました
+	void Start(PlayerData& _data) override;
 };

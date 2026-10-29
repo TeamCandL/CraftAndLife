@@ -10,6 +10,7 @@
 #include <Game/Manager/SessionManager.h>
 #include <string>
 #include "PlayerHand.h"
+#include "Player/IPlayerJobController.h"
 #include "Player/PlayerJobControllerHealer.h"
 #include "Player/PlayerJobControllerTank.h"
 #include "Player/PlayerJobControllerFighter.h"
@@ -17,6 +18,11 @@
 
 void Player::Start()
 {
+	transformAnimator.animations["idle"] = { TransformAnimationKey{ 0.0f,
+		                                                            Vec3{ 0.003f, 0.003f, 0.0f },
+		                                                            Quaternion::FromEuler(Vec3{ 0.489f, 0.0f, 0.0f }),
+		                                                            Vec3{ 0.005f, 0.005f, 0.005f } } };
+
 	obb.isTrigger = true;
 
 	transform.scale = Vec3::One() * 200.0f;
@@ -53,8 +59,7 @@ void Player::Update()
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
 	{
-		jobType++;
-		jobType %= PlayerJobType_Max;
+		SetJob((jobType + 1) % PlayerJobType_Max);
 	}
 
 	nowAttackCoolTime -= Get<DeltaTime>();
@@ -79,7 +84,7 @@ void Player::Update()
 
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
 
-	float moveSpeed = 0.1f;
+	float moveSpeed = jobStatus.moveSpeed;
 
 	// カメラの向きを取得
 	float angleY = Get<IMainCamera>(objMainCamera).GetAngleY();
@@ -266,6 +271,11 @@ void Player::Update()
 		Damaged(10);
 		hpTestTimer = 0.0f;
 	}
+
+	if (!objJobController.IsEmpty())
+	{
+		Get<IPlayerJobController>(objJobController).Update(Data());
+	}
 }
 
 void Player::Draw()
@@ -335,8 +345,10 @@ void Player::SetJob(
 		break;
 	default:
 		VCU_ASSERT(false && "選択不可能な役職です。");
-		break;
+		return;
 	}
+
+	Get<IPlayerJobController>(objJobController).Start(Data());
 }
 
 Vec3 Player::GetPosition() const
