@@ -19,13 +19,14 @@ void PlayerHand::Update()
 	if (ImGui::Button("出力"))
 	{
 		fs::path filePath{ "./animDump.txt" };
-		std::ofstream ofs{ filePath };
+		std::ofstream ofs{ filePath, std::ios::app };
 		if (ofs)
 		{
 			ofs << std::format(
-			           "TransformAnimationKey{ Vec3{{ {}, {}, {} }}, Quaternion::From(Vec3{{ {}, {}, {} }}), Vec3{{ "
-			           "{}, {}, "
-			           "{} }} }",
+			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:3.2f}f, {}f, {}f }}, Quaternion::From(Vec3{{ {}f, {}f, "
+			           "{}f }}), Vec3{{ "
+			           "{}f, {}f, "
+			           "{}f }} }}",
 			           transform.position.x,
 			           transform.position.y,
 			           transform.position.z,

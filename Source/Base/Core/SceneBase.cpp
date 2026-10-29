@@ -10,6 +10,10 @@ cha::SceneBase::SceneBase() :
 void cha::SceneBase::Destroy(
     GameObject& _gameObject)
 {
+	if (_gameObject.IsEmpty())
+	{
+		return;  // 既に空っぽなら消せない
+	}
 	pGameObjectCollection_->DestroyAt(_gameObject);
 	_gameObject = GameObject::Empty();
 }
@@ -17,6 +21,10 @@ void cha::SceneBase::Destroy(
 void cha::SceneBase::Destroy(
     const GameObject& _gameObject)
 {
+	if (_gameObject.IsEmpty())
+	{
+		return;  // 既に空っぽなら消せない
+	}
 	pGameObjectCollection_->DestroyAt(_gameObject);
 }
 

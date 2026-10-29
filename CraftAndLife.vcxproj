@@ -431,6 +431,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Common\VirtualInputManager.cpp" />
     <ClCompile Include="Source\Game\Component\SoundManager.cpp" />
     <ClCompile Include="Source\Game\Component\Transform.cpp" />
+    <ClCompile Include="Source\Game\Component\TransformAnimator.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyNetworkController.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyReadyButton.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyScene.cpp" />
@@ -467,7 +468,10 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\PlayerAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerControllerNormal.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerArcher.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerFighter.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerHealer.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerTank.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayNetworkController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayScene.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlaySceneUIController.cpp" />
@@ -677,6 +681,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Common\Sky\SkyMaterial.h" />
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
+    <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
@@ -707,7 +712,10 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\IPlayerJobController.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerAnimType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerArcher.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerFighter.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerHealer.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerTank.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobType.h" />
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
@@ -842,6 +850,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TestScene\LifeChecker.h" />
     <ClInclude Include="Source\Game\TestScene\SceneTester.h" />
     <ClInclude Include="Source\Game\TestScene\TestScene.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitleLogo.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleNetworkController.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleScene.h" />
     <ClInclude Include="Source\Game\TitleScene\WordInputPanel.h" />

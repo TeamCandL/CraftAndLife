@@ -93,6 +93,10 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void Damaged(int32_t damage);
 
+	/// @brief プレイヤーの役職を設定する
+	/// @param _jobType 役職の種類
+	void SetJob(const PlayerJobType _jobType);
+
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;
 };
