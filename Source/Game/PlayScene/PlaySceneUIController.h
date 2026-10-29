@@ -17,15 +17,22 @@ struct PlaySceneUIControllerData
 	GameObject objMiniMap{};         ///< ミニマップUI
 	GameObject objOtherInfo{};       ///< 味方の体力ゲージ
 	GameObject objSelfInfo{};        ///< 自分の体力ゲージ裏
-	GameObject objMyGage{};          ///< 自分の体力ゲージ緑
-	GameObject objGage1{};           ///< 他プレイヤー1ゲージ緑
-	GameObject objGage2{};           ///< 他プレイヤー2ゲージ緑
-	GameObject objGage3{};           ///< 他プレイヤー3ゲージ緑
-	GameObject objGage4{};           ///< 他プレイヤー4ゲージ緑
+	GameObject objMyGauge{};         ///< 自分の体力ゲージ緑
+	GameObject objGauge1{};          ///< 他プレイヤー1ゲージ緑
+	GameObject objGauge2{};          ///< 他プレイヤー2ゲージ緑
+	GameObject objGauge3{};          ///< 他プレイヤー3ゲージ緑
+	GameObject objGauge4{};          ///< 他プレイヤー4ゲージ緑
 	GameObject objMyName{};          ///< 自分の名前
-	GameObject objName1{};           ///< 仲間の名前
+	GameObject objName1{};           ///< 仲間の名前上から１
+	GameObject objName2{};           ///< 仲間の名前２
+	GameObject objName3{};           ///< 仲間の名前３
+	GameObject objName4{};           ///< 仲間の名前４
+	GameObject objBossGaugeR{};      ///< ボスのゲージ、赤
+	GameObject objBossGauge{};       ///< ボスのゲージ、オレンジ
+	GameObject objBossName{};        ///< ボスの名前
+	GameObject objBossHp{};          ///< ボスのHP数値
 
-	GameObject objPlayer{};  ///< MyGageに渡すプレイヤー
+	GameObject objPlayer{};  ///< MyGaugeに渡すプレイヤー
 };
 
 /// @brief プレイシーンのUI操作

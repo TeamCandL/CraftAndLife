@@ -465,25 +465,46 @@
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMapPoint.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\PlayScene\UI\MyGage.cpp">
+    <ClCompile Include="Source\Game\PlayScene\UI\MyGauge.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\PlayScene\UI\Gage1.cpp">
+    <ClCompile Include="Source\Game\PlayScene\UI\Gauge1.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\PlayScene\UI\Gage2.cpp">
+    <ClCompile Include="Source\Game\PlayScene\UI\Gauge2.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\PlayScene\UI\Gage3.cpp">
+    <ClCompile Include="Source\Game\PlayScene\UI\Gauge3.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\PlayScene\UI\Gage4.cpp">
+    <ClCompile Include="Source\Game\PlayScene\UI\Gauge4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\PlayScene\UI\MyName.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\PlayScene\UI\Name1.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\UI\BossGaugeR.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\UI\BossGauge.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\UI\Name2.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\UI\Name3.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\UI\Name4.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\UI\BossName.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\PlayScene\UI\BossHp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1067,9 +1088,6 @@
     <ClInclude Include="Source\Game\System\DiscordSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\System\EntitySystem.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Game\System\IMESystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -1385,25 +1403,52 @@
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMapPoint.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\PlayScene\UI\MyGage.h">
+    <ClInclude Include="Source\Game\PlayScene\UI\MyGauge.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\PlayScene\UI\Gage1.h">
+    <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\PlayScene\UI\Gage2.h">
+    <ClInclude Include="Source\Game\PlayScene\UI\Gauge2.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\PlayScene\UI\Gage3.h">
+    <ClInclude Include="Source\Game\PlayScene\UI\Gauge3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\PlayScene\UI\Gage4.h">
+    <ClInclude Include="Source\Game\PlayScene\UI\Gauge4.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\PlayScene\UI\MyName.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\PlayScene\UI\Name1.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\UI\BossGaugeR.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\UI\BossGauge.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\UI\Name2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\UI\Name3.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\UI\Name4.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\UI\BossName.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\UI\BossHp.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

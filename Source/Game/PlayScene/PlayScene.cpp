@@ -17,7 +17,7 @@
 #include "PlaySceneUIController.h"
 #include <../Resource/MAP/MAP.h>
 #include "Harvestable.h"
-#include "UI/MyGage.h"
+#include "UI/MyGauge.h"
 #include "NetworkActorServer.h"
 
 void PlayScene::Start()
