@@ -45,6 +45,6 @@ namespace Protocol
 		float rotationX{};
 		float rotationY{};
 
-		int flag{};
+		int32_t flag{};
 	};
 }  // namespace Protocol

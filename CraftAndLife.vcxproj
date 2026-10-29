@@ -666,6 +666,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemyStates.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />

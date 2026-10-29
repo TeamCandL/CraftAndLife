@@ -26,6 +26,7 @@ void Enemy::Update()
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
+	ImGui::DragInt("HP", &hp);
 	ImGui::End();
 
 	if (hp <= 0)
@@ -76,7 +77,7 @@ void Enemy::Update()
 		// 敵IDを使って死亡通知を送信キューに登録
 		// Registryの登録を解除
 		// ※上記2つは今後実装する
-		DestroyMe();
+		// DestroyMe();
 	}
 }
 

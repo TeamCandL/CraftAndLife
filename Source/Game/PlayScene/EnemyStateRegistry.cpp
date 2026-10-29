@@ -20,11 +20,11 @@ void EnemyStateRegistry::Register(
 }
 
 void EnemyStateRegistry::Register(
-    std::initializer_list<std::pair<std::string, std::reference_wrapper<const bool>>> entries)
+    std::initializer_list<EnemyStateEntry> entries)
 {
-	for (const auto& [name, value] : entries)
+	for (const auto& entry : entries)
 	{
-		Register(name, value.get());
+		Register(entry.name, entry.value);
 	}
 }
 
@@ -83,6 +83,30 @@ std::vector<EnemyStateChange> EnemyStateRegistry::GetAllStates() const
 	}
 
 	return result;
+}
+
+std::vector<EnemyStateChange> EnemyStateRegistry::GetStates(
+    bool fullSync) const
+{
+	if (fullSync)
+	{
+		return GetAllStates();
+	}
+
+	return GetChanges();
+}
+
+void EnemyStateRegistry::Unregister(
+    const std::string& name)
+{
+	for (auto it = states.begin(); it != states.end(); ++it)
+	{
+		if (it->name == name)
+		{
+			states.erase(it);
+			return;
+		}
+	}
 }
 
 void EnemyStateRegistry::Clear()

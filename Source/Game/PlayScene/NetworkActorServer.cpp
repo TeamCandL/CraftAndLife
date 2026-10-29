@@ -25,6 +25,14 @@ void NetworkActorServer::Update()
 	if (IsHost())
 	{
 		CreateEnemies();
+
+		Data().enemyStateSyncTimer -= Get<DeltaTime>();
+
+		if (Data().enemyStateSyncTimer <= 0.0f)
+		{
+			Data().enemyStateSyncTimer += Data().enemyStateSyncTime;
+			Data().isFullSync = true;
+		}
 	}
 	else
 	{
@@ -59,11 +67,13 @@ void NetworkActorServer::CreateEnemies()
 void NetworkActorServer::EnemyStateRegistries(
     GameObject objEnemy)
 {
+	auto& enemy           = Get<Enemy>(objEnemy);
 	const int32_t enemyId = Get<Enemy>(objEnemy).GetID();
 
 	if (enemyId >= 0)
 	{
-		auto& registries = Data().enemyStateRegistries;
+		auto& registries   = Data().enemyStateRegistries;
+		const size_t index = static_cast<size_t>(enemyId);
 
 		if (registries.size() <= static_cast<size_t>(enemyId))
 		{
@@ -73,6 +83,7 @@ void NetworkActorServer::EnemyStateRegistries(
 		if (!registries[enemyId].has_value())
 		{
 			registries[enemyId].emplace();
+			enemy.RegisterStates(*registries[index]);
 		}
 	}
 }

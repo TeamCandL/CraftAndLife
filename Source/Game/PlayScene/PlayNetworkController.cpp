@@ -7,6 +7,7 @@
 #include <Game/Network/Protocols/UpdatedPlayers.h>
 #include <Game/Network/Protocols/UpdateEnemy.h>
 #include <Game/Network/Protocols/UpdatedEnemies.h>
+#include <Game/Network/Protocols/UpdatedEnemyStates.h>
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
 #include <Game/PlayScene/Enemy.h>
@@ -78,6 +79,37 @@ void PlayNetworkController::Update()
 				        enemyMessage.enemyTypes,
 				        enemyMessage.positions,
 				        enemyMessage.rotations);
+
+				    break;
+			    }
+			    case ProtocolType::UpdatedEnemyStates:
+			    {
+				    VCU_LOG("UpdatedEnemyStatesを受信！！");
+
+				    Protocol::UpdatedEnemyStates enemyStateMessage{};
+				    converter.ToMessage(_event.data, enemyStateMessage);
+
+				    // 敵IDと値の数が一致しているか確認
+				    const auto count = enemyStateMessage.enemyStateIds.Size();
+
+				    if (count != enemyStateMessage.values.Size())
+				    {
+					    VCU_LOG("敵ステートの配列サイズが一致しません");
+					    break;
+				    }
+
+				    // ステート名は全敵共通
+				    const std::string& stateName = enemyStateMessage.stateName;
+
+				    for (size_t i = 0; i < count; ++i)
+				    {
+					    const int enemyId = enemyStateMessage.enemyStateIds[i];
+					    const bool value  = enemyStateMessage.values[i];
+
+					    VCU_LOG("敵ステート受信 ID={}, 名前={}, 値={}", enemyId, stateName, value);
+
+					    Get<SessionManager>().UpdateEnemyState(enemyId, stateName, value);
+				    }
 
 				    break;
 			    }
@@ -154,6 +186,76 @@ void PlayNetworkController::Update()
 				    enemy.enemyPosition.z);
 
 				networkSessionManager.Send(enemyMessage);
+			}
+
+			/// 敵ステート送信
+			const bool fullSync = actorServer.IsFullSync();
+
+			// 更新履歴を確定するため、変更可能な参照で取得
+			auto& registries = actorServer.GetEnemyStateRegistries();
+
+			struct StatePacket
+			{
+				std::vector<int32_t> enemyIds;
+				std::vector<bool> values;
+			};
+
+			// ステート名ごとに送信データをまとめる
+			std::unordered_map<std::string, StatePacket> statePackets;
+
+			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
+			{
+				if (!registries[enemyId].has_value())
+					continue;
+
+				const auto changes = registries[enemyId]->GetStates(fullSync);
+
+				for (const auto& change : changes)
+				{
+					auto& packet = statePackets[change.name];
+
+					packet.enemyIds.push_back(static_cast<int32_t>(enemyId));
+					packet.values.push_back(change.value);
+				}
+			}
+
+			// ステート名ごとに送信
+			for (const auto& [stateName, packet] : statePackets)
+			{
+				Protocol::UpdatedEnemyStates message{};
+
+				message.stateName  = stateName;
+				message.isFullSync = fullSync;
+
+				message.enemyStateIds = SizedBuffer<int32_t>(packet.enemyIds.begin(), packet.enemyIds.end());
+
+				// vector<bool> は特殊化されているので、
+				// bool を1要素ずつ SizedBuffer に代入する
+				message.values.Resize(packet.values.size());
+
+				for (size_t i = 0; i < packet.values.size(); ++i)
+				{
+					message.values[i] = packet.values[i];
+				}
+
+				networkSessionManager.Send(message);
+
+				VCU_LOG("敵ステート送信 名前={}, 件数={}, 全同期={}", stateName, packet.enemyIds.size(), fullSync);
+			}
+
+			// 送信済みのステート変更を確定
+			for (auto& registry : registries)
+			{
+				if (!registry.has_value())
+					continue;
+
+				const auto changes = registry->GetStates(fullSync);
+				registry->CommitChanges(changes);
+			}
+
+			if (fullSync)
+			{
+				actorServer.ResetFullSync();
 			}
 		}
 

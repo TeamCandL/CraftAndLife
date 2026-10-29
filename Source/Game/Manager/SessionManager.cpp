@@ -210,6 +210,51 @@ bool SessionManager::IsExistEnemy(
 	return inSessionStatus_.enemiesStatus.count(_enemyId) != 0;
 }
 
+bool SessionManager::UpdateEnemyState(
+    int _enemyId,
+    const std::string& _stateName,
+    bool _value)
+{
+	auto& enemiesStatus = inSessionStatus_.enemiesStatus;
+
+	// 指定した敵IDが存在しない場合は更新しない
+	auto enemyIt = enemiesStatus.find(_enemyId);
+
+	if (enemyIt == enemiesStatus.end())
+	{
+		VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", _enemyId);
+		return false;
+	}
+
+	// 指定した敵のステート情報を取得
+	auto& states = enemyIt->second.states;
+
+	// ステートがまだ登録されていない場合は追加
+	auto stateIt = states.find(_stateName);
+
+	if (stateIt == states.end())
+	{
+		states[_stateName] = _value;
+
+		VCU_LOG("敵ステート初回登録 ID={}, 名前={}, 値={}", _enemyId, _stateName, _value);
+
+		return true;
+	}
+
+	// 前回と値が同じなら更新しない
+	if (stateIt->second == _value)
+	{
+		return false;
+	}
+
+	// 値が変更された場合のみ更新
+	stateIt->second = _value;
+
+	VCU_LOG("敵ステート更新 ID={}, 名前={}, 値={}", _enemyId, _stateName, _value);
+
+	return true;
+}
+
 void SessionManager::UpdateDayTime(
     float _currentTimeSec)
 {
