@@ -133,7 +133,7 @@ void EffectSystem::Update()
 	    [this, deltaTime, fps](IObject& _object, Transform& _transform, EffectPlayer& _effect)
 	    {
 		    // 未使用のデータは更新しない
-		    if (_effect.ref == nullptr || _effect.handle == -1)
+		    if (_effect.ref == nullptr)
 		    {
 			    return;
 		    }
@@ -147,7 +147,6 @@ void EffectSystem::Update()
 			    {
 				    managerRef_->StopEffect(handle);
 			    }
-			    // インスタンスを解放
 			    return;
 		    }
 
@@ -190,10 +189,13 @@ void EffectSystem::Update()
 			    Effekseer::Matrix43 mat = CnvMat43(_transform.world);
 			    // エフェクトのインスタンスに対して処理をし、更新速度を設定
 
-			    managerRef_->SetMatrix(handle, mat);
-			    managerRef_->SetSpeed(handle, _effect.playSpeed);
-			    // 再生時間を増やす
-			    _effect.elapsedTime += deltaTime;
+			    if (handle >= 0)
+			    {
+				    managerRef_->SetMatrix(handle, mat);
+				    managerRef_->SetSpeed(handle, _effect.playSpeed);
+				    // 再生時間を増やす
+				    _effect.elapsedTime += deltaTime;
+			    }
 		    }
 	    });
 

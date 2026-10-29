@@ -16,7 +16,7 @@ struct EffectPlayer : ComponentBase<EffectPlayer>
 	// エフェクトの再生速度
 	float playSpeed{ 1.0f };
 	void Reset();
-	Effekseer::Handle handle{};
+	Effekseer::Handle handle{ -1 };
 	Effekseer::EffectRef ref{ nullptr };
 	double elapsedTime{ 0.0 };
 };
