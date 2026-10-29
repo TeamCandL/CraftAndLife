@@ -207,6 +207,17 @@ void Player::Update()
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
 		}
+
+		if (jumpVelocity < 0.0f)
+		{
+			animIndex = PlayerAnimType_FallBig;
+			animSpeed = 1.0f;
+		}
+		else
+		{
+			animIndex = PlayerAnimType_Fall;
+			animSpeed = 1.0f;
+		}
 	}
 	else
 	{

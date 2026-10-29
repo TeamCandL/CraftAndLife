@@ -2,13 +2,57 @@
 #include "PlayerHand.h"
 #include "ItemSystem.h"
 
-void PlayerHand::Start() {}
+void PlayerHand::Start()
+{
+	transform.scale = Vec3::One() * 0.005f;
+}
 
 void PlayerHand::Update()
 {
 	ImGui::Begin("PlayerHand");
 
-	ImGui::DragFloat3("offset", transform.position.v, 0.01f);
+	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+	Vec3 angles = transform.rotation.ToEuler();
+	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+	transform.rotation = Quaternion::FromEuler(angles);
+
+	if (ImGui::Button("出力"))
+	{
+		fs::path filePath{ "./animDump.txt" };
+		std::ofstream ofs{ filePath };
+		if (ofs)
+		{
+			ofs << std::format(
+			           "TransformAnimationKey{ Vec3{{ {}, {}, {} }}, Quaternion::From(Vec3{{ {}, {}, {} }}), Vec3{{ "
+			           "{}, {}, "
+			           "{} }} }",
+			           transform.position.x,
+			           transform.position.y,
+			           transform.position.z,
+			           angles.x,
+			           angles.y,
+			           angles.z,
+			           transform.scale.x,
+			           transform.scale.y,
+			           transform.scale.z)
+			    << std::endl;
+			/*ofs << std::format(
+			           "TransformAnimationKey{ Vec3{{ {}, {}, {} }}, Quaternion::From(Vec3{{ {}, {}, {} }}), Vec3{{ "
+			           "{}, {}, "
+			           "{} }} }",
+			           transform.position.x,
+			           transform.position.y,
+			           transform.position.z,
+			           angles.x,
+			           angles.y,
+			           angles.z,
+			           transform.scale.x,
+			           transform.scale.y,
+			           transform.scale.z)
+			    << std::endl;*/
+		}
+		ofs.close();
+	}
 
 	ImGui::End();
 }

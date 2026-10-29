@@ -64,12 +64,12 @@ struct PlayerData
 	const float OBB_SCALE{ 0.005f };              ///< OBBのスケール
 
 	// ジャンプ用パラメータ
-	float jumpVelocity{ 0.0f };         // 上下方向の速度
-	const float JUMP_POWER{ 12.0f };    // ジャンプ初速
-	const float GRAVITY{ 15.0f };       // 重力
-	const float GROUND_HEIGHT{ 0.0f };  // 地面の高さ
-	const float JUMP_CUT_RATE{ 0.5f };  // ボタンを離したときの速度倍率
-	bool isJumping{ false };            // ジャンプ中かどうか
+	float jumpVelocity{ 0.0f };         ///< 上下方向の速度
+	const float JUMP_POWER{ 12.0f };    ///< ジャンプ初速
+	const float GRAVITY{ 15.0f };       ///< 重力
+	const float GROUND_HEIGHT{ 0.0f };  ///< 地面の高さ
+	const float JUMP_CUT_RATE{ 0.5f };  ///< ボタンを離したときの速度倍率
+	bool isJumping{ false };            ///< ジャンプ中かどうか
 
 	// HP減少テスト用
 	float hpTestTimer{ 0.0f };
