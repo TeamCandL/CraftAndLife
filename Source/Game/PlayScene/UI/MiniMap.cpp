@@ -1,7 +1,6 @@
 #include "pch\pch.h"
 #include "MiniMap.h"
 #include "MiniMapPoint.h"
-#include "MiniMap.h"
 
 void MiniMap::Start()
 {
@@ -30,7 +29,6 @@ void MiniMap::Update()
 	// 東西南北のマークを配置
 	for (float angle = 0; angle < DirectX::XM_2PI; angle += DirectX::XM_PIDIV2)
 	{
-		Get<MiniMapPoint>(points[static_cast<int>(angle / DirectX::XM_PIDIV2)])
-		    .SetPosition(angle + DirectX::XM_PIDIV2 + DirectX::XM_PIDIV4, 150);
+		Get<MiniMapPoint>(points[static_cast<int>(angle / DirectX::XM_PIDIV2)]).SetPosition(angle + playerAngle, 150);
 	}
 }
