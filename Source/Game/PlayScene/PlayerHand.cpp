@@ -17,12 +17,12 @@ void PlayerHand::Draw()
 {
 	Resource<Model> hModel = Get<ItemSystem>().GetModel(haveItemId);
 
-	Get<Dx11Manager>().SetShader(shaderFront);
+	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
+	// hModel.Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
 
-	const auto& subParts{ models[jobType].Get().subParts };
+	const auto& subParts{ hModel.Get().subParts };
 
 	for (const auto& parts : subParts)
 	{
