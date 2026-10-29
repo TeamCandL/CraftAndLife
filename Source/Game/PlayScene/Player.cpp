@@ -9,6 +9,11 @@
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/Manager/SessionManager.h>
 #include <string>
+#include "PlayerHand.h"
+#include "Player/PlayerJobControllerHealer.h"
+#include "Player/PlayerJobControllerTank.h"
+#include "Player/PlayerJobControllerFighter.h"
+#include "Player/PlayerJobControllerArcher.h"
 
 void Player::Start()
 {
@@ -20,6 +25,7 @@ void Player::Start()
 	obb.isTrigger   = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
 
 	objPlayerController = GetScene().Instantiate<PlayerControllerNormal>();
+	objPlayerHand       = GetScene().Instantiate<PlayerHand>(this->ToGameObject());
 
 	// ジャンプの初期化
 	jumpVelocity = 0.0f;
@@ -27,6 +33,8 @@ void Player::Start()
 
 	// 初期位置の地面の高さを取得
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	SetJob(PlayerJobType_Healer);
 }
 
 void Player::Update()
@@ -42,6 +50,12 @@ void Player::Update()
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::End();
+
+	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
+	{
+		jobType++;
+		jobType %= PlayerJobType_Max;
+	}
 
 	nowAttackCoolTime -= Get<DeltaTime>();
 	nowDamagedCoolTime -= Get<DeltaTime>();
@@ -205,6 +219,17 @@ void Player::Update()
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
 		}
+
+		if (jumpVelocity < 0.0f)
+		{
+			animIndex = PlayerAnimType_FallBig;
+			animSpeed = 1.0f;
+		}
+		else
+		{
+			animIndex = PlayerAnimType_Fall;
+			animSpeed = 1.0f;
+		}
 	}
 	else
 	{
@@ -284,6 +309,33 @@ void Player::Damaged(
 		}
 
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+	}
+}
+
+void Player::SetJob(
+    const PlayerJobType _jobType)
+{
+	// 今のjobこんを消す
+	GetScene().Destroy(objJobController);
+
+	jobType = _jobType;
+	switch (jobType)
+	{
+	case PlayerJobType_Healer:
+		objJobController = GetScene().Instantiate<PlayerJobControllerHealer>();
+		break;
+	case PlayerJobType_Tank:
+		objJobController = GetScene().Instantiate<PlayerJobControllerTank>();
+		break;
+	case PlayerJobType_Fighter:
+		objJobController = GetScene().Instantiate<PlayerJobControllerFighter>();
+		break;
+	case PlayerJobType_Archer:
+		objJobController = GetScene().Instantiate<PlayerJobControllerArcher>();
+		break;
+	default:
+		VCU_ASSERT(false && "選択不可能な役職です。");
+		break;
 	}
 }
 
