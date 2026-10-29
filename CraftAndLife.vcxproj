@@ -527,6 +527,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\TestScene\LifeChecker.cpp" />
     <ClCompile Include="Source\Game\TestScene\SceneTester.cpp" />
     <ClCompile Include="Source\Game\TestScene\TestScene.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitleLogo.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleNetworkController.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordInputPanel.cpp" />
