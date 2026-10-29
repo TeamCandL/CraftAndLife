@@ -29,6 +29,6 @@ void MiniMap::Update()
 	// 東西南北のマークを配置
 	for (float angle = 0; angle < DirectX::XM_2PI; angle += DirectX::XM_PIDIV2)
 	{
-		Get<MiniMapPoint>(points[static_cast<int>(angle / DirectX::XM_PIDIV2)]).SetPosition(angle + playerAngle, 150);
+		Get<MiniMapPoint>(points[static_cast<int>(angle / DirectX::XM_PIDIV2)]).SetPosition(angle - playerAngle, 150);
 	}
 }
