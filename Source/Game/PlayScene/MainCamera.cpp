@@ -94,10 +94,25 @@ void MainCamera::SetPosition(
 void MainCamera::ChangeUpdater(
     const GameObject _objUpdater)
 {
-	VCU_ASSERT(_objUpdater.IsEmpty() && "渡された更新処理オブジェクトが空っぽであった");
-
 	GetScene().Destroy(objUpdater);
 	objUpdater = _objUpdater;
+}
+
+void MainCamera::SetCameraType(
+    const MainCameraType _type)
+{
+	switch (_type)
+	{
+	case MainCameraType_TPS:
+		ChangeUpdater(GetScene().Instantiate<TPSCamera>());
+		break;
+	case MainCameraType_Ghost:
+		ChangeUpdater(GetScene().Instantiate<GhostCamera>());
+		break;
+	default:
+		VCU_ASSERT(false && "不正なカメラの種類だよ");
+		return;
+	}
 }
 
 void MainCamera::UpdatePositionFromTarget(

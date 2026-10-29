@@ -77,6 +77,124 @@ void Player::Update()
 	    0.0f,
 	});
 
+	if (helthState == HelthState_Live)
+	{
+		MoveBody();
+	}
+
+	// HPゲージ動作確認用：1秒ごとに10ダメージ
+	hpTestTimer += Get<DeltaTime>();
+
+	if (hpTestTimer >= 1.0f)
+	{
+		Damaged(10);
+		hpTestTimer = 0.0f;
+	}
+
+	if (!objJobController.IsEmpty())
+	{
+		Get<IPlayerJobController>(objJobController).Update(Data());
+	}
+}
+
+void Player::Draw()
+{
+	Get<Dx11Manager>().SetShader(shaderFront);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
+
+	const auto& subParts{ models[jobType].Get().subParts };
+
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
+}
+
+void Player::AttackCollider()
+{
+	if (nowAttackCoolTime <= 0.0f)
+	{
+		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+
+		nowAttackCoolTime = ATTACK_COOL_TIME;
+	}
+}
+
+void Player::Damaged(
+    int32_t damage)
+{
+	if (nowDamagedCoolTime <= 0.0f && hp > 0)
+	{
+		hp -= damage;
+
+		if (hp < 0)
+		{
+			hp = 0;
+		}
+
+		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+	}
+
+	if (hp <= 0)
+	{
+		SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
+	}
+}
+
+void Player::SetHelthState(
+    const HelthState _state)
+{
+	switch (_state)
+	{
+	case HelthState_Live:
+		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_TPS);
+		break;
+	case HelthState_Dead:
+		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_Ghost);
+		break;
+	default:
+		VCU_ASSERT("不正な生存ステータスですよ。");
+		return;
+	}
+	helthState = _state;
+}
+
+void Player::SetJob(
+    const PlayerJobType _jobType)
+{
+	// 今のjobこんを消す
+	GetScene().Destroy(objJobController);
+
+	jobType = _jobType;
+	switch (jobType)
+	{
+	case PlayerJobType_Healer:
+		objJobController = GetScene().Instantiate<PlayerJobControllerHealer>();
+		break;
+	case PlayerJobType_Tank:
+		objJobController = GetScene().Instantiate<PlayerJobControllerTank>();
+		break;
+	case PlayerJobType_Fighter:
+		objJobController = GetScene().Instantiate<PlayerJobControllerFighter>();
+		break;
+	case PlayerJobType_Archer:
+		objJobController = GetScene().Instantiate<PlayerJobControllerArcher>();
+		break;
+	default:
+		VCU_ASSERT(false && "選択不可能な役職です。");
+		return;
+	}
+
+	Get<IPlayerJobController>(objJobController).Start(Data());
+}
+
+void Player::MoveBody()
+{
 	// 入力取得
 	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
 
@@ -262,93 +380,6 @@ void Player::Update()
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 		// objPick
 	}
-
-	// HPゲージ動作確認用：1秒ごとに10ダメージ
-	hpTestTimer += Get<DeltaTime>();
-
-	if (hpTestTimer >= 1.0f)
-	{
-		Damaged(10);
-		hpTestTimer = 0.0f;
-	}
-
-	if (!objJobController.IsEmpty())
-	{
-		Get<IPlayerJobController>(objJobController).Update(Data());
-	}
-}
-
-void Player::Draw()
-{
-	Get<Dx11Manager>().SetShader(shaderFront);
-	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
-
-	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
-
-	const auto& subParts{ models[jobType].Get().subParts };
-
-	for (const auto& parts : subParts)
-	{
-		Get<Dx11Manager>().SetSurface(parts.mesh);
-		Get<Dx11Manager>().SetMaterial(parts.material);
-		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
-		Get<Dx11Manager>().Draw();
-	}
-}
-
-void Player::AttackCollider()
-{
-	if (nowAttackCoolTime <= 0.0f)
-	{
-		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
-
-		nowAttackCoolTime = ATTACK_COOL_TIME;
-	}
-}
-
-void Player::Damaged(
-    int32_t damage)
-{
-	if (nowDamagedCoolTime <= 0.0f && hp > 0)
-	{
-		hp -= damage;
-
-		if (hp < 0)
-		{
-			hp = 0;
-		}
-
-		nowDamagedCoolTime = DAMAGED_COOL_TIME;
-	}
-}
-
-void Player::SetJob(
-    const PlayerJobType _jobType)
-{
-	// 今のjobこんを消す
-	GetScene().Destroy(objJobController);
-
-	jobType = _jobType;
-	switch (jobType)
-	{
-	case PlayerJobType_Healer:
-		objJobController = GetScene().Instantiate<PlayerJobControllerHealer>();
-		break;
-	case PlayerJobType_Tank:
-		objJobController = GetScene().Instantiate<PlayerJobControllerTank>();
-		break;
-	case PlayerJobType_Fighter:
-		objJobController = GetScene().Instantiate<PlayerJobControllerFighter>();
-		break;
-	case PlayerJobType_Archer:
-		objJobController = GetScene().Instantiate<PlayerJobControllerArcher>();
-		break;
-	default:
-		VCU_ASSERT(false && "選択不可能な役職です。");
-		return;
-	}
-
-	Get<IPlayerJobController>(objJobController).Start(Data());
 }
 
 Vec3 Player::GetPosition() const

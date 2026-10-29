@@ -1,10 +1,17 @@
 #pragma once
 #include <Game/Game.h>
 
+using MainCameraType = int32_t;
+enum MainCameraType_
+{
+	MainCameraType_TPS,    ///< TPSカメラ
+	MainCameraType_Ghost,  ///< 観戦カメラ
+};
+
 /// @brief メインカメラのインタフェース
 class IMainCamera
 {
-public:
+  public:
 	/// @brief コンストラクタ
 	IMainCamera() = default;
 	/// @brief デストラクタ
@@ -20,4 +27,8 @@ public:
 	/// @brief カメラの角度yを取得する
 	/// @return ラジアン角度 0.0f <= v < 2PI
 	virtual float GetAngleY() const = 0;
+
+	/// @brief カメラの種類を設定する
+	/// @param _type カメラの種類
+	virtual void SetCameraType(const MainCameraType _type) = 0;
 };

@@ -82,6 +82,13 @@ struct PlayerData
 	{
 		float moveSpeed{ 0.1f };
 	} jobStatus;  ///< プレイヤーの役職固有のステータス
+
+	inline static const float DIE_ANIM_TIME_SEC_MAX{ 21.0f / 60.0f };  ///< 死亡アニメーションの時間
+
+	struct LiveStatus
+	{
+		float dieAnimTimeSec{ DIE_ANIM_TIME_SEC_MAX };
+	} liveStatus;  ///< 生存中のステータス
 };
 
 /// @brief プレイヤー
@@ -102,9 +109,16 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void Damaged(int32_t damage);
 
+	/// @brief 生存ステータスを設定する
+	/// @param _state 生存ステータス
+	void SetHelthState(const HelthState _state);
+
 	/// @brief プレイヤーの役職を設定する
 	/// @param _jobType 役職の種類
 	void SetJob(const PlayerJobType _jobType);
+
+	/// @brief 移動処理
+	void MoveBody();
 
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;
