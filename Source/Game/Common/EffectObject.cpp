@@ -9,7 +9,8 @@ void EffectObject::Start() {}
 
 void EffectObject::Play()
 {
-	effectPlayer.ref = Get<EffectSystem>().Play(effect);
+	effectPlayer.handle = Get<EffectSystem>().Play(effect);
+	effectPlayer.ref    = effect.Get().ref;
 }
 
 void EffectObject::OnDestroy()

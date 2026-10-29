@@ -150,12 +150,6 @@ void EffectSystem::Update()
 			    return;
 		    }
 
-		    // 再生時間が0の場合、再生を始める
-		    if (_effect.elapsedTime == 0)
-		    {
-			    handle = managerRef_->Play(_effect.ref, 0, 0, 0);
-		    }
-
 		    // エフェクトの最大フレームを取得
 		    int32_t maxFrame = _effect.ref->CalculateTerm().TermMax;
 
@@ -228,7 +222,7 @@ void EffectSystem::Draw()
 	    });
 }
 
-Effekseer::EffectRef EffectSystem::Play(
+Effekseer::Handle EffectSystem::Play(
     cha::Resource<ResourceType::Effect>& _resource)
 {
 	EffectResource& particle = _resource.Get();
@@ -243,7 +237,6 @@ Effekseer::EffectRef EffectSystem::Play(
 			particle.ref = Effekseer::Effect::Create(managerRef_, u16Char);
 		}
 	}
-
 	// エフェクトの元データへの参照
-	return particle.ref;
+	return managerRef_->Play(particle.ref, 0, 0, 0);
 }

@@ -27,7 +27,7 @@ struct EffectSystem : SystemObjectBase<EffectSystem>
 	void Start() override;
 	void Update() override;
 	void Draw();
-	Effekseer::EffectRef Play(cha::Resource<ResourceType::Effect>& _resource);
+	Effekseer::Handle Play(cha::Resource<ResourceType::Effect>& _resource);
 
   private:
 	// 描画オブジェクトの参照

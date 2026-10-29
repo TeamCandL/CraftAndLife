@@ -55,7 +55,6 @@ void Player::Update()
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-
 		Get<EffectObject>(laserEffect).Play();
 		Get<EffectObject>(laserEffect).Data().effectPlayer.isLoop = true;
 		Get<EffectObject>(laserEffect).Data().transform.position  = transform.position;
