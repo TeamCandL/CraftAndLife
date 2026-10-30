@@ -9,6 +9,7 @@
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
 #include "EnemyController.h"
+#include "../Manager/SessionManager.h"
 
 void Enemy::Start()
 {
@@ -34,12 +35,21 @@ void Enemy::Update()
 	}
 
 	// 徘徊チェックポイントとの距離(差分)
-	float distX = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().x - transform.position.x;
-	float distZ = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition().z - transform.position.z;
+	if (!followed)
+	{
+		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec2();
+	}
+
+	Sensor();
+
+	VCU_LOG("敵の追跡状況：{}", followed);
+
+	float distX = targetPos.x - transform.position.x;
+	float distZ = targetPos.y - transform.position.z;
 	float vecX  = Math::GetSquareVec(distX, distZ);
 	float vecZ  = Math::GetSquareVec(distZ, distX);
 	// 差分を基に移動方向の計算
-	float angleY = Math::GetAngle(distX, distZ);
+	angleY = Math::GetAngle(distX, distZ);
 
 	Move(vecX, vecZ, speed, angleY);
 
@@ -51,19 +61,23 @@ void Enemy::Update()
 	nowDamagedCoolTime -= Get<DeltaTime>();
 
 	//	徘徊時のチェックポイントの更新
-	if (!objWanderingCheckPoint.IsEmpty())
+	if (!followed)
 	{
-		// チェックポイントに到達したら新しいチェックポイントを生成する
-		if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPosition()).Length() < 1.0f)
+		if (!objWanderingCheckPoint.IsEmpty())
+		{
+			// チェックポイントに到達したら新しいチェックポイントを生成する
+			if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3()).Length() < 1.0f)
+			{
+				SetWanderingCheckPoint(transform.position);
+			}
+		}
+		else
 		{
 			SetWanderingCheckPoint(transform.position);
 		}
 	}
-	else
-	{
-	}
 
-	ImGui::Begin("Enemy");
+	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
 	ImGui::DragInt("modelIndex", &modelIndex);
 	modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
@@ -71,7 +85,7 @@ void Enemy::Update()
 
 	ImGui::End();
 
-	if (hp <= 0)
+	if (!alive)
 	{
 		DestroyMe();
 	}
@@ -88,11 +102,58 @@ void Enemy::Move(
 	transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, angleY_, 0.0f });
 	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
 	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
+}
 
-	// for (auto& [name, obj] : Get<OtherPlayerController>(objOtherPlayerController).Data().nameToObjOtherPlayer)
-	//{
-	//	Vec3 distToTarget = Get<OtherPlayer>(obj).GetPosition();
-	// }
+void Enemy::Sensor()
+{
+	Vec2 nowVec2Pos{ transform.position.x, transform.position.z };
+	Vec2 targetPos_{ DEFAULT_TARGET_POS };
+	float targetDist{ -1.0f };
+	std::vector<Vec2> playerPositions;
+	Get<SessionManager>().ForeachPlayerStatus(
+	    [&playerPositions](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
+	    {
+		    playerPositions.push_back({ _status.position.x, _status.position.z });
+	    });
+	for (Vec2 objPlayerPos : playerPositions)
+	{
+		float playerDist = (nowVec2Pos - objPlayerPos).Length();
+		if (playerDist <= visibilityDist)
+		{
+			Vec2 dist;
+			dist.x      = nowVec2Pos.x - objPlayerPos.x;
+			dist.y      = nowVec2Pos.y - objPlayerPos.y;
+			float angle = Math::GetDeg(angleY) - Math::GetDeg(atan2f(dist.x, dist.y));
+			VCU_LOG("AngleE : {}, AngleT : {}, angle : {}", angleY, atan2f(dist.x, dist.y), angle);
+			if (abs(angle) <= visibilityAngle / 2.0f)
+			{
+				if (targetDist < 0.0f)
+				{
+					targetPos_ = objPlayerPos;
+					targetDist = playerDist;
+				}
+				else
+				{
+					if (targetDist > playerDist)
+					{
+						targetPos_ = objPlayerPos;
+						targetDist = playerDist;
+					}
+				}
+			}
+		}
+	}
+	followed = false;
+	if (targetPos_ != DEFAULT_TARGET_POS)
+	{
+		followed = true;
+
+		if (!objWanderingCheckPoint.IsEmpty())
+		{
+			GetScene().Destroy(objWanderingCheckPoint);
+		}
+		targetPos = targetPos_;
+	}
 }
 
 void Enemy::Draw()
@@ -114,10 +175,17 @@ void Enemy::Draw()
 	}
 }
 
+void Enemy::OnDestroy()
+{
+	int a = 10;
+	a++;
+}
+
 void Enemy::AttackCollider()
 {
 	if (nowAttackCoolTime <= 0.0f)
 	{
+		attacked = true;
 		Get<AudioSystem>().Play(attackSE);
 
 		GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);

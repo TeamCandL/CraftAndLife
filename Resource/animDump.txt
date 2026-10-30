@@ -1,0 +1,4 @@
+TransformAnimationKey{ Vec3{ 0.003, 0.003, 0 }, Quaternion::From(Vec3{ 0.6460004, 4.3854496e-07, 1.06781906e-13 }), Vec3{ 0.005, 0.005, 0.005 } }
+TransformAnimationKey{ Vec3{ 0.003, 0.003, 0 }, Quaternion::From(Vec3{ 0.489, 0, 0 }), Vec3{ 0.005, 0.005, 0.005 } }
+TransformAnimationKey{ Vec3{ 0.003, 0.003, 0 }, Quaternion::From(Vec3{ 1.2050002, -1.0479996, 2.4995458e-07 }), Vec3{ 0.005, 0.005, 0.005 } }
+TransformAnimationKey{ Vec3{ 0.003, 0.003, 0 }, Quaternion::From(Vec3{ -0.4300008, -0.9789997, -6.0574133e-05 }), Vec3{ 0.005, 0.005, 0.005 } }

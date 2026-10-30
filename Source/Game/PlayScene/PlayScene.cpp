@@ -17,8 +17,9 @@
 #include "PlaySceneUIController.h"
 #include <../Resource/MAP/MAP.h>
 #include "Harvestable.h"
-#include "UI/MyGage.h"
+#include "UI/MyGauge.h"
 #include "NetworkActorServer.h"
+#include "UI/MiniMap.h"
 
 void PlayScene::Start()
 {
@@ -28,7 +29,7 @@ void PlayScene::Start()
 	GameObject objTerrain = Instantiate<MAP>();
 	// GameObject objTerrain = Instantiate<Terrain>();
 
-	Instantiate<DayController>(objSky);
+	GameObject objDayController = Instantiate<DayController>(objSky);
 
 	// ホスト判定オブジェクトを生成
 	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>();
@@ -39,7 +40,8 @@ void PlayScene::Start()
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
-	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer);
+	// ミニマップを生成してプレイヤーを渡す
+	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer, objDayController);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer);
 
