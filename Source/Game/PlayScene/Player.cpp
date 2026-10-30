@@ -137,7 +137,7 @@ void Player::Damaged(
 
 	if (hp <= 0)
 	{
-		SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
+		// SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
 	}
 }
 
