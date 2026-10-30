@@ -7,12 +7,12 @@
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
 {
-	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };           ///< 体力
-	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };           ///< 攻撃力
-	const std::vector<float> Speed{ 3.0f, 2.5f, 4.0f, 5.0f, 3.5f };  ///< 移動速度
+	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };             ///< 体力
+	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };             ///< 攻撃力
+	const std::vector<float> Speed{ 300.0f, 2.5f, 4.0f, 5.0f, 3.5f };  ///< 移動速度
 	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };
 	const std::vector<bool> HasLongAttack{ false, false, false, false, true };
-	const std::vector<float> VisibilityDist{ 500.0f, 20.0f, 10.0f, 8.0f, 30.0f };
+	const std::vector<float> VisibilityDist{ 100.0f, 20.0f, 10.0f, 8.0f, 30.0f };
 	const std::vector<float> visibilityAngle{ 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };
 	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.5f, 1.0f, 3.0f };
 }  // namespace EnemyParam
@@ -190,6 +190,7 @@ struct EnemyData
 
 	Vec3 targetPos{};                     ///< 追跡地点
 	GameObject objWanderingCheckPoint{};  ///< 徘徊時のチェックポイント
+	float torque{};
 };
 
 /// @brief 敵
@@ -207,7 +208,7 @@ struct Enemy : ObjectBase<EnemyData>
 	/// @param vecZ_ Z軸の移動量
 	/// @param spd_ 速度
 	/// @param angleY_	Y軸の回転角度
-	void Move(float vecX_, float vecZ_, float spd_, float angleY_);
+	void Move(Vec3 target_, Vec3 pos_, Vec3 Fwd, float spd_);
 	/// @brief プレイヤーの視認
 	void Sensor();
 
