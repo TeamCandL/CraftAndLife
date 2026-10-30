@@ -18,10 +18,11 @@
 
 void Player::Start()
 {
-	transformAnimator.animations["idle"] = { TransformAnimationKey{ 0.0f,
-		                                                            Vec3{ 0.003f, 0.003f, 0.0f },
-		                                                            Quaternion::FromEuler(Vec3{ 0.489f, 0.0f, 0.0f }),
-		                                                            Vec3{ 0.005f, 0.005f, 0.005f } } };
+	transformAnimator.animations["idle"] = { TransformAnimationKey{
+		0.0f,
+		Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		Quaternion::FromEuler(Vec3{ 0.681000f, 0.000000f, 0.000000f }),
+		Vec3{ 0.005000f, 0.005000f, 0.005000f } } };
 
 	obb.isTrigger = true;
 
@@ -71,12 +72,6 @@ void Player::Update()
 	// カメラの更新処理
 	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
 
-	transform.rotation = Quaternion::FromEuler(Vec3{
-	    0.0f,
-	    Get<IMainCamera>(objMainCamera).GetAngleY(),
-	    0.0f,
-	});
-
 	if (helthState == HelthState_Live)
 	{
 		MoveBody();
@@ -86,6 +81,7 @@ void Player::Update()
 		DeadAnim();
 	}
 
+#if 1
 	// HPゲージ動作確認用：1秒ごとに10ダメージ
 	hpTestTimer += Get<DeltaTime>();
 
@@ -94,6 +90,7 @@ void Player::Update()
 		Damaged(10);
 		hpTestTimer = 0.0f;
 	}
+#endif
 
 	if (!objJobController.IsEmpty())
 	{
@@ -199,6 +196,12 @@ void Player::SetJob(
 
 void Player::MoveBody()
 {
+	transform.rotation = Quaternion::FromEuler(Vec3{
+	    0.0f,
+	    Get<IMainCamera>(objMainCamera).GetAngleY(),
+	    0.0f,
+	});
+
 	// 入力取得
 	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
 
@@ -401,6 +404,8 @@ void Player::DeadAnim()
 
 			animIndex = PlayerAnimType_Die;
 			animSpeed = 0.0f;
+
+			Get<PlayerHand>(objPlayerHand).SetItem(0);
 		}
 	}
 	else

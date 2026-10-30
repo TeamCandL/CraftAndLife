@@ -23,10 +23,11 @@ void PlayerHand::Update()
 		if (ofs)
 		{
 			ofs << std::format(
-			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:3.2f}f, {}f, {}f }}, Quaternion::From(Vec3{{ {}f, {}f, "
-			           "{}f }}), Vec3{{ "
-			           "{}f, {}f, "
-			           "{}f }} }}",
+			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:f}f, {:f}f, {:f}f }}, Quaternion::FromEuler(Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }}), Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }} }}",
 			           transform.position.x,
 			           transform.position.y,
 			           transform.position.z,
@@ -61,6 +62,11 @@ void PlayerHand::Update()
 void PlayerHand::Draw()
 {
 	Resource<Model> hModel = Get<ItemSystem>().GetModel(haveItemId);
+
+	if (hModel.IsNull())
+	{
+		return;
+	}
 
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
