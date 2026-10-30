@@ -132,6 +132,7 @@ const InSessionStatus::PlayerStatus& SessionManager::RefPlayerStatus(
 bool SessionManager::IsExistPlayer(
     const std::string& _playerName) const
 {
+	// TODO: ここで文字化けしているためうまく判定できていない可能性がある。
 	return inSessionStatus_.playersStatus.count(_playerName) != 0;
 }
 

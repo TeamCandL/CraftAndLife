@@ -3,18 +3,11 @@
 
 void OtherPlayer::Start()
 {
-	VCU_LOG("atara");
+	VCU_LOG("ああああああああああああああああああああああああああああああ");
 }
 
 void OtherPlayer::Update()
 {
-	ImGui::Begin(std::format("[{}]OtherPlayer", name.content).c_str());
-
-	ImGui::DragFloat3("pos", transform.position.v);
-	ImGui::DragFloat3("scale", transform.scale.v);
-
-	ImGui::End();
-
 	SessionManager& sessionManager = Get<SessionManager>();
 	if (sessionManager.IsExistPlayer(name.content))  // プレイヤーが存在するなら
 	{
@@ -44,13 +37,13 @@ void OtherPlayer::Draw()
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	VCU_LOG(
+	/*VCU_LOG(
 	    "{}の描画前直前！座標:({}, {}, {}) 回転y:{}",
 	    name.content,
 	    transform.position.x,
 	    transform.position.y,
 	    transform.position.z,
-	    transform.rotation.y);
+	    transform.rotation.y);*/
 
 	/*models[role]*/ aModel.Get().Draw(Get<DeltaTime>(), animIndex);
 

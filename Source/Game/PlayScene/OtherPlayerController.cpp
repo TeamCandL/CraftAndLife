@@ -12,6 +12,7 @@ void OtherPlayerController::Update()
 	{
 		if (!sessionManager.IsExistPlayer(name))
 		{
+			VCU_ASSERT(false);
 			GetScene().Destroy(obj);
 		}
 	}
