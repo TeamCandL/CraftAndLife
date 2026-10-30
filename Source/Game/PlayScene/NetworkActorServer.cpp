@@ -13,19 +13,19 @@ void NetworkActorServer::Start()
 		return;
 	}
 
-	CreateEnemies();
-	// 敵管理オブジェクトを生成して保存
-	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+	// CreateEnemies();
+	//  敵管理オブジェクトを生成して保存
+	// Data().objEnemyController = GetScene().Instantiate<EnemyController>();
 
 	// 敵を生成
-	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
-	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::BossSkeleton));
-	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Spider));
-	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Bat));
-	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Dragon));
+	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
+	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::BossSkeleton));
+	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Spider));
+	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Bat));
+	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Dragon));
 
 	// 生成済みにする
-	Data().isInitialized = true;
+	// Data().isInitialized = true;
 }
 
 void NetworkActorServer::Update()
@@ -56,14 +56,14 @@ void NetworkActorServer::Update()
 	}
 }
 
-// void NetworkActorServer::CreateEnemy(
-//     EnemyType type)
-//{
-//	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
-//
-//	// 生成した敵のステートを登録
-//	EnemyStateRegistries(objEnemy);
-// }
+void NetworkActorServer::CreateEnemy(
+    EnemyType type)
+{
+	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
+
+	// 生成した敵のステートを登録
+	EnemyStateRegistries(objEnemy);
+}
 
 void NetworkActorServer::CreateEnemies()
 {
@@ -75,16 +75,16 @@ void NetworkActorServer::CreateEnemies()
 	// 敵管理オブジェクトを生成
 	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
 
-	//// 敵を生成（同じ種類も複数生成可能）
-	// CreateEnemy(EnemyType::Skeleton);
-	// CreateEnemy(EnemyType::Skeleton);
-	// CreateEnemy(EnemyType::Spider);
-	// CreateEnemy(EnemyType::Spider);
-	// CreateEnemy(EnemyType::BossSkeleton);
-	// CreateEnemy(EnemyType::Bat);
-	// CreateEnemy(EnemyType::Dragon);
-	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
-	// 生成済みにする
+	// 敵を生成（同じ種類も複数生成可能）
+	CreateEnemy(EnemyType::Skeleton);
+	CreateEnemy(EnemyType::Skeleton);
+	CreateEnemy(EnemyType::Spider);
+	CreateEnemy(EnemyType::Spider);
+	CreateEnemy(EnemyType::BossSkeleton);
+	CreateEnemy(EnemyType::Bat);
+	CreateEnemy(EnemyType::Dragon);
+	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
+	//  生成済みにする
 	Data().isInitialized = true;
 }
 
@@ -111,8 +111,3 @@ void NetworkActorServer::EnemyStateRegistries(
 		}
 	}
 }
-
-// bool NetworkActorServer::IsHost()
-//{
-//	return Get<SessionManager>().RefStatus().imLobbyHost;
-// }

@@ -3,6 +3,7 @@
 #include "EnemyStateRegistry.h"
 #include <optional>
 #include <vector>
+#include "EnemyType.h"
 
 /// @brief サーバー側のネットワークアクターのデータ
 struct NetworkActorServerData
@@ -32,7 +33,7 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	void Start() override;
 	void Update() override;
 
-	// void CreateEnemy(EnemyType type);
+	void CreateEnemy(EnemyType type);
 	void CreateEnemies();
 	void EnemyStateRegistries(GameObject objEnemy);
 

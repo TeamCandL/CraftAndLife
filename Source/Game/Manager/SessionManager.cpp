@@ -141,61 +141,52 @@ void SessionManager::UpdateEnemies(
     SizedBuffer<float>& _positions,
     SizedBuffer<float>& _rotations)
 {
-	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
-	auto& enemiesStatus          = inSessionStatus_.enemiesStatus;
+	const size_t count = _enemyIds.Size();
 
-	size_t count = _enemyIds.Size();
-
-	for (size_t i = 0; i < count; i++)
+	// 受信データ数を確認
+	if (_enemyTypes.Size() < count || _positions.Size() < count * Vec3::AT_MAX ||
+	    _rotations.Size() < count * Vec2::AT_MAX)
 	{
-		int enemyId = _enemyIds[i];
+		VCU_LOG(
+		    "敵データ不足 ID={}, 種類={}, 座標={}, 回転={}",
+		    count,
+		    _enemyTypes.Size(),
+		    _positions.Size(),
+		    _rotations.Size());
+
+		return;
+	}
+
+	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
+
+	auto& enemiesStatus = inSessionStatus_.enemiesStatus;
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		const int enemyId = _enemyIds[i];
 
 		auto& enemyStatus = enemiesStatus[enemyId];
 
 		enemyStatus.enemyType = _enemyTypes[i];
 
-		if (_enemyTypes.Size() < count)
-		{
-			VCU_LOG("敵の種類データが不足しています。ID数: {}, 種類数: {}", count, _enemyTypes.Size());
-			return;
-		}
+		enemyStatus.position = Vec3{ _positions[i * Vec3::AT_MAX + Vec3::AT_X],
+			                         _positions[i * Vec3::AT_MAX + Vec3::AT_Y],
+			                         _positions[i * Vec3::AT_MAX + Vec3::AT_Z] };
 
-		if (Vec3::AT_MAX * i >= _positions.Size())
-		{
-			VCU_LOG("取得した名前分の座標データのサイズが足りない({}個以上必要)", Vec3::AT_MAX * i);
-			break;
-		}
-
-		if (Vec2::AT_MAX * i >= _rotations.Size())
-		{
-			VCU_LOG("取得した名前分の回転データのサイズが足りない({}個以上必要)", Vec3::AT_MAX * i);
-			break;
-		}
-
-		enemyStatus.position = Vec3{
-			_positions[i * Vec3::AT_MAX + Vec3::AT_X],
-			_positions[i * Vec3::AT_MAX + Vec3::AT_Y],
-			_positions[i * Vec3::AT_MAX + Vec3::AT_Z],
-		};
-
-		enemyStatus.rotation = Vec2{
-			_rotations[i * Vec2::AT_MAX + Vec2::AT_X],
-			_rotations[i * Vec2::AT_MAX + Vec2::AT_Y],
-		};
+		enemyStatus.rotation =
+		    Vec2{ _rotations[i * Vec2::AT_MAX + Vec2::AT_X], _rotations[i * Vec2::AT_MAX + Vec2::AT_Y] };
 
 		enemyStatus.updatedFlag = inSessionStatus_.updatedFlag;
 
-		// VCU_LOG(
-		//     "Update position[{}] = ({}, {}, {})",
-		//     enemyId,
-		//     enemyStatus.position.x,
-		//     enemyStatus.position.y,
-		//     enemyStatus.position.z);
-
-		// VCU_LOG("Update rotation[{}] = ({}, {})", enemyId, enemyStatus.rotation.x, enemyStatus.rotation.y);
+		VCU_LOG(
+		    "SessionManager保存 ID={}, 座標=({}, {}, {})",
+		    enemyId,
+		    enemyStatus.position.x,
+		    enemyStatus.position.y,
+		    enemyStatus.position.z);
 	}
 
-	// 今回の受信データに存在しなかった敵を削除
+	// 今回受信しなかった敵を削除
 	std::erase_if(
 	    enemiesStatus,
 	    [this](const auto& idAndStatus)

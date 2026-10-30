@@ -69,10 +69,10 @@ void PlayNetworkController::Update()
 				    converter.ToMessage(_event.data, enemyMessage);
 
 				    // 受信した敵データの数を確認
-				    // VCU_LOG("敵ID数: {}", enemyMessage.enemyIds.Size());
-				    // VCU_LOG("敵種類数: {}", enemyMessage.enemyTypes.Size());
-				    // VCU_LOG("座標データ数: {}", enemyMessage.positions.Size());
-				    // VCU_LOG("回転データ数: {}", enemyMessage.rotations.Size());
+				    VCU_LOG("敵ID数: {}", enemyMessage.enemyIds.Size());
+				    VCU_LOG("敵種類数: {}", enemyMessage.enemyTypes.Size());
+				    VCU_LOG("座標データ数: {}", enemyMessage.positions.Size());
+				    VCU_LOG("回転データ数: {}", enemyMessage.rotations.Size());
 
 				    Get<SessionManager>().UpdateEnemies(
 				        enemyMessage.enemyIds,
@@ -176,12 +176,12 @@ void PlayNetworkController::Update()
 				enemyMessage.rotationX = 0.0f;
 				enemyMessage.rotationY = enemy.enemyAngleY;
 
-				// VCU_LOG(
-				//     "送信前の敵座標 ID={}: ({}, {}, {})",
-				//     enemy.enemyId,
-				//     enemy.enemyPosition.x,
-				//     enemy.enemyPosition.y,
-				//     enemy.enemyPosition.z);
+				VCU_LOG(
+				    "送信前の敵座標 ID={}: ({}, {}, {})",
+				    enemy.enemyId,
+				    enemy.enemyPosition.x,
+				    enemy.enemyPosition.y,
+				    enemy.enemyPosition.z);
 
 				networkSessionManager.Send(enemyMessage);
 			}
