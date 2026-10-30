@@ -34,7 +34,7 @@ namespace Protocol
 
 		SizedBuffer<int32_t> enemyStateIds{};
 		std::string stateName{};
-		SizedBuffer<bool> values{};  /// 修正必要かもしれない
+		SizedBuffer<uint8_t> values{};  /// 修正必要かもしれない
 		bool isFullSync{};
 	};
 }  // namespace Protocol

@@ -14,7 +14,6 @@ enum struct ProtocolType : uint8_t
 	UpdatedPlayers,      ///< 全プレイヤーの更新情報
 	UpdateEnemy,         ///< 敵の情報更新
 	UpdatedEnemies,      ///< 全ての敵の情報更新
-	UpdateEnemyState,    ///< 敵のステート情報更新
 	UpdatedEnemyStates,  ///< 全ての敵のステートの情報更新
 	UpdateDayTime,       ///< ゲーム内時間の更新要求
 	UpdatedDayTime,      ///< ゲーム内時間の同期情報

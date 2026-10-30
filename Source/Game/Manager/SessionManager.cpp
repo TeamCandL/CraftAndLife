@@ -210,49 +210,76 @@ bool SessionManager::IsExistEnemy(
 	return inSessionStatus_.enemiesStatus.count(_enemyId) != 0;
 }
 
-bool SessionManager::UpdateEnemyState(
-    int _enemyId,
-    const std::string& _stateName,
-    bool _value)
+bool SessionManager::UpdateEnemyStates(
+    SizedBuffer<int32_t>& _enemyIds,
+    std::string_view _stateNames,
+    SizedBuffer<uint8_t>& _values)
 {
-	auto& enemiesStatus = inSessionStatus_.enemiesStatus;
+	const size_t count = _enemyIds.Size();
 
-	// 指定した敵IDが存在しない場合は更新しない
-	auto enemyIt = enemiesStatus.find(_enemyId);
-
-	if (enemyIt == enemiesStatus.end())
+	if (count != _values.Size())
 	{
-		VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", _enemyId);
+		VCU_LOG("敵ステートのID数と値の数が一致しません");
 		return false;
 	}
 
-	// 指定した敵のステート情報を取得
-	auto& states = enemyIt->second.states;
+	size_t i     = 0;
+	bool updated = false;
 
-	// ステートがまだ登録されていない場合は追加
-	auto stateIt = states.find(_stateName);
-
-	if (stateIt == states.end())
+	for (auto&& lineRange : _stateNames | std::views::split('\n'))
 	{
-		states[_stateName] = _value;
+		std::string_view stateName{ lineRange.begin(), lineRange.end() };
 
-		VCU_LOG("敵ステート初回登録 ID={}, 名前={}, 値={}", _enemyId, _stateName, _value);
+		// CRLF対策
+		if (!stateName.empty() && stateName.back() == '\r')
+		{
+			stateName.remove_suffix(1);
+		}
 
-		return true;
+		if (stateName.empty() || i >= count)
+		{
+			VCU_LOG("敵ステート名が不正、またはデータ数が一致しません");
+			return false;
+		}
+
+		const int enemyId = _enemyIds[i];
+		const bool value  = _values[i] != 0;
+
+		auto enemyIt = inSessionStatus_.enemiesStatus.find(enemyId);
+
+		if (enemyIt == inSessionStatus_.enemiesStatus.end())
+		{
+			VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", enemyId);
+			++i;
+			continue;
+		}
+
+		auto& states = enemyIt->second.states;
+		const std::string key{ stateName };
+
+		auto stateIt = states.find(key);
+
+		if (stateIt == states.end())
+		{
+			states.emplace(key, value);
+			updated = true;
+		}
+		else if (stateIt->second != value)
+		{
+			stateIt->second = value;
+			updated         = true;
+		}
+
+		++i;
 	}
 
-	// 前回と値が同じなら更新しない
-	if (stateIt->second == _value)
+	if (i != count)
 	{
+		VCU_LOG("敵ステート名と敵IDの数が一致しません");
 		return false;
 	}
 
-	// 値が変更された場合のみ更新
-	stateIt->second = _value;
-
-	VCU_LOG("敵ステート更新 ID={}, 名前={}, 値={}", _enemyId, _stateName, _value);
-
-	return true;
+	return updated;
 }
 
 void SessionManager::UpdateDayTime(

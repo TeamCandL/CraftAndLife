@@ -157,5 +157,5 @@ void Enemy::SetWanderingCheckPoint(
 void Enemy::RegisterStates(
     EnemyStateRegistry& registry) const
 {
-	registry.Register({ { "alive", std::cref(alive) } });
+	registry.Register("alive", alive);
 }
