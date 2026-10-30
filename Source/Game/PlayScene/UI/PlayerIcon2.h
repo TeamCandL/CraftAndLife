@@ -11,6 +11,8 @@ struct PlayerIcon2Data
 
 	// ミニマップの中心座標
 	Vec2 miniMapCenterPosition{ 1746, 174 };
+
+	bool isActivePlayer{ false };
 };
 
 struct PlayerIcon2 : ObjectBase<PlayerIcon2Data>
@@ -22,4 +24,10 @@ struct PlayerIcon2 : ObjectBase<PlayerIcon2Data>
 
 	// ミニマップ上の位置を設定
 	void SetPosition(const float _angle, const float _radius);
+
+	void SetActivePlayer(
+	    const bool _isActivePlayer)
+	{
+		isActivePlayer = _isActivePlayer;
+	}
 };
