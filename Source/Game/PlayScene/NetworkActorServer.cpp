@@ -56,6 +56,15 @@ void NetworkActorServer::Update()
 	}
 }
 
+void NetworkActorServer::CreateEnemy(
+    EnemyType type)
+{
+	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
+
+	// 生成した敵のステートを登録
+	EnemyStateRegistries(objEnemy);
+}
+
 void NetworkActorServer::CreateEnemies()
 {
 	if (IsInitialized())
@@ -63,14 +72,17 @@ void NetworkActorServer::CreateEnemies()
 		return;
 	}
 
-	// 敵管理オブジェクトを生成して保存
+	// 敵管理オブジェクトを生成
 	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
 
-	// 敵を生成
-	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController);
-
-	// 敵のステート登録システムを生成
-	EnemyStateRegistries(objEnemy);
+	// 敵を生成（同じ種類も複数生成可能）
+	CreateEnemy(EnemyType::Skeleton);
+	CreateEnemy(EnemyType::Skeleton);
+	CreateEnemy(EnemyType::Spider);
+	CreateEnemy(EnemyType::Spider);
+	CreateEnemy(EnemyType::BossSkeleton);
+	CreateEnemy(EnemyType::Bat);
+	CreateEnemy(EnemyType::Dragon);
 
 	// 生成済みにする
 	Data().isInitialized = true;
