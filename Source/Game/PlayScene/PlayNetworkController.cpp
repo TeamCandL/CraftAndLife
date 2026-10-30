@@ -7,6 +7,7 @@
 #include <Game/Network/Protocols/UpdatedPlayers.h>
 #include <Game/Network/Protocols/UpdateEnemy.h>
 #include <Game/Network/Protocols/UpdatedEnemies.h>
+#include <Game/Network/Protocols/UpdateEnemyState.h>
 #include <Game/Network/Protocols/UpdatedEnemyStates.h>
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
@@ -188,69 +189,30 @@ void PlayNetworkController::Update()
 				networkSessionManager.Send(enemyMessage);
 			}
 
-			/// 敵ステート送信
+			/// 敵ステート送信処理
 			const bool fullSync = actorServer.IsFullSync();
-
-			// 更新履歴を確定するため、変更可能な参照で取得
-			auto& registries = actorServer.GetEnemyStateRegistries();
-
-			struct StatePacket
-			{
-				std::vector<int32_t> enemyIds;
-				std::vector<bool> values;
-			};
-
-			// ステート名ごとに送信データをまとめる
-			std::unordered_map<std::string, StatePacket> statePackets;
+			auto& registries    = actorServer.GetEnemyStateRegistries();
 
 			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
 			{
 				if (!registries[enemyId].has_value())
 					continue;
 
-				const auto changes = registries[enemyId]->GetStates(fullSync);
+				auto& registry     = *registries[enemyId];
+				const auto changes = registry.GetStates(fullSync);
 
 				for (const auto& change : changes)
 				{
-					auto& packet = statePackets[change.name];
+					Protocol::UpdateEnemyState message{};
 
-					packet.enemyIds.push_back(static_cast<int32_t>(enemyId));
-					packet.values.push_back(change.value);
-				}
-			}
+					message.enemyId   = static_cast<int32_t>(enemyId);
+					message.stateName = change.name;
+					message.value     = change.value;
 
-			// ステート名ごとに送信
-			for (const auto& [stateName, packet] : statePackets)
-			{
-				Protocol::UpdatedEnemyStates message{};
-
-				message.stateName  = stateName;
-				message.isFullSync = fullSync;
-
-				message.enemyStateIds = SizedBuffer<int32_t>(packet.enemyIds.begin(), packet.enemyIds.end());
-
-				// vector<bool> は特殊化されているので、
-				// bool を1要素ずつ SizedBuffer に代入する
-				message.values.Resize(packet.values.size());
-
-				for (size_t i = 0; i < packet.values.size(); ++i)
-				{
-					message.values[i] = packet.values[i];
+					networkSessionManager.Send(message);
 				}
 
-				networkSessionManager.Send(message);
-
-				VCU_LOG("敵ステート送信 名前={}, 件数={}, 全同期={}", stateName, packet.enemyIds.size(), fullSync);
-			}
-
-			// 送信済みのステート変更を確定
-			for (auto& registry : registries)
-			{
-				if (!registry.has_value())
-					continue;
-
-				const auto changes = registry->GetStates(fullSync);
-				registry->CommitChanges(changes);
+				registry.CommitChanges(changes);
 			}
 
 			if (fullSync)
