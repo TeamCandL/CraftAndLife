@@ -14,6 +14,9 @@ struct PlayerHandData
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
 
 	Component<Transform> transform{};
+	Component<TransformAnimator> transformAnimator{};
+
+	bool isActing{ false };
 
 	ItemId haveItemId{ 1 };
 };
@@ -29,6 +32,10 @@ struct PlayerHand : ObjectBase<PlayerHandData>
 	void Update() override;
 	/// @brief 描画処理
 	void Draw() override;
+
+	/// @brief アクション状態を設定する
+	/// @param _isAction trueでアクション、falseでアクション強制キャンセル
+	void SetAction(const bool _isAction);
 
 	/// @brief アイテムをセットする
 	/// @param アイテムのId

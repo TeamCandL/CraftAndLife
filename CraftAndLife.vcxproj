@@ -497,6 +497,9 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\Name3.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Name4.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\OtherInfo.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon2.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon3.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon4.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\TaskBackground.cpp" />
@@ -504,6 +507,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalPlayerInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalUIInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.cpp" />
+    <ClCompile Include="Source\Game\System\AnimationSystem.cpp" />
     <ClCompile Include="Source\Game\System\AudioSystem.cpp" />
     <ClCompile Include="Source\Game\System\AudioSystem\AudioPlayer.cpp" />
     <ClCompile Include="Source\Game\System\CameraSystem.cpp" />
@@ -713,6 +717,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerHand.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\HelthState.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\IPlayerJobController.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerAnimType.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerArcher.h" />
@@ -742,9 +747,13 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\Name3.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Name4.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon2.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon3.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon4.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
+    <ClInclude Include="Source\Game\System\AnimationSystem.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />
     <ClInclude Include="Source\Game\Common\UI\Button.h" />

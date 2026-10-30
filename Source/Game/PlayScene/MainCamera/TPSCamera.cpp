@@ -143,6 +143,7 @@ void TPSCamera::UpdatePositionFromTarget(
 
 	// 最終的なカメラ位置をセット
 	camera.transform.position = finalCameraPosition;
+	_data.position            = finalCameraPosition;
 
 	if (!objDebugPoint.IsEmpty())
 	{
