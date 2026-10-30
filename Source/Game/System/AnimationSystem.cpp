@@ -12,6 +12,7 @@ void AnimationSystem::Update()
 	view.ForEach(
 	    [DELTA_TIME](IObject& _object, Transform& _transform, TransformAnimator& _animator)
 	    {
+		    _animator.onFinished = false;
 		    while (true)
 		    {
 			    auto itr = _animator.animations.find(_animator.playAnimation);
@@ -54,7 +55,7 @@ void AnimationSystem::Update()
 					    _animator.playToLoop = false;  // ループしたためフラグを降ろしておく
 					    // ループ用に時間を調整して戻す
 					    _animator.playingTimeSec = std::fmodf(_animator.playingTimeSec, animKeys.back().timeAtSec);
-					    VCU_LOG("B");
+					    _animator.onFinished     = true;
 					    continue;
 				    }
 				    else
@@ -63,7 +64,6 @@ void AnimationSystem::Update()
 					    _transform.rotation      = animKeys.back().rotation;
 					    _transform.scale         = animKeys.back().scale;
 					    _animator.playingTimeSec = animKeys.back().timeAtSec;
-					    VCU_LOG("C");
 					    return;
 				    }
 			    }

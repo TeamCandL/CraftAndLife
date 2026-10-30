@@ -84,13 +84,16 @@ void PlayerHand::Update()
 	}
 
 	ImGui::End();
-
 	if (isActing)
 	{
-		// Get<ItemSystem>();
-		if (transformAnimator.isFinished)
+		if (transformAnimator.onFinished)
 		{
 			VCU_LOG("アクション！");
+		}
+
+		if (transformAnimator.isFinished)
+		{
+			isActing = false;
 		}
 	}
 	else
@@ -99,6 +102,7 @@ void PlayerHand::Update()
 		{
 			transformAnimator.playAnimation  = "idle";
 			transformAnimator.playingTimeSec = 0.0f;
+			isActing                         = false;
 		}
 	}
 }
