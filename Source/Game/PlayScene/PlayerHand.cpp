@@ -17,15 +17,15 @@ void PlayerHand::Start()
 		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
 		                       Quaternion::FromEuler(Vec3{ 0.681000f, 0.000000f, 0.000000f }),
 		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
-		TransformAnimationKey{ 0.1f,
+		TransformAnimationKey{ 0.04f,
 		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
 		                       Quaternion::FromEuler(Vec3{ 1.273991f, -1.414000f, 0.000000f }),
 		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
-		TransformAnimationKey{ 0.2f,
+		TransformAnimationKey{ 0.1f,
 		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
 		                       Quaternion::FromEuler(Vec3{ -0.959000f, -0.454001f, -0.140001f }),
 		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
-		TransformAnimationKey{ 0.3f,
+		TransformAnimationKey{ 0.2f,
 		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
 		                       Quaternion::FromEuler(Vec3{ 0.681000f, 0.000000f, 0.000000f }),
 		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
@@ -84,6 +84,23 @@ void PlayerHand::Update()
 	}
 
 	ImGui::End();
+
+	if (isActing)
+	{
+		// Get<ItemSystem>();
+		if (transformAnimator.isFinished)
+		{
+			VCU_LOG("アクション！");
+		}
+	}
+	else
+	{
+		if (transformAnimator.isFinished)
+		{
+			transformAnimator.playAnimation  = "idle";
+			transformAnimator.playingTimeSec = 0.0f;
+		}
+	}
 }
 
 void PlayerHand::Draw()
@@ -122,9 +139,18 @@ void PlayerHand::SetAction(
 			transformAnimator.playingTimeSec = 0.0f;
 			transformAnimator.playAnimation  = "action";
 		}
+
+		transformAnimator.playToLoop = true;  // 長押し中ならループ追加を要請
 	}
 	else
 	{
+		if (isActing)
+		{
+			isActing = false;
+			// transformAnimator.playingTimeSec = 0.0f;
+			// transformAnimator.playAnimation  = "idle";
+			transformAnimator.playToLoop = false;
+		}
 	}
 }
 

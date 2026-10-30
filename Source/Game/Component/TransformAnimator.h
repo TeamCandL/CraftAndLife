@@ -25,4 +25,5 @@ struct TransformAnimator : ComponentBase<TransformAnimator>
 	std::string playAnimation{};                                                       ///< 再生するアニメーション名
 	float playingTimeSec{};                                                            ///< 再生時間
 	bool playToLoop{};  ///< 次もループ再生して！とお願いするフラグ
+	bool isFinished{};  ///< 再生が終了しているか true / false
 };

@@ -75,7 +75,7 @@ void Player::Update()
 		DeadAnim();
 	}
 
-#if 1
+#if 0
 	// HPゲージ動作確認用：1秒ごとに10ダメージ
 	hpTestTimer += Get<DeltaTime>();
 
@@ -367,6 +367,12 @@ void Player::MoveBody()
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 		VCU_LOG("objPawn");
+	}
+
+	if (pPlayerInput->IsAction())
+	{
+		// アクション有効にする
+		Get<PlayerHand>(objPlayerHand).SetAction(true);
 	}
 
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);

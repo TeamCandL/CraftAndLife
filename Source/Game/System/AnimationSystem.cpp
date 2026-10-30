@@ -18,6 +18,7 @@ void AnimationSystem::Update()
 
 			    if (itr == _animator.animations.end())
 			    {
+				    VCU_ASSERT(false && "存在しないアニメーション");
 				    return;  // 再生中のアニメーションが無いなら無視
 			    }
 
@@ -30,36 +31,45 @@ void AnimationSystem::Update()
 			        animKeys.end(),
 			        [&_animator](const TransformAnimationKey& _key)
 			        {
-				        return _animator.playingTimeSec > _key.timeAtSec;
+				        return _animator.playingTimeSec < _key.timeAtSec;
 			        });
 
 			    if (itrEnd == animKeys.begin())
 			    {
 				    // これ以上後ろがないため開始キーに合わせる
-				    _transform.position = itrEnd->position;
-				    _transform.rotation = itrEnd->rotation;
-				    _transform.scale    = itrEnd->scale;
+				    _transform.position  = itrEnd->position;
+				    _transform.rotation  = itrEnd->rotation;
+				    _transform.scale     = itrEnd->scale;
+				    _animator.isFinished = false;
 				    return;
 			    }
 
 			    if (itrEnd == animKeys.end())
 			    {
 				    // 番兵さんに当たっている
+				    _animator.isFinished = true;  // 次ループに入る入らない関係なく終了フラグは立てる。
 
 				    if (_animator.playToLoop)
 				    {
 					    _animator.playToLoop = false;  // ループしたためフラグを降ろしておく
 					    // ループ用に時間を調整して戻す
 					    _animator.playingTimeSec = std::fmodf(_animator.playingTimeSec, animKeys.back().timeAtSec);
+					    VCU_LOG("B");
 					    continue;
 				    }
 				    else
 				    {
-					    _transform.position = animKeys.back().position;
-					    _transform.rotation = animKeys.back().rotation;
-					    _transform.scale    = animKeys.back().scale;
+					    _transform.position      = animKeys.back().position;
+					    _transform.rotation      = animKeys.back().rotation;
+					    _transform.scale         = animKeys.back().scale;
+					    _animator.playingTimeSec = animKeys.back().timeAtSec;
+					    VCU_LOG("C");
 					    return;
 				    }
+			    }
+			    else
+			    {
+				    _animator.isFinished = false;
 			    }
 
 			    auto itrBegin = itrEnd - 1;
