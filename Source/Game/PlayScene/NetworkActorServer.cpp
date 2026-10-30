@@ -18,6 +18,10 @@ void NetworkActorServer::Start()
 
 	// 敵を生成
 	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
+	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::BossSkeleton));
+	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Spider));
+	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Bat));
+	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Dragon));
 
 	// 生成済みにする
 	Data().isInitialized = true;
