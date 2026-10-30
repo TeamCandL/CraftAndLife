@@ -504,6 +504,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalPlayerInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalUIInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.cpp" />
+    <ClCompile Include="Source\Game\System\AnimationSystem.cpp" />
     <ClCompile Include="Source\Game\System\AudioSystem.cpp" />
     <ClCompile Include="Source\Game\System\AudioSystem\AudioPlayer.cpp" />
     <ClCompile Include="Source\Game\System\CameraSystem.cpp" />
@@ -711,6 +712,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerHand.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\HelthState.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\IPlayerJobController.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerAnimType.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerArcher.h" />
@@ -743,6 +745,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
+    <ClInclude Include="Source\Game\System\AnimationSystem.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />
     <ClInclude Include="Source\Game\Common\UI\Button.h" />

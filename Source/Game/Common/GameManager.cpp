@@ -12,6 +12,7 @@
 #include "../System/RaycastSystem.h"
 #include "../System/ShaderTimeSystem.h"
 #include "../System/UITranslationSystem.h"
+#include "../System/AnimationSystem.h"
 
 #include <Game/Common/Canvas.h>
 
@@ -34,6 +35,7 @@ void GameManager::Start()
 	GetScene().Instantiate<CursorSystem>();
 	GetScene().Instantiate<AudioSystem>();
 	// GetScene().Instantiate<DiscordSystem>();
+	GetScene().Instantiate<AnimationSystem>();
 	GetScene().Instantiate<TranslationSystem>();
 	GetScene().Instantiate<PhysicsSystem>();
 	GetScene().Instantiate<RaycastSystem>();

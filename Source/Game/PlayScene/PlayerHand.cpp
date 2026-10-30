@@ -5,6 +5,33 @@
 void PlayerHand::Start()
 {
 	transform.scale = Vec3::One() * 0.005f;
+
+	transformAnimator.animations["idle"] = { TransformAnimationKey{
+		0.0f,
+		Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		Quaternion::FromEuler(Vec3{ 0.681000f, 0.000000f, 0.000000f }),
+		Vec3{ 0.005000f, 0.005000f, 0.005000f } } };
+
+	transformAnimator.animations["action"] = {
+		TransformAnimationKey{ 0.0f,
+		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.681000f, 0.000000f, 0.000000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.1f,
+		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 1.273991f, -1.414000f, 0.000000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.2f,
+		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ -0.959000f, -0.454001f, -0.140001f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.3f,
+		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.681000f, 0.000000f, 0.000000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+	};
+
+	transformAnimator.playAnimation = "idle";
 }
 
 void PlayerHand::Update()
@@ -23,10 +50,11 @@ void PlayerHand::Update()
 		if (ofs)
 		{
 			ofs << std::format(
-			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:3.2f}f, {}f, {}f }}, Quaternion::From(Vec3{{ {}f, {}f, "
-			           "{}f }}), Vec3{{ "
-			           "{}f, {}f, "
-			           "{}f }} }}",
+			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:f}f, {:f}f, {:f}f }}, Quaternion::FromEuler(Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }}), Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }} }}",
 			           transform.position.x,
 			           transform.position.y,
 			           transform.position.z,
@@ -62,6 +90,11 @@ void PlayerHand::Draw()
 {
 	Resource<Model> hModel = Get<ItemSystem>().GetModel(haveItemId);
 
+	if (hModel.IsNull())
+	{
+		return;
+	}
+
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
@@ -76,4 +109,27 @@ void PlayerHand::Draw()
 		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
 		Get<Dx11Manager>().Draw();
 	}
+}
+
+void PlayerHand::SetAction(
+    const bool _isAction)
+{
+	if (_isAction)
+	{
+		if (!isActing)
+		{
+			isActing                         = true;
+			transformAnimator.playingTimeSec = 0.0f;
+			transformAnimator.playAnimation  = "action";
+		}
+	}
+	else
+	{
+	}
+}
+
+void PlayerHand::SetItem(
+    const ItemId _itemId)
+{
+	haveItemId = _itemId;
 }
