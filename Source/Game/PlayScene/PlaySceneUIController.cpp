@@ -20,6 +20,9 @@
 #include "UI/BossGauge.h"
 #include "UI/BossName.h"
 #include "UI/BossHp.h"
+#include "UI/PlayerIcon2.h"
+#include "UI/PlayerIcon3.h"
+#include "UI/PlayerIcon4.h"
 
 void PlaySceneUIController::Start()
 {
@@ -43,4 +46,7 @@ void PlaySceneUIController::Start()
 	objBossGauge      = GetScene().Instantiate<BossGauge>();
 	objBossName       = GetScene().Instantiate<BossName>();
 	objBossHp         = GetScene().Instantiate<BossHp>();
+	objPlayerIcon2    = GetScene().Instantiate<PlayerIcon2>();
+	objPlayerIcon3    = GetScene().Instantiate<PlayerIcon3>();
+	objPlayerIcon4    = GetScene().Instantiate<PlayerIcon4>();
 }
