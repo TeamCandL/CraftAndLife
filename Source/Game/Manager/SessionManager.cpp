@@ -210,6 +210,78 @@ bool SessionManager::IsExistEnemy(
 	return inSessionStatus_.enemiesStatus.count(_enemyId) != 0;
 }
 
+bool SessionManager::UpdateEnemyStates(
+    SizedBuffer<int32_t>& _enemyIds,
+    std::string_view _stateNames,
+    SizedBuffer<uint8_t>& _values)
+{
+	const size_t count = _enemyIds.Size();
+
+	if (count != _values.Size())
+	{
+		VCU_LOG("敵ステートのID数と値の数が一致しません");
+		return false;
+	}
+
+	size_t i     = 0;
+	bool updated = false;
+
+	for (auto&& lineRange : _stateNames | std::views::split('\n'))
+	{
+		std::string_view stateName{ lineRange.begin(), lineRange.end() };
+
+		// CRLF対策
+		if (!stateName.empty() && stateName.back() == '\r')
+		{
+			stateName.remove_suffix(1);
+		}
+
+		if (stateName.empty() || i >= count)
+		{
+			VCU_LOG("敵ステート名が不正、またはデータ数が一致しません");
+			return false;
+		}
+
+		const int enemyId = _enemyIds[i];
+		const bool value  = _values[i] != 0;
+
+		auto enemyIt = inSessionStatus_.enemiesStatus.find(enemyId);
+
+		if (enemyIt == inSessionStatus_.enemiesStatus.end())
+		{
+			VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", enemyId);
+			++i;
+			continue;
+		}
+
+		auto& states = enemyIt->second.states;
+		const std::string key{ stateName };
+
+		auto stateIt = states.find(key);
+
+		if (stateIt == states.end())
+		{
+			states.emplace(key, value);
+			updated = true;
+		}
+		else if (stateIt->second != value)
+		{
+			stateIt->second = value;
+			updated         = true;
+		}
+
+		++i;
+	}
+
+	if (i != count)
+	{
+		VCU_LOG("敵ステート名と敵IDの数が一致しません");
+		return false;
+	}
+
+	return updated;
+}
+
 void SessionManager::UpdateDayTime(
     float _currentTimeSec)
 {

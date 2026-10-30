@@ -36,8 +36,8 @@ namespace Protocol
 
 		// 以下通信メンバーたち
 
-		SizedBuffer<int> enemyIds{};
-		SizedBuffer<int> enemyTypes{};
+		SizedBuffer<int32_t> enemyIds{};
+		SizedBuffer<int32_t> enemyTypes{};
 		SizedBuffer<float> positions{};
 		SizedBuffer<float> rotations{};
 
