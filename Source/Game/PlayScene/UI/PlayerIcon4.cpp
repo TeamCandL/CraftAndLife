@@ -3,7 +3,17 @@
 
 void PlayerIcon4::Start() {}
 
-void PlayerIcon4::Update() {}
+void PlayerIcon4::Update()
+{
+	if (isActivePlayer)
+	{
+		transform.scale.x = 16;
+	}
+	else
+	{
+		transform.scale.x = 0;
+	}
+}
 
 void PlayerIcon4::SetPosition(
     const float _angle,

@@ -10,6 +10,8 @@ struct PlayerIcon3Data
 	Component<UIImage> image{ texture };
 
 	Vec2 miniMapCenterPosition{ 1746, 174 };
+
+	bool isActivePlayer{ false };
 };
 
 struct PlayerIcon3 : ObjectBase<PlayerIcon3Data>
@@ -20,4 +22,10 @@ struct PlayerIcon3 : ObjectBase<PlayerIcon3Data>
 	void Update() override;
 
 	void SetPosition(const float _angle, const float _radius);
+
+	void SetActivePlayer(
+	    const bool _isActivePlayer)
+	{
+		isActivePlayer = _isActivePlayer;
+	}
 };
