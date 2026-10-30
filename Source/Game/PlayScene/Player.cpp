@@ -81,6 +81,10 @@ void Player::Update()
 	{
 		MoveBody();
 	}
+	else if (helthState == HelthState_Dead)
+	{
+		DeadAnim();
+	}
 
 	// HPゲージ動作確認用：1秒ごとに10ダメージ
 	hpTestTimer += Get<DeltaTime>();
@@ -379,6 +383,30 @@ void Player::MoveBody()
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 		// objPick
+	}
+}
+
+void Player::DeadAnim()
+{
+	if (liveStatus.dieAnimTimeSec > 0.0f)
+	{
+		liveStatus.dieAnimTimeSec -= Get<DeltaTime>();
+
+		animIndex = PlayerAnimType_Die;
+		animSpeed = 1.0f;
+
+		if (liveStatus.dieAnimTimeSec <= 0.0f)
+		{
+			liveStatus.dieAnimTimeSec = 0.0f;
+
+			animIndex = PlayerAnimType_Die;
+			animSpeed = 0.0f;
+		}
+	}
+	else
+	{
+		animIndex = PlayerAnimType_Die;
+		animSpeed = 0.0f;
 	}
 }
 
