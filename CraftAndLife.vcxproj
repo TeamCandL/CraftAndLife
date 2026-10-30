@@ -528,7 +528,9 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\TestScene\SceneTester.cpp" />
     <ClCompile Include="Source\Game\TestScene\TestScene.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleLogo.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitleLogoStartGuide.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleNetworkController.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitlePageContlroller.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordInputPanel.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordJoinButton.cpp" />
@@ -852,7 +854,9 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TestScene\SceneTester.h" />
     <ClInclude Include="Source\Game\TestScene\TestScene.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleLogo.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitleLogoStartGuide.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleNetworkController.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitlePageContlroller.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleScene.h" />
     <ClInclude Include="Source\Game\TitleScene\WordInputPanel.h" />
     <ClInclude Include="Source\Game\TitleScene\WordJoinButton.h" />

@@ -11,7 +11,7 @@ struct TitleLogoData
 		                         FontAlignment_Center) };  // ここが配置(LeftとかRightとかTopとかRightBottomとかあるよ
 
 	// 1つめに座標のVec2, 2つ目にスケールのVec2を入れる
-	Component<UITransform> transform{ Vec2{ 192, 237 }, Vec2{ 459, 104 } };
+	Component<UITransform> transform{ Vec2{ 350, 141 }, Vec2{ 459, 104 } };
 	Component<UIText> text{ font, Color::WHITE, "Craft&Life" };  // 1つ目がフォントリソース、２つ目がテキストの色
 };
 
