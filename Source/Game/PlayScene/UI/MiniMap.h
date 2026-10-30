@@ -10,22 +10,27 @@ struct MiniMapData
 		objPlayer                = _objPlayer;
 		objOtherPlayerController = _objOtherPlayerController;
 	}
-	Resource<Texture> texture{ "Image/UI/mini_map.png" };  ///< ミニマップの背景画像
 
-	Component<UITransform> transform{ Vec2{ 1572, 0 }, Vec2{ 348, 348 }, UILayerOrder{}.WithUser(0) };  ///< UI座標系
-	Component<UIImage> image{ texture };  ///< 画像テクスチャ
+	Resource<Texture> texture{ "Image/UI/mini_map.png" };
+
+	Component<UITransform> transform{ Vec2{ 1572, 0 }, Vec2{ 348, 348 }, UILayerOrder{}.WithUser(0) };
+
+	Component<UIImage> image{ texture };
 
 	GameObject objPlayer{};
 	GameObject objOtherPlayerController{};
+
 	GameObject objPlayerIcon2{};
-	std::vector<GameObject> points{};  ///< ミニマップに表示するマーク
+	GameObject objPlayerIcon3{};
+	GameObject objPlayerIcon4{};
+
+	std::vector<GameObject> points{};
 };
 
 struct MiniMap : ObjectBase<MiniMapData>
 {
 	using ObjectBase<MiniMapData>::ObjectBase;
-	/// @brief 開始処理
+
 	void Start() override;
-	/// @brief 更新処理
 	void Update() override;
 };

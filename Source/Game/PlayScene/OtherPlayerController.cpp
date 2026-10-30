@@ -48,3 +48,19 @@ GameObject OtherPlayerController::GetFirstOtherPlayer() const
 
 	return nameToObjOtherPlayer.begin()->second;
 }
+
+// 仲間プレイヤー全員を取得
+std::vector<GameObject> OtherPlayerController::GetOtherPlayers() const
+{
+	std::vector<GameObject> players{};
+
+	for (const auto& [name, obj] : nameToObjOtherPlayer)
+	{
+		if (!obj.IsEmpty())
+		{
+			players.push_back(obj);
+		}
+	}
+
+	return players;
+}

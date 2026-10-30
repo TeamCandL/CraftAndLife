@@ -16,4 +16,7 @@ struct OtherPlayerController : ObjectBase<OtherPlayerControllerData>
 
 	// 仲間プレイヤーを1人取得
 	GameObject GetFirstOtherPlayer() const;
+
+	// 仲間プレイヤー全員を取得
+	std::vector<GameObject> GetOtherPlayers() const;
 };
