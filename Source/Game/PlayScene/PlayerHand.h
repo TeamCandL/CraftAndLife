@@ -16,9 +16,10 @@ struct PlayerHandData
 	Component<Transform> transform{};
 	Component<TransformAnimator> transformAnimator{};
 
-	bool isActing{ false };
+	bool isActing{ false };    ///< アイテムを振っている最中か
+	bool isOnAction{ false };  ///< アイテムのアイテムのアクションがあった瞬間か true / false
 
-	ItemId haveItemId{ 1 };
+	ItemId haveItemId{ 2 };  ///< 持っているアイテムのId
 };
 
 /// @brief プレイヤーの手持ち
@@ -40,4 +41,16 @@ struct PlayerHand : ObjectBase<PlayerHandData>
 	/// @brief アイテムをセットする
 	/// @param アイテムのId
 	void SetItem(const ItemId _itemId);
+
+	bool IsActing() const
+	{
+		return isActing;
+	}
+
+	/// @brief アイテムのアクションがあった瞬間か
+	/// @return アイテムのアクションがあった瞬間 true / false
+	bool IsOnAction() const
+	{
+		return isOnAction;
+	}
 };
