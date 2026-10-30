@@ -28,8 +28,6 @@ struct PlayerData
 	};
 	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
-	Component<TransformAnimator> transformAnimator{};
-
 	Component<Transform> transform{};
 	Component<RigidBody> rigidBody{};
 	Component<StaticOBB> obb{};

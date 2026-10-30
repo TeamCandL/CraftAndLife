@@ -18,12 +18,6 @@
 
 void Player::Start()
 {
-	transformAnimator.animations["idle"] = { TransformAnimationKey{
-		0.0f,
-		Vec3{ 0.003000f, 0.002000f, 0.001000f },
-		Quaternion::FromEuler(Vec3{ 0.681000f, 0.000000f, 0.000000f }),
-		Vec3{ 0.005000f, 0.005000f, 0.005000f } } };
-
 	obb.isTrigger = true;
 
 	transform.scale = Vec3::One() * 200.0f;
