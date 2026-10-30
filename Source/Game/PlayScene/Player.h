@@ -38,6 +38,7 @@ struct PlayerData
 	GameObject objMainCamera{};        ///< プレイヤーのカメラ
 	GameObject objPlayerController{};  ///< プレイヤーの操作
 	GameObject objJobController{};     ///< 役職固有の操作
+	GameObject objPlayerHand{};        ///< プレイヤーの手持ち
 
 	PlayerRoleType role{ PlayerRoleType_Max };
 
@@ -63,12 +64,12 @@ struct PlayerData
 	const float OBB_SCALE{ 0.005f };              ///< OBBのスケール
 
 	// ジャンプ用パラメータ
-	float jumpVelocity{ 0.0f };         // 上下方向の速度
-	const float JUMP_POWER{ 12.0f };    // ジャンプ初速
-	const float GRAVITY{ 15.0f };       // 重力
-	const float GROUND_HEIGHT{ 0.0f };  // 地面の高さ
-	const float JUMP_CUT_RATE{ 0.5f };  // ボタンを離したときの速度倍率
-	bool isJumping{ false };            // ジャンプ中かどうか
+	float jumpVelocity{ 0.0f };         ///< 上下方向の速度
+	const float JUMP_POWER{ 12.0f };    ///< ジャンプ初速
+	const float GRAVITY{ 15.0f };       ///< 重力
+	const float GROUND_HEIGHT{ 0.0f };  ///< 地面の高さ
+	const float JUMP_CUT_RATE{ 0.5f };  ///< ボタンを離したときの速度倍率
+	bool isJumping{ false };            ///< ジャンプ中かどうか
 
 	// HP減少テスト用
 	float hpTestTimer{ 0.0f };
@@ -91,6 +92,10 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 	void AttackCollider();
 
 	void Damaged(int32_t damage);
+
+	/// @brief プレイヤーの役職を設定する
+	/// @param _jobType 役職の種類
+	void SetJob(const PlayerJobType _jobType);
 
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;

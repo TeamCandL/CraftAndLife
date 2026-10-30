@@ -19,6 +19,7 @@
 #include "Harvestable.h"
 #include "UI/MyGauge.h"
 #include "NetworkActorServer.h"
+#include "UI/MiniMap.h"
 
 void PlayScene::Start()
 {
@@ -39,6 +40,7 @@ void PlayScene::Start()
 	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
+	// ミニマップを生成してプレイヤーを渡す
 	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer, objDayController);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer);
