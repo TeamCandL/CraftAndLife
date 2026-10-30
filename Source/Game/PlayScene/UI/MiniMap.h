@@ -4,9 +4,11 @@
 struct MiniMapData
 {
 	MiniMapData(
-	    GameObject _objPlayer)
+	    GameObject _objPlayer,
+	    GameObject _objOtherPlayerController)
 	{
-		objPlayer = _objPlayer;
+		objPlayer                = _objPlayer;
+		objOtherPlayerController = _objOtherPlayerController;
 	}
 	Resource<Texture> texture{ "Image/UI/mini_map.png" };  ///< ミニマップの背景画像
 
@@ -14,6 +16,8 @@ struct MiniMapData
 	Component<UIImage> image{ texture };  ///< 画像テクスチャ
 
 	GameObject objPlayer{};
+	GameObject objOtherPlayerController{};
+	GameObject objPlayerIcon2{};
 	std::vector<GameObject> points{};  ///< ミニマップに表示するマーク
 };
 

@@ -38,3 +38,13 @@ void OtherPlayerController::Update()
 		    }
 	    });
 }
+
+GameObject OtherPlayerController::GetFirstOtherPlayer() const
+{
+	if (nameToObjOtherPlayer.empty())
+	{
+		return {};
+	}
+
+	return nameToObjOtherPlayer.begin()->second;
+}

@@ -13,4 +13,7 @@ struct OtherPlayerController : ObjectBase<OtherPlayerControllerData>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+
+	// 仲間プレイヤーを1人取得
+	GameObject GetFirstOtherPlayer() const;
 };
