@@ -18,6 +18,8 @@ struct InSessionStatus
 		Vec3 position{ 0, 10, 0 };  ///< 座標
 		Vec2 rotation{ 0, 0 };      ///< 角度データ
 		bool updatedFlag{ false };  ///< 更新時のフラグ false / true 切り替え用
+
+		std::unordered_map<std::string, bool> states{};
 	};
 
 	std::string joinRoomName{};              ///< 参加する部屋名

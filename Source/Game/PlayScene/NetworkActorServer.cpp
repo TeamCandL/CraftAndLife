@@ -13,11 +13,16 @@ void NetworkActorServer::Start()
 		return;
 	}
 
+	CreateEnemies();
 	// 敵管理オブジェクトを生成して保存
 	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
 
 	// 敵を生成
 	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
+	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::BossSkeleton));
+	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Spider));
+	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Bat));
+	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Dragon));
 
 	// 生成済みにする
 	Data().isInitialized = true;
@@ -31,17 +36,14 @@ void NetworkActorServer::Update()
 	// ホストになったとき、まだ敵を生成していなければ生成
 	if (IsHost())
 	{
-		if (!IsInitialized())
+		CreateEnemies();
+
+		Data().enemyStateSyncTimer -= Get<DeltaTime>();
+
+		if (Data().enemyStateSyncTimer <= 0.0f)
 		{
-			Data().objEnemyController = GetScene().Instantiate<EnemyController>();
-
-			GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
-
-			GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Spider));
-
-			GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Dragon));
-
-			Data().isInitialized = true;
+			Data().enemyStateSyncTimer += Data().enemyStateSyncTime;
+			Data().isFullSync = true;
 		}
 	}
 	else
@@ -50,6 +52,62 @@ void NetworkActorServer::Update()
 		if (Data().objOtherEnemyController.IsEmpty())
 		{
 			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>();
+		}
+	}
+}
+
+void NetworkActorServer::CreateEnemy(
+    EnemyType type)
+{
+	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
+
+	// 生成した敵のステートを登録
+	EnemyStateRegistries(objEnemy);
+}
+
+void NetworkActorServer::CreateEnemies()
+{
+	if (IsInitialized())
+	{
+		return;
+	}
+
+	// 敵管理オブジェクトを生成
+	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+
+	// 敵を生成（同じ種類も複数生成可能）
+	CreateEnemy(EnemyType::Skeleton);
+	CreateEnemy(EnemyType::Skeleton);
+	CreateEnemy(EnemyType::Spider);
+	CreateEnemy(EnemyType::Spider);
+	CreateEnemy(EnemyType::BossSkeleton);
+	CreateEnemy(EnemyType::Bat);
+	CreateEnemy(EnemyType::Dragon);
+
+	// 生成済みにする
+	Data().isInitialized = true;
+}
+
+void NetworkActorServer::EnemyStateRegistries(
+    GameObject objEnemy)
+{
+	auto& enemy           = Get<Enemy>(objEnemy);
+	const int32_t enemyId = Get<Enemy>(objEnemy).GetID();
+
+	if (enemyId >= 0)
+	{
+		auto& registries   = Data().enemyStateRegistries;
+		const size_t index = static_cast<size_t>(enemyId);
+
+		if (registries.size() <= static_cast<size_t>(enemyId))
+		{
+			registries.resize(static_cast<size_t>(enemyId) + 1);
+		}
+
+		if (!registries[enemyId].has_value())
+		{
+			registries[enemyId].emplace();
+			enemy.RegisterStates(*registries[index]);
 		}
 	}
 }

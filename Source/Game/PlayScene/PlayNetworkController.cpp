@@ -7,6 +7,7 @@
 #include <Game/Network/Protocols/UpdatedPlayers.h>
 #include <Game/Network/Protocols/UpdateEnemy.h>
 #include <Game/Network/Protocols/UpdatedEnemies.h>
+#include <Game/Network/Protocols/UpdatedEnemyStates.h>
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
 #include <Game/PlayScene/Enemy.h>
@@ -78,6 +79,35 @@ void PlayNetworkController::Update()
 				        enemyMessage.enemyTypes,
 				        enemyMessage.positions,
 				        enemyMessage.rotations);
+
+				    break;
+			    }
+			    case ProtocolType::UpdatedEnemyStates:
+			    {
+				    Protocol::UpdatedEnemyStates enemyStateMessage{};
+				    converter.ToMessage(_event.data, enemyStateMessage);
+
+				    Get<SessionManager>().UpdateEnemyStates(
+				        enemyStateMessage.enemyStateIds,
+				        enemyStateMessage.stateName,
+				        enemyStateMessage.values);
+
+				    for (size_t i = 0; i < enemyStateMessage.values.Size(); ++i)
+				    {
+					    if (enemyStateMessage.values[i] == 0)
+					    {
+						    VCU_LOG("敵ステート:rifeがfalseになった！ 敵ID={}", enemyStateMessage.enemyStateIds[i]);
+					    }
+					    else
+					    {
+						    VCU_LOG("敵ステート:attackがtrueになった！ 敵ID={}", enemyStateMessage.enemyStateIds[i]);
+					    }
+				    }
+
+				    VCU_LOG(
+				        "敵ステート取得してゆくぅぅ!!:件数={}, 全同期={}",
+				        enemyStateMessage.enemyStateIds.Size(),
+				        enemyStateMessage.isFullSync);
 
 				    break;
 			    }
@@ -154,6 +184,68 @@ void PlayNetworkController::Update()
 				//     enemy.enemyPosition.z);
 
 				networkSessionManager.Send(enemyMessage);
+			}
+
+			/// 敵ステート送信処理
+			const bool fullSync = actorServer.IsFullSync();
+			auto& registries    = actorServer.GetEnemyStateRegistries();
+
+			Protocol::UpdatedEnemyStates enemyStateMessage{};
+			enemyStateMessage.isFullSync = fullSync;
+
+			std::vector<int32_t> enemyStateIds;
+			std::vector<uint8_t> values;
+
+			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
+			{
+				if (!registries[enemyId].has_value())
+					continue;
+
+				auto& registry     = *registries[enemyId];
+				const auto changes = registry.GetStates(fullSync);
+
+				for (const auto& change : changes)
+				{
+					VCU_LOG(
+					    "敵ステート送信前 ID={}, 名前={}, 値={}, 全同期={}",
+					    enemyId,
+					    change.name,
+					    change.value,
+					    fullSync);
+
+					enemyStateIds.push_back(static_cast<int32_t>(enemyId));
+					values.push_back(change.value ? 1 : 0);
+
+					if (!enemyStateMessage.stateName.empty())
+					{
+						enemyStateMessage.stateName += '\n';
+					}
+
+					enemyStateMessage.stateName += change.name;
+				}
+
+				registry.CommitChanges(changes);
+			}
+
+			if (!enemyStateIds.empty())
+			{
+				enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
+
+				enemyStateMessage.values.Resize(values.size());
+
+				for (size_t i = 0; i < values.size(); ++i)
+				{
+					enemyStateMessage.values[i] = values[i];
+				}
+
+				networkSessionManager.Send(enemyStateMessage);
+
+				VCU_LOG("敵ステート送信 件数={}, 全同期={}", enemyStateIds.size(), fullSync);
+			}
+
+			if (fullSync)
+			{
+				actorServer.ResetFullSync();
 			}
 		}
 

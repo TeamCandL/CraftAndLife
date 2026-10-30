@@ -5,12 +5,14 @@
 #include "WordInputPanel.h"
 #include "TitleNetworkController.h"
 #include "TitleLogo.h"
+#include "TitleLogoStartGuide.h"
 
 void TitleScene::Start()
 {
 	Instantiate<GameManager>();
 	Instantiate<TitleNetworkController>();
-	Instantiate<TitleLogo>();
+	// Instantiate<TitleLogo>();
+	// Instantiate<TitleLogoStartGuide>();
 
 	GameObject objWordInputPanel = Instantiate<WordInputPanel>();
 	Instantiate<WordJoinButton>(objWordInputPanel);

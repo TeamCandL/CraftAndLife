@@ -73,6 +73,16 @@ class SessionManager : public IManager
 	/// @return 存在している true / false
 	bool IsExistEnemy(int _enemyId) const;
 
+	/// @brief 受信した複数の敵ステートを更新する
+	/// @param _enemyIds 敵ID一覧
+	/// @param _stateNames 改行区切りのステート名一覧
+	/// @param _values 各ステートの値
+	/// @return 1件以上のステートが追加・変更された場合 true
+	bool UpdateEnemyStates(
+	    SizedBuffer<int32_t>& _enemyIds,
+	    std::string_view _stateNames,
+	    SizedBuffer<uint8_t>& _values);
+
 	/// @brief 各敵を周回する
 	/// @tparam Func コールバック [](int, const InSessionStatus::EnemyStatus&){}
 	/// @param _func コールバック [](int, const InSessionStatus::EnemyStatus&){}

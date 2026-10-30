@@ -27,6 +27,7 @@ void Enemy::Update()
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
+	ImGui::DragInt("HP", &hp);
 	ImGui::End();
 
 	if (hp <= 0)
@@ -80,7 +81,10 @@ void Enemy::Update()
 
 	if (!alive)
 	{
-		DestroyMe();
+		// 敵IDを使って死亡通知を送信キューに登録
+		// Registryの登録を解除
+		// ※上記2つは今後実装する
+		// DestroyMe();
 	}
 }
 
@@ -97,13 +101,13 @@ void Enemy::Move(
 	Vec3 ePos{ ex, 0.0f, ez };
 	Vec3 crossed = Math::GetCrossProduct(Fwd, tPos - ePos);
 
-	torque += crossed.y * Math::GetRad(20.0f);
+	torque += crossed.y * Math::GetRad(rotationAnglePerSec);
 
 	Vec3 angles        = transform.rotation.ToEuler();
 	angles.y           = torque;
 	transform.rotation = Quaternion::FromEuler(angles);
 
-	Vec3 move{ transform.Forward() * 5.0f };
+	Vec3 move{ transform.Forward() * speed };
 	transform.position += move;
 
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
@@ -150,7 +154,6 @@ void Enemy::Sensor()
 			}
 		}
 	}
-	// followed = false;
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
 		if (!objWanderingCheckPoint.IsEmpty())
@@ -227,4 +230,10 @@ void Enemy::SetWanderingCheckPoint(
 
 	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position_);
 	followed               = false;
+}
+
+void Enemy::RegisterStates(
+    EnemyStateRegistry& registry) const
+{
+	registry.Register("alive", alive);
 }
