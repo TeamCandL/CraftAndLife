@@ -108,6 +108,8 @@ struct EnemyData
 	{
 		objEnemyController = objEnemyController_;
 
+		modelIndex = enemyType_;
+
 		hp                  = EnemyParam::Hp[enemyType_];
 		damage              = EnemyParam::Damage[enemyType_];
 		speed               = EnemyParam::Speed[enemyType_];

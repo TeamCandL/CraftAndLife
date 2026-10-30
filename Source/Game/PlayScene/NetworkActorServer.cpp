@@ -13,19 +13,7 @@ void NetworkActorServer::Start()
 		return;
 	}
 
-	// CreateEnemies();
-	//  敵管理オブジェクトを生成して保存
-	// Data().objEnemyController = GetScene().Instantiate<EnemyController>();
-
-	// 敵を生成
-	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
-	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::BossSkeleton));
-	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Spider));
-	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Bat));
-	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Dragon));
-
-	// 生成済みにする
-	// Data().isInitialized = true;
+	CreateEnemies();
 }
 
 void NetworkActorServer::Update()
@@ -65,6 +53,15 @@ void NetworkActorServer::CreateEnemy(
 	EnemyStateRegistries(objEnemy);
 }
 
+void NetworkActorServer::CreateEnemy(
+    EnemyType type,
+    const Vec3& position)
+{
+	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, position, static_cast<int>(type));
+
+	EnemyStateRegistries(objEnemy);
+}
+
 void NetworkActorServer::CreateEnemies()
 {
 	if (IsInitialized())
@@ -82,8 +79,8 @@ void NetworkActorServer::CreateEnemies()
 	CreateEnemy(EnemyType::Spider);
 	CreateEnemy(EnemyType::BossSkeleton);
 	CreateEnemy(EnemyType::Bat);
-	CreateEnemy(EnemyType::Dragon);
-	// GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
+	CreateEnemy(EnemyType::Dragon, Vec3{ 1.0f, 7.0f, 2.0f });
+
 	//  生成済みにする
 	Data().isInitialized = true;
 }
