@@ -43,4 +43,28 @@ struct Math
 	{
 		return angle_ * 180 / DirectX::XM_PI;
 	}
+	static float GetRad(float deg_)
+	{
+		return deg_ * DirectX::XM_PI / 180;
+	}
+
+	/// @brief 二つの３次元ベクトルの内積を取得
+	/// @param v1 
+	/// @param v2 
+	/// @return cosθの結果の値
+	static float GetDotProduct(Vec3 v1, Vec3 v2)
+	{
+		/// メモ　ノーマライズして長さは１にする。求めたいのは角度だけなので変化の割合だけ欲しい。
+		///		これをしないと内積の値が無駄にデカくなる。
+		Vec3 v = DirectX::XMVector3Dot(v1.Normalize(), v2.Normalize());
+		return v.x;
+	}
+	/// @brief 二つの３次元ベクトルに垂直なベクトルを求める
+	/// @param v1 
+	/// @param v2 
+	/// @return 
+	static Vec3 GetCrossProduct(Vec3 v1, Vec3 v2)
+	{
+		return DirectX::XMVector3Cross(v1, v2);
+	}
 };

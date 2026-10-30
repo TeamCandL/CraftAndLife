@@ -58,20 +58,20 @@ void PlayNetworkController::Update()
 
 				    Get<SessionManager>().UpdatePlayers(message.playerNames, message.positions, message.rotations);
 
-				    VCU_LOG("Receive UpdatedPlayers:{}", message.flag);
+				    // VCU_LOG("Receive UpdatedPlayers:{}", message.flag);
 				    break;
 			    }
 			    case ProtocolType::UpdatedEnemies:
 			    {
-				    VCU_LOG("UpdatedEnemiesを受信した！");
+				    // VCU_LOG("UpdatedEnemiesを受信した！");
 				    Protocol::UpdatedEnemies enemyMessage{};
 				    converter.ToMessage(_event.data, enemyMessage);
 
 				    // 受信した敵データの数を確認
-				    VCU_LOG("敵ID数: {}", enemyMessage.enemyIds.Size());
-				    VCU_LOG("敵種類数: {}", enemyMessage.enemyTypes.Size());
-				    VCU_LOG("座標データ数: {}", enemyMessage.positions.Size());
-				    VCU_LOG("回転データ数: {}", enemyMessage.rotations.Size());
+				    // VCU_LOG("敵ID数: {}", enemyMessage.enemyIds.Size());
+				    // VCU_LOG("敵種類数: {}", enemyMessage.enemyTypes.Size());
+				    // VCU_LOG("座標データ数: {}", enemyMessage.positions.Size());
+				    // VCU_LOG("回転データ数: {}", enemyMessage.rotations.Size());
 
 				    Get<SessionManager>().UpdateEnemies(
 				        enemyMessage.enemyIds,
@@ -130,7 +130,7 @@ void PlayNetworkController::Update()
 				// 同じIDがすでに登録されていたら送信しない
 				if (!enemyIds.insert(enemy.enemyId).second)
 				{
-					VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
+					// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
 					continue;
 				}
 
@@ -146,12 +146,12 @@ void PlayNetworkController::Update()
 				enemyMessage.rotationX = 0.0f;
 				enemyMessage.rotationY = enemy.enemyAngleY;
 
-				VCU_LOG(
-				    "送信前の敵座標 ID={}: ({}, {}, {})",
-				    enemy.enemyId,
-				    enemy.enemyPosition.x,
-				    enemy.enemyPosition.y,
-				    enemy.enemyPosition.z);
+				// VCU_LOG(
+				//     "送信前の敵座標 ID={}: ({}, {}, {})",
+				//     enemy.enemyId,
+				//     enemy.enemyPosition.x,
+				//     enemy.enemyPosition.y,
+				//     enemy.enemyPosition.z);
 
 				networkSessionManager.Send(enemyMessage);
 			}
@@ -170,7 +170,7 @@ void PlayNetworkController::Update()
 
 			networkSessionManager.Send(dayTimeMessage);
 
-			VCU_LOG("昼夜時刻送信: {}", dayTimeMessage.currentTimeSec);
+			// VCU_LOG("昼夜時刻送信: {}", dayTimeMessage.currentTimeSec);
 		}
 
 		// VCU_LOG("敵更新処理送信: {}", eCount);

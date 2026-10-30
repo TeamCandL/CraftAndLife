@@ -37,7 +37,7 @@ void Enemy::Update()
 	// 徘徊チェックポイントとの距離(差分)
 	if (!followed)
 	{
-		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec2();
+		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
 
 	Sensor();
@@ -106,27 +106,24 @@ void Enemy::Move(
 
 void Enemy::Sensor()
 {
-	Vec2 nowVec2Pos{ transform.position.x, transform.position.z };
-	Vec2 targetPos_{ DEFAULT_TARGET_POS };
+	Vec3 targetPos_{ DEFAULT_TARGET_POS };
 	float targetDist{ -1.0f };
-	std::vector<Vec2> playerPositions;
+	std::vector<Vec3> playerPositions;
 	Get<SessionManager>().ForeachPlayerStatus(
 	    [&playerPositions](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
 	    {
-		    playerPositions.push_back({ _status.position.x, _status.position.z });
+		    playerPositions.push_back(_status.position);
 	    });
-	for (Vec2 objPlayerPos : playerPositions)
+	for (Vec3 objPlayerPos : playerPositions)
 	{
-		float playerDist = (nowVec2Pos - objPlayerPos).Length();
+		float playerDist = (transform.position - objPlayerPos).Length();
 		if (playerDist <= visibilityDist)
 		{
-			Vec2 dist;
-			dist.x      = nowVec2Pos.x - objPlayerPos.x;
-			dist.y      = nowVec2Pos.y - objPlayerPos.y;
-			float angle = Math::GetDeg(angleY) - Math::GetDeg(atan2f(dist.x, dist.y));
-			VCU_LOG("AngleE : {}, AngleT : {}, angle : {}", angleY, atan2f(dist.x, dist.y), angle);
-			if (abs(angle) <= visibilityAngle / 2.0f)
+			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayerPos - transform.position));
+			float visibilityDot = std::cosf(visibilityAngle);
+			if (dot <= visibilityDot)
 			{
+				VCU_LOG("視認してる");
 				if (targetDist < 0.0f)
 				{
 					targetPos_ = objPlayerPos;
@@ -141,24 +138,31 @@ void Enemy::Sensor()
 					}
 				}
 			}
+			else
+			{
+				VCU_LOG("視認してない {},{}", dot, visibilityDot);
+			}
 		}
 	}
-	followed = false;
+	// followed = false;
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
-		followed = true;
-
 		if (!objWanderingCheckPoint.IsEmpty())
 		{
 			GetScene().Destroy(objWanderingCheckPoint);
 		}
 		targetPos = targetPos_;
+		followed  = true;
+	}
+	else
+	{
+		// followed = false;
 	}
 }
 
 void Enemy::Draw()
 {
-	VCU_LOG("hostEnemy Position: ({}, {}, {})", transform.position.x, transform.position.y, transform.position.z);
+	// VCU_LOG("hostEnemy Position: ({}, {}, {})", transform.position.x, transform.position.y, transform.position.z);
 
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
@@ -216,4 +220,5 @@ void Enemy::SetWanderingCheckPoint(
 	position_ += range_;
 
 	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position_);
+	followed               = false;
 }

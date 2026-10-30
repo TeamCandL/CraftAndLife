@@ -102,14 +102,14 @@ void SessionManager::UpdatePlayers(
 		};
 		playerStatus.updatedFlag = !playerStatus.updatedFlag;  // 更新フラグを反転
 
-		VCU_LOG(
-		    "Update position[{}] = ({}, {}, {})",
-		    line,
-		    playerStatus.position.x,
-		    playerStatus.position.y,
-		    playerStatus.position.z);
+		// VCU_LOG(
+		//     "Update position[{}] = ({}, {}, {})",
+		//     line,
+		//     playerStatus.position.x,
+		//     playerStatus.position.y,
+		//     playerStatus.position.z);
 
-		VCU_LOG("Update rotation[{}] = ({}, {})", line, playerStatus.rotation.x, playerStatus.rotation.y);
+		// VCU_LOG("Update rotation[{}] = ({}, {})", line, playerStatus.rotation.x, playerStatus.rotation.y);
 
 		i++;
 	}
@@ -185,14 +185,14 @@ void SessionManager::UpdateEnemies(
 
 		enemyStatus.updatedFlag = inSessionStatus_.updatedFlag;
 
-		VCU_LOG(
-		    "Update position[{}] = ({}, {}, {})",
-		    enemyId,
-		    enemyStatus.position.x,
-		    enemyStatus.position.y,
-		    enemyStatus.position.z);
+		// VCU_LOG(
+		//     "Update position[{}] = ({}, {}, {})",
+		//     enemyId,
+		//     enemyStatus.position.x,
+		//     enemyStatus.position.y,
+		//     enemyStatus.position.z);
 
-		VCU_LOG("Update rotation[{}] = ({}, {})", enemyId, enemyStatus.rotation.x, enemyStatus.rotation.y);
+		// VCU_LOG("Update rotation[{}] = ({}, {})", enemyId, enemyStatus.rotation.x, enemyStatus.rotation.y);
 	}
 
 	// 今回の受信データに存在しなかった敵を削除

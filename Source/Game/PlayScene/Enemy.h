@@ -181,14 +181,14 @@ struct EnemyData
 	bool alive{ true };      ///< 生きているか
 	bool attacked{ false };  ///< 攻撃中か
 
-	const Vec2 DEFAULT_TARGET_POS{ 0.0f, 0.0f };
+	const Vec3 DEFAULT_TARGET_POS{ 0.0f, -100.0f, 0.0f };
 
 	const float WAN_RANGE{ 45 };  ///< 徘徊範囲
 	const float WAN_REFERENCE{
 		WAN_RANGE / 2
 	};  ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する
 
-	Vec2 targetPos{};                     ///< 追跡地点
+	Vec3 targetPos{};                     ///< 追跡地点
 	GameObject objWanderingCheckPoint{};  ///< 徘徊時のチェックポイント
 };
 

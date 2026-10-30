@@ -2,11 +2,11 @@
 #include <Base/Base.h>
 
 /// @brief ネットワークとゲーム処理の中間層
-class NetworkReplicationManager : public IManager
+class : public IManager
 {
-public:
-	NetworkReplicationManager() = default;
+  public:
+	NetworkReplicationManager()  = default;
 	~NetworkReplicationManager() = default;
 
-	//void 
+	// void
 };
