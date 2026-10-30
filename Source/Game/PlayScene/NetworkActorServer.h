@@ -32,11 +32,14 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	void Start() override;
 	void Update() override;
 
-	void CreateEnemy(EnemyType type);
+	// void CreateEnemy(EnemyType type);
 	void CreateEnemies();
 	void EnemyStateRegistries(GameObject objEnemy);
 
-	bool IsHost();
+	bool IsHost() const
+	{
+		return Data().isHost;
+	}
 
 	// 敵管理オブジェクトを取得
 	GameObject GetEnemyController() const
