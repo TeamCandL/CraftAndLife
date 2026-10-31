@@ -443,6 +443,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\CraftUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DayController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
@@ -681,6 +682,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
+    <ClInclude Include="Source\Game\PlayScene\CraftUI.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />

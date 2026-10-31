@@ -28,6 +28,7 @@ struct PlayerData
 	GameObject objMainCamera{};
 	GameObject objPlayerController{};
 	GameObject objPlayerBag{};
+	GameObject objCraftUI{};
 
 	PlayerRoleType role{ PlayerRoleType_Max };
 

@@ -2,7 +2,7 @@
 #include <Game/Game.h>
 #include <Game/PlayScene/ItemSystem.h>
 #include <limits>
-static constexpr ItemId EMPTY_ITEM_ID{ std::numeric_limits<ItemId>::max() };
+inline constexpr ItemId EMPTY_ITEM_ID{ std::numeric_limits<ItemId>::max() };
 
 struct ItemStack
 {
@@ -67,7 +67,7 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	bool CanAddItem(const ItemId _id);
 	/// @brief IDを指定してクラフト
 	/// @param _id
-	void Craft(const ItemId _id);
+	bool TryCraft(const ItemId _id);
 	/// @brief バッグにアイテムを追加する
 	/// @param _id 追加するID
 	/// @param _count 追加するアイテムの個数

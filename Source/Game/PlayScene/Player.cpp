@@ -9,6 +9,7 @@
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/Manager/SessionManager.h>
 #include <Game/PlayScene/PlayerBag.h>
+#include <Game/PlayScene/CraftUI.h>
 #include <string>
 
 void Player::Start()
@@ -31,6 +32,8 @@ void Player::Start()
 
 	// バッグ作成
 	objPlayerBag = GetScene().Instantiate<PlayerBag>();
+
+	objCraftUI = GetScene().Instantiate<CraftUI>();
 }
 
 void Player::Update()
@@ -158,7 +161,14 @@ void Player::Update()
 	if (pPlayerInput->IsInteractBegin())
 	{
 		Get<EntitySystem>().Spawn(
-		    1,
+		    8,
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
+	{
+		Get<EntitySystem>().Spawn(
+		    7,
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 		VCU_LOG("objPawn");
@@ -166,10 +176,10 @@ void Player::Update()
 
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
 	// エンティティを拾うことができた場合
+	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
 	if (objPick)
 	{
 		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
-		PlayerBag& bag      = Get<PlayerBag>(objPlayerBag);
 		// バッグに追加できるなら、追加
 		if (bag.CanAddItem(pickedItemId))
 		{
@@ -177,6 +187,29 @@ void Player::Update()
 		}
 
 		VCU_LOG("objPick");
+	}
+
+	CraftUI& craftUI = Get<CraftUI>(objCraftUI);
+	if (ItemId id = craftUI.Update(bag); id != INVALID_ITEM_ID)
+	{
+		// クラフトを試みて、成功した場合
+		if (bag.TryCraft(id))
+		{
+			// バッグに追加できる場合、追加
+			if (bag.CanAddItem(id))
+			{
+				bag.AddItem(id);
+			}
+			// 追加できないなら、エンティティとして前方に放り出す
+			else
+			{
+				Get<EntitySystem>().Spawn(
+				    id,
+				    transform.position + Vec3::Up() * 2.0f,
+				    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+				VCU_LOG("objPawn");
+			}
+		}
 	}
 
 	// HPゲージ動作確認用：1秒ごとに10ダメージ

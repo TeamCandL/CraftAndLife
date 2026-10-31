@@ -1,13 +1,6 @@
 #include "PlayerBag.h"
 #include <numeric>
-namespace
-{
-	// テスト用のクラフトアイテム
-	ItemInfo woodAllInfo{ ._id        = 1,
-		                  ._type      = ItemType::Materials,
-		                  ._name      = "Wood",
-		                  ._craftInfo = { { ._id = 3, ._value = 2 }, { ._id = 4, ._value = 4 } } };
-}  // namespace
+
 PlayerBagData::PlayerBagData()
 {
 	items.resize(initialCapacity, ItemStack::EmptyStack());
@@ -25,18 +18,6 @@ void PlayerBag::Update()
 	{
 		ExpansionCapacity(10);
 	}
-	if (ImGui::Button("Craft"))
-	{
-		Craft(woodAllInfo._id);
-	}
-	auto requirements = GetCraftRequirements(woodAllInfo._id);
-	for (auto& requirement : requirements)
-	{
-		ImGui::Text("%d Id", requirement.id);
-		ImGui::Checkbox("IsSuffice", &requirement.isSufficient);
-		ImGui::Text("%d Owned", requirement.ownedCount);
-		ImGui::Text("%d Required", requirement.requiredCount);
-	}
 
 	// アイテム追加用のUI(デバッグ)
 	ImGui::InputInt("ID", &id);
@@ -49,11 +30,12 @@ void PlayerBag::Update()
 	{
 		if (items[i].id == EMPTY_ITEM_ID)
 		{
-			ImGui::Text("%d: empty, %d", i, items[i].count);
+			ImGui::Text("%d:empty, %d", i, items[i].count);
 		}
 		else
 		{
-			ImGui::Text("%d: %d, %d", i, items[i].id, items[i].count);
+			std::string itemName = Get<ItemSystem>().GetInfo(items[i].id)._name;
+			ImGui::Text("%d:%s %d, %d", i, itemName.c_str(), items[i].id, items[i].count);
 		}
 	}
 	ImGui::End();
@@ -124,10 +106,9 @@ bool PlayerBag::CanAddItem(
 	return false;
 }
 
-void PlayerBag::Craft(
+bool PlayerBag::TryCraft(
     const ItemId _id)
 {
-	// ItemInfo itemInfo = woodAllInfo;
 	ItemInfo itemInfo      = Get<ItemSystem>().GetInfo(_id);
 	const auto& craftInfos = itemInfo._craftInfo;
 
@@ -145,8 +126,7 @@ void PlayerBag::Craft(
 		int idx = FindCraftMaterialSlot(craftInfo);
 		if (idx == -1)
 		{
-			// assert(false);
-			return;
+			return false;
 		}
 		stackUsedCraftTmps.push_back(ItemConsumption{ .slotIndex = idx, .useItemCount = craftInfo._value });
 	}
@@ -156,8 +136,8 @@ void PlayerBag::Craft(
 	{
 		if (reservation.slotIndex < 0 || reservation.slotIndex >= items.size())
 		{
-			// assert(false);
-			return;
+			assert(false);
+			return false;
 		}
 		ItemStack& slot = items[reservation.slotIndex];
 		slot.count -= reservation.useItemCount;
@@ -167,15 +147,16 @@ void PlayerBag::Craft(
 			slot = ItemStack::EmptyStack();
 		}
 	}
-	// クラフトによって作成されるアイテム数は1個
-	AddItem(_id);
-
 	Sort();
+	return true;
 }
 
 void PlayerBag::AddItem(
     const ItemId _id)
 {
+	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
+	if (itemType == ItemType::Weapons)
+		return;
 	// 既に同じIDのアイテムが存在する場合は、スタック可能なスロットに追加する
 
 	// 同じIDのアイテムの範囲を取得
@@ -226,6 +207,7 @@ void PlayerBag::AddItem(
 	{
 		// 空スロットの位置を取得
 		auto emptySlotBegin = std::find(items.begin(), items.end(), ItemStack::EmptyStack());
+
 		// 先頭の空スロットから順に追加していく
 		for (auto itr = emptySlotBegin; itr != items.end(); itr++)
 		{
@@ -252,7 +234,6 @@ void PlayerBag::AddItem(
 std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
     const ItemId _craftItemId)
 {
-	// ItemInfo craftItemInfo = woodAllInfo;
 	ItemInfo craftItemInfo = Get<ItemSystem>().GetInfo(_craftItemId);
 	auto& craftInfos       = craftItemInfo._craftInfo;
 	std::vector<CraftMaterialRequirement> craftMaterials;
