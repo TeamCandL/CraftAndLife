@@ -1,5 +1,8 @@
+
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
+#include "UI/PlayerName2.h"
+
 #include <Game/Manager/SessionManager.h>
 
 void OtherPlayerController::Start() {}
@@ -10,8 +13,12 @@ void OtherPlayerController::Update()
 
 	if (!sessionManager.HasAllPlayersStatus())
 	{
-		return;  // 他プレイヤーがいないなら知らん！
+		return;
 	}
+
+	// --------------------------------
+	// 退出したプレイヤーを削除
+	// --------------------------------
 
 	for (auto& [name, obj] : nameToObjOtherPlayer)
 	{
@@ -21,25 +28,58 @@ void OtherPlayerController::Update()
 		}
 	}
 
+	for (auto& [name, obj] : nameToObjPlayerName)
+	{
+		if (!sessionManager.IsExistPlayer(name))
+		{
+			GetScene().Destroy(obj);
+		}
+	}
+
+	// 空になったGameObjectをmapから削除
 	std::erase_if(
 	    nameToObjOtherPlayer,
-	    [this](const auto& nameAndObj)
+	    [](const auto& nameAndObj)
 	    {
 		    return nameAndObj.second.IsEmpty();
 	    });
 
+	std::erase_if(
+	    nameToObjPlayerName,
+	    [](const auto& nameAndObj)
+	    {
+		    return nameAndObj.second.IsEmpty();
+	    });
+
+	// --------------------------------
+	// 参加しているプレイヤーを確認
+	// --------------------------------
+
 	sessionManager.ForeachPlayerStatus(
 	    [this, &sessionManager](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
 	    {
+		    // 自分自身は無視
 		    if (sessionManager.RefStatus().name == _name)
 		    {
-			    // 自分自身は無視する
 			    return;
 		    }
+
+		    // --------------------------------
+		    // OtherPlayerを生成
+		    // --------------------------------
 
 		    if (nameToObjOtherPlayer.count(_name) == 0)
 		    {
 			    nameToObjOtherPlayer[_name] = GetScene().Instantiate<OtherPlayer>(_name);
+		    }
+
+		    // --------------------------------
+		    // PlayerName2を生成
+		    // --------------------------------
+
+		    if (nameToObjPlayerName.count(_name) == 0)
+		    {
+			    nameToObjPlayerName[_name] = GetScene().Instantiate<PlayerName2>(_name, nameToObjOtherPlayer[_name]);
 		    }
 	    });
 }
@@ -54,7 +94,6 @@ GameObject OtherPlayerController::GetFirstOtherPlayer() const
 	return nameToObjOtherPlayer.begin()->second;
 }
 
-// 仲間プレイヤー全員を取得
 std::vector<GameObject> OtherPlayerController::GetOtherPlayers() const
 {
 	std::vector<GameObject> players{};

@@ -3,17 +3,7 @@
 
 void PlayerIcon2::Start() {}
 
-void PlayerIcon2::Update()
-{
-	if (isActivePlayer)
-	{
-		transform.scale.x = 16;
-	}
-	else
-	{
-		transform.scale.x = 0;
-	}
-}
+void PlayerIcon2::Update() {}
 
 // ミニマップ上のアイコンの位置を設定する
 void PlayerIcon2::SetPosition(

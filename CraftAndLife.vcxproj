@@ -501,6 +501,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon2.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon3.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon4.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerName2.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\TaskBackground.cpp" />
@@ -753,6 +754,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon2.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon3.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon4.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerName2.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
