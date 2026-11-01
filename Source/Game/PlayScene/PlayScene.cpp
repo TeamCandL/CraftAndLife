@@ -31,14 +31,16 @@ void PlayScene::Start()
 
 	GameObject objDayController = Instantiate<DayController>(objSky);
 
+	GameObject objMainCamera = Instantiate<MainCamera>();
+	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
+
 	// ホスト判定オブジェクトを生成
-	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>();
+	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer);
 
 	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 
 	Instantiate<Reticle>();
-	GameObject objMainCamera = Instantiate<MainCamera>();
-	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
+
 	// ミニマップを生成してプレイヤーを渡す
 	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer, objDayController);
 

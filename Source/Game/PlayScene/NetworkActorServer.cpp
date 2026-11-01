@@ -89,22 +89,91 @@ void NetworkActorServer::EnemyStateRegistries(
     GameObject objEnemy)
 {
 	auto& enemy           = Get<Enemy>(objEnemy);
-	const int32_t enemyId = Get<Enemy>(objEnemy).GetID();
+	const int32_t enemyId = enemy.GetID();
 
-	if (enemyId >= 0)
+	if (enemyId < 0)
 	{
-		auto& registries   = Data().enemyStateRegistries;
-		const size_t index = static_cast<size_t>(enemyId);
+		return;
+	}
 
-		if (registries.size() <= static_cast<size_t>(enemyId))
+	auto& registries   = Data().enemyStateRegistries;
+	const size_t index = static_cast<size_t>(enemyId);
+
+	if (registries.size() <= index)
+	{
+		registries.resize(index + 1);
+	}
+
+	if (!registries[index].has_value())
+	{
+		registries[index].emplace();
+		enemy.RegisterStates(*registries[index]);
+
+		auto& queued = Data().enemyDeathQueued;
+
+		if (queued.size() <= index)
 		{
-			registries.resize(static_cast<size_t>(enemyId) + 1);
+			queued.resize(index + 1, false);
 		}
 
-		if (!registries[enemyId].has_value())
-		{
-			registries[enemyId].emplace();
-			enemy.RegisterStates(*registries[index]);
-		}
+		queued[index] = false;
+	}
+}
+
+void NetworkActorServer::MarkDeathQueued(
+    int32_t actorId)
+{
+	if (actorId < 0)
+	{
+		return;
+	}
+
+	auto& queued       = Data().enemyDeathQueued;
+	const size_t index = static_cast<size_t>(actorId);
+
+	if (queued.size() <= index)
+	{
+		queued.resize(index + 1, false);
+	}
+
+	queued[index] = true;
+}
+
+bool NetworkActorServer::IsDeathQueued(
+    int32_t actorId) const
+{
+	if (actorId < 0)
+	{
+		return false;
+	}
+
+	const auto& queued = Data().enemyDeathQueued;
+	const size_t index = static_cast<size_t>(actorId);
+
+	return index < queued.size() && queued[index];
+}
+
+void NetworkActorServer::ReleaseActor(
+    int32_t actorId)
+{
+	if (actorId < 0)
+	{
+		return;
+	}
+
+	const size_t index = static_cast<size_t>(actorId);
+	auto& registries   = Data().enemyStateRegistries;
+
+	if (index < registries.size() && registries[index].has_value())
+	{
+		registries[index]->Clear();
+		registries[index].reset();
+	}
+
+	auto& queued = Data().enemyDeathQueued;
+
+	if (index < queued.size())
+	{
+		queued[index] = false;
 	}
 }

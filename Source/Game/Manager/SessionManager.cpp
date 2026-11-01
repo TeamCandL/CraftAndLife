@@ -1,5 +1,100 @@
 #include "SessionManager.h"
 #include <ranges>
+#include <type_traits>
+
+namespace
+{
+	/// @brief プレイヤー・敵共通のステート更新処理
+	template <typename TIds, typename TResolver>
+	bool UpdateStates(
+	    TIds& _ids,
+	    std::string_view _stateNames,
+	    SizedBuffer<uint8_t>& _values,
+	    TResolver&& _resolver)
+	{
+		// 単体IDなら1件、複数IDならバッファのサイズ
+		constexpr bool isSingleId = std::is_integral_v<std::remove_cvref_t<TIds>>;
+
+		const size_t count = [&]()
+		{
+			if constexpr (isSingleId)
+				return size_t{ 1 };
+			else
+				return _ids.Size();
+		}();
+
+		if (count != _values.Size())
+		{
+			VCU_LOG("ステート更新失敗：ID数と値の数が一致しません");
+			return false;
+		}
+
+		// ステート名を改行で分割
+		std::vector<std::string> stateNames;
+
+		for (auto&& lineRange : _stateNames | std::views::split('\n'))
+		{
+			std::string_view name{ lineRange.begin(), lineRange.end() };
+
+			// CRLF対策
+			if (!name.empty() && name.back() == '\r')
+				name.remove_suffix(1);
+
+			if (name.empty())
+			{
+				VCU_LOG("ステート名が不正です");
+				return false;
+			}
+
+			stateNames.emplace_back(name);
+		}
+
+		if (stateNames.size() != count)
+		{
+			VCU_LOG("ステート名とIDの数が一致しません");
+			return false;
+		}
+
+		bool updated = false;
+
+		for (size_t i = 0; i < count; ++i)
+		{
+			// 単体ID・複数IDのどちらにも対応
+			const int32_t id = [&]()
+			{
+				if constexpr (isSingleId)
+					return _ids;
+				else
+					return _ids[i];
+			}();
+
+			// IDから対象のステータスを取得
+			auto* status = _resolver(id);
+
+			if (status == nullptr)
+				continue;
+
+			const std::string& name = stateNames[i];
+			const bool value        = _values[i] != 0;
+
+			auto& states = status->states;
+			auto stateIt = states.find(name);
+
+			if (stateIt == states.end())
+			{
+				states.emplace(name, value);
+				updated = true;
+			}
+			else if (stateIt->second != value)
+			{
+				stateIt->second = value;
+				updated         = true;
+			}
+		}
+
+		return updated;
+	}
+}  // namespace
 
 void SessionManager::Reset()
 {
@@ -16,6 +111,9 @@ void SessionManager::SetMemberNames(
     const std::string_view _names)
 {
 	inSessionStatus_.memberNames.clear();
+	inSessionStatus_.memberId.clear();
+
+	int32_t id = 0;
 
 	// 文字列を改行で分解してく
 	for (auto&& line_range : _names | std::views::split('\n'))
@@ -28,7 +126,13 @@ void SessionManager::SetMemberNames(
 			line.remove_suffix(1);
 		}
 
+		if (line.empty())
+		{
+			continue;
+		}
+
 		inSessionStatus_.memberNames.push_back(std::string{ line });
+		inSessionStatus_.memberId.push_back(id++);
 	}
 }
 
@@ -147,6 +251,42 @@ bool SessionManager::HasAllPlayersStatus() const
 	return inSessionStatus_.playersStatus.size() > 0;
 }
 
+bool SessionManager::UpdatePlayerStates(
+    int32_t _playerId,
+    std::string_view _stateNames,
+    SizedBuffer<uint8_t>& _values)
+{
+	return UpdateStates(
+	    _playerId,
+	    _stateNames,
+	    _values,
+	    [this](int32_t playerId) -> InSessionStatus::PlayerStatus*
+	    {
+		    // プレイヤーIDからID配列内の位置を検索
+		    auto idIt = std::ranges::find(inSessionStatus_.memberId, playerId);
+
+		    if (idIt == inSessionStatus_.memberId.end())
+		    {
+			    VCU_LOG("プレイヤーステート更新失敗：プレイヤーID={} が存在しません", playerId);
+			    return nullptr;
+		    }
+
+		    // IDと同じインデックスの名前を取得
+		    const size_t index     = std::distance(inSessionStatus_.memberId.begin(), idIt);
+		    const auto& playerName = inSessionStatus_.memberNames[index];
+
+		    auto it = inSessionStatus_.playersStatus.find(playerName);
+
+		    if (it == inSessionStatus_.playersStatus.end())
+		    {
+			    VCU_LOG("プレイヤーステート更新失敗：{} が存在しません", playerName);
+			    return nullptr;
+		    }
+
+		    return &it->second;
+	    });
+}
+
 void SessionManager::UpdateEnemies(
     SizedBuffer<int>& _enemyIds,
     SizedBuffer<int>& _enemyTypes,
@@ -218,71 +358,22 @@ bool SessionManager::UpdateEnemyStates(
     std::string_view _stateNames,
     SizedBuffer<uint8_t>& _values)
 {
-	const size_t count = _enemyIds.Size();
+	return UpdateStates(
+	    _enemyIds,
+	    _stateNames,
+	    _values,
+	    [this](int32_t enemyId) -> InSessionStatus::EnemyStatus*
+	    {
+		    auto it = inSessionStatus_.enemiesStatus.find(enemyId);
 
-	if (count != _values.Size())
-	{
-		VCU_LOG("敵ステートのID数と値の数が一致しません");
-		return false;
-	}
+		    if (it == inSessionStatus_.enemiesStatus.end())
+		    {
+			    VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", enemyId);
+			    return nullptr;
+		    }
 
-	size_t i     = 0;
-	bool updated = false;
-
-	for (auto&& lineRange : _stateNames | std::views::split('\n'))
-	{
-		std::string_view stateName{ lineRange.begin(), lineRange.end() };
-
-		// CRLF対策
-		if (!stateName.empty() && stateName.back() == '\r')
-		{
-			stateName.remove_suffix(1);
-		}
-
-		if (stateName.empty() || i >= count)
-		{
-			VCU_LOG("敵ステート名が不正、またはデータ数が一致しません");
-			return false;
-		}
-
-		const int enemyId = _enemyIds[i];
-		const bool value  = _values[i] != 0;
-
-		auto enemyIt = inSessionStatus_.enemiesStatus.find(enemyId);
-
-		if (enemyIt == inSessionStatus_.enemiesStatus.end())
-		{
-			VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", enemyId);
-			++i;
-			continue;
-		}
-
-		auto& states = enemyIt->second.states;
-		const std::string key{ stateName };
-
-		auto stateIt = states.find(key);
-
-		if (stateIt == states.end())
-		{
-			states.emplace(key, value);
-			updated = true;
-		}
-		else if (stateIt->second != value)
-		{
-			stateIt->second = value;
-			updated         = true;
-		}
-
-		++i;
-	}
-
-	if (i != count)
-	{
-		VCU_LOG("敵ステート名と敵IDの数が一致しません");
-		return false;
-	}
-
-	return updated;
+		    return &it->second;
+	    });
 }
 
 void SessionManager::UpdateDayTime(

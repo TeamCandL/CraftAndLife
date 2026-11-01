@@ -1,6 +1,6 @@
 #pragma once
 #include <Game/Game.h>
-#include "EnemyStateRegistry.h"
+#include "StateRegistry.h"
 #include <optional>
 #include <vector>
 #include "EnemyType.h"
@@ -12,11 +12,17 @@ struct NetworkActorServerData
 
 	bool isInitialized{ false };
 
+	GameObject objPlayer{};
 	GameObject objEnemyController{};
 	GameObject objOtherEnemyController{};
 
+	/// @brief 自プレイヤーのステート登録情報
+	StateRegistry playerStateRegistry;
+
 	/// @brief 敵IDごとのステート登録情報
-	std::vector<std::optional<EnemyStateRegistry>> enemyStateRegistries;
+	std::vector<std::optional<StateRegistry>> enemyStateRegistries;
+	/// @brief 敵IDごとの死亡通知送信登録状態
+	std::vector<bool> enemyDeathQueued;
 	/// @brief 敵ステートの全同期間隔（秒）
 	static constexpr float enemyStateSyncTime{ 5.0f };
 	/// @brief 次の全同期までの残り時間（秒）
@@ -38,6 +44,25 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	void CreateEnemies();
 	void EnemyStateRegistries(GameObject objEnemy);
 
+	GameObject GetPlayer() const
+	{
+		return Data().objPlayer;
+	}
+	/// @brief プレイヤーのステート登録情報を取得
+	StateRegistry& GetPlayerStateRegistry()
+	{
+		return Data().playerStateRegistry;
+	}
+
+	/// @brief 死亡通知の送信登録完了を記録
+	void MarkDeathQueued(int32_t actorId);
+
+	/// @brief 死亡通知が送信キューに登録済みか確認
+	bool IsDeathQueued(int32_t actorId) const;
+
+	/// @brief 指定した敵のステート登録情報を解除
+	void ReleaseActor(int32_t actorId);
+
 	bool IsHost() const
 	{
 		return Data().isHost;
@@ -56,12 +81,12 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	}
 
 	// 敵ステート登録情報を取得
-	std::vector<std::optional<EnemyStateRegistry>>& GetEnemyStateRegistries()
+	std::vector<std::optional<StateRegistry>>& GetEnemyStateRegistries()
 	{
 		return Data().enemyStateRegistries;
 	}
 
-	const std::vector<std::optional<EnemyStateRegistry>>& GetEnemyStateRegistries() const
+	const std::vector<std::optional<StateRegistry>>& GetEnemyStateRegistries() const
 	{
 		return Data().enemyStateRegistries;
 	}
