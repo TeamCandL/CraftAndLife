@@ -3,7 +3,6 @@
 #include <Game/Game.h>
 #include "EnemyType.h"
 #include "EnemyStatus.h"
-#include "EnemyStateRegistry.h"
 
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
@@ -19,6 +18,8 @@ namespace EnemyParam
 	const std::vector<float> RotationAnglePerSec{ 30.0f, 20.0f, 45.0f, 40.0f, 35.0f };
 	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };
 }  // namespace EnemyParam
+
+struct StateRegistry;
 
 struct EnemyData
 {
@@ -281,5 +282,5 @@ struct Enemy : ObjectBase<EnemyData>
 		id = id_;
 	};
 
-	void RegisterStates(EnemyStateRegistry& registry) const;
+	void RegisterStates(StateRegistry& registry) const;
 };

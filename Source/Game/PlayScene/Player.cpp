@@ -15,6 +15,7 @@
 #include "Player/PlayerJobControllerTank.h"
 #include "Player/PlayerJobControllerFighter.h"
 #include "Player/PlayerJobControllerArcher.h"
+#include "StateRegistry.h"
 
 void Player::Start()
 {
@@ -407,6 +408,16 @@ void Player::DeadAnim()
 		animIndex = PlayerAnimType_Die;
 		animSpeed = 0.0f;
 	}
+}
+
+void Player::RegisterStates(
+    StateRegistry& registry) const
+{
+	registry.Register({
+	    { "hp", Data().hp },
+	    { "helthState", Data().helthState },
+	    { "animIndex", Data().animIndex },
+	});
 }
 
 Vec3 Player::GetPosition() const

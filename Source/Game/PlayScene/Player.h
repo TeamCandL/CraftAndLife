@@ -7,6 +7,8 @@
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
 
+struct StateRegistry;
+
 /// @brief プレイヤーのデータ
 struct PlayerData
 {
@@ -121,6 +123,8 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	/// @brief 死亡アニメーション
 	void DeadAnim();
+
+	void RegisterStates(StateRegistry& registry) const;
 
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;
