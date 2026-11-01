@@ -1,8 +1,7 @@
-
 #pragma once
 #include <Game/Game.h>
 
-struct PlayerName2Data
+struct PlayerNameData
 {
 	// 表示するプレイヤーの名前
 	std::string playerName{};
@@ -13,7 +12,7 @@ struct PlayerName2Data
 	// 背景画像
 	Resource<Texture> texture{ "Image/UI/PlayerName_background.png" };
 
-	Component<UITransform> backgroundTransform{ Vec2::Zero(), Vec2{ 207, 60 }, UILayerOrder{}.WithUser(9999) };
+	Component<UITransform> backgroundTransform{ Vec2::Zero(), Vec2{ 240, 65 }, UILayerOrder{}.WithUser(9999) };
 
 	Component<UIImage> image{ texture };
 
@@ -21,16 +20,16 @@ struct PlayerName2Data
 	Resource<Font> font{ FontLoadConfig{}
 		                     .WithFile("Font/Stick/Stick-Regular.ttf")
 		                     .WithFamilyName(L"Stick")
-		                     .WithFontSize(36)
+		                     .WithFontSize(24)
 		                     .WithFontAlignment(FontAlignment_Center) };
 
 	// 名前のテキスト
-	Component<UITransform> textTransform{ Vec2::Zero(), Vec2{ 192, 27 }, UILayerOrder{}.WithUser(10000) };
+	Component<UITransform> textTransform{ Vec2::Zero(), Vec2{ 220, 40 }, UILayerOrder{}.WithUser(10000) };
 
 	Component<UIText> text{ font, Color::WHITE };
 
 	// コンストラクタ
-	PlayerName2Data(
+	PlayerNameData(
 	    const std::string& _name,
 	    GameObject _targetPlayer) :
 	    playerName{ _name },
@@ -39,9 +38,9 @@ struct PlayerName2Data
 	}
 };
 
-struct PlayerName2 : ObjectBase<PlayerName2Data>
+struct PlayerName : ObjectBase<PlayerNameData>
 {
-	using ObjectBase<PlayerName2Data>::ObjectBase;
+	using ObjectBase<PlayerNameData>::ObjectBase;
 
 	void Start() override;
 	void Update() override;

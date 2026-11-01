@@ -1,17 +1,16 @@
-
 #include "pch\pch.h"
-#include "PlayerName2.h"
+#include "PlayerName.h"
 
 #include "../OtherPlayer.h"
 #include <Base/Manager/ScreenSize.h>
 
-void PlayerName2::Start()
+void PlayerName::Start()
 {
 	// 表示する名前を設定
 	text.content = playerName;
 }
 
-void PlayerName2::Update()
+void PlayerName::Update()
 {
 	// 対象プレイヤーが存在しない場合
 	if (targetPlayer.IsEmpty())
@@ -23,7 +22,7 @@ void PlayerName2::Update()
 	Vec3 playerPosition = Get<OtherPlayer>(targetPlayer).GetPosition();
 
 	// 頭上に表示するための高さ
-	Vec3 worldPosition{ playerPosition.x, playerPosition.y + 250.0f, playerPosition.z };
+	Vec3 worldPosition{ playerPosition.x, playerPosition.y + 1.7f, playerPosition.z };
 
 	// カメラ情報を取得
 	const CameraSystemData& camera = Get<CameraSystem>().Data();
@@ -68,8 +67,8 @@ void PlayerName2::Update()
 	textTransform.scale       = Vec2{ 192, 27 };
 
 	// 背景画像の位置
-	backgroundTransform.position = Vec2{ screenPos.x - 103.5f, screenPos.y - 60.0f };
+	backgroundTransform.position = Vec2{ screenPos.x - 120.0f, screenPos.y - 45.0f };
 
 	// テキストの位置
-	textTransform.position = Vec2{ screenPos.x - 96.0f, screenPos.y - 43.5f };
+	textTransform.position = Vec2{ screenPos.x - 110.0f, screenPos.y - 32.5f };
 }

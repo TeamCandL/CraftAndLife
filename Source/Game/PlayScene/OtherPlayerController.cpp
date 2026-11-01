@@ -1,7 +1,6 @@
-
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
-#include "UI/PlayerName2.h"
+#include "UI/PlayerName.h"
 
 #include <Game/Manager/SessionManager.h>
 
@@ -79,7 +78,7 @@ void OtherPlayerController::Update()
 
 		    if (nameToObjPlayerName.count(_name) == 0)
 		    {
-			    nameToObjPlayerName[_name] = GetScene().Instantiate<PlayerName2>(_name, nameToObjOtherPlayer[_name]);
+			    nameToObjPlayerName[_name] = GetScene().Instantiate<PlayerName>(_name, nameToObjOtherPlayer[_name]);
 		    }
 	    });
 }
