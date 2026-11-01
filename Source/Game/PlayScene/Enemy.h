@@ -7,15 +7,19 @@
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
 {
-	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };           ///< 体力
-	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };           ///< 攻撃力
-	const std::vector<float> Speed{ 3.0f, 2.5f, 4.0f, 5.0f, 3.5f };  ///< 移動速度
+	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };             ///< 体力
+	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };             ///< 攻撃力
+	const std::vector<float> Speed{ 300.0f, 2.5f, 4.0f, 5.0f, 3.5f };  ///< 移動速度
 	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };
 	const std::vector<bool> HasLongAttack{ false, false, false, false, true };
-	const std::vector<float> VisibilityDist{ 500.0f, 20.0f, 10.0f, 8.0f, 30.0f };
-	const std::vector<float> visibilityAngle{ 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };
+	const std::vector<float> VisibilityDist{ 100.0f, 200.0f, 100.0f, 80.0f, 300.0f };
+	const std::vector<float> VisibilityAngle{ 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };
 	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.5f, 1.0f, 3.0f };
+	const std::vector<float> RotationAnglePerSec{ 30.0f, 20.0f, 45.0f, 40.0f, 35.0f };
+	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };
 }  // namespace EnemyParam
+
+struct StateRegistry;
 
 struct EnemyData
 {
@@ -33,13 +37,16 @@ struct EnemyData
 		transform.position = Vec3{ 0.0f, 15.0f, 0.0f };
 		enemyType          = EnemyType::Skeleton;
 
-		hp              = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
-		damage          = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
-		speed           = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
-		hasCloseAttack  = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
-		hasLongAttack   = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
-		visibilityDist  = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
-		visibilityAngle = EnemyParam::visibilityAngle[static_cast<int>(EnemyType::Skeleton)];
+		hp                  = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
+		damage              = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
+		speed               = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
+		hasCloseAttack      = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
+		hasLongAttack       = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
+		visibilityDist      = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
+		visibilityAngle     = EnemyParam::VisibilityAngle[static_cast<int>(EnemyType::Skeleton)];
+		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[static_cast<int>(EnemyType::Skeleton)];
+		scale               = EnemyParam::Scale[static_cast<int>(EnemyType::Skeleton)];
+		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 位置指定生成
 	/// @param position_ 位置
@@ -53,13 +60,16 @@ struct EnemyData
 
 		enemyType = EnemyType::Skeleton;
 
-		hp              = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
-		damage          = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
-		speed           = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
-		hasCloseAttack  = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
-		hasLongAttack   = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
-		visibilityDist  = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
-		visibilityAngle = EnemyParam::visibilityAngle[static_cast<int>(EnemyType::Skeleton)];
+		hp                  = EnemyParam::Hp[static_cast<int>(EnemyType::Skeleton)];
+		damage              = EnemyParam::Damage[static_cast<int>(EnemyType::Skeleton)];
+		speed               = EnemyParam::Speed[static_cast<int>(EnemyType::Skeleton)];
+		hasCloseAttack      = EnemyParam::HasCloseAttack[static_cast<int>(EnemyType::Skeleton)];
+		hasLongAttack       = EnemyParam::HasLongAttack[static_cast<int>(EnemyType::Skeleton)];
+		visibilityDist      = EnemyParam::VisibilityDist[static_cast<int>(EnemyType::Skeleton)];
+		visibilityAngle     = EnemyParam::VisibilityAngle[static_cast<int>(EnemyType::Skeleton)];
+		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[static_cast<int>(EnemyType::Skeleton)];
+		scale               = EnemyParam::Scale[static_cast<int>(EnemyType::Skeleton)];
+		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 種類指定生成
 	/// @param enemyType_ 敵の種類(Skeleton, Spider, Bat, Dragon)
@@ -75,13 +85,16 @@ struct EnemyData
 
 		transform.position = Vec3{ 0.0f, 0.0f, 0.0f };
 
-		hp              = EnemyParam::Hp[enemyType_];
-		damage          = EnemyParam::Damage[enemyType_];
-		speed           = EnemyParam::Speed[enemyType_];
-		hasCloseAttack  = EnemyParam::HasCloseAttack[enemyType_];
-		hasLongAttack   = EnemyParam::HasLongAttack[enemyType_];
-		visibilityDist  = EnemyParam::VisibilityDist[enemyType_];
-		visibilityAngle = EnemyParam::visibilityAngle[enemyType_];
+		hp                  = EnemyParam::Hp[enemyType_];
+		damage              = EnemyParam::Damage[enemyType_];
+		speed               = EnemyParam::Speed[enemyType_];
+		hasCloseAttack      = EnemyParam::HasCloseAttack[enemyType_];
+		hasLongAttack       = EnemyParam::HasLongAttack[enemyType_];
+		visibilityDist      = EnemyParam::VisibilityDist[enemyType_];
+		visibilityAngle     = EnemyParam::VisibilityAngle[enemyType_];
+		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
+		scale               = EnemyParam::Scale[enemyType_];
+		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 位置、種類指定生成
 	/// @param position_ 位置
@@ -96,13 +109,18 @@ struct EnemyData
 	{
 		objEnemyController = objEnemyController_;
 
-		hp              = EnemyParam::Hp[enemyType_];
-		damage          = EnemyParam::Damage[enemyType_];
-		speed           = EnemyParam::Speed[enemyType_];
-		hasCloseAttack  = EnemyParam::HasCloseAttack[enemyType_];
-		hasLongAttack   = EnemyParam::HasLongAttack[enemyType_];
-		visibilityDist  = EnemyParam::VisibilityDist[enemyType_];
-		visibilityAngle = EnemyParam::visibilityAngle[enemyType_];
+		modelIndex = enemyType_;
+
+		hp                  = EnemyParam::Hp[enemyType_];
+		damage              = EnemyParam::Damage[enemyType_];
+		speed               = EnemyParam::Speed[enemyType_];
+		hasCloseAttack      = EnemyParam::HasCloseAttack[enemyType_];
+		hasLongAttack       = EnemyParam::HasLongAttack[enemyType_];
+		visibilityDist      = EnemyParam::VisibilityDist[enemyType_];
+		visibilityAngle     = EnemyParam::VisibilityAngle[enemyType_];
+		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
+		scale               = EnemyParam::Scale[enemyType_];
+		transform.scale     = Vec3::One() * scale;
 	}
 
 	/// @brief アニメーションの状態
@@ -176,6 +194,7 @@ struct EnemyData
 	const float ATTACK_COLL_LIFE_TIME{ 0.5f };  ///< 攻撃判定の寿命
 	const float DAMAGED_COOL_TIME{ 0.5f };      ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
+	float scale{ 1.0f };                        ///< モデルの大きさ
 
 	bool followed{ false };  ///< 追跡中か
 	bool alive{ true };      ///< 生きているか
@@ -190,6 +209,8 @@ struct EnemyData
 
 	Vec3 targetPos{};                     ///< 追跡地点
 	GameObject objWanderingCheckPoint{};  ///< 徘徊時のチェックポイント
+	float rotationAnglePerSec{};          ///< 回転速度
+	float torque{};
 };
 
 /// @brief 敵
@@ -207,7 +228,7 @@ struct Enemy : ObjectBase<EnemyData>
 	/// @param vecZ_ Z軸の移動量
 	/// @param spd_ 速度
 	/// @param angleY_	Y軸の回転角度
-	void Move(float vecX_, float vecZ_, float spd_, float angleY_);
+	void Move(Vec3 target_, Vec3 pos_, Vec3 Fwd, float spd_);
 	/// @brief プレイヤーの視認
 	void Sensor();
 
@@ -260,4 +281,6 @@ struct Enemy : ObjectBase<EnemyData>
 	{
 		id = id_;
 	};
+
+	void RegisterStates(StateRegistry& registry) const;
 };

@@ -45,6 +45,17 @@ class SessionManager : public IManager
 	/// @return 存在している true / false
 	bool IsExistPlayer(const std::string& _playerName) const;
 
+	/// @brief 自分も含め全プレイヤーのステータスが存在するか
+	/// @return 存在する true / false
+	bool HasAllPlayersStatus() const;
+
+	/// @brief 受信した複数のプレイヤーステートを更新する
+	/// @param _playerId プレイヤーID
+	/// @param _stateNames 改行区切りのステート名一覧
+	/// @param _values 各ステートの値
+	/// @return 1件以上のステートが追加・変更された場合 true
+	bool UpdatePlayerStates(int32_t _playerId, std::string_view _stateNames, SizedBuffer<uint8_t>& _values);
+
 	/// @brief 各プレイヤーを周回する
 	/// @tparam Func コールバック [](const std::string&, const InSessionStatus::PlayerStatus&){}
 	/// @param _func コールバック [](const std::string&, const InSessionStatus::PlayerStatus&){}
@@ -72,6 +83,16 @@ class SessionManager : public IManager
 	/// @param _enemyId ステージに存在してる敵のID
 	/// @return 存在している true / false
 	bool IsExistEnemy(int _enemyId) const;
+
+	/// @brief 受信した複数の敵ステートを更新する
+	/// @param _enemyIds 敵ID一覧
+	/// @param _stateNames 改行区切りのステート名一覧
+	/// @param _values 各ステートの値
+	/// @return 1件以上のステートが追加・変更された場合 true
+	bool UpdateEnemyStates(
+	    SizedBuffer<int32_t>& _enemyIds,
+	    std::string_view _stateNames,
+	    SizedBuffer<uint8_t>& _values);
 
 	/// @brief 各敵を周回する
 	/// @tparam Func コールバック [](int, const InSessionStatus::EnemyStatus&){}

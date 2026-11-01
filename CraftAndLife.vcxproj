@@ -450,6 +450,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Harvestable.cpp" />
@@ -497,6 +498,10 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\Name3.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Name4.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\OtherInfo.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon2.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon3.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon4.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerName.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\TaskBackground.cpp" />
@@ -529,7 +534,9 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\TestScene\SceneTester.cpp" />
     <ClCompile Include="Source\Game\TestScene\TestScene.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleLogo.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitleLogoStartGuide.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleNetworkController.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitlePageContlroller.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordInputPanel.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordJoinButton.cpp" />
@@ -688,10 +695,13 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemyStates.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedPlayerStates.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
@@ -721,6 +731,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerTank.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobType.h" />
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
+    <ClInclude Include="Source\Game\PlayScene\StateValueCode.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossGaugeR.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossGauge.h" />
@@ -742,6 +753,10 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\Name3.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Name4.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon2.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon3.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon4.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerName.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
@@ -855,7 +870,9 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TestScene\SceneTester.h" />
     <ClInclude Include="Source\Game\TestScene\TestScene.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleLogo.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitleLogoStartGuide.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleNetworkController.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitlePageContlroller.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleScene.h" />
     <ClInclude Include="Source\Game\TitleScene\WordInputPanel.h" />
     <ClInclude Include="Source\Game\TitleScene\WordJoinButton.h" />

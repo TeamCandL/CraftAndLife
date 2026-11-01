@@ -5,9 +5,11 @@
 struct PlaySceneUIControllerData
 {
 	PlaySceneUIControllerData(
-	    GameObject objPlayer_)
+	    GameObject objPlayer_,
+	    GameObject objOtherPlayerController_)
 	{
-		objPlayer = objPlayer_;
+		objPlayer                = objPlayer_;
+		objOtherPlayerController = objOtherPlayerController_;
 	};
 
 	GameObject objTaskBackground{};  ///< タスク情報の背景
@@ -31,8 +33,12 @@ struct PlaySceneUIControllerData
 	GameObject objBossGauge{};       ///< ボスのゲージ、オレンジ
 	GameObject objBossName{};        ///< ボスの名前
 	GameObject objBossHp{};          ///< ボスのHP数値
+	GameObject objPlayerIcon2{};     ///< プレイヤー２ミニマップアイコン
+	GameObject objPlayerIcon3{};     ///< プレイヤー３ミニマップアイコン
+	GameObject objPlayerIcon4{};     ///< プレイヤー４ニマップアイコン
 
 	GameObject objPlayer{};  ///< MyGaugeに渡すプレイヤー
+	GameObject objOtherPlayerController{};
 };
 
 /// @brief プレイシーンのUI操作

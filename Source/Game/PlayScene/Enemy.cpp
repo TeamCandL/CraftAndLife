@@ -9,6 +9,7 @@
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
 #include "EnemyController.h"
+#include "StateRegistry.h"
 #include "../Manager/SessionManager.h"
 
 void Enemy::Start()
@@ -27,6 +28,7 @@ void Enemy::Update()
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
+	ImGui::DragInt("HP", &hp);
 	ImGui::End();
 
 	if (hp <= 0)
@@ -44,14 +46,7 @@ void Enemy::Update()
 
 	VCU_LOG("敵の追跡状況：{}", followed);
 
-	float distX = targetPos.x - transform.position.x;
-	float distZ = targetPos.y - transform.position.z;
-	float vecX  = Math::GetSquareVec(distX, distZ);
-	float vecZ  = Math::GetSquareVec(distZ, distX);
-	// 差分を基に移動方向の計算
-	angleY = Math::GetAngle(distX, distZ);
-
-	Move(vecX, vecZ, speed, angleY);
+	Move(targetPos, transform.position, transform.Forward(), speed);
 
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
@@ -87,21 +82,36 @@ void Enemy::Update()
 
 	if (!alive)
 	{
-		DestroyMe();
+		// 敵IDを使って死亡通知を送信キューに登録
+		// Registryの登録を解除
+		// ※上記2つは今後実装する
+		// DestroyMe();
 	}
 }
 
 void Enemy::Move(
-    float vecX_,
-    float vecZ_,
-    float spd_,
-    float angleY_)
+    Vec3 target_,
+    Vec3 pos_,
+    Vec3 Fwd,
+    float spd_)
 {
-	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+	// VCU_LOG("TargetPosition : {}, {}", target_.x, target_.z);
+	auto& [tx, _, tz] = target_.v;
+	Vec3 tPos{ tx, 0.0f, tz };
+	auto& [ex, __, ez] = pos_.v;
+	Vec3 ePos{ ex, 0.0f, ez };
+	Vec3 crossed = Math::GetCrossProduct(Fwd, tPos - ePos);
 
-	transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, angleY_, 0.0f });
-	transform.position.x += vecX_ * spd_ * Get<DeltaTime>();
-	transform.position.z += vecZ_ * spd_ * Get<DeltaTime>();
+	torque += crossed.y * Math::GetRad(rotationAnglePerSec);
+
+	Vec3 angles        = transform.rotation.ToEuler();
+	angles.y           = torque;
+	transform.rotation = Quaternion::FromEuler(angles);
+
+	Vec3 move{ transform.Forward() * speed };
+	transform.position += move;
+
+	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 }
 
 void Enemy::Sensor()
@@ -121,9 +131,8 @@ void Enemy::Sensor()
 		{
 			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayerPos - transform.position));
 			float visibilityDot = std::cosf(visibilityAngle);
-			if (dot <= visibilityDot)
+			if (dot >= visibilityDot)
 			{
-				VCU_LOG("視認してる");
 				if (targetDist < 0.0f)
 				{
 					targetPos_ = objPlayerPos;
@@ -140,11 +149,9 @@ void Enemy::Sensor()
 			}
 			else
 			{
-				VCU_LOG("視認してない {},{}", dot, visibilityDot);
 			}
 		}
 	}
-	// followed = false;
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
 		if (!objWanderingCheckPoint.IsEmpty())
@@ -221,4 +228,10 @@ void Enemy::SetWanderingCheckPoint(
 
 	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position_);
 	followed               = false;
+}
+
+void Enemy::RegisterStates(
+    StateRegistry& registry) const
+{
+	registry.Register("alive", alive);
 }

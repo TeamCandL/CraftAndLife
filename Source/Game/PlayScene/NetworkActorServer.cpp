@@ -13,14 +13,7 @@ void NetworkActorServer::Start()
 		return;
 	}
 
-	// 敵管理オブジェクトを生成して保存
-	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
-
-	// 敵を生成
-	GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
-
-	// 生成済みにする
-	Data().isInitialized = true;
+	CreateEnemies();
 }
 
 void NetworkActorServer::Update()
@@ -31,17 +24,14 @@ void NetworkActorServer::Update()
 	// ホストになったとき、まだ敵を生成していなければ生成
 	if (IsHost())
 	{
-		if (!IsInitialized())
+		CreateEnemies();
+
+		Data().enemyStateSyncTimer -= Get<DeltaTime>();
+
+		if (Data().enemyStateSyncTimer <= 0.0f)
 		{
-			Data().objEnemyController = GetScene().Instantiate<EnemyController>();
-
-			GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Skeleton));
-
-			GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Spider));
-
-			GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(EnemyType::Dragon));
-
-			Data().isInitialized = true;
+			Data().enemyStateSyncTimer += Data().enemyStateSyncTime;
+			Data().isFullSync = true;
 		}
 	}
 	else
@@ -54,7 +44,136 @@ void NetworkActorServer::Update()
 	}
 }
 
-bool NetworkActorServer::IsHost()
+void NetworkActorServer::CreateEnemy(
+    EnemyType type)
 {
-	return Get<SessionManager>().RefStatus().imLobbyHost;
+	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
+
+	// 生成した敵のステートを登録
+	EnemyStateRegistries(objEnemy);
+}
+
+void NetworkActorServer::CreateEnemy(
+    EnemyType type,
+    const Vec3& position)
+{
+	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, position, static_cast<int>(type));
+
+	EnemyStateRegistries(objEnemy);
+}
+
+void NetworkActorServer::CreateEnemies()
+{
+	if (IsInitialized())
+	{
+		return;
+	}
+
+	// 敵管理オブジェクトを生成
+	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+
+	// 敵を生成（同じ種類も複数生成可能）
+	CreateEnemy(EnemyType::Skeleton);
+	CreateEnemy(EnemyType::Skeleton);
+	CreateEnemy(EnemyType::Spider);
+	CreateEnemy(EnemyType::Spider);
+	CreateEnemy(EnemyType::BossSkeleton);
+	CreateEnemy(EnemyType::Bat);
+	CreateEnemy(EnemyType::Dragon, Vec3{ 1.0f, 7.0f, 2.0f });
+
+	//  生成済みにする
+	Data().isInitialized = true;
+}
+
+void NetworkActorServer::EnemyStateRegistries(
+    GameObject objEnemy)
+{
+	auto& enemy           = Get<Enemy>(objEnemy);
+	const int32_t enemyId = enemy.GetID();
+
+	if (enemyId < 0)
+	{
+		return;
+	}
+
+	auto& registries   = Data().enemyStateRegistries;
+	const size_t index = static_cast<size_t>(enemyId);
+
+	if (registries.size() <= index)
+	{
+		registries.resize(index + 1);
+	}
+
+	if (!registries[index].has_value())
+	{
+		registries[index].emplace();
+		enemy.RegisterStates(*registries[index]);
+
+		auto& queued = Data().enemyDeathQueued;
+
+		if (queued.size() <= index)
+		{
+			queued.resize(index + 1, false);
+		}
+
+		queued[index] = false;
+	}
+}
+
+void NetworkActorServer::MarkDeathQueued(
+    int32_t actorId)
+{
+	if (actorId < 0)
+	{
+		return;
+	}
+
+	auto& queued       = Data().enemyDeathQueued;
+	const size_t index = static_cast<size_t>(actorId);
+
+	if (queued.size() <= index)
+	{
+		queued.resize(index + 1, false);
+	}
+
+	queued[index] = true;
+}
+
+bool NetworkActorServer::IsDeathQueued(
+    int32_t actorId) const
+{
+	if (actorId < 0)
+	{
+		return false;
+	}
+
+	const auto& queued = Data().enemyDeathQueued;
+	const size_t index = static_cast<size_t>(actorId);
+
+	return index < queued.size() && queued[index];
+}
+
+void NetworkActorServer::ReleaseActor(
+    int32_t actorId)
+{
+	if (actorId < 0)
+	{
+		return;
+	}
+
+	const size_t index = static_cast<size_t>(actorId);
+	auto& registries   = Data().enemyStateRegistries;
+
+	if (index < registries.size() && registries[index].has_value())
+	{
+		registries[index]->Clear();
+		registries[index].reset();
+	}
+
+	auto& queued = Data().enemyDeathQueued;
+
+	if (index < queued.size())
+	{
+		queued[index] = false;
+	}
 }

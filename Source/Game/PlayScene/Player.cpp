@@ -15,6 +15,7 @@
 #include "Player/PlayerJobControllerTank.h"
 #include "Player/PlayerJobControllerFighter.h"
 #include "Player/PlayerJobControllerArcher.h"
+#include "StateRegistry.h"
 
 void Player::Start()
 {
@@ -137,7 +138,7 @@ void Player::Damaged(
 
 	if (hp <= 0)
 	{
-		SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
+		// SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
 	}
 }
 
@@ -413,6 +414,16 @@ void Player::DeadAnim()
 		animIndex = PlayerAnimType_Die;
 		animSpeed = 0.0f;
 	}
+}
+
+void Player::RegisterStates(
+    StateRegistry& registry) const
+{
+	registry.Register({
+	    { "hp", Data().hp },
+	    { "helthState", Data().helthState },
+	    { "animIndex", Data().animIndex },
+	});
 }
 
 Vec3 Player::GetPosition() const

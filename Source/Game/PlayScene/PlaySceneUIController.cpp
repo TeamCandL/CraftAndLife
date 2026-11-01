@@ -20,13 +20,16 @@
 #include "UI/BossGauge.h"
 #include "UI/BossName.h"
 #include "UI/BossHp.h"
+#include "UI/PlayerIcon2.h"
+#include "UI/PlayerIcon3.h"
+#include "UI/PlayerIcon4.h"
 
 void PlaySceneUIController::Start()
 {
 	objTaskBackground = GetScene().Instantiate<TaskBackground>();
 	objBossInfo       = GetScene().Instantiate<BossInfo>();
 	objHotBar         = GetScene().Instantiate<HotBar>();
-	objMiniMap        = GetScene().Instantiate<MiniMap>(objPlayer);
+	objMiniMap        = GetScene().Instantiate<MiniMap>(objPlayer, objOtherPlayerController);
 	objOtherInfo      = GetScene().Instantiate<OtherInfo>();
 	objSelfInfo       = GetScene().Instantiate<SelfInfo>();
 	objMyGauge        = GetScene().Instantiate<MyGauge>(objPlayer);
