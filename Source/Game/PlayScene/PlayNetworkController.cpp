@@ -77,15 +77,23 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedPlayerStates playerStateMessage{};
 				    converter.ToMessage(_event.data, playerStateMessage);
 
-				    VCU_LOG(
-				        "Receive UpdatedPlayerStates: PlayerID={}, StateName={}",
-				        playerStateMessage.playerId,
-				        playerStateMessage.stateName);
-
+#if 1
 				    Get<SessionManager>().UpdatePlayerStates(
 				        playerStateMessage.playerId,
 				        playerStateMessage.stateName,
 				        playerStateMessage.values);
+#else
+				    const bool updated = Get<SessionManager>().UpdatePlayerStates(
+				        playerStateMessage.playerId,
+				        playerStateMessage.stateName,
+				        playerStateMessage.values);
+
+				    VCU_LOG(
+				        "Receive UpdatedPlayerStates: PlayerID={}, StateName={}, Updated={}",
+				        playerStateMessage.playerId,
+				        playerStateMessage.stateName,
+				        updated);
+#endif
 
 				    break;
 			    }
@@ -114,15 +122,25 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedEnemyStates enemyStateMessage{};
 				    converter.ToMessage(_event.data, enemyStateMessage);
 
+#if 1
 				    Get<SessionManager>().UpdateEnemyStates(
 				        enemyStateMessage.enemyStateIds,
 				        enemyStateMessage.stateName,
 				        enemyStateMessage.values);
 
+#else
+				    const bool updated = Get<SessionManager>().UpdateEnemyStates(
+				        enemyStateMessage.enemyStateIds,
+				        enemyStateMessage.stateName,
+				        enemyStateMessage.values);
+
 				    VCU_LOG(
-				        "敵ステート取得してゆくぅぅ!!:件数={}, 全同期={}",
+				        "Receive UpdatedEnemyStates: ID数={}, StateName={}, FullSync={}, Updated={}",
 				        enemyStateMessage.enemyStateIds.Size(),
-				        enemyStateMessage.isFullSync);
+				        enemyStateMessage.stateName,
+				        enemyStateMessage.isFullSync,
+				        updated);
+#endif
 
 				    break;
 			    }

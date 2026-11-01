@@ -46,18 +46,6 @@ struct StateRegistry
 {
 	std::vector<RegisteredState> states;  ///< 登録されたステートの一覧
 
-	/// @brief 敵のbool変数を監視対象として登録する
-	/// @param name 登録するステートの名前
-	/// @param value 監視対象となるbool変数
-
-	// void Register(const std::string& name, const bool& value);
-
-	// void Register(const std::string& name, const uint8_t& value);
-
-	// void Register(const std::string& name, const int32_t& value);
-
-	// void Register(const std::string& name, const float& value);
-
 	/// @brief ステートを登録する
 	template <typename T>
 	void Register(
