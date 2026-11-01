@@ -59,6 +59,7 @@ void PlayNetworkController::Update()
 
 				    Get<SessionManager>().UpdatePlayers(message.playerNames, message.positions, message.rotations);
 
+				    VCU_LOG("RECV ProtocolType::UpdatedPlayers:{}", message.positions.Size());
 				    // VCU_LOG("Receive UpdatedPlayers:{}", message.flag);
 				    break;
 			    }

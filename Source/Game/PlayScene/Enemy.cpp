@@ -130,10 +130,8 @@ void Enemy::Sensor()
 		{
 			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayerPos - transform.position));
 			float visibilityDot = std::cosf(visibilityAngle);
-			VCU_LOG("dot : {}, visibilityDot : {}", dot, visibilityDot);
 			if (dot >= visibilityDot)
 			{
-				VCU_LOG("視認してる");
 				if (targetDist < 0.0f)
 				{
 					targetPos_ = objPlayerPos;
@@ -150,7 +148,6 @@ void Enemy::Sensor()
 			}
 			else
 			{
-				VCU_LOG("視認してない");
 			}
 		}
 	}
