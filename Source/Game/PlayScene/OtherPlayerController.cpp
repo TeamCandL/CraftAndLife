@@ -8,11 +8,15 @@ void OtherPlayerController::Update()
 {
 	SessionManager& sessionManager = Get<SessionManager>();
 
+	if (!sessionManager.HasAllPlayersStatus())
+	{
+		return;  // 他プレイヤーがいないなら知らん！
+	}
+
 	for (auto& [name, obj] : nameToObjOtherPlayer)
 	{
 		if (!sessionManager.IsExistPlayer(name))
 		{
-			VCU_ASSERT(false);
 			GetScene().Destroy(obj);
 		}
 	}

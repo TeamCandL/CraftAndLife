@@ -9,6 +9,10 @@ void OtherPlayer::Start()
 void OtherPlayer::Update()
 {
 	SessionManager& sessionManager = Get<SessionManager>();
+	if (!sessionManager.HasAllPlayersStatus())
+	{
+		return;  // 他プレイヤーがいないならしらん！
+	}
 	if (sessionManager.IsExistPlayer(name.content))  // プレイヤーが存在するなら
 	{
 		const InSessionStatus::PlayerStatus& status = sessionManager.RefPlayerStatus(name.content);

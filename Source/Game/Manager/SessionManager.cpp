@@ -115,12 +115,13 @@ void SessionManager::UpdatePlayers(
 	}
 
 	// 更新フラグが不一致は削除していく
-	std::erase_if(
+	// TODO: ittannむし！！！
+	/*std::erase_if(
 	    inSessionStatus_.playersStatus,
 	    [this](const auto& nameAndStatus)
 	    {
-		    return nameAndStatus.second.updatedFlag != inSessionStatus_.updatedFlag;
-	    });
+	        return nameAndStatus.second.updatedFlag != inSessionStatus_.updatedFlag;
+	    });*/
 }
 
 const InSessionStatus::PlayerStatus& SessionManager::RefPlayerStatus(
@@ -132,8 +133,18 @@ const InSessionStatus::PlayerStatus& SessionManager::RefPlayerStatus(
 bool SessionManager::IsExistPlayer(
     const std::string& _playerName) const
 {
+	if (inSessionStatus_.playersStatus.count(_playerName) == 0)
+	{
+		VCU_LOG("なんでだよおおおおおおお");
+	}
+
 	// TODO: ここで文字化けしているためうまく判定できていない可能性がある。
 	return inSessionStatus_.playersStatus.count(_playerName) != 0;
+}
+
+bool SessionManager::HasAllPlayersStatus() const
+{
+	return inSessionStatus_.playersStatus.size() > 0;
 }
 
 void SessionManager::UpdateEnemies(

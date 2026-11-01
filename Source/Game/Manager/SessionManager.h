@@ -45,6 +45,10 @@ class SessionManager : public IManager
 	/// @return 存在している true / false
 	bool IsExistPlayer(const std::string& _playerName) const;
 
+	/// @brief 自分も含め全プレイヤーのステータスが存在するか
+	/// @return 存在する true / false
+	bool HasAllPlayersStatus() const;
+
 	/// @brief 各プレイヤーを周回する
 	/// @tparam Func コールバック [](const std::string&, const InSessionStatus::PlayerStatus&){}
 	/// @param _func コールバック [](const std::string&, const InSessionStatus::PlayerStatus&){}
