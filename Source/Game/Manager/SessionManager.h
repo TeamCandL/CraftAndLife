@@ -49,6 +49,13 @@ class SessionManager : public IManager
 	/// @return 存在する true / false
 	bool HasAllPlayersStatus() const;
 
+	/// @brief 受信した複数のプレイヤーステートを更新する
+	/// @param _playerId プレイヤーID
+	/// @param _stateNames 改行区切りのステート名一覧
+	/// @param _values 各ステートの値
+	/// @return 1件以上のステートが追加・変更された場合 true
+	bool UpdatePlayerStates(int32_t _playerId, std::string_view _stateNames, SizedBuffer<uint8_t>& _values);
+
 	/// @brief 各プレイヤーを周回する
 	/// @tparam Func コールバック [](const std::string&, const InSessionStatus::PlayerStatus&){}
 	/// @param _func コールバック [](const std::string&, const InSessionStatus::PlayerStatus&){}

@@ -9,6 +9,7 @@
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
 #include "EnemyController.h"
+#include "StateRegistry.h"
 #include "../Manager/SessionManager.h"
 
 void Enemy::Start()
@@ -230,7 +231,7 @@ void Enemy::SetWanderingCheckPoint(
 }
 
 void Enemy::RegisterStates(
-    EnemyStateRegistry& registry) const
+    StateRegistry& registry) const
 {
 	registry.Register("alive", alive);
 }

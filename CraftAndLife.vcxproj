@@ -450,7 +450,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
-    <ClCompile Include="Source\Game\PlayScene\EnemyStateRegistry.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Harvestable.cpp" />
@@ -696,11 +696,12 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemyStates.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedPlayerStates.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
-    <ClInclude Include="Source\Game\PlayScene\EnemyStateRegistry.h" />
+    <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
@@ -730,6 +731,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerTank.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobType.h" />
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
+    <ClInclude Include="Source\Game\PlayScene\StateValueCode.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossGaugeR.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossGauge.h" />

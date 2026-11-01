@@ -27,14 +27,14 @@ namespace Protocol
 		}
 		ENetSendMode GetSendMode() const override
 		{
-			return ENetSendMode::Unreliable;
+			return ENetSendMode::Reliable;
 		}
 
 		// 以下通信メンバーたち
 
 		SizedBuffer<int32_t> enemyStateIds{};
 		std::string stateName{};
-		SizedBuffer<uint8_t> values{};  /// 修正必要かもしれない
+		SizedBuffer<uint8_t> values{};
 		bool isFullSync{};
 	};
 }  // namespace Protocol
