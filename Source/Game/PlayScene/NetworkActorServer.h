@@ -12,6 +12,7 @@ struct NetworkActorServerData
 
 	bool isInitialized{ false };
 
+	GameObject objPlayer{};
 	GameObject objEnemyController{};
 	GameObject objOtherEnemyController{};
 
@@ -43,6 +44,10 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	void CreateEnemies();
 	void EnemyStateRegistries(GameObject objEnemy);
 
+	GameObject GetPlayer() const
+	{
+		return Data().objPlayer;
+	}
 	/// @brief プレイヤーのステート登録情報を取得
 	StateRegistry& GetPlayerStateRegistry()
 	{

@@ -11,6 +11,7 @@
 #include <Game/Network/Protocols/UpdatedEnemyStates.h>
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
+#include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
 #include <Game/PlayScene/NetworkActorServer.h>
@@ -23,6 +24,12 @@ using enum NetworkSessionManager::State;
 void PlayNetworkController::Start()
 {
 	Get<NetworkSessionManager>().SetCurrentState(Playing);
+
+	Player& player = Get<Player>(objPlayer);
+
+	NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
+
+	player.RegisterStates(actorServer.GetPlayerStateRegistry());
 }
 
 void PlayNetworkController::Update()
@@ -68,6 +75,11 @@ void PlayNetworkController::Update()
 			    {
 				    Protocol::UpdatedPlayerStates playerStateMessage{};
 				    converter.ToMessage(_event.data, playerStateMessage);
+
+				    VCU_LOG(
+				        "Receive UpdatedPlayerStates: PlayerID={}, StateName={}",
+				        playerStateMessage.playerId,
+				        playerStateMessage.stateName);
 
 				    Get<SessionManager>().UpdatePlayerStates(
 				        playerStateMessage.playerId,
@@ -154,46 +166,56 @@ void PlayNetworkController::Update()
 
 		if (!playerChanges.empty())
 		{
-			// 自分のプレイヤーIDを取得
 			const auto& status = Get<SessionManager>().RefStatus();
 
+			// 自分のプレイヤーIDを取得
 			auto nameIt = std::find(status.memberNames.begin(), status.memberNames.end(), status.name);
+
+			VCU_LOG("自分の名前: {}", status.name);
+
+			for (size_t i = 0; i < status.memberNames.size(); ++i)
+			{
+				VCU_LOG(
+				    "Member[{}]: Name={}, ID={}",
+				    i,
+				    status.memberNames[i],
+				    i < status.memberId.size() ? status.memberId[i] : -1);
+			}
 
 			if (nameIt != status.memberNames.end())
 			{
 				const size_t index = std::distance(status.memberNames.begin(), nameIt);
-				// プレイヤーIDの範囲チェック
+
 				if (index < status.memberId.size())
 				{
-					const int32_t playerId = status.memberId[index];
-
-					Protocol::UpdatedPlayerStates playerStateMessage{};
-					playerStateMessage.playerId = playerId;
+					Protocol::UpdatedPlayerStates message{};
+					message.playerId = status.memberId[index];
 
 					std::vector<uint8_t> values;
 
 					for (const auto& change : playerChanges)
 					{
-						if (!playerStateMessage.stateName.empty())
+						if (!message.stateName.empty())
 						{
-							playerStateMessage.stateName += '\n';
+							message.stateName += '\n';
 						}
 
-						playerStateMessage.stateName += change.name;
-
+						message.stateName += change.name;
 						StateValueCode::Encode(change.value, values);
 					}
 
-					playerStateMessage.values.Resize(values.size());
+					message.values.Resize(values.size());
 
 					for (size_t i = 0; i < values.size(); ++i)
 					{
-						playerStateMessage.values[i] = values[i];
+						message.values[i] = values[i];
 					}
 
-					networkSessionManager.Send(playerStateMessage);
+					VCU_LOG("Send UpdatedPlayerStates: PlayerID={}, StateName={}", message.playerId, message.stateName);
 
-					// 送信登録後に変更を確定
+					networkSessionManager.Send(message);
+
+					// 送信後に変更を確定
 					playerRegistry.CommitChanges(playerChanges);
 				}
 			}
