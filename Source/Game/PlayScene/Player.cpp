@@ -109,7 +109,7 @@ void Player::Update()
 	{
 		isOpenCraftUI = !isOpenCraftUI;
 	}
-
+	Get<PlayerHand>(objPlayerHand).SetItem(Get<HotBar>(objHotbar).GetSelectedItemId());
 	/*
 	//テスト用
 	 // HPゲージ動作確認用：1秒ごとに10ダメージ
