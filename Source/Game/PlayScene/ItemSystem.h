@@ -6,6 +6,7 @@ enum ItemType
 {
 	Weapons = 0,  ///<	武器
 	WeaponBow,    ///<	弓
+	Arrow,        ///<	矢
 	Consumables,  ///<	消費アイテム
 	Materials,    ///<	素材アイテム
 	ItemTypeMax,  ///<	その他アイテム

@@ -51,7 +51,7 @@ ItemSystemData::ItemSystemData()
 	craft.push_back({ 8, 3 });
 	craft.push_back({ 10, 2 });
 	allItemList.push_back({ 3,
-	                        ItemType::Weapons,
+	                        ItemType::WeaponBow,
 	                        "弓",
 	                        "Image/Item/IconBow.png",
 	                        "Model/HandWeapon/HandBow.fbx",
@@ -195,7 +195,7 @@ ItemSystemData::ItemSystemData()
 	craft.push_back({ 7, 1 });
 	craft.push_back({ 8, 2 });
 	allItemList.push_back({ 15,
-	                        ItemType::Consumables,
+	                        ItemType::Arrow,
 	                        "矢",
 	                        "Image/Item/IconArrow.png",
 	                        "Model/HandWeapon/Arrow.fbx",
