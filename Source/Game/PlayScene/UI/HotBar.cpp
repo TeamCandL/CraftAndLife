@@ -118,6 +118,11 @@ ItemId HotBar::GetSelectedItemId()
 	return Get<SlotItem>(Get<Slot>(slots[currentSlotIdx]).Data().slotItem).Data().id;
 }
 
+ItemId HotBar::GetConsumableItemId()
+{
+	return Get<SlotItem>(Get<Slot>(slots[CONSUMABLE_SLOT_INDEX]).Data().slotItem).Data().id;
+}
+
 bool HotBar::CanRemoveConsumableItem(
     int _count)
 {

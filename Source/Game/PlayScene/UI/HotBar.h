@@ -91,6 +91,9 @@ struct HotBar : ObjectBase<HotBarData>
 	/// @brief 現在選択中のスロットのアイテムを返す
 	/// @return
 	ItemId GetSelectedItemId();
+	/// @brief 消費アイテム(または矢)のIDを返す
+	/// @return
+	ItemId GetConsumableItemId();
 	/// @brief 消費アイテム(または矢)を、指定された個数だけ除外できるか判定
 	/// @param _count 指定するアイテム数
 	/// @return
