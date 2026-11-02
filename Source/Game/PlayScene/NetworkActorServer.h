@@ -19,6 +19,8 @@ struct NetworkActorServerData
 	/// @brief 自プレイヤーのステート登録情報
 	StateRegistry playerStateRegistry;
 
+	bool isPlayerStateRegistered{ false };
+
 	/// @brief 敵IDごとのステート登録情報
 	std::vector<std::optional<StateRegistry>> enemyStateRegistries;
 	/// @brief 敵IDごとの死亡通知送信登録状態
@@ -48,10 +50,22 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	{
 		return Data().objPlayer;
 	}
+
 	/// @brief プレイヤーのステート登録情報を取得
 	StateRegistry& GetPlayerStateRegistry()
 	{
 		return Data().playerStateRegistry;
+	}
+
+	bool IsPlayerStateRegistered() const
+	{
+		return Data().isPlayerStateRegistered;
+	}
+
+	void SetPlayerStateRegistered(
+	    bool value)
+	{
+		Data().isPlayerStateRegistered = value;
 	}
 
 	/// @brief 死亡通知の送信登録完了を記録

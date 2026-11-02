@@ -468,6 +468,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\Player.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayerAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayerHand.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\PlayerBag.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerControllerNormal.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerArcher.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerFighter.cpp" />
@@ -485,11 +486,13 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossName.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\DeathUI.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\CraftUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge1.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge2.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge3.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge4.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\HotBar.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\ListBox.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMap.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMapPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MyGauge.cpp" />
@@ -734,6 +737,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\OtherPlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerHand.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlayerBag.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\HelthState.h" />
     <ClInclude Include="Source\Game\PlayScene\Player\IPlayerJobController.h" />
@@ -753,11 +757,13 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossName.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\DeathUI.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\CraftUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge2.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge3.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge4.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\HotBar.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\ListBox.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMapPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MyGauge.h" />

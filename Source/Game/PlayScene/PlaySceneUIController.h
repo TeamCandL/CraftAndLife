@@ -17,7 +17,6 @@ struct PlaySceneUIControllerData
 	GameObject objTaskBackground{};  ///< タスク情報の背景
 	GameObject objTaskText{};        ///< タスク情報のテキスト
 	GameObject objBossInfo{};        ///< ボスの体力ゲージUI
-	GameObject objHotBar{};          ///< アイテムのホットスロットバーUI
 	GameObject objMiniMap{};         ///< ミニマップUI
 	GameObject objOtherInfo{};       ///< 味方の体力ゲージ
 	GameObject objSelfInfo{};        ///< 自分の体力ゲージ裏
@@ -35,6 +34,7 @@ struct PlaySceneUIControllerData
 	GameObject objBossGauge{};       ///< ボスのゲージ、オレンジ
 	GameObject objBossName{};        ///< ボスの名前
 	GameObject objBossHp{};          ///< ボスのHP数値
+	GameObject objCraftUI{};         ///< クラフト画面
 	GameObject objPlayerIcon2{};     ///< プレイヤー２ミニマップアイコン
 	GameObject objPlayerIcon3{};     ///< プレイヤー３ミニマップアイコン
 	GameObject objPlayerIcon4{};     ///< プレイヤー４ニマップアイコン

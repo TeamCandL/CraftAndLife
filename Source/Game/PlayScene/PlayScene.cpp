@@ -15,6 +15,7 @@
 #include "OtherEnemy.h"
 #include "OtherEnemyController.h"
 #include "PlaySceneUIController.h"
+#include "PlayerBag.h"
 #include <../Resource/MAP/MAP.h>
 #include "Harvestable.h"
 #include "UI/MyGauge.h"
