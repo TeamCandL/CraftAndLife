@@ -16,6 +16,8 @@ enum struct ProtocolType : uint8_t
 	UpdateEnemy,          ///< 敵の情報更新
 	UpdatedEnemies,       ///< すべての敵の情報更新
 	UpdatedEnemyStates,   ///< 敵のステートの情報を更新
+	UpdateEntitySpawn,    ///< エンティティの生成
+	UpdateEntityRemove,   ///< エンティティの削除
 	UpdateDayTime,        ///< ゲーム内時間の更新要求
 	UpdatedDayTime,       ///< ゲーム内時間の同期情報
 	LoadedTerrain,        ///< 地形のチャンク情報を取得
