@@ -8,6 +8,8 @@
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/PlayerBag.h>
+#include <Game/PlayScene/UI/HotBar.h>
 #include <string>
 #include "PlayerHand.h"
 #include "Player/IPlayerJobController.h"
@@ -35,6 +37,11 @@ void Player::Start()
 
 	// 初期位置の地面の高さを取得
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	// バッグ作成
+	objPlayerBag = GetScene().Instantiate<PlayerBag>();
+
+	objHotbar = GetScene().Instantiate<HotBar>();
 
 	SetJob(PlayerJobType_Healer);
 }
@@ -360,23 +367,27 @@ void Player::MoveBody()
 	if (pPlayerInput->IsInteractBegin())
 	{
 		Get<EntitySystem>().Spawn(
-		    1,
+		    8,
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
+	{
+		Get<EntitySystem>().Spawn(
+		    7,
 		    transform.position + Vec3::Up() * 2.0f,
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 		VCU_LOG("objPawn");
 	}
 
-	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
-	if (objPick)
-	{
-		// GetScene().Destroy(objPick);
-		VCU_LOG("objPick");
+	// 近くのアイテムを拾う
+	UpdatePickNearestItem();
 
-		Get<EntitySystem>().Spawn(
-		    Get<IEntity>(objPick).GetItemId(),
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-		// objPick
+	// クラフト画面を開く
+	if (Get<InputSystem>().GetKeyDown(KeyCode::C) ||
+	    Get<AbstructInputSystem>().GetPadInputSystem().IsButtonTriggered(GameInputGamepadY))
+	{
+		isOpenCraftUI = !isOpenCraftUI;
 	}
 }
 
@@ -424,4 +435,38 @@ Vec3 Player::GetPosition() const
 float Player::GetAngleY() const
 {
 	return Vec3{ transform.rotation.ToEuler() }.y;
+}
+
+void Player::UpdatePickNearestItem()
+{
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	// エンティティを拾うことができた場合
+	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
+	if (objPick)
+	{
+		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
+		TryAddItem(pickedItemId);
+	}
+}
+
+void Player::TryAddItem(
+    ItemId _id)
+{
+	if (Get<HotBar>(objHotbar).TrySetItem(_id))
+		return;
+	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
+	// バッグに追加できる場合、追加
+	if (bag.CanAddItem(_id))
+	{
+		bag.AddItem(_id);
+	}
+	// 追加できないなら、エンティティとして前方に放り出す
+	else
+	{
+		Get<EntitySystem>().Spawn(
+		    _id,
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		VCU_LOG("objPawn");
+	}
 }

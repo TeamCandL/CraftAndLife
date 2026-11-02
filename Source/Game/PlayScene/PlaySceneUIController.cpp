@@ -2,7 +2,6 @@
 #include "PlaySceneUIController.h"
 #include "UI/TaskBackground.h"
 #include "UI/BossInfo.h"
-#include "UI/HotBar.h"
 #include "UI/MiniMap.h"
 #include "UI/OtherInfo.h"
 #include "UI/SelfInfo.h"
@@ -20,6 +19,7 @@
 #include "UI/BossGauge.h"
 #include "UI/BossName.h"
 #include "UI/BossHp.h"
+#include "UI/CraftUI.h"
 #include "UI/PlayerIcon2.h"
 #include "UI/PlayerIcon3.h"
 #include "UI/PlayerIcon4.h"
@@ -28,7 +28,6 @@ void PlaySceneUIController::Start()
 {
 	objTaskBackground = GetScene().Instantiate<TaskBackground>();
 	objBossInfo       = GetScene().Instantiate<BossInfo>();
-	objHotBar         = GetScene().Instantiate<HotBar>();
 	objMiniMap        = GetScene().Instantiate<MiniMap>(objPlayer, objOtherPlayerController);
 	objOtherInfo      = GetScene().Instantiate<OtherInfo>();
 	objSelfInfo       = GetScene().Instantiate<SelfInfo>();
@@ -46,4 +45,5 @@ void PlaySceneUIController::Start()
 	objBossGauge      = GetScene().Instantiate<BossGauge>();
 	objBossName       = GetScene().Instantiate<BossName>();
 	objBossHp         = GetScene().Instantiate<BossHp>();
+	objCraftUI        = GetScene().Instantiate<CraftUI>(objPlayer);
 }

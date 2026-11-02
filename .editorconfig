@@ -108,3 +108,6 @@ indent_size = 2
 # UTF-8‚É•ÏŠ·
 charset = utf-8
 indent_style = space
+
+[*.json]
+charset = utf-8
