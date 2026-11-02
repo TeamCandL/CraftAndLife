@@ -7,9 +7,9 @@
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
 {
-	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };             ///< 体力
-	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };             ///< 攻撃力
-	const std::vector<float> Speed{ 300.0f, 2.5f, 4.0f, 5.0f, 3.5f };  ///< 移動速度
+	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };               ///< 体力
+	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };               ///< 攻撃力
+	const std::vector<float> Speed{ 10.0f, 7.5f, 12.0f, 15.0f, 11.5f };  ///< 移動速度
 	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };
 	const std::vector<bool> HasLongAttack{ false, false, false, false, true };
 	const std::vector<float> VisibilityDist{ 100.0f, 200.0f, 100.0f, 80.0f, 300.0f };
@@ -256,8 +256,18 @@ struct Enemy : ObjectBase<EnemyData>
 		return { id, enemyType, transform.position, angleY };
 	}
 
+	/// @brief 攻撃処理
+	/// @param targetPos_
+	void Attack(Vec3 targetPos_);
+	/// @brief 遠距離攻撃
+	void LongAttack();
+	/// @brief 近距離攻撃
+	void CloseAttack();
 	/// @brief 攻撃判定の生成
 	void AttackCollider();
+	/// @brief 攻撃判定の生成(遠距離)
+	/// @param forward_ 自身から見たターゲットの方向
+	void AttackCollider(const Vec3& forward_);
 	/// @brief
 	/// @param damage 受けるダメージ量
 	void Damaged(int32_t damage);

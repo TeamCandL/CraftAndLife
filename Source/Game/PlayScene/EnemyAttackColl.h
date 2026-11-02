@@ -20,6 +20,19 @@ struct EnemyAttackCollData
 	    lifeTime{ lifeTime_ }
 	{
 	}
+	EnemyAttackCollData(
+	    const Vec3 position_,
+	    const int32_t damage_,
+	    const float lifeTime_,
+	    const Vec3& forward_,
+	    const float speed_) :
+	    transform{ position_ },
+	    damage{ damage_ },
+	    lifeTime{ lifeTime_ },
+	    forward{ forward_ },
+	    speed{ speed_ }
+	{
+	}
 
 	Component<Transform> transform{};      ///< 座標系
 	Component<RigidBody> rigidBody{};      ///< 剛体
@@ -36,6 +49,8 @@ struct EnemyAttackCollData
 	//-----------------------------------------//
 	int32_t damage{};
 	float lifeTime{};  ///< 寿命
+	Vec3 forward{};    ///< 進行方向
+	float speed{};     ///< 進行速度
 
 	const Vec3 OBB_OFFSET{ 0.0f, 0.5f, 0.0f };  ///< OBBのオフセット(位置)
 	const float OBB_SCALE{ 1.0f };              ///< OBBのスケール
@@ -51,6 +66,9 @@ struct EnemyAttackColl : ObjectBase<EnemyAttackCollData>
 
 	/// @brief 更新処理
 	void Update() override;
+
+	/// @brief 当たり判定の移動
+	void Move();
 
 	/// 対象へのダメージ付与
 	void SendDamage(Player& player, int32_t damage_);

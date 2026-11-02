@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "EnemyAttackColl.h"
 #include "Player.h"
+#include "TerrainSystem.h"
 
 void EnemyAttackColl::Start()
 {
@@ -30,6 +31,17 @@ void EnemyAttackColl::Update()
 			SendDamage();
 			*/
 		}
+	}
+}
+
+void EnemyAttackColl::Move()
+{
+	Vec3 move{ transform.Forward() * speed };
+	transform.position += move;
+
+	if (transform.position.y <= Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z))
+	{
+		lifeTime = 0.0f;
 	}
 }
 

@@ -25,6 +25,8 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	attacked = false;
+
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
@@ -44,14 +46,16 @@ void Enemy::Update()
 
 	Sensor();
 
-	VCU_LOG("敵の追跡状況：{}", followed);
+	targetPos.y = Get<TerrainSystem>().GetHeight(targetPos.x, targetPos.z);
+
+	// VCU_LOG("敵の追跡状況：{}", followed);
 
 	Move(targetPos, transform.position, transform.Forward(), speed);
 
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
 	{
-		AttackCollider();
+		Attack(targetPos);
 	}
 	nowDamagedCoolTime -= Get<DeltaTime>();
 
@@ -192,16 +196,55 @@ void Enemy::OnDestroy()
 	a++;
 }
 
+void Enemy::Attack(
+    Vec3 targetPos_)
+{
+	if (followed)
+	{
+		if (nowAttackCoolTime <= 0.0f)
+		{
+			float dist = (targetPos_ - transform.position).Length();
+			if (hasLongAttack && dist > 5.0f)
+			{
+				LongAttack();
+			}
+			else if (hasCloseAttack && dist <= 5.0f)
+			{
+				CloseAttack();
+			}
+		}
+	}
+}
+
+void Enemy::LongAttack()
+{
+	Vec3 forward = targetPos - transform.position;
+	AttackCollider(forward);
+}
+
+void Enemy::CloseAttack()
+{
+	AttackCollider();
+}
+
 void Enemy::AttackCollider()
 {
-	if (nowAttackCoolTime <= 0.0f)
-	{
-		attacked = true;
-		Get<AudioSystem>().Play(attackSE);
+	attacked = true;
+	Get<AudioSystem>().Play(attackSE);
 
-		GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
-		nowAttackCoolTime = ATTACK_COOL_TIME;
-	}
+	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+	nowAttackCoolTime = ATTACK_COOL_TIME;
+}
+
+void Enemy::AttackCollider(
+    const Vec3& forward_)
+{
+	attacked = true;
+	Get<AudioSystem>().Play(attackSE);
+
+	GetScene()
+	    .Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 100.0f, forward_, 10.0f);
+	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
 void Enemy::Damaged(

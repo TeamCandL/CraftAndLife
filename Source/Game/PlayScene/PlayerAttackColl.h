@@ -58,6 +58,9 @@ struct PlayerAttackColl : ObjectBase<PlayerAttackCollData>
 	/// @brief 更新処理
 	void Update() override;
 
+	/// @brief 当たり判定の移動
+	void Move();
+
 	/// 対象へのダメージ付与
 	void SendDamage(Enemy& enemy, int32_t);
 };
