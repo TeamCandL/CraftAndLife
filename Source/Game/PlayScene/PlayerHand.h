@@ -19,7 +19,9 @@ struct PlayerHandData
 	bool isActing{ false };    ///< アイテムを振っている最中か
 	bool isOnAction{ false };  ///< アイテムのアイテムのアクションがあった瞬間か true / false
 
-	ItemId haveItemId{ 2 };  ///< 持っているアイテムのId
+	ItemId haveItemId{};  ///< 持っているアイテムのId
+
+	GameObject objItemAction{};  ///< アイテムアクションのオブジェクト
 };
 
 /// @brief プレイヤーの手持ち

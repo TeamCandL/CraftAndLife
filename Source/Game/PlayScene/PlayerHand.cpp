@@ -32,6 +32,8 @@ void PlayerHand::Start()
 	};
 
 	transformAnimator.playAnimation = "idle";
+
+	SetItem(3);
 }
 
 void PlayerHand::Update()
