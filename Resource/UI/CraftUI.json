@@ -1,0 +1,250 @@
+{
+  "image 1": {
+    "name": "image 1",
+    "type": "RECTANGLE",
+    "x": 0,
+    "y": 0,
+    "width": 1920,
+    "height": 1080
+  },
+  "craftable_list_group": {
+    "name": "craftable_list_group",
+    "type": "GROUP",
+    "x": 425,
+    "y": 241,
+    "width": 275,
+    "height": 598,
+    "children": {
+      "self_info_background": {
+        "name": "self_info_background",
+        "type": "RECTANGLE",
+        "x": 429,
+        "y": 241,
+        "width": 271,
+        "height": 598
+      },
+      "Rectangle 6": {
+        "name": "Rectangle 6",
+        "type": "RECTANGLE",
+        "x": 429,
+        "y": 285,
+        "width": 271,
+        "height": 40
+      },
+      "Polygon 1": {
+        "name": "Polygon 1",
+        "type": "POLYGON",
+        "x": 457,
+        "y": 289,
+        "width": 32,
+        "height": 32
+      },
+      "斧": {
+        "name": "斧",
+        "type": "TEXT",
+        "x": 457,
+        "y": 241,
+        "width": 32,
+        "height": 32,
+        "fontSize": 32,
+        "content": "斧"
+      },
+      "ハンマー": {
+        "name": "ハンマー",
+        "type": "TEXT",
+        "x": 457,
+        "y": 285,
+        "width": 131,
+        "height": 32,
+        "fontSize": 32,
+        "content": "ハンマー"
+      }
+    }
+  },
+  "Rectangle 4": {
+    "name": "Rectangle 4",
+    "type": "RECTANGLE",
+    "x": 700,
+    "y": 241,
+    "width": 308,
+    "height": 216
+  },
+  "craft_preview": {
+    "name": "craft_preview",
+    "type": "RECTANGLE",
+    "x": 700,
+    "y": 241,
+    "width": 619,
+    "height": 598
+  },
+  "recipe_group": {
+    "name": "recipe_group",
+    "type": "GROUP",
+    "x": 719,
+    "y": 452,
+    "width": 580,
+    "height": 212,
+    "children": {
+      "material_element_first_name": {
+        "name": "material_element_first_name",
+        "type": "TEXT",
+        "x": 802,
+        "y": 529,
+        "width": 53,
+        "height": 32,
+        "fontSize": 32,
+        "content": "木"
+      },
+      "material_element_first_held": {
+        "name": "material_element_first_held",
+        "type": "TEXT",
+        "x": 1052,
+        "y": 529,
+        "width": 53,
+        "height": 32,
+        "fontSize": 32,
+        "content": "3"
+      },
+      "material_element_first_required": {
+        "name": "material_element_first_required",
+        "type": "TEXT",
+        "x": 1166,
+        "y": 529,
+        "width": 53,
+        "height": 32,
+        "fontSize": 32,
+        "content": "3"
+      },
+      "material_label": {
+        "name": "material_label",
+        "type": "TEXT",
+        "x": 721,
+        "y": 459,
+        "width": 75,
+        "height": 32,
+        "fontSize": 32,
+        "content": "素材"
+      },
+      "held_label": {
+        "name": "held_label",
+        "type": "TEXT",
+        "x": 913,
+        "y": 454,
+        "width": 192,
+        "height": 46,
+        "fontSize": 32,
+        "content": "持っている数"
+      },
+      "slash_label": {
+        "name": "slash_label",
+        "type": "TEXT",
+        "x": 1115,
+        "y": 454,
+        "width": 13,
+        "height": 46,
+        "fontSize": 32,
+        "content": "/"
+      },
+      "material_element_first_slash": {
+        "name": "material_element_first_slash",
+        "type": "TEXT",
+        "x": 1114,
+        "y": 529,
+        "width": 13,
+        "height": 32,
+        "fontSize": 32,
+        "content": "/"
+      },
+      "required_label": {
+        "name": "required_label",
+        "type": "TEXT",
+        "x": 1139,
+        "y": 452,
+        "width": 160,
+        "height": 46,
+        "fontSize": 32,
+        "content": "ひつよう数"
+      },
+      "石": {
+        "name": "石",
+        "type": "TEXT",
+        "x": 801,
+        "y": 616,
+        "width": 119,
+        "height": 32,
+        "fontSize": 32,
+        "content": "石"
+      },
+      "material_element_first_icon": {
+        "name": "material_element_first_icon",
+        "type": "RECTANGLE",
+        "x": 719,
+        "y": 513,
+        "width": 64,
+        "height": 64
+      },
+      "IconAxe 4": {
+        "name": "IconAxe 4",
+        "type": "RECTANGLE",
+        "x": 719,
+        "y": 600,
+        "width": 64,
+        "height": 64
+      }
+    }
+  },
+  "IconAxe 5": {
+    "name": "IconAxe 5",
+    "type": "RECTANGLE",
+    "x": 719,
+    "y": 687,
+    "width": 64,
+    "height": 64
+  },
+  "selected_item_frame": {
+    "name": "selected_item_frame",
+    "type": "GROUP",
+    "x": 700,
+    "y": 241,
+    "width": 619,
+    "height": 186,
+    "children": {
+      "background": {
+        "name": "background",
+        "type": "INSTANCE",
+        "x": 700,
+        "y": 241,
+        "width": 619,
+        "height": 186,
+        "children": {
+          "Rectangle": {
+            "name": "Rectangle",
+            "type": "RECTANGLE",
+            "x": 579,
+            "y": 146,
+            "width": 40,
+            "height": 40
+          }
+        }
+      },
+      "icon": {
+        "name": "icon",
+        "type": "RECTANGLE",
+        "x": 789,
+        "y": 270,
+        "width": 128,
+        "height": 128
+      },
+      "name": {
+        "name": "name",
+        "type": "TEXT",
+        "x": 976,
+        "y": 280,
+        "width": 64,
+        "height": 93,
+        "fontSize": 64,
+        "content": "斧"
+      }
+    }
+  }
+}

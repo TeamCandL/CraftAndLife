@@ -3,6 +3,7 @@
 #include "Player/IPlayerController.h"
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
+#include <Game/PlayScene/ItemSystem.h>
 #include "Player/PlayerAnimType.h"
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
@@ -43,7 +44,8 @@ struct PlayerData
 	GameObject objPlayerController{};  ///< プレイヤーの操作
 	GameObject objJobController{};     ///< 役職固有の操作
 	GameObject objPlayerHand{};        ///< プレイヤーの手持ち
-
+	GameObject objPlayerBag{};
+	GameObject objHotbar{};
 	PlayerRoleType role{ PlayerRoleType_Max };
 
 	float angleX{};
@@ -90,6 +92,9 @@ struct PlayerData
 	{
 		float dieAnimTimeSec{ DIE_ANIM_TIME_SEC_MAX };
 	} liveStatus;  ///< 生存中のステータス
+
+	// クラフトUIを開いているか(クラフト機能側がUIを表示するか判定するのに使う)
+	bool isOpenCraftUI{ false };
 };
 
 /// @brief プレイヤー
@@ -128,4 +133,7 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;
+
+	void UpdatePickNearestItem();
+	void TryAddItem(ItemId _id);
 };
