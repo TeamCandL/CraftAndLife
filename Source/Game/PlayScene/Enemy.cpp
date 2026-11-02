@@ -44,8 +44,6 @@ void Enemy::Update()
 
 	Sensor();
 
-	VCU_LOG("敵の追跡状況：{}", followed);
-
 	Move(targetPos, transform.position, transform.Forward(), speed);
 
 	nowAttackCoolTime -= Get<DeltaTime>();
