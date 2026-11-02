@@ -36,10 +36,6 @@ struct PlayerHand : ObjectBase<PlayerHandData>
 	/// @brief 描画処理
 	void Draw() override;
 
-	/// @brief アクション状態を設定する
-	/// @param _isAction trueでアクション、falseでアクション強制キャンセル
-	void SetAction(const bool _isAction);
-
 	/// @brief アイテムをセットする
 	/// @param アイテムのId
 	void SetItem(const ItemId _itemId);

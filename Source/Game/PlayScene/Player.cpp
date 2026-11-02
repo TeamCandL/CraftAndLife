@@ -370,11 +370,12 @@ void Player::MoveBody()
 		VCU_LOG("objPawn");
 	}
 
-	if (pPlayerInput->IsAction())
-	{
-		// アクション有効にする
-		Get<PlayerHand>(objPlayerHand).SetAction(true);
-	}
+	// MEMO: PlayerHand側に処理を移動しました。
+	// if (pPlayerInput->IsAction())
+	//{
+	//	// アクション有効にする
+	//	Get<PlayerHand>(objPlayerHand).SetAction(true);
+	//}
 
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
 	if (objPick)

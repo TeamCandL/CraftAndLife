@@ -12,6 +12,11 @@ void AnimationSystem::Update()
 	view.ForEach(
 	    [DELTA_TIME](IObject& _object, Transform& _transform, TransformAnimator& _animator)
 	    {
+		    if (_animator.playAnimation.size() <= 0)
+		    {
+			    return;  // 再生中のアニメーションが空っぽなら無視
+		    }
+
 		    _animator.onFinished = false;
 		    while (true)
 		    {

@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "PlayerHand.h"
 #include "ItemSystem.h"
+#include <Game/System/AbstructInputSystem.h>
 
 void PlayerHand::Start()
 {
@@ -86,26 +87,22 @@ void PlayerHand::Update()
 	}
 
 	ImGui::End();
-	if (isActing)
-	{
-		if (transformAnimator.onFinished)
-		{
-			VCU_LOG("アクション！");
-		}
+	ItemInfo itemInfo = Get<ItemSystem>().GetInfo(haveItemId);
 
-		if (transformAnimator.isFinished)
-		{
-			isActing = false;
-		}
-	}
-	else
+	switch (itemInfo._type)
 	{
-		if (transformAnimator.isFinished)
-		{
-			transformAnimator.playAnimation  = "idle";
-			transformAnimator.playingTimeSec = 0.0f;
-			isActing                         = false;
-		}
+	case ItemType::Weapons:
+		// TODO: ここは各手の処理にしちゃえばいい
+
+		break;
+	case ItemType::WeaponBow:
+		break;
+	case ItemType::Consumables:
+		break;
+	case ItemType::Materials:
+		break;
+	default:
+		break;
 	}
 }
 
@@ -131,32 +128,6 @@ void PlayerHand::Draw()
 		Get<Dx11Manager>().SetMaterial(parts.material);
 		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
 		Get<Dx11Manager>().Draw();
-	}
-}
-
-void PlayerHand::SetAction(
-    const bool _isAction)
-{
-	if (_isAction)
-	{
-		if (!isActing)
-		{
-			isActing                         = true;
-			transformAnimator.playingTimeSec = 0.0f;
-			transformAnimator.playAnimation  = "action";
-		}
-
-		transformAnimator.playToLoop = true;  // 長押し中ならループ追加を要請
-	}
-	else
-	{
-		if (isActing)
-		{
-			isActing = false;
-			// transformAnimator.playingTimeSec = 0.0f;
-			// transformAnimator.playAnimation  = "idle";
-			transformAnimator.playToLoop = false;
-		}
 	}
 }
 
