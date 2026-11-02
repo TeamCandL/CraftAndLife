@@ -1,6 +1,7 @@
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
 #include "UI/PlayerName.h"
+#include "UI/DeathUI.h"
 
 #include <Game/Manager/SessionManager.h>
 
@@ -15,44 +16,76 @@ void OtherPlayerController::Update()
 		return;
 	}
 
+	ImGui::Begin("SessionManager");
+
+	sessionManager.ForeachPlayerStatus(
+	    [](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
+	    {
+		    ImGui::Text(
+		        "%s : %3.2f, %3.2f, %3.2f STATUS=%d",
+		        _name.c_str(),
+		        _status.position.x,
+		        _status.position.y,
+		        _status.position.z,
+		        _status.states);
+	    });
+
+	ImGui::End();
+
 	// --------------------------------
 	// 退出したプレイヤーを削除
-	// --------------------------------
+	// =====================================
 
 	for (auto& [name, obj] : nameToObjOtherPlayer)
 	{
 		if (!sessionManager.IsExistPlayer(name))
 		{
 			GetScene().Destroy(obj);
+
+			// DeathUIを削除
+			auto deathIt = nameToObjDeathUI.find(name);
+			if (deathIt != nameToObjDeathUI.end())
+			{
+				GetScene().Destroy(deathIt->second);
+			}
+
+			// PlayerNameを削除
+			auto nameIt = nameToObjPlayerName.find(name);
+			if (nameIt != nameToObjPlayerName.end())
+			{
+				GetScene().Destroy(nameIt->second);
+			}
 		}
 	}
 
-	for (auto& [name, obj] : nameToObjPlayerName)
-	{
-		if (!sessionManager.IsExistPlayer(name))
-		{
-			GetScene().Destroy(obj);
-		}
-	}
+	// =====================================
+	// 空になったオブジェクトを削除
+	// =====================================
 
-	// 空になったGameObjectをmapから削除
 	std::erase_if(
 	    nameToObjOtherPlayer,
-	    [](const auto& nameAndObj)
+	    [](const auto& p)
 	    {
-		    return nameAndObj.second.IsEmpty();
+		    return p.second.IsEmpty();
+	    });
+
+	std::erase_if(
+	    nameToObjDeathUI,
+	    [](const auto& p)
+	    {
+		    return p.second.IsEmpty();
 	    });
 
 	std::erase_if(
 	    nameToObjPlayerName,
-	    [](const auto& nameAndObj)
+	    [](const auto& p)
 	    {
-		    return nameAndObj.second.IsEmpty();
+		    return p.second.IsEmpty();
 	    });
 
-	// --------------------------------
-	// 参加しているプレイヤーを確認
-	// --------------------------------
+	// =====================================
+	// 他プレイヤーを確認
+	// =====================================
 
 	sessionManager.ForeachPlayerStatus(
 	    [this, &sessionManager](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
@@ -63,22 +96,33 @@ void OtherPlayerController::Update()
 			    return;
 		    }
 
-		    // --------------------------------
-		    // OtherPlayerを生成
-		    // --------------------------------
+		    // =====================================
+		    // 他プレイヤーを生成
+		    // =====================================
 
 		    if (nameToObjOtherPlayer.count(_name) == 0)
 		    {
 			    nameToObjOtherPlayer[_name] = GetScene().Instantiate<OtherPlayer>(_name);
 		    }
 
-		    // --------------------------------
-		    // PlayerName2を生成
-		    // --------------------------------
+		    GameObject targetPlayer = nameToObjOtherPlayer[_name];
+
+		    // =====================================
+		    // PlayerNameを生成
+		    // =====================================
 
 		    if (nameToObjPlayerName.count(_name) == 0)
 		    {
-			    nameToObjPlayerName[_name] = GetScene().Instantiate<PlayerName>(_name, nameToObjOtherPlayer[_name]);
+			    nameToObjPlayerName[_name] = GetScene().Instantiate<PlayerName>(_name, targetPlayer);
+		    }
+
+		    // =====================================
+		    // DeathUIを生成
+		    // =====================================
+
+		    if (nameToObjDeathUI.count(_name) == 0)
+		    {
+			    nameToObjDeathUI[_name] = GetScene().Instantiate<DeathUI>(targetPlayer);
 		    }
 	    });
 }

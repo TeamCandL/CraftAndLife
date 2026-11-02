@@ -76,21 +76,17 @@ void Player::Update()
 		DeadAnim();
 	}
 
-#if 0
-	// HPゲージ動作確認用：1秒ごとに10ダメージ
-	hpTestTimer += Get<DeltaTime>();
+	/*
+	//テスト用
+	 // HPゲージ動作確認用：1秒ごとに10ダメージ
+	 hpTestTimer += Get<DeltaTime>();
 
-	if (hpTestTimer >= 1.0f)
-	{
-		Damaged(10);
-		hpTestTimer = 0.0f;
-	}
-#endif
-
-	if (!objJobController.IsEmpty())
-	{
-		Get<IPlayerJobController>(objJobController).Update(Data());
-	}
+	 if (hpTestTimer >= 1.0f)
+	 {
+	     Damaged(10);
+	     hpTestTimer = 0.0f;
+	 }
+	*/
 }
 
 void Player::Draw()
@@ -138,7 +134,7 @@ void Player::Damaged(
 
 	if (hp <= 0)
 	{
-		// SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
+		SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
 	}
 }
 

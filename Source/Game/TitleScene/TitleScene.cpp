@@ -6,6 +6,7 @@
 #include "TitleNetworkController.h"
 #include "TitleLogo.h"
 #include "TitleLogoStartGuide.h"
+#include "TitlePageContlroller.h"
 
 void TitleScene::Start()
 {
@@ -13,6 +14,7 @@ void TitleScene::Start()
 	Instantiate<TitleNetworkController>();
 	// Instantiate<TitleLogo>();
 	// Instantiate<TitleLogoStartGuide>();
+	Instantiate<TitlePageController>();
 
 	GameObject objWordInputPanel = Instantiate<WordInputPanel>();
 	Instantiate<WordJoinButton>(objWordInputPanel);
