@@ -8,7 +8,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 0,
 	                        ItemType::Materials,
 	                        "",
-	                        "Image/InvalidImage.png",
+	                        "Image/EmptyItem.png",
 	                        {},
 
 	                        false,

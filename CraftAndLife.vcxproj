@@ -443,7 +443,6 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
-    <ClCompile Include="Source\Game\PlayScene\CraftUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DayController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
@@ -479,6 +478,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossName.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\CraftUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge1.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge2.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge3.cpp" />
@@ -683,7 +683,6 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
-    <ClInclude Include="Source\Game\PlayScene\CraftUI.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
@@ -715,6 +714,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossName.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\CraftUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge2.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge3.h" />

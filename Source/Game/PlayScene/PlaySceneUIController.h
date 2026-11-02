@@ -31,6 +31,7 @@ struct PlaySceneUIControllerData
 	GameObject objBossGauge{};       ///< ボスのゲージ、オレンジ
 	GameObject objBossName{};        ///< ボスの名前
 	GameObject objBossHp{};          ///< ボスのHP数値
+	GameObject objCraftUI{};         ///< クラフト画面
 
 	GameObject objPlayer{};  ///< MyGaugeに渡すプレイヤー
 };

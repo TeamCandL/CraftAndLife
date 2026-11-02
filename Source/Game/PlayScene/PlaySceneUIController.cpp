@@ -20,6 +20,7 @@
 #include "UI/BossGauge.h"
 #include "UI/BossName.h"
 #include "UI/BossHp.h"
+#include "UI/CraftUI.h"
 
 void PlaySceneUIController::Start()
 {
@@ -42,4 +43,5 @@ void PlaySceneUIController::Start()
 	objBossGauge      = GetScene().Instantiate<BossGauge>();
 	objBossName       = GetScene().Instantiate<BossName>();
 	objBossHp         = GetScene().Instantiate<BossHp>();
+	objCraftUI        = GetScene().Instantiate<CraftUI>(objPlayer);
 }

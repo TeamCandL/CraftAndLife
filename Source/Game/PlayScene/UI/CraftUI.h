@@ -124,11 +124,12 @@ struct RecipeMaterial
 
 struct CraftUIData
 {
+	CraftUIData(GameObject _objPlayer) :
+	    objPlayer{ _objPlayer } {};
+
   protected:
 	ItemId selectedItemId{ EMPTY_ITEM_ID };
 	GameObject objListBox{};
-	Component<UIText> text{};            // テキスト
-	Component<UITransform> transform{};  // UI座標系
 	Resource<Font> font{ FontLoadConfig{}
 		                     .WithFile("Font/Stick/Stick-Regular.ttf")
 		                     .WithFamilyName(L"Stick")
@@ -137,7 +138,8 @@ struct CraftUIData
 
 	Resource<ResourceType::Texture> backgroundTexture{ "Image/UI/craft_ui_background.png" };
 	Resource<ResourceType::Texture> craftPreviewbackgroundTexture{ "Image/UI/craft_preview.png" };
-	Component<UIImage> craftPreviewBackground{ craftPreviewbackgroundTexture };
+
+	GameObject objCraftBackgroundImage{};
 
 	GameObject objSelectedItemImage{};
 	GameObject objSelectedItemText{};
@@ -155,13 +157,16 @@ struct CraftUIData
 
 	std::vector<ItemAllInfo> craftableItems;
 	std::unordered_map<ItemId, std::vector<RecipeMaterial>> recipeUIMap;
+
+	GameObject objPlayer{};
 };
 
 struct CraftUI : ObjectBase<CraftUIData>
 {
 	using ObjectBase<CraftUIData>::ObjectBase;
 	void Start() override;
-	ItemId Update(PlayerBag& _playerBag);
+	void Update() override;
+	ItemId UpdateUI();
 	void SetActiveAll(const bool _isActive);
 
   private:

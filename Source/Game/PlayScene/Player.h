@@ -3,6 +3,7 @@
 #include "Player/IPlayerController.h"
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
+#include <Game/PlayScene/ItemSystem.h>
 
 /// @brief プレイヤーのデータ
 struct PlayerData
@@ -28,7 +29,6 @@ struct PlayerData
 	GameObject objMainCamera{};
 	GameObject objPlayerController{};
 	GameObject objPlayerBag{};
-	GameObject objCraftUI{};
 	GameObject objHotbar{};
 
 	PlayerRoleType role{ PlayerRoleType_Max };
@@ -63,6 +63,9 @@ struct PlayerData
 
 	// HP減少テスト用
 	float hpTestTimer{ 0.0f };
+
+	// クラフトUIを開いているか(クラフト機能側がUIを表示するか判定するのに使う)
+	bool isOpenCraftUI{ false };
 };
 
 /// @brief プレイヤー
@@ -87,4 +90,5 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 	float GetAngleY() const override;
 
 	void UpdatePickNearestItem();
+	void TryAddItem(ItemId _id);
 };

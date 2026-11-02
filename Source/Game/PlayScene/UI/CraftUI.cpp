@@ -2,6 +2,10 @@
 #include "CraftUI.h"
 #include <Game/System/AbstructInputSystem.h>
 #include <Game/PlayScene/UI/ListBox.h>
+#include <Game/PlayScene/Player.h>
+#include <Game/PlayScene/EntitySystem.h>
+
+#include "HotBar.h"
 #include <ranges>
 #include <format>
 #include <fstream>
@@ -129,8 +133,8 @@ void CraftUI::Start()
 		materialElementRequiredBegin.y = j.at("y").get<int>();
 	}
 
-	from_json_UITransform(j["craft_preview"], transform);
-	transform.layerOrder = 2;
+	objCraftBackgroundImage = GetScene().Instantiate<ImageObject>(craftPreviewbackgroundTexture, Vec2{}, Vec2{}, 0);
+	SetImageObjectFromJson(j["craft_preview"], objCraftBackgroundImage);
 	for (int i = 0; i < craftableItems.size(); i++)
 	{
 		ItemAllInfo& info                = craftableItems[i];
@@ -172,10 +176,33 @@ void CraftUI::Start()
 	}
 }
 
-ItemId CraftUI::Update(
-    PlayerBag& _playerBag)
+void CraftUI::Update()
 {
-	auto padInput = Get<AbstructInputSystem>().GetPadInputSystem();
+	PlayerData& playerData = Get<Player>(objPlayer).Data();
+
+	if (playerData.isOpenCraftUI == false)
+	{
+		SetActiveAll(false);
+		return;
+	}
+	SetActiveAll(true);
+
+	ItemId resultItemId = UpdateUI();
+	if (resultItemId == EMPTY_ITEM_ID)
+		return;
+	PlayerBag& playerBag = Get<PlayerBag>(Get<Player>(objPlayer).Data().objPlayerBag);
+
+	// クラフトを試みて、成功した場合
+	if (playerBag.TryCraft(resultItemId))
+	{
+		Get<Player>(objPlayer).TryAddItem(resultItemId);
+	}
+}
+
+ItemId CraftUI::UpdateUI()
+{
+	PlayerBag& _playerBag = Get<PlayerBag>(Get<Player>(objPlayer).Data().objPlayerBag);
+	auto padInput         = Get<AbstructInputSystem>().GetPadInputSystem();
 
 	const auto& allItemList = Get<ItemSystem>().Data().allItemList;
 
@@ -228,6 +255,7 @@ void CraftUI::SetActiveAll(
     const bool _isActive)
 {
 	auto& collection = GetScene().RefGameObjectCollection();
+	collection.At<IObject>(objCraftBackgroundImage).SetActive(_isActive);
 	collection.At<IObject>(objSelectedItemImage).SetActive(_isActive);
 	collection.At<IObject>(objSelectedItemText).SetActive(_isActive);
 	collection.At<IObject>(objSelectedItemBackground).SetActive(_isActive);
