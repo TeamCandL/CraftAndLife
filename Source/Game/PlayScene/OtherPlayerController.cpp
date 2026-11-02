@@ -1,6 +1,7 @@
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
 #include "UI/PlayerName.h"
+#include "UI/DeathUI.h"
 
 #include <Game/Manager/SessionManager.h>
 
@@ -33,25 +34,29 @@ void OtherPlayerController::Update()
 
 	// --------------------------------
 	// 退出したプレイヤーを削除
-	// --------------------------------
+	// =====================================
 
 	for (auto& [name, obj] : nameToObjOtherPlayer)
 	{
 		if (!sessionManager.IsExistPlayer(name))
 		{
+			// 他プレイヤーを削除
 			GetScene().Destroy(obj);
+
+			// 対応するDeathUIも削除
+			auto deathIt = nameToObjDeathUI.find(name);
+
+			if (deathIt != nameToObjDeathUI.end())
+			{
+				GetScene().Destroy(deathIt->second);
+			}
 		}
 	}
 
-	for (auto& [name, obj] : nameToObjPlayerName)
-	{
-		if (!sessionManager.IsExistPlayer(name))
-		{
-			GetScene().Destroy(obj);
-		}
-	}
+	// =====================================
+	// 空になったオブジェクトをマップから削除
+	// =====================================
 
-	// 空になったGameObjectをmapから削除
 	std::erase_if(
 	    nameToObjOtherPlayer,
 	    [](const auto& nameAndObj)
@@ -60,15 +65,15 @@ void OtherPlayerController::Update()
 	    });
 
 	std::erase_if(
-	    nameToObjPlayerName,
+	    nameToObjDeathUI,
 	    [](const auto& nameAndObj)
 	    {
 		    return nameAndObj.second.IsEmpty();
 	    });
 
-	// --------------------------------
-	// 参加しているプレイヤーを確認
-	// --------------------------------
+	// =====================================
+	// 他プレイヤーを確認
+	// =====================================
 
 	sessionManager.ForeachPlayerStatus(
 	    [this, &sessionManager](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
@@ -79,22 +84,27 @@ void OtherPlayerController::Update()
 			    return;
 		    }
 
-		    // --------------------------------
-		    // OtherPlayerを生成
-		    // --------------------------------
+		    // =====================================
+		    // 他プレイヤーがまだ生成されていない場合
+		    // =====================================
 
 		    if (nameToObjOtherPlayer.count(_name) == 0)
 		    {
+			    // 他プレイヤーを生成
 			    nameToObjOtherPlayer[_name] = GetScene().Instantiate<OtherPlayer>(_name);
 		    }
 
-		    // --------------------------------
-		    // PlayerName2を生成
-		    // --------------------------------
+		    // =====================================
+		    // DeathUIがまだ生成されていない場合
+		    // =====================================
 
-		    if (nameToObjPlayerName.count(_name) == 0)
+		    if (nameToObjDeathUI.count(_name) == 0)
 		    {
-			    nameToObjPlayerName[_name] = GetScene().Instantiate<PlayerName>(_name, nameToObjOtherPlayer[_name]);
+			    // 対象となる他プレイヤーを取得
+			    GameObject targetPlayer = nameToObjOtherPlayer[_name];
+
+			    // DeathUIを生成
+			    nameToObjDeathUI[_name] = GetScene().Instantiate<DeathUI>(targetPlayer);
 		    }
 	    });
 }

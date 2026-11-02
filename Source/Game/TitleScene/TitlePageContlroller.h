@@ -2,34 +2,46 @@
 #pragma once
 
 #include <Game/Game.h>
+#include <vector>
 
-struct TitlePageController
+/// @brief ページの種類
+enum class PageType
 {
+	Title,       // タイトル
+	TeamSelect,  // チーム選択
+	PlayerName,  // プレイヤー名入力
+	Lobby,       // ロビー
+	GameStart    // ゲームスタート
+};
 
-	enum class Page
+/// @brief ページ管理データ
+struct TitlePageControllerData
+{
+	// 現在表示しているUI要素
+	std::vector<GameObject> objUIs{};
+};
+
+/// @brief タイトル画面のページ管理
+struct TitlePageController : ObjectBase<TitlePageControllerData>
+{
+	void Start() override
 	{
-		Title,       // タイトル
-		TeamSelect,  // チーム選択
-		PlayerName,  // プレイヤー名入力
-		Lobby,       // ロビー
-		GameStart    // ゲームスタート
-	};
-	// ページ変更
-	void ChangePage(Page page);
+		// 初期ページはタイトルページ
+		ChangePage(PageType::Title);
+	}
+	/// @brief ページ変更
+	/// @param page 表示したいページ
+	void ChangePage(PageType page);
 
-	Page currentPage = Page::Title;
+	TitlePageControllerData data{};
 
-	// 現在のページを削除
+	/// @brief 現在のページのUIを削除
 	void ClearPage();
 
-	// 各ページの生成
+	/// @brief 各ページのUI生成
 	void CreateTitlePage();
 	void CreateTeamSelectPage();
 	void CreatePlayerNamePage();
 	void CreateLobbyPage();
 	void CreateGameStartPage();
-};
-
-struct TitlePageControllerComponent : ComponentBase<TitlePageController>
-{
 };

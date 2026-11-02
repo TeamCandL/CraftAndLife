@@ -18,8 +18,12 @@ struct HarvestableData
 	// モデルの種類
 	HarvestableType type{ HarvestableType::Tree };
 
+	Component<StaticOBB> obb{};  ///< OBB当たり判定
+
 	// 3Dモデル
 	Resource<Model> model{};
+
+	Component<OBBRenderer> obbRenderer{};  ///< OBB描画
 
 	// モデル描画用シェーダー
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };

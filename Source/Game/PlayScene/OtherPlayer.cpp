@@ -1,5 +1,6 @@
 #include "OtherPlayer.h"
 #include <Game/Manager/SessionManager.h>
+#include "Player/HelthState.h"
 
 void OtherPlayer::Start()
 {
@@ -16,6 +17,22 @@ void OtherPlayer::Update()
 	if (sessionManager.IsExistPlayer(name.content))  // プレイヤーが存在するなら
 	{
 		const InSessionStatus::PlayerStatus& status = sessionManager.RefPlayerStatus(name.content);
+
+		// =====================================
+		// 死亡状態を取得
+		// =====================================
+
+		isDead = false;
+
+		auto stateIt = status.states.find("helthState");
+
+		if (stateIt != status.states.end())
+		{
+			if (const int32_t* healthState = std::get_if<int32_t>(&stateIt->second))
+			{
+				isDead = (*healthState == HelthState_Dead);
+			}
+		}
 
 		// 座標と角度を更新
 		transform.position = status.position;
