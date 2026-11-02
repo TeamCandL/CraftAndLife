@@ -76,7 +76,8 @@ void Player::Update()
 		DeadAnim();
 	}
 
-	/*　テスト用
+	/*
+	//テスト用
 	 // HPゲージ動作確認用：1秒ごとに10ダメージ
 	 hpTestTimer += Get<DeltaTime>();
 
