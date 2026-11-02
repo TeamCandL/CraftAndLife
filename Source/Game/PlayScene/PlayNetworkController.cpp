@@ -24,12 +24,6 @@ using enum NetworkSessionManager::State;
 void PlayNetworkController::Start()
 {
 	Get<NetworkSessionManager>().SetCurrentState(Playing);
-
-	Player& player = Get<Player>(objPlayer);
-
-	NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
-
-	player.RegisterStates(actorServer.GetPlayerStateRegistry());
 }
 
 void PlayNetworkController::Update()
@@ -66,10 +60,14 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedPlayers message{};
 				    converter.ToMessage(_event.data, message);
 
+				    VCU_LOG(
+				        "UpdatedPlayers受信: Names={}, Positions={}, Rotations={}",
+				        message.playerNames,
+				        message.positions.Size(),
+				        message.rotations.Size());
+
 				    Get<SessionManager>().UpdatePlayers(message.playerNames, message.positions, message.rotations);
 
-				    VCU_LOG("RECV ProtocolType::UpdatedPlayers:{}", message.positions.Size());
-				    // VCU_LOG("Receive UpdatedPlayers:{}", message.flag);
 				    break;
 			    }
 			    case ProtocolType::UpdatedPlayerStates:
