@@ -80,6 +80,8 @@ struct HotBar : ObjectBase<HotBarData>
 	/// @return
 	ItemId GetSelectedItemId();
 
+	bool TrySetItem(ItemId _id);
+
   private:
 	/// @brief
 	/// 指定された方向にフォーカスを移動。フォーカスは循環する。一番右のスロットでさらに右を押したら一番左へ行く。

@@ -1,7 +1,10 @@
 #include "pch\pch.h"
 #include "CraftUI.h"
-#include <Game/PlayScene/PlayerBag.h>
+#include <Game/System/AbstructInputSystem.h>
+#include <Game/PlayScene/UI/ListBox.h>
 #include <ranges>
+#include <format>
+#include <fstream>
 
 void CraftUI::Start()
 {
@@ -17,81 +20,287 @@ void CraftUI::Start()
 	{
 		selectedItemId = itr->_id;
 	}
-}
 
-ItemId CraftUI::Update(
-    PlayerBag& _playerBag)
-{
-	const auto& allItemList = Get<ItemSystem>().Data().allItemList;
-	std::vector<ItemAllInfo> craftableItems;
 	for (const ItemAllInfo& info : allItemList | std::views::filter(
 	                                                 [](const ItemAllInfo& _info)
 	                                                 {
 		                                                 return _info._isCraftable;
 	                                                 }))
 	{
-		craftableItems.emplace_back(info);
+		craftableItems.push_back(info);
 	}
 
-	ImGui::Begin("CraftUI_List(Test)");
-	for (auto& craftableItem : craftableItems)
-	{
-		bool selected       = (selectedItemId == craftableItem._id);
-		ItemId requiremntId = craftableItem._id;
-		auto itr            = std::find_if(
-            allItemList.begin(),
-            allItemList.end(),
-            [requiremntId](const ItemAllInfo& _info)
-            {
-                return requiremntId == _info._id;
-            });
-		if (itr == allItemList.end())
-			continue;
+	objListBox           = GetScene().Instantiate<UI::ListBox>();
+	UI::ListBox& listBox = Get<UI::ListBox>(objListBox);
 
-		if (ImGui::Selectable(itr->_name.c_str(), selected))
+	/// ---------------
+	/// リストボックス
+	/// ---------------
+	Vec2 recipeListBegin{ 429, 241 };
+	int recipeElementHeight{ 40 };
+	for (int i = 0; i < craftableItems.size(); i++)
+	{
+		Vec2 begin{ recipeListBegin + Vec2{ 0, recipeElementHeight * i } };
+		GameObject objListElement = GetScene().Instantiate<UI::ListElement>(
+		    "Image/EmptyItem.png",
+		    "Image/UI/selected_recipe_background.png",
+		    craftableItems[i]._name,
+		    std::to_string(craftableItems[i]._id),
+		    begin,
+		    Vec2{ 271, 40 },
+		    font);
+		listBox.PushBackElement(Get<UI::ListElement>(objListElement));
+	}
+	std::ifstream i("UI/CraftUI.json");
+	nlohmann::json j;
+	i >> j;
+
+	nlohmann::json listBoxJson = j["craftable_list_group"];
+	// リストボックス背景の画像、座標
+	from_json_UITransform(listBoxJson, listBox.Data().transform);
+	listBox.Data().sprite.texture = backgroundTexture;
+
+	/// ---------------------------
+	/// 選択中のアイテムの画面
+	/// ---------------------------
+	nlohmann::json selectedItemJson = j["selected_item_frame"]["children"];
+	auto& scene                     = GetScene();
+	objSelectedItemBackground       = scene.Instantiate<ImageObject>(
+        Resource<ResourceType::Texture>("Image/UI/slot_panel.png"),
+        Vec2{ 700, 241 },
+        Vec2{ 619, 186 },
+        2);
+	{
+		nlohmann::json j = selectedItemJson["background"];
+		SetImageObjectFromJson(j, objSelectedItemBackground);
+	}
+
+	objSelectedItemImage = scene.Instantiate<ImageObject>(
+	    Resource<ResourceType::Texture>("Image/EmptyItem.png"),
+	    Vec2{ 789, 270 },
+	    Vec2{ 128, 128 },
+	    3);
+	{
+		SetImageObjectFromJson(selectedItemJson["icon"], objSelectedItemImage);
+	}
+	FontLoadConfig config;
+	config.fontSize = 64;
+
+	Resource<ResourceType::Font> font{ config };
+
+	objSelectedItemText = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 3, font);
+	{
+		SetTextObjectFromJson(selectedItemJson["name"], objSelectedItemText);
+	}
+
+	/// --------------------
+	/// 充足状況画面
+	/// --------------------
+	nlohmann::json recipeGroupJson = j["recipe_group"]["children"];
+	objRecipeMaterialLabel         = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 3);
+	SetTextObjectFromJson(recipeGroupJson["material_label"], objRecipeMaterialLabel);
+
+	objRecipeHeldLabel = scene.Instantiate<TextObject>(Vec2{ 913, 454 }, Vec2{ 192, 46 }, 3);
+	SetTextObjectFromJson(recipeGroupJson["held_label"], objRecipeHeldLabel);
+	objRecipeRequiredLabel = scene.Instantiate<TextObject>(Vec2{ 1139, 452 }, Vec2{ 64, 64 }, 3);
+	SetTextObjectFromJson(recipeGroupJson["required_label"], objRecipeRequiredLabel);
+
+	// 個々の素材のUI
+	{
+		nlohmann::json j            = recipeGroupJson["material_element_first_icon"];
+		materialElementImageBegin.x = j.at("x").get<int>();
+		materialElementImageBegin.y = j.at("y").get<int>();
+		materialElementImageSize.x  = j.at("width").get<int>();
+		materialElementImageSize.y  = j.at("height").get<int>();
+	}
+	{
+		nlohmann::json j           = recipeGroupJson["material_element_first_name"];
+		materialElementNameBegin.x = j.at("x").get<int>();
+		materialElementNameBegin.y = j.at("y").get<int>();
+	}
+	{
+		nlohmann::json j           = recipeGroupJson["material_element_first_held"];
+		materialElementHeldBegin.x = j.at("x").get<int>();
+		materialElementHeldBegin.y = j.at("y").get<int>();
+	}
+	{
+		nlohmann::json j               = recipeGroupJson["material_element_first_required"];
+		materialElementRequiredBegin.x = j.at("x").get<int>();
+		materialElementRequiredBegin.y = j.at("y").get<int>();
+	}
+
+	from_json_UITransform(j["craft_preview"], transform);
+	transform.layerOrder = 2;
+	for (int i = 0; i < craftableItems.size(); i++)
+	{
+		ItemAllInfo& info                = craftableItems[i];
+		std::vector<CraftInfo> craftInfo = info._craftInfo;
+		std::vector<RecipeMaterial> materials;
+		for (int iCraftInfo = 0; iCraftInfo < craftInfo.size(); iCraftInfo++)
 		{
-			selectedItemId = craftableItem._id;
+			// 素材ごとのテキストのオフセット。
+			int textOffset = 55;
+			RecipeMaterial recipeUI{ scene.Instantiate<ImageObject>(
+				                         // 素材の画像
+				                         Get<ItemSystem>().GetInfo(craftInfo[iCraftInfo]._id)._imageId,
+				                         // 素材画像
+				                         materialElementImageBegin +
+				                             Vec2{ 0.0f, (23 + materialElementImageSize.y) * iCraftInfo },
+				                         materialElementImageSize,
+				                         3),
+				                     // 素材名
+				                     scene.Instantiate<TextObject>(
+				                         materialElementNameBegin + Vec2{ 0, (textOffset + 32) * iCraftInfo },
+				                         Vec2{ 32, 32 },
+				                         3),
+				                     // 所持数テキスト
+				                     scene.Instantiate<TextObject>(
+				                         materialElementHeldBegin + Vec2{ 0, (textOffset + 32) * iCraftInfo },
+				                         Vec2{ 32, 32 },
+				                         3),
+				                     // 必要数テキスト
+				                     scene.Instantiate<TextObject>(
+				                         materialElementRequiredBegin + Vec2{ 0, (textOffset + 32) * iCraftInfo },
+				                         Vec2{ 32, 32 },
+				                         3),
+				                     // 素材のアイテムID
+				                     craftInfo[iCraftInfo]._id };
+			materials.push_back(recipeUI);
 		}
+		ItemId id = info._id;
+		recipeUIMap.insert({ id, materials });
 	}
-	ImGui::End();
+}
 
-	ImGui::Begin("CraftUI_Preview");
+ItemId CraftUI::Update(
+    PlayerBag& _playerBag)
+{
+	auto padInput = Get<AbstructInputSystem>().GetPadInputSystem();
 
-	auto itemInfo     = Get<ItemSystem>().GetInfo(selectedItemId);
-	auto requirements = _playerBag.GetCraftRequirements(selectedItemId);
+	const auto& allItemList = Get<ItemSystem>().Data().allItemList;
 
-	ImGui::Text("Item: %s", itemInfo._name.c_str());
-	ImGui::Image((void*)itemInfo._imageId.Get().pSRV.Get(), ImVec2(64, 64));
-	ImGui::Separator();
+	UI::ListBox& listBox = Get<UI::ListBox>(objListBox);
 
-	for (auto& requirement : requirements)
+	selectedItemId = std::stoi(listBox.GetSelectionData());
+
+	// 選択中アイテムの画像、テキストを描画
+	auto itemInfo                                               = Get<ItemSystem>().GetInfo(selectedItemId);
+	Get<ImageObject>(objSelectedItemImage).Data().image.texture = itemInfo._imageId;
 	{
-		ImGui::PushID(requirement.id);
-
-		ImGui::Text("%s", Get<ItemSystem>().GetInfo(requirement.id)._name.c_str());
-		ImGui::Text("所持数: %d", requirement.ownedCount);
-		ImGui::Text("必要数 %d", requirement.requiredCount);
-		ImGui::Separator();
-
-		ImGui::PopID();
+		TextObjectData& selectedTextObjectData   = Get<TextObject>(objSelectedItemText).Data();
+		selectedTextObjectData.text.content      = itemInfo._name;
+		selectedTextObjectData.transform.scale.x = selectedTextObjectData.text.content.size() * 64;
 	}
-	bool canCraft = std::all_of(
-	    requirements.begin(),
-	    requirements.end(),
-	    [](const CraftMaterialRequirement& _requirement)
-	    {
-		    return _requirement.isSufficient;
-	    });
 
-	ItemId resultItemId = INVALID_ITEM_ID;
-	ImGui::BeginDisabled(canCraft == false);
+	ItemId resultItemId = EMPTY_ITEM_ID;
 
-	if (ImGui::Button("TryCraft"))
+	/// ---------------
+	/// レシピの描画
+	/// ---------------
+
+	// いったん、すべてのレシピを非アクティブにする
+	for (auto& [id, recipe] : recipeUIMap)
+	{
+		SetRecipeUIActive(recipe, false);
+	}
+
+	// 選択中のアイテムのレシピを取得
+	auto itr = recipeUIMap.find(selectedItemId);
+	if (itr == recipeUIMap.end())
+		return resultItemId;
+
+	// 選択中のアイテムのレシピだけアクティブ
+	SetRecipeUIActive(itr->second, true);
+	auto requirements = _playerBag.GetCraftRequirements(selectedItemId);
+	// レシピのUIを更新
+	UpdateRequirementUI(requirements, itr->second);
+
+	// ボタンが押されているなら、選択中のIDを返す
+	if (listBox.IsPushed())
 	{
 		resultItemId = selectedItemId;
 	}
-	ImGui::EndDisabled();
-	ImGui::End();
 
 	return resultItemId;
+}
+
+void CraftUI::SetActiveAll(
+    const bool _isActive)
+{
+	auto& collection = GetScene().RefGameObjectCollection();
+	collection.At<IObject>(objSelectedItemImage).SetActive(_isActive);
+	collection.At<IObject>(objSelectedItemText).SetActive(_isActive);
+	collection.At<IObject>(objSelectedItemBackground).SetActive(_isActive);
+
+	collection.At<IObject>(objRecipeMaterialLabel).SetActive(_isActive);
+	collection.At<IObject>(objRecipeHeldLabel).SetActive(_isActive);
+	collection.At<IObject>(objRecipeRequiredLabel).SetActive(_isActive);
+
+	// すべてのレシピを非アクティブにする
+	for (auto& [id, recipe] : recipeUIMap)
+	{
+		SetRecipeUIActive(recipe, _isActive);
+	}
+
+	Get<UI::ListBox>(objListBox).SetActiveAll(_isActive);
+	collection.At<IObject>(objListBox).SetActive(_isActive);
+}
+
+void CraftUI::SetTextObjectFromJson(
+    const nlohmann::json& _json,
+    const GameObject& _obj)
+{
+	from_json(_json, Get<TextObject>(_obj).Data());
+}
+
+void CraftUI::SetImageObjectFromJson(
+    const nlohmann::json& _json,
+    const GameObject& _obj)
+{
+	from_json(_json, Get<ImageObject>(_obj).Data());
+}
+
+void CraftUI::UpdateRequirementUI(
+    const std::vector<CraftMaterialRequirement>& _requirements,
+    std::vector<RecipeMaterial>& _recipeMaterial)
+{
+	for (int i = 0; i < _requirements.size(); i++)
+	{
+		const CraftMaterialRequirement& requirement = _requirements[i];
+		RecipeMaterial& _recipe                     = _recipeMaterial[i];
+
+		ItemInfo itemInfo = Get<ItemSystem>().GetInfo(requirement.id);
+		{
+			ImageObjectData& imageObjectData = Get<ImageObject>(_recipe.objRecipeMaterialElementImage).Data();
+			imageObjectData.image.texture    = itemInfo._imageId;
+		}
+		{
+			TextObjectData& textObjectData   = Get<TextObject>(_recipe.objRecipeMaterialElementText).Data();
+			textObjectData.text.content      = itemInfo._name;
+			textObjectData.transform.scale.x = textObjectData.text.content.size() * 32;
+		}
+		{
+			TextObjectData& textObjectData   = Get<TextObject>(_recipe.objRecipeHeldElement).Data();
+			textObjectData.text.content      = std::to_string(requirement.ownedCount);
+			textObjectData.transform.scale.x = textObjectData.text.content.size() * 32;
+		}
+		{
+			TextObjectData& textObjectData   = Get<TextObject>(_recipe.objRecipeRequiredElement).Data();
+			textObjectData.text.content      = std::to_string(requirement.requiredCount);
+			textObjectData.transform.scale.x = textObjectData.text.content.size() * 32;
+		}
+	}
+}
+
+void CraftUI::SetRecipeUIActive(
+    std::vector<RecipeMaterial>& _recipes,
+    const bool _isActive)
+{
+	for (auto& recipe : _recipes)
+	{
+		Get<ImageObject>(recipe.objRecipeMaterialElementImage).SetActive(_isActive);
+		Get<TextObject>(recipe.objRecipeMaterialElementText).SetActive(_isActive);
+		Get<TextObject>(recipe.objRecipeHeldElement).SetActive(_isActive);
+		Get<TextObject>(recipe.objRecipeRequiredElement).SetActive(_isActive);
+	}
 }

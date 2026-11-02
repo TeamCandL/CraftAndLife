@@ -28,7 +28,7 @@ void PlayerBag::Update()
 
 	for (int i = 0; i < items.size(); i++)
 	{
-		if (items[i].id == EMPTY_ITEM_ID)
+		if (items[i].id == ItemStack::EMPTY_STACK_ITEM_ID)
 		{
 			ImGui::Text("%d:empty, %d", i, items[i].count);
 		}

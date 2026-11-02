@@ -2,11 +2,12 @@
 #include <Game/Game.h>
 #include <Game/PlayScene/ItemSystem.h>
 #include <limits>
-inline constexpr ItemId EMPTY_ITEM_ID{ std::numeric_limits<ItemId>::max() };
 
 struct ItemStack
 {
-	ItemId id{ EMPTY_ITEM_ID };
+	// バッグ内における、空のアイテム枠のID。バッグをソートする都合上、ItemId型の最大値に設定している。
+	static constexpr ItemId EMPTY_STACK_ITEM_ID{ std::numeric_limits<ItemId>::max() };
+	ItemId id{ EMPTY_STACK_ITEM_ID };
 	int count{ 0 };
 	// アイテムの最大スタック数
 	int maxStack{ 64 };
@@ -15,7 +16,7 @@ struct ItemStack
 	/// @return 空ならtrue
 	bool IsEmpty() const
 	{
-		return count <= 0 || id == EMPTY_ITEM_ID;
+		return count <= 0 || id == EMPTY_STACK_ITEM_ID;
 	}
 	static ItemStack EmptyStack()
 	{

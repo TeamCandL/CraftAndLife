@@ -3,14 +3,21 @@
 #include "MiniMapPoint.h"
 #include <Game/System/AbstructInputSystem.h>
 
+namespace
+{
+	constexpr size_t WEAPON_SLOT_INDEX{ 0 };
+	constexpr size_t CONSUMABLE_SLOT_INDEX{ 1 };
+	constexpr size_t BAG_SLOT_INDEX{ 2 };
+}  // namespace
+
 void HotBar::Start()
 {
 	// 武器
-	slots[0] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::Weapons);
+	slots[WEAPON_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::Weapons);
 	// 消費アイテム
-	slots[1] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::Consumables);
+	slots[CONSUMABLE_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::Consumables);
 	// バッグ
-	slots[2] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::Weapons);
+	slots[BAG_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture, ItemType::ItemTypeMax);
 
 	for (int i = 0; i < slots.size(); i++)
 	{
@@ -91,6 +98,36 @@ void HotBar::MoveFocusToLeft()
 ItemId HotBar::GetSelectedItemId()
 {
 	return Get<SlotItem>(Get<Slot>(slots[currentSlotIdx]).Data().slotItem).Data().id;
+}
+
+bool HotBar::TrySetItem(
+    ItemId _id)
+{
+	size_t slotIndex = -1;
+	ItemInfo info    = Get<ItemSystem>().GetInfo(_id);
+	switch (info._type)
+	{
+	case ItemType::Weapons:
+		slotIndex = WEAPON_SLOT_INDEX;
+		break;
+	case ItemType::Consumables:
+		slotIndex = CONSUMABLE_SLOT_INDEX;
+		break;
+	default:
+		break;
+	}
+	if (slotIndex == -1)
+		return false;
+
+	SlotItemData& slotItemData = Get<SlotItem>(Get<Slot>(slots[slotIndex]).Data().slotItem).Data();
+
+	if (slotItemData.id == EMPTY_ITEM_ID)
+	{
+		slotItemData.id = _id;
+		return true;
+	}
+
+	return false;
 }
 
 void HotBar::MoveFocusImpl(

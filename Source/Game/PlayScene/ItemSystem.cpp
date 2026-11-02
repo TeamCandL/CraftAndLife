@@ -1,11 +1,6 @@
 #include "pch\pch.h"
 #include "ItemSystem.h"
 
-// ItemInfo ItemSystemData::GetInfo(int32_t id_)
-//{
-//	return {allItemList[id_]._imageId};
-// }
-
 ItemSystemData::ItemSystemData()
 {
 	std::vector<CraftInfo> craft;
@@ -13,7 +8,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 0,
 	                        ItemType::Materials,
 	                        "",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        {},
 
 	                        false,
@@ -25,7 +20,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 1,
 	                        ItemType::Weapons,
 	                        "さんぷる１",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/HandMaterial/HandWood.fbx",
 	                        //"Model/Harvestable/Rock.fbx",
 
@@ -38,7 +33,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 2,
 	                        ItemType::Weapons,
 	                        "さんぷる２",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/Sample/Axe.fbx",
 	                        //"Model/Harvestable/Rock.fbx",
 
@@ -81,7 +76,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 5,
 	                        ItemType::Weapons,
 	                        "ハンマー",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/HandWeapon/HandAxe.fbx",
 
 	                        true,
@@ -106,7 +101,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 7,
 	                        ItemType::Materials,
 	                        "石",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/HandMaterial/HandRock.fbx",
 
 	                        false,
@@ -117,7 +112,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 8,
 	                        ItemType::Materials,
 	                        "木材",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/HandMaterial/HandWood.fbx",
 
 	                        false,
@@ -128,7 +123,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 9,
 	                        ItemType::Materials,
 	                        "骨",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/HandMaterial/HandRock.fbx",
 
 	                        false,
@@ -139,7 +134,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 10,
 	                        ItemType::Materials,
 	                        "蜘蛛の糸",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
@@ -150,7 +145,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 11,
 	                        ItemType::Materials,
 	                        "生肉",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/HandFood/HandMeat.fbx",
 
 	                        false,
@@ -161,7 +156,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 12,
 	                        ItemType::Materials,
 	                        "爪",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
@@ -172,7 +167,7 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 13,
 	                        ItemType::Consumables,
 	                        "焼肉",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,

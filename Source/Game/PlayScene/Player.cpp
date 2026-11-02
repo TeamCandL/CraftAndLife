@@ -10,6 +10,7 @@
 #include <Game/Manager/SessionManager.h>
 #include <Game/PlayScene/PlayerBag.h>
 #include <Game/PlayScene/CraftUI.h>
+#include <Game/PlayScene/UI/HotBar.h>
 #include <string>
 
 void Player::Start()
@@ -34,6 +35,7 @@ void Player::Start()
 	objPlayerBag = GetScene().Instantiate<PlayerBag>();
 
 	objCraftUI = GetScene().Instantiate<CraftUI>();
+	objHotbar  = GetScene().Instantiate<HotBar>();
 }
 
 void Player::Update()
@@ -173,43 +175,51 @@ void Player::Update()
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 		VCU_LOG("objPawn");
 	}
+	UpdatePickNearestItem();
 
-	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
-	// エンティティを拾うことができた場合
-	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
-	if (objPick)
-	{
-		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
-		// バッグに追加できるなら、追加
-		if (bag.CanAddItem(pickedItemId))
-		{
-			bag.AddItem(pickedItemId);
-		}
-
-		VCU_LOG("objPick");
-	}
-
+	PlayerBag& bag   = Get<PlayerBag>(objPlayerBag);
+	HotBar& hotbar   = Get<HotBar>(objHotbar);
 	CraftUI& craftUI = Get<CraftUI>(objCraftUI);
-	if (ItemId id = craftUI.Update(bag); id != INVALID_ITEM_ID)
+	bool isAction    = pPlayerInput->IsActionBegin();
+
+	static bool open = false;
+	if (isAction)
 	{
-		// クラフトを試みて、成功した場合
-		if (bag.TryCraft(id))
+		open = !open;
+	}
+	if (open)
+	{
+		craftUI.SetActiveAll(true);
+		craftUI.SetActive(true);
+		if (ItemId id = craftUI.Update(bag); id != EMPTY_ITEM_ID)
 		{
-			// バッグに追加できる場合、追加
-			if (bag.CanAddItem(id))
+			// クラフトを試みて、成功した場合
+			if (bag.TryCraft(id))
 			{
-				bag.AddItem(id);
-			}
-			// 追加できないなら、エンティティとして前方に放り出す
-			else
-			{
-				Get<EntitySystem>().Spawn(
-				    id,
-				    transform.position + Vec3::Up() * 2.0f,
-				    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-				VCU_LOG("objPawn");
+				if (hotbar.TrySetItem(id))
+					return;
+
+				// バッグに追加できる場合、追加
+				if (bag.CanAddItem(id))
+				{
+					bag.AddItem(id);
+				}
+				// 追加できないなら、エンティティとして前方に放り出す
+				else
+				{
+					Get<EntitySystem>().Spawn(
+					    id,
+					    transform.position + Vec3::Up() * 2.0f,
+					    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+					VCU_LOG("objPawn");
+				}
 			}
 		}
+	}
+	else
+	{
+		craftUI.SetActiveAll(false);
+		craftUI.SetActive(false);
 	}
 
 	// HPゲージ動作確認用：1秒ごとに10ダメージ
@@ -274,4 +284,22 @@ Vec3 Player::GetPosition() const
 float Player::GetAngleY() const
 {
 	return Vec3{ transform.rotation.ToEuler() }.y;
+}
+
+void Player::UpdatePickNearestItem()
+{
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	// エンティティを拾うことができた場合
+	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
+	if (objPick)
+	{
+		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
+		// バッグに追加できるなら、追加
+		if (bag.CanAddItem(pickedItemId))
+		{
+			bag.AddItem(pickedItemId);
+		}
+
+		VCU_LOG("objPick");
+	}
 }

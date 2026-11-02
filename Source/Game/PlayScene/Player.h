@@ -29,6 +29,7 @@ struct PlayerData
 	GameObject objPlayerController{};
 	GameObject objPlayerBag{};
 	GameObject objCraftUI{};
+	GameObject objHotbar{};
 
 	PlayerRoleType role{ PlayerRoleType_Max };
 
@@ -84,4 +85,6 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;
+
+	void UpdatePickNearestItem();
 };
