@@ -11,16 +11,19 @@ void Harvestable::Start()
 	case HarvestableType::Tree:
 		model         = Resource<Model>{ "Model/Harvestable/Tree.fbx" };
 		maxDurability = 3;
+		obb.scale     = { 0.5f, 2.0f, 0.2f };
 		break;
 
 	case HarvestableType::TreeHigh:
 		model         = Resource<Model>{ "Model/Harvestable/TreeHigh.fbx" };
 		maxDurability = 5;
+		obb.scale     = { 0.5f, 3.0f, 0.2f };
 		break;
 
 	case HarvestableType::Rock:
 		model         = Resource<Model>{ "Model/Harvestable/Rock.fbx" };
 		maxDurability = 5;
+		obb.scale     = { 0.5f, 0.5f, 0.5f };
 		break;
 
 	default:
