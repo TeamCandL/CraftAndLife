@@ -484,6 +484,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossName.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\DeathUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge1.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge2.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge3.cpp" />
@@ -739,6 +740,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossName.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\DeathUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge2.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge3.h" />
