@@ -34,9 +34,11 @@ void PlayNetworkController::Start()
 
 void PlayNetworkController::Update()
 {
-	if (Get<InputSystem>().GetKeyDown(KeyCode::R))
+	static int testing{};
+	testing++;
+	if (testing % 20 != 0)
 	{
-		Get<SceneManager>().Move<TitleScene>();
+		return;
 	}
 
 	NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
