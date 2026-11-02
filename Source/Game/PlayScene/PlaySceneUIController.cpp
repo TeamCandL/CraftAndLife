@@ -45,5 +45,5 @@ void PlaySceneUIController::Start()
 	objBossGaugeR     = GetScene().Instantiate<BossGaugeR>();
 	objBossGauge      = GetScene().Instantiate<BossGauge>();
 	objBossName       = GetScene().Instantiate<BossName>();
-	objBossHp         = GetScene().Instantiate<BossHp>();
+	objBossHp         = GetScene().Instantiate<BossHp>(objBoss);
 }

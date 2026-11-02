@@ -1,10 +1,17 @@
 #include "pch\pch.h"
 #include "BossHp.h"
 #include <Game/Manager/SessionManager.h>
+#include "../Enemy.h"
 
-void BossHp::Start() {}
+void BossHp::Start()
+{
+	Enemy& boss = Get<Enemy>(objBoss);
+	maxHP       = boss.Data().hp;
+}
 
 void BossHp::Update()
 {
-	text.content = "1234567890/";
+	Enemy& boss  = Get<Enemy>(objBoss);
+	hp           = boss.Data().hp;
+	text.content = "%d / %d", hp, maxHP;
 }
