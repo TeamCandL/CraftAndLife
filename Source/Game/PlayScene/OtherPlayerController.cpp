@@ -69,6 +69,7 @@ void OtherPlayerController::Update()
 
 		    if (nameToObjOtherPlayer.count(_name) == 0)
 		    {
+			    VCU_LOG("【OtherPlayer生成】名前={}", _name);
 			    nameToObjOtherPlayer[_name] = GetScene().Instantiate<OtherPlayer>(_name);
 		    }
 
