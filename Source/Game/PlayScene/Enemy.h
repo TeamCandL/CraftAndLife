@@ -31,7 +31,7 @@ struct EnemyData
 	    const std::string& _name = "AAA") :
 	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[static_cast<int>(EnemyType::Skeleton)] }
 	{
-		nameDEB            = _name;
+		nameDEB.content    = _name;
 		objEnemyController = objEnemyController_;
 
 		transform.position = Vec3{ 0.0f, 15.0f, 0.0f };

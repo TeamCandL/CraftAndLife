@@ -20,6 +20,7 @@
 #include "UI/MyGauge.h"
 #include "NetworkActorServer.h"
 #include "UI/MiniMap.h"
+#include "UI/DeathUI.h"
 
 void PlayScene::Start()
 {
@@ -33,6 +34,7 @@ void PlayScene::Start()
 
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
+	Instantiate<DeathUI>(objPlayer, true);
 
 	// ホスト判定オブジェクトを生成
 	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer);
