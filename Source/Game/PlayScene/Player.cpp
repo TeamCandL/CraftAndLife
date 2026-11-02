@@ -83,6 +83,33 @@ void Player::Update()
 		DeadAnim();
 	}
 
+	// お試しで出してるエンティティ
+	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
+	{
+		Get<EntitySystem>().Spawn(
+		    8,
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
+	{
+		Get<EntitySystem>().Spawn(
+		    7,
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		VCU_LOG("objPawn");
+	}
+
+	// 近くのアイテムを拾う
+	UpdatePickNearestItem();
+
+	// クラフト画面を開く
+	if (Get<InputSystem>().GetKeyDown(KeyCode::C) ||
+	    Get<AbstructInputSystem>().GetPadInputSystem().IsButtonTriggered(GameInputGamepadY))
+	{
+		isOpenCraftUI = !isOpenCraftUI;
+	}
+
 	/*
 	//テスト用
 	 // HPゲージ動作確認用：1秒ごとに10ダメージ
@@ -361,33 +388,6 @@ void Player::MoveBody()
 	}
 	else
 	{
-	}
-
-	// お試しで出してるエンティティ
-	if (pPlayerInput->IsInteractBegin())
-	{
-		Get<EntitySystem>().Spawn(
-		    8,
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
-	{
-		Get<EntitySystem>().Spawn(
-		    7,
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-		VCU_LOG("objPawn");
-	}
-
-	// 近くのアイテムを拾う
-	UpdatePickNearestItem();
-
-	// クラフト画面を開く
-	if (Get<InputSystem>().GetKeyDown(KeyCode::C) ||
-	    Get<AbstructInputSystem>().GetPadInputSystem().IsButtonTriggered(GameInputGamepadY))
-	{
-		isOpenCraftUI = !isOpenCraftUI;
 	}
 }
 
