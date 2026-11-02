@@ -1,12 +1,24 @@
 #include "pch\pch.h"
 #include "NetworkActorServer.h"
 #include "../Manager/SessionManager.h"
+#include "Player.h"
 #include "Enemy.h"
 #include "EnemyController.h"
 #include "OtherEnemyController.h"
 
 void NetworkActorServer::Start()
 {
+	// プレイヤーのステートを登録
+	if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+	{
+		Player& player = Get<Player>(Data().objPlayer);
+		player.RegisterStates(Data().playerStateRegistry);
+
+		Data().isPlayerStateRegistered = true;
+
+		VCU_LOG("【Player StateRegistry 登録完了】");
+	}
+
 	// ゲストなら敵を生成しない
 	if (!IsHost())
 	{
@@ -21,9 +33,20 @@ void NetworkActorServer::Update()
 	// ホスト情報を更新
 	Data().isHost = Get<SessionManager>().RefStatus().imLobbyHost;
 
-	// ホストになったとき、まだ敵を生成していなければ生成
+	// ホストになったときの処理
 	if (IsHost())
 	{
+		// プレイヤーステート登録
+		if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+		{
+			Player& player = Get<Player>(Data().objPlayer);
+			player.RegisterStates(Data().playerStateRegistry);
+
+			Data().isPlayerStateRegistered = true;
+
+			VCU_LOG("【Player StateRegistry 登録完了】");
+		}
+
 		CreateEnemies();
 
 		Data().enemyStateSyncTimer -= Get<DeltaTime>();
