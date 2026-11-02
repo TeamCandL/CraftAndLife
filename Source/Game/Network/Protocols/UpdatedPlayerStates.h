@@ -19,7 +19,7 @@ namespace Protocol
 
 		uint8_t GetChannel() const override
 		{
-			return 1;
+			return 0;
 		}
 
 		ENetSendMode GetSendMode() const override

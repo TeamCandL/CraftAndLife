@@ -16,7 +16,23 @@ void OtherPlayerController::Update()
 		return;
 	}
 
-	// =====================================
+	ImGui::Begin("SessionManager");
+
+	sessionManager.ForeachPlayerStatus(
+	    [](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
+	    {
+		    ImGui::Text(
+		        "%s : %3.2f, %3.2f, %3.2f STATUS=%d",
+		        _name.c_str(),
+		        _status.position.x,
+		        _status.position.y,
+		        _status.position.z,
+		        _status.states);
+	    });
+
+	ImGui::End();
+
+	// --------------------------------
 	// 退出したプレイヤーを削除
 	// =====================================
 
