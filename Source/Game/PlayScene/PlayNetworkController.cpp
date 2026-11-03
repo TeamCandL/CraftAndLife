@@ -8,6 +8,7 @@
 #include <Game/Network/Protocols/UpdatedPlayerStates.h>
 #include <Game/Network/Protocols/UpdateEnemy.h>
 #include <Game/Network/Protocols/UpdatedEnemies.h>
+#include <Game/Network/Protocols/UpdateEnemyDamage.h>
 #include <Game/Network/Protocols/UpdatedEnemyStates.h>
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
@@ -15,6 +16,7 @@
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
 #include <Game/PlayScene/NetworkActorServer.h>
+#include <Game/PlayScene/EnemyController.h>
 #include <Game/PlayScene/StateValueCode.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
@@ -114,6 +116,31 @@ void PlayNetworkController::Update()
 				        enemyMessage.enemyTypes,
 				        enemyMessage.positions,
 				        enemyMessage.rotations);
+
+				    break;
+			    }
+			    case ProtocolType::UpdateEnemyDamage:
+			    {
+				    Protocol::UpdateEnemyDamage message{};
+				    converter.ToMessage(_event.data, message);
+
+				    // NetworkActorServerを取得
+				    NetworkActorServer& networkActorServer = Get<NetworkActorServer>(Data().objNetworkActorServer);
+
+				    // NetworkActorServerを取得
+				    NetworkActorServer& actorServer = Get<NetworkActorServer>(Data().objNetworkActorServer);
+
+				    // ホストでなければ処理しない
+				    if (!actorServer.IsHost() || !actorServer.IsInitialized())
+				    {
+					    break;
+				    }
+
+				    // EnemyControllerを取得
+				    GameObject objEnemyController = networkActorServer.GetEnemyController();
+
+				    // 対象の敵にダメージを与える
+				    Get<EnemyController>(objEnemyController).DamagedEnemy(message.enemyId, message.damage);
 
 				    break;
 			    }

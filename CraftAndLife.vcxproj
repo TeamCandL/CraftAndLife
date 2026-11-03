@@ -714,6 +714,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemyStates.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedPlayerStates.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemyDamage.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
