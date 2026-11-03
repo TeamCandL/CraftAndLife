@@ -12,6 +12,10 @@
 
 void CraftUI::Start()
 {
+	// ジョブによってクラフト可能か切り替えるかどうか。falseにすれば、どのジョブも弓作ったりできる。デバッグ用。
+	bool filterCraftableItemOnJob{ false };
+	playerJobType = Get<Player>(objPlayer).Data().jobType;
+
 	const auto& allItemList = Get<ItemSystem>().Data().allItemList;
 	auto itr                = std::find_if(
         allItemList.begin(),
@@ -26,9 +30,16 @@ void CraftUI::Start()
 	}
 
 	for (const ItemAllInfo& info : allItemList | std::views::filter(
-	                                                 [](const ItemAllInfo& _info)
+	                                                 [this, filterCraftableItemOnJob](const ItemAllInfo& _info)
 	                                                 {
-		                                                 return _info._isCraftable;
+		                                                 // 制作可能アイテム かつ そのジョブがクラフト可能
+		                                                 bool jobCanCraft =
+		                                                     JobCanCraftOrAddItem(_info._type, playerJobType);
+		                                                 if (filterCraftableItemOnJob == false)
+		                                                 {
+			                                                 jobCanCraft = true;
+		                                                 }
+		                                                 return _info._isCraftable && jobCanCraft;
 	                                                 }))
 	{
 		craftableItems.push_back(info);
@@ -193,6 +204,8 @@ void CraftUI::Update()
 	if (resultItemId == EMPTY_ITEM_ID)
 		return;
 	PlayerBag& playerBag = Get<PlayerBag>(Get<Player>(objPlayer).Data().objPlayerBag);
+
+	ItemInfo info = Get<ItemSystem>().GetInfo(selectedItemId);
 
 	// クラフトを試みて、成功した場合
 	if (playerBag.TryCraft(resultItemId))
@@ -362,4 +375,10 @@ void CraftUI::DrawDebugItemAddWindow()
 	}
 
 	ImGui::End();
+}
+
+CraftUIData::CraftUIData(
+    GameObject _objPlayer) :
+    objPlayer{ _objPlayer }
+{
 }

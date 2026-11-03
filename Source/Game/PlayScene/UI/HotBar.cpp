@@ -129,7 +129,7 @@ bool HotBar::CanRemoveSelectedItem(
 		return false;
 
 	SlotItemData& itemData = GetSlotItemData(currentSlotIdx);
-	return (itemData.count >= _count || itemData.id == EMPTY_ITEM_ID);
+	return (itemData.count >= _count && itemData.id != EMPTY_ITEM_ID);
 }
 
 void HotBar::RemoveSelectedItem(
@@ -157,7 +157,7 @@ bool HotBar::CanRemoveConsumableItem(
     int _count)
 {
 	SlotItemData& itemData = GetSlotItemData(CONSUMABLE_SLOT_INDEX);
-	return (itemData.count >= _count || itemData.id == EMPTY_ITEM_ID);
+	return (itemData.count >= _count && itemData.id != EMPTY_ITEM_ID);
 }
 
 void HotBar::RemoveConsumableItem(
@@ -268,7 +268,7 @@ bool HotBar::CanRemoveItem(
 		return false;
 
 	SlotItemData& itemData = GetSlotItemData(slotIndex);
-	return (itemData.count >= _count || itemData.id == EMPTY_ITEM_ID);
+	return (itemData.count >= _count && itemData.id != EMPTY_ITEM_ID);
 }
 
 void HotBar::RemoveItem(
