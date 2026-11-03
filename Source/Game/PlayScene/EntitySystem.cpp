@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "IEntity.h"
 #include <Game/PlayScene/ItemSystem.h>
+#include <Game/PlayScene/NetworkActorServer.h>
 
 void EntitySystem::Start()
 {
@@ -14,23 +15,34 @@ void EntitySystem::Update()
 
 	for (auto& info : entities)
 	{
-		info.despawnTimeLeft -= DELTA_TIME;
 		info.pickupCooldownSec -= DELTA_TIME;
 	}
 
-	std::vector<int32_t> removeIds;
-
-	for (const auto& info : entities)
+	// 自然消滅タイマーはホストだけが管理
+	if (Data().isHost)
 	{
-		if (info.despawnTimeLeft <= 0.0f)
+		for (auto& info : entities)
 		{
-			removeIds.push_back(info.entityId);
+			info.despawnTimeLeft -= DELTA_TIME;
 		}
 	}
 
-	for (int32_t entityId : removeIds)
+	if (Data().isHost)
 	{
-		Remove(entityId);
+		std::vector<int32_t> removeIds;
+
+		for (const auto& info : entities)
+		{
+			if (!info.isRemoveRequested && info.despawnTimeLeft <= 0.0f)
+			{
+				removeIds.push_back(info.entityId);
+			}
+		}
+
+		for (int32_t entityId : removeIds)
+		{
+			Remove(entityId);
+		}
 	}
 }
 
@@ -46,15 +58,15 @@ void EntitySystem::Spawn(
 
 	const int32_t entityId = Data().nextEntityId++;
 
-	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 3.0f, 60.0f * 5.0f);
-	IEntity& entity = Get<IEntity>(entities.back().obj);
+	// entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 3.0f, 60.0f * 5.0f);
+	// IEntity& entity = Get<IEntity>(entities.back().obj);
 
 	// TODO: 自然消滅タイムの初期化
 
-	entity.SetPosition(_position);
-	entity.SetVelocity(_velocity);
+	// entity.SetPosition(_position);
+	// entity.SetVelocity(_velocity);
 
-	Data().entities.back().entityId = entityId;
+	// Data().entities.back().entityId = entityId;
 
 	EntitySpawnData spawnData{};
 
@@ -76,11 +88,17 @@ GameObject EntitySystem::PickNearest(
 {
 	float minDistance{ _radius };
 	EntityInfo* pMinEntityInfo{};
+
 	for (auto& info : entities)
 	{
 		if (info.pickupCooldownSec > 0.0f)
 		{
 			continue;  // 拾えないなら無視
+		}
+
+		if (info.isRemoveRequested)
+		{
+			continue;  // 削除要求済みの場合は無視
 		}
 
 		Transform* pTransform = TryGet<Transform>(info.obj);
@@ -90,10 +108,12 @@ GameObject EntitySystem::PickNearest(
 			continue;  // transformがないなら無視
 		}
 
-		Vec3 entityPosition = pTransform->position;
+		const Vec3 entityPosition = pTransform->position;
+		const float distance      = (entityPosition - _pos).Length();
 
-		if ((entityPosition - _pos).Length() <= minDistance)
+		if (distance <= minDistance)
 		{
+			minDistance    = distance;
 			pMinEntityInfo = &info;
 		}
 	}
@@ -114,17 +134,26 @@ void EntitySystem::SpawnFromNetwork(
     const Vec3 _position,
     const Vec3 _velocity)
 {
+	// 同じIDのエンティティが既に存在する場合は生成しない
+	for (const auto& info : entities)
+	{
+		if (info.entityId == _entityId)
+		{
+			return;
+		}
+	}
+
+	// エンティティを生成
 	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 3.0f, 60.0f * 5.0f);
 
 	EntityInfo& info = entities.back();
-	info.entityId    = _entityId;
+
+	info.entityId = _entityId;
 
 	IEntity& entity = Get<IEntity>(info.obj);
+
 	entity.SetPosition(_position);
 	entity.SetVelocity(_velocity);
-
-	// 自分が生成したエンティティIDと重複しないようにする
-	Data().nextEntityId = std::max(Data().nextEntityId, _entityId + 1);
 }
 
 const std::vector<EntitySpawnData>& EntitySystem::GetPendingSpawnData() const
@@ -150,20 +179,28 @@ void EntitySystem::ClearPendingRemoveData()
 void EntitySystem::Remove(
     int32_t _entityId)
 {
-	for (auto itr = entities.begin(); itr != entities.end(); ++itr)
+	for (auto& info : entities)
 	{
-		if (itr->entityId != _entityId)
+		if (info.entityId != _entityId)
 		{
 			continue;
 		}
 
-		GetScene().Destroy(itr->obj);
-		entities.erase(itr);
+		// 既に削除要求を登録している場合は何もしない
+		if (info.isRemoveRequested)
+		{
+			return;
+		}
+
+		// 削除要求済みにする
+		info.isRemoveRequested = true;
 
 		EntityRemoveData removeData{};
 		removeData.entityId = _entityId;
 
+		// 削除要求を登録
 		Data().pendingRemoveData.push_back(removeData);
+
 		return;
 	}
 }
@@ -180,6 +217,7 @@ void EntitySystem::RemoveFromNetwork(
 
 		GetScene().Destroy(itr->obj);
 		entities.erase(itr);
+
 		return;
 	}
 }
@@ -188,7 +226,7 @@ void EntitySystem::UpdateEntityId(
     int32_t _oldId,
     int32_t _newId)
 {
-	for (auto& info : Data().entities)
+	for (auto& info : entities)
 	{
 		if (info.entityId != _oldId)
 		{
@@ -203,4 +241,10 @@ void EntitySystem::UpdateEntityId(
 	}
 
 	VCU_LOG("ID更新対象のエンティティが見つからない: {}", _oldId);
+}
+
+void EntitySystem::SetHost(
+    bool _isHost)
+{
+	Data().isHost = _isHost;
 }

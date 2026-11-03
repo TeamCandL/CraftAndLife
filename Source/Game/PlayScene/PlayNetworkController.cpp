@@ -42,6 +42,13 @@ void PlayNetworkController::Update()
 
 	NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
 
+	NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
+
+	EntitySystem& entitySystem = Get<EntitySystem>();
+
+	// ホスト情報を更新
+	entitySystem.SetHost(actorServer.IsHost());
+
 	MessageConverter converter{};
 
 	switch (networkSessionManager.GetCurrentState())
@@ -185,6 +192,18 @@ void PlayNetworkController::Update()
 				        Vec3{ message.positionX, message.positionY, message.positionZ },
 				        Vec3{ message.velocityX, message.velocityY, message.velocityZ });
 
+				    Vec3 pos  = { message.positionX, message.positionY, message.positionZ };
+				    Vec3 velo = { message.velocityX, message.velocityY, message.velocityZ };
+				    VCU_LOG(
+				        "Receve UpdateEntitySpawn: ID={}, Pos={},{},{}, velo={},{},{}",
+				        message.entityId,
+				        pos.x,
+				        pos.y,
+				        pos.z,
+				        velo.x,
+				        velo.y,
+				        velo.z);
+
 				    break;
 			    }
 			    case ProtocolType::UpdateEntityRemove:
@@ -232,7 +251,6 @@ void PlayNetworkController::Update()
 		networkSessionManager.Send(message);
 
 		// プレイヤーステート送信処理
-		NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
 
 		StateRegistry& playerRegistry = actorServer.GetPlayerStateRegistry();
 		const auto playerChanges      = playerRegistry.GetChanges();
@@ -450,6 +468,13 @@ void PlayNetworkController::Update()
 			entityMessage.velocityZ = spawnData.velocity.z;
 
 			networkSessionManager.Send(entityMessage);
+			VCU_LOG(
+			    "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
+			    entityMessage.entityId,
+			    entityMessage.itemId,
+			    entityMessage.sourceType,
+			    entityMessage.positionX,
+			    entityMessage.velocityX);
 		}
 
 		// 送信後に送信待ちデータをクリア
