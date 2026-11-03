@@ -508,10 +508,10 @@ void PlayNetworkController::Update()
 		// VCU_LOG("敵更新処理送信: {}", eCount);
 
 		HarvestableController& harvestableController = Get<HarvestableController>(objHarvestableController);
-		while (std::optional<uint32_t> foundId = harvestableController.FindToLocalBokenIds())
+		if (std::optional<uint32_t> foundId = harvestableController.FindToLocalBokenIds())
 		{
 			Protocol::BreakHarvestable breakHarvestableMessage{};
-
+			breakHarvestableMessage.breakHarvestableId = *foundId;
 			networkSessionManager.Send(breakHarvestableMessage);
 		}
 	}

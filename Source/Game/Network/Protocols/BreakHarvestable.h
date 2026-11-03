@@ -23,7 +23,7 @@ namespace Protocol
 
 		uint8_t GetChannel() const override
 		{
-			return 2;
+			return 0;
 		}
 
 		// 以下通信メンバーたち
