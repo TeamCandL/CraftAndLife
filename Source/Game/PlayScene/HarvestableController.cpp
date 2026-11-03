@@ -32,6 +32,12 @@ std::optional<uint32_t> HarvestableController::FindToLocalBokenIds()
 void HarvestableController::BreakAt(
     const uint32_t _id)
 {
+	if (!objs[_id])
+	{
+		objs[_id] = GameObject::Empty();
+		return;
+	}
+
 	Get<Harvestable>(objs[_id]).Break();
 	objs[_id] = GameObject::Empty();
 }
