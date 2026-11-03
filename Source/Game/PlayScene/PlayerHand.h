@@ -2,6 +2,8 @@
 #include <Game/Game.h>
 #include "ItemId.h"
 
+struct PlayerData;
+
 /// @brief プレイヤーの手持ちのデータ
 struct PlayerHandData
 {
@@ -16,9 +18,14 @@ struct PlayerHandData
 	Component<Transform> transform{};
 	Component<TransformAnimator> transformAnimator{};
 
-	bool isActing{ false };
+	bool isActing{ false };    ///< アイテムを振っている最中か
+	bool isOnAction{ false };  ///< アイテムのアイテムのアクションがあった瞬間か true / false
 
-	ItemId haveItemId{ 1 };
+	ItemId haveItemId{};  ///< 持っているアイテムのId
+
+	GameObject objItemAction{};  ///< アイテムアクションのオブジェクト
+
+	bool isAnimPreviewingDebug{ false };
 };
 
 /// @brief プレイヤーの手持ち
@@ -28,16 +35,27 @@ struct PlayerHand : ObjectBase<PlayerHandData>
 
 	/// @brief 更新処理
 	void Start() override;
+
 	/// @brief 更新処理
-	void Update() override;
+	/// @param _playerData プレイヤーのデータ
+	void Update(PlayerData& _playerData);
+
 	/// @brief 描画処理
 	void Draw() override;
-
-	/// @brief アクション状態を設定する
-	/// @param _isAction trueでアクション、falseでアクション強制キャンセル
-	void SetAction(const bool _isAction);
 
 	/// @brief アイテムをセットする
 	/// @param アイテムのId
 	void SetItem(const ItemId _itemId);
+
+	bool IsActing() const
+	{
+		return isActing;
+	}
+
+	/// @brief アイテムのアクションがあった瞬間か
+	/// @return アイテムのアクションがあった瞬間 true / false
+	bool IsOnAction() const
+	{
+		return isOnAction;
+	}
 };
