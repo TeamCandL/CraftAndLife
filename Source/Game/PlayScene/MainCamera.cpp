@@ -115,6 +115,11 @@ void MainCamera::SetCameraType(
 	}
 }
 
+Vec3 MainCamera::GetFocusPosition()
+{
+	return Get<IMainCameraUpdater>(objUpdater).GetFocusPosition();
+}
+
 void MainCamera::UpdatePositionFromTarget(
     const GameObject _objTarget)
 {

@@ -1,12 +1,27 @@
 #include "pch\pch.h"
 #include "ItemActionWeaponBow.h"
+#include "../Player.h"
 #include "../PlayerHand.h"
+#include "../EntitySystem.h"
+#include "../MainCamera.h"
 
 void ItemActionWeaponBow::Action(
     const ItemId _itemId,
     PlayerData& _playerData,
     PlayerHandData& _playerHandData)
 {
+	EntitySystem& entitySystem = Get<EntitySystem>();
+
+	Vec3 firePositionFrom = _playerHandData.transform.position;
+	Vec3 firePositionTo   = Get<MainCamera>(_playerData.objMainCamera).GetFocusPosition();
+	if (stringTimeSec >= tripleFireTimeThresholdSec)
+	{
+		entitySystem.Spawn(ARROW_ITEM_ID, , )
+	}
+	else
+	{
+	}
+	stringTimeSec = 0.0f;
 }
 
 void ItemActionWeaponBow::Update(
@@ -36,10 +51,10 @@ void ItemActionWeaponBow::Update(
 			_playerHandData.isActing                        = false;
 			_playerHandData.transformAnimator.playToLoop    = false;
 			_playerHandData.transformAnimator.playAnimation = "idle";
-		}
 
-		VCU_LOG("アクション！");
-		Action(_itemId, _playerData, _playerHandData);
+			VCU_LOG("アクション！");
+			Action(_itemId, _playerData, _playerHandData);
+		}
 	}
 
 	if (_playerHandData.isActing)
