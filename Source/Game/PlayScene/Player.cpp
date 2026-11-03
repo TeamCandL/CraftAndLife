@@ -120,6 +120,11 @@ void Player::Update()
 	     hpTestTimer = 0.0f;
 	 }
 	*/
+
+	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
+	{
+		hp -= 10;
+	}
 }
 
 void Player::Draw()

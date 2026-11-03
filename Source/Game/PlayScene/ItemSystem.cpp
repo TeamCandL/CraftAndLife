@@ -15,6 +15,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 
 	allItemList.push_back({ 1,
@@ -28,7 +29,8 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        1.0f,
-	                        10 });
+	                        10,
+	                        0 });
 
 	allItemList.push_back({ 2,
 	                        ItemType::Weapons,
@@ -41,6 +43,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        2.0f,
+	                        0,
 	                        25 });
 	craft.clear();
 	craft.push_back({ 8, 3 });
@@ -55,7 +58,8 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.5f,
-	                        8 });
+	                        8,
+	                        0 });
 	craft.clear();
 	craft.push_back({ 7, 3 });
 	craft.push_back({ 8, 2 });
@@ -69,7 +73,8 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.6f,
-	                        12 });
+	                        12,
+	                        0 });
 	craft.clear();
 	craft.push_back({ 7, 5 });
 	craft.push_back({ 8, 3 });
@@ -83,6 +88,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        1.0f,
+	                        0,
 	                        20 });
 	craft.clear();
 	craft.push_back({ 7, 3 });
@@ -97,6 +103,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.8f,
+	                        0,
 	                        10 });
 	allItemList.push_back({ 7,
 	                        ItemType::Materials,
@@ -108,6 +115,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 8,
 	                        ItemType::Materials,
@@ -119,6 +127,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 9,
 	                        ItemType::Materials,
@@ -130,6 +139,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 10,
 	                        ItemType::Materials,
@@ -141,6 +151,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 11,
 	                        ItemType::Materials,
@@ -152,6 +163,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 12,
 	                        ItemType::Materials,
@@ -163,6 +175,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 13,
 	                        ItemType::Consumables,
@@ -174,6 +187,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 14,
 	                        ItemType::Consumables,
@@ -185,6 +199,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	craft.clear();
 	craft.push_back({ 7, 1 });
@@ -199,6 +214,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 }
 
@@ -213,9 +229,10 @@ ItemInfo ItemSystem::GetInfo(
 	info._isCraftable = allItemList[id]._isCraftable;
 	info._craftInfo   = allItemList[id]._craftInfo;
 
-	info._imageId  = allItemList[id]._imageId;
-	info._coolTime = allItemList[id]._coolTime;
-	info._damage   = allItemList[id]._damage;
+	info._imageId         = allItemList[id]._imageId;
+	info._coolTime        = allItemList[id]._coolTime;
+	info._damageForEnemy  = allItemList[id]._damageForEnemy;
+	info._damageForObject = allItemList[id]._damageForObject;
 	return info;
 }
 

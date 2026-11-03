@@ -16,13 +16,13 @@ struct OtherPlayerData
 	Component<Name> name{};
 	Component<Transform> transform{ Vec3::Zero(), Vec3::One() * 200.0f };
 
-	Resource<Model> aModel{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-c.fbx" };
+	// Resource<Model> aModel{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-c.fbx" };
 
 	std::array<Resource<Model>, PlayerRoleType_Max> models{
-		Resource<Model>{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx" },
-		Resource<Model>{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx" },
-		Resource<Model>{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx" },
-		Resource<Model>{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx" },
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",    // Tank
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",    // Fighter
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-f.fbx",  // Archer
 	};
 
 	PlayerRoleType role{ PlayerRoleType_Healer };
