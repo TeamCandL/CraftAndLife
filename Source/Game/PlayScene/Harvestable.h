@@ -31,6 +31,8 @@ struct HarvestableData
 	// ワールド座標・回転・大きさ
 	Component<Transform> transform{};
 
+	Component<Name> name{ "ハーベスタブル" };  ///< 名前コンポーネント
+
 	// モデルのアニメーション番号
 	int32_t animIndex{ 0 };
 
