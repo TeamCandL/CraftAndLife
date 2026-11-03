@@ -2,6 +2,7 @@
 #include <Game/Game.h>
 #include <Game/PlayScene/ItemSystem.h>
 #include <Game/PlayScene/PlayerBag.h>
+#include <Game/PlayScene/Player/PlayerJobType.h>
 #include <nlohmann-json/json.hpp>
 #include <unordered_map>
 #include <span>
@@ -124,8 +125,7 @@ struct RecipeMaterial
 
 struct CraftUIData
 {
-	CraftUIData(GameObject _objPlayer) :
-	    objPlayer{ _objPlayer } {};
+	CraftUIData(GameObject _objPlayer);
 
   protected:
 	ItemId selectedItemId{ EMPTY_ITEM_ID };
@@ -159,6 +159,7 @@ struct CraftUIData
 	std::unordered_map<ItemId, std::vector<RecipeMaterial>> recipeUIMap;
 
 	GameObject objPlayer{};
+	PlayerJobType playerJobType{ PlayerJobType_Max };
 };
 
 struct CraftUI : ObjectBase<CraftUIData>

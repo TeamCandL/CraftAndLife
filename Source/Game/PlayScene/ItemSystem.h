@@ -1,6 +1,7 @@
 #pragma once
 #include <Game/Game.h>
 #include "ItemId.h"
+#include "Player/PlayerJobType.h"
 
 enum ItemType
 {
@@ -62,6 +63,9 @@ struct ItemStack
 		return ItemStack{};
 	}
 };
+
+bool JobCanCraftOrAddItem(const ItemType _type, PlayerJobType _job);
+
 struct ItemSystemData
 {
 	ItemSystemData();

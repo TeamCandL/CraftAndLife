@@ -224,3 +224,14 @@ Resource<Model> ItemSystem::GetModel(
 {
 	return allItemList[_id]._model;
 }
+
+bool JobCanCraftOrAddItem(
+    const ItemType _type,
+    PlayerJobType _job)
+{
+	if (_type == Arrow || _type == WeaponBow)
+	{
+		return _job == PlayerJobType_Archer;
+	}
+	return true;
+}
