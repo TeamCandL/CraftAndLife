@@ -450,6 +450,8 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
     <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
@@ -714,9 +716,16 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemyStates.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedPlayerStates.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEntityRemove.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEntitySpawn.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemyDamage.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
+    <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
     <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />

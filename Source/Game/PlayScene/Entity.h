@@ -42,11 +42,7 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	{
 		transform.position = _position;
 	}
-	void SetVelocity(
-	    const Vec3 _velocity) override
-	{
-		velocity = _velocity;
-	}
+	void SetVelocity(const Vec3 _velocity) override;
 
 	/// @brief このエンティティのアイテムIdを取得する
 	/// @return アイテムId

@@ -68,3 +68,10 @@ void Entity::Draw()
 	    Get<Dx11Manager>().Draw();
 	}*/
 }
+
+void Entity::SetVelocity(
+    const Vec3 _velocity)
+{
+	velocity           = _velocity;
+	transform.rotation = Quaternion::FromLookAtQuaternion(Vec3::Zero(), _velocity, Vec3::Up());
+}

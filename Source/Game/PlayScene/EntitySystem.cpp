@@ -12,24 +12,25 @@ void EntitySystem::Update()
 {
 	const float DELTA_TIME{ Get<DeltaTime>() };
 
-	for (size_t i = 0; i < entities.size(); i++)
+	for (auto& info : entities)
 	{
-		auto& info = entities[i];
 		info.despawnTimeLeft -= DELTA_TIME;
 		info.pickupCooldownSec -= DELTA_TIME;
 	}
-	// return;
-	for (auto itr = entities.begin(); itr != entities.end();)
+
+	std::vector<int32_t> removeIds;
+
+	for (const auto& info : entities)
 	{
-		if (itr->despawnTimeLeft <= 0.0f)
+		if (info.despawnTimeLeft <= 0.0f)
 		{
-			GetScene().Destroy(itr->obj);
-			itr = entities.erase(itr);
+			removeIds.push_back(info.entityId);
 		}
-		else
-		{
-			itr++;
-		}
+	}
+
+	for (int32_t entityId : removeIds)
+	{
+		Remove(entityId);
 	}
 }
 
@@ -43,6 +44,8 @@ void EntitySystem::Spawn(
 	// info.
 	// TODO: 自然消滅とかの情報ほしい
 
+	const int32_t entityId = Data().nextEntityId++;
+
 	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 3.0f, 60.0f * 5.0f);
 	IEntity& entity = Get<IEntity>(entities.back().obj);
 
@@ -50,6 +53,21 @@ void EntitySystem::Spawn(
 
 	entity.SetPosition(_position);
 	entity.SetVelocity(_velocity);
+
+	Data().entities.back().entityId = entityId;
+
+	EntitySpawnData spawnData{};
+
+	spawnData.entityId = entityId;
+	spawnData.itemId   = _itemId;
+	spawnData.position = _position;
+	spawnData.velocity = _velocity;
+
+	// 生成元は呼び出し元に応じて設定する
+	spawnData.sourceType = EntitySourceType::Object;
+	spawnData.sourceId   = 0;
+
+	Data().pendingSpawnData.push_back(spawnData);
 }
 
 GameObject EntitySystem::PickNearest(
@@ -88,4 +106,101 @@ GameObject EntitySystem::PickNearest(
 	pMinEntityInfo->despawnTimeLeft = 0.0f;
 
 	return pMinEntityInfo->obj;
+}
+
+void EntitySystem::SpawnFromNetwork(
+    const int32_t _entityId,
+    const ItemId _itemId,
+    const Vec3 _position,
+    const Vec3 _velocity)
+{
+	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 3.0f, 60.0f * 5.0f);
+
+	EntityInfo& info = entities.back();
+	info.entityId    = _entityId;
+
+	IEntity& entity = Get<IEntity>(info.obj);
+	entity.SetPosition(_position);
+	entity.SetVelocity(_velocity);
+
+	// 自分が生成したエンティティIDと重複しないようにする
+	Data().nextEntityId = std::max(Data().nextEntityId, _entityId + 1);
+}
+
+const std::vector<EntitySpawnData>& EntitySystem::GetPendingSpawnData() const
+{
+	return Data().pendingSpawnData;
+}
+
+void EntitySystem::ClearPendingSpawnData()
+{
+	Data().pendingSpawnData.clear();
+}
+
+const std::vector<EntityRemoveData>& EntitySystem::GetPendingRemoveData() const
+{
+	return Data().pendingRemoveData;
+}
+
+void EntitySystem::ClearPendingRemoveData()
+{
+	Data().pendingRemoveData.clear();
+}
+
+void EntitySystem::Remove(
+    int32_t _entityId)
+{
+	for (auto itr = entities.begin(); itr != entities.end(); ++itr)
+	{
+		if (itr->entityId != _entityId)
+		{
+			continue;
+		}
+
+		GetScene().Destroy(itr->obj);
+		entities.erase(itr);
+
+		EntityRemoveData removeData{};
+		removeData.entityId = _entityId;
+
+		Data().pendingRemoveData.push_back(removeData);
+		return;
+	}
+}
+
+void EntitySystem::RemoveFromNetwork(
+    int32_t _entityId)
+{
+	for (auto itr = entities.begin(); itr != entities.end(); ++itr)
+	{
+		if (itr->entityId != _entityId)
+		{
+			continue;
+		}
+
+		GetScene().Destroy(itr->obj);
+		entities.erase(itr);
+		return;
+	}
+}
+
+void EntitySystem::UpdateEntityId(
+    int32_t _oldId,
+    int32_t _newId)
+{
+	for (auto& info : Data().entities)
+	{
+		if (info.entityId != _oldId)
+		{
+			continue;
+		}
+
+		info.entityId = _newId;
+
+		VCU_LOG("エンティティID更新: {} -> {}", _oldId, _newId);
+
+		return;
+	}
+
+	VCU_LOG("ID更新対象のエンティティが見つからない: {}", _oldId);
 }

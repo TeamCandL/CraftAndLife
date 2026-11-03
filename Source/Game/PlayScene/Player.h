@@ -32,6 +32,7 @@ struct PlayerData
 	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
 	Component<Transform> transform{};
+	Component<TransformAnimator> animator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
 	Component<RigidBody> rigidBody{};
 	Component<StaticOBB> obb{};
 	Component<OBBRenderer> obbRenderer{};
@@ -136,4 +137,5 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void UpdatePickNearestItem();
 	void TryAddItem(ItemId _id);
+	void SpawnItem(ItemId _id);
 };

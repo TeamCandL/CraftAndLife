@@ -76,6 +76,8 @@ struct HotBarData
 	int slotMargin{ 18 };
 	// 左のスロットのアイテム数の座標(パネルとの相対座標)
 	Vec2 leftSlotItemCountBegin{ 67, 58 };
+
+	std::function<void()> onChangeSelectedItem{ nullptr };
 };
 
 struct HotBar : ObjectBase<HotBarData>
@@ -84,6 +86,9 @@ struct HotBar : ObjectBase<HotBarData>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+	/// @brief スロットの動作を更新
+	void UpdateSlot();
+
 	/// @brief スロットのフォーカスを右に進める
 	void MoveFocusToRight();
 	/// @brief スロットのフォーカスを左に進める
@@ -91,6 +96,8 @@ struct HotBar : ObjectBase<HotBarData>
 	/// @brief 現在選択中のスロットのアイテムを返す
 	/// @return
 	ItemId GetSelectedItemId();
+	bool CanRemoveSelectedItem(int _count = 1);
+	void RemoveSelectedItem(int _count = 1);
 	/// @brief 消費アイテム(または矢)のIDを返す
 	/// @return
 	ItemId GetConsumableItemId();
@@ -107,10 +114,36 @@ struct HotBar : ObjectBase<HotBarData>
 	/// @return 追加できた場合はtrue
 	bool TrySetItem(ItemId _id);
 
+	/// @brief スロットに存在するアイテムと、引数のアイテムを入れ替える。
+	/// @param _newItemId
+	/// @param _slotItemType
+	/// @return もともとスロットにあったアイテムのID。入れ替えに失敗した場合、空のアイテムIDを返す
+	bool SwapWeaponItem(ItemId& _oldItemId, ItemId _newItemId);
+	bool SwapConsumableItem(ItemStack& _oldItemStack, ItemId _newItemId);
+	bool SwapItem(ItemStack& _oldItemStack, ItemId _newItemId);
+
+	template <typename T> void SetOnChangedSelectedItemCallback(T&& _func);
+
   private:
+	bool CanRemoveItem(ItemType _itemType, int _count = 0);
+	void RemoveItem(ItemType _itemType, int _count = 0);
+	bool SwapItemImpl(ItemStack& _oldItemStack, ItemId _newItemId, int _index);
 	/// @brief
 	/// 指定された方向にフォーカスを移動。フォーカスは循環する。一番右のスロットでさらに右を押したら一番左へ行く。
 	/// @param _dir フォーカスを移動する方向を指定する値
 	void MoveFocusImpl(int _dir);
 	SlotItemData& GetSlotItemData(int _idx);
+	size_t GetSlotIndexFrom(ItemType _itemType);
+	void OnChangedSelectedItem();
 };
+
+template <typename T>
+inline void HotBar::SetOnChangedSelectedItemCallback(
+    T&& _func)
+{
+	static_assert(std::is_invocable_v<T>);
+	if constexpr (std::is_invocable_v<T>)
+	{
+		onChangeSelectedItem = std::forward<T>(_func);
+	}
+}

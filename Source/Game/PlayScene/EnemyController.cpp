@@ -62,15 +62,22 @@ std::vector<EnemyStatus> EnemyController::GetAllEnemyStatus()
 	return allStatus;
 }
 
-ActiveBoss EnemyController::GetActiveBoss()
+void EnemyController::DamagedEnemy(
+    int32_t enemyId,
+    int32_t damage)
 {
-	for (const GameObject& obj : allEnemys)
+	for (const GameObject& enemyObj : allEnemys)
 	{
-		if (Get<Enemy>(obj).Data().isBoss)
+		Enemy& enemy = Get<Enemy>(enemyObj);
+
+		if (enemy.GetID() != enemyId)
 		{
-			return { true, obj };
+			continue;
 		}
+
+		enemy.Damaged(damage);
+		return;
 	}
 
-	return { false, allEnemys.front() };
+	VCU_LOG("ダメージ対象の敵が見つかりません: ID={}", enemyId);
 }

@@ -27,16 +27,10 @@ void BootSceneLogo::Update()
 		return;
 	}
 
-	ImGui::Begin("BootSceneLogo");
-	ImGui::InputFloat("last", &last);
-
 	last -= fadeOutTime;
 	if (last <= 0.0f)
 	{
 		image.baseColor.a = 1.0f - -last / fadeOutTime;
-		ImGui::Text("fadeOutTime");
-		ImGui::InputFloat("image.baseColor.a", &image.baseColor.a);
-		ImGui::End();
 		return;
 	}
 
@@ -44,9 +38,6 @@ void BootSceneLogo::Update()
 	if (last <= 0.0f)
 	{
 		image.baseColor.a = 1.0f;
-		ImGui::Text("stayTime");
-		ImGui::InputFloat("image.baseColor.a", &image.baseColor.a);
-		ImGui::End();
 		return;
 	}
 
@@ -54,11 +45,6 @@ void BootSceneLogo::Update()
 	if (last <= 0.0f)
 	{
 		image.baseColor.a = -last / fadeOutTime;
-		ImGui::Text("fadeInTime");
-		ImGui::InputFloat("image.baseColor.a", &image.baseColor.a);
-		ImGui::End();
 		return;
 	}
-
-	ImGui::End();
 }

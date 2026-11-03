@@ -3,7 +3,7 @@
 
 PlayerBagData::PlayerBagData()
 {
-	items.resize(initialCapacity, ItemStack::EmptyStack());
+	items.resize(initialCapacity, BagItemStack::EmptyStack());
 }
 
 void PlayerBag::Start() {}
@@ -28,7 +28,7 @@ void PlayerBag::Update()
 
 	for (int i = 0; i < items.size(); i++)
 	{
-		if (items[i].id == ItemStack::EMPTY_STACK_ITEM_ID)
+		if (items[i].id == BagItemStack::EMPTY_STACK_ITEM_ID)
 		{
 			ImGui::Text("%d:empty, %d", i, items[i].count);
 		}
@@ -45,7 +45,7 @@ void PlayerBag::ExpansionCapacity(
     const unsigned _capacity)
 {
 	// バッグの容量を拡張。新規スロットは空の状態で追加する
-	items.resize(items.size() + _capacity, ItemStack::EmptyStack());
+	items.resize(items.size() + _capacity, BagItemStack::EmptyStack());
 }
 
 bool PlayerBag::CanCraft(
@@ -74,8 +74,8 @@ bool PlayerBag::CanAddItem(
 	auto [begin, end] = std::equal_range(
 	    items.begin(),
 	    items.end(),
-	    ItemStack{ .id = _id },
-	    [](const ItemStack& _a, const ItemStack& _b)
+	    BagItemStack{ .id = _id },
+	    [](const BagItemStack& _a, const BagItemStack& _b)
 	    {
 		    return _a.id < _b.id;
 	    });
@@ -98,7 +98,7 @@ bool PlayerBag::CanAddItem(
 	}
 
 	// 空スロットを検索
-	auto emptySlot = std::find(items.begin(), items.end(), ItemStack::EmptyStack());
+	auto emptySlot = std::find(items.begin(), items.end(), BagItemStack::EmptyStack());
 	if (emptySlot != items.end())
 	{
 		return true;
@@ -139,12 +139,12 @@ bool PlayerBag::TryCraft(
 			assert(false);
 			return false;
 		}
-		ItemStack& slot = items[reservation.slotIndex];
+		BagItemStack& slot = items[reservation.slotIndex];
 		slot.count -= reservation.useItemCount;
 
 		if (slot.count == 0)
 		{
-			slot = ItemStack::EmptyStack();
+			slot = BagItemStack::EmptyStack();
 		}
 	}
 	Sort();
@@ -163,8 +163,8 @@ void PlayerBag::AddItem(
 	auto [begin, end] = std::equal_range(
 	    items.begin(),
 	    items.end(),
-	    ItemStack{ .id = _id },
-	    [](const ItemStack& _a, const ItemStack& _b)
+	    BagItemStack{ .id = _id },
+	    [](const BagItemStack& _a, const BagItemStack& _b)
 	    {
 		    return _a.id < _b.id;
 	    });
@@ -206,7 +206,7 @@ void PlayerBag::AddItem(
 	if (remain > 0)
 	{
 		// 空スロットの位置を取得
-		auto emptySlotBegin = std::find(items.begin(), items.end(), ItemStack::EmptyStack());
+		auto emptySlotBegin = std::find(items.begin(), items.end(), BagItemStack::EmptyStack());
 
 		// 先頭の空スロットから順に追加していく
 		for (auto itr = emptySlotBegin; itr != items.end(); itr++)
@@ -244,8 +244,8 @@ std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
 		auto range = std::equal_range(
 		    items.begin(),
 		    items.end(),
-		    ItemStack{ .id = craftInfo._id },
-		    [](const ItemStack& _a, const ItemStack& _b)
+		    BagItemStack{ .id = craftInfo._id },
+		    [](const BagItemStack& _a, const BagItemStack& _b)
 		    {
 			    return _a.id < _b.id;
 		    });
@@ -254,7 +254,7 @@ std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
 		    range.first,
 		    range.second,
 		    0,
-		    [](int sum, const ItemStack& _stack)
+		    [](int sum, const BagItemStack& _stack)
 		    {
 			    return sum + _stack.count;
 		    });
@@ -276,7 +276,7 @@ void PlayerBag::Sort()
 	std::sort(
 	    items.begin(),
 	    items.end(),
-	    [](const ItemStack& _a, const ItemStack& _b)
+	    [](const BagItemStack& _a, const BagItemStack& _b)
 	    {
 		    if (_a.id == _b.id)
 		    {
@@ -300,7 +300,7 @@ int PlayerBag::FindCraftMaterialSlot(
 	auto foundItemStack = std::find_if(
 	    items.begin(),
 	    items.end(),
-	    [_craftInfo](const ItemStack& _itemStack)
+	    [_craftInfo](const BagItemStack& _itemStack)
 	    {
 		    return _craftInfo._id == _itemStack.id;
 	    });

@@ -42,6 +42,13 @@ void Player::Start()
 	objPlayerBag = GetScene().Instantiate<PlayerBag>();
 
 	objHotbar = GetScene().Instantiate<HotBar>();
+	Get<HotBar>(objHotbar).SetOnChangedSelectedItemCallback(
+	    [this]()
+	    {
+		    HotBar& hotbar = Get<HotBar>(objHotbar);
+		    Get<PlayerHand>(objPlayerHand).SetItem(hotbar.GetSelectedItemId());
+		    VCU_LOG("change selected item");
+	    });
 
 	SetJob(PlayerJobType_Healer);
 }
@@ -86,18 +93,11 @@ void Player::Update()
 	// お試しで出してるエンティティ
 	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 	{
-		Get<EntitySystem>().Spawn(
-		    8,
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		SpawnItem(8);
 	}
 	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		Get<EntitySystem>().Spawn(
-		    7,
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-		VCU_LOG("objPawn");
+		SpawnItem(7);
 	}
 
 	// 近くのアイテムを拾う
@@ -109,7 +109,6 @@ void Player::Update()
 	{
 		isOpenCraftUI = !isOpenCraftUI;
 	}
-
 	/*
 	//テスト用
 	 // HPゲージ動作確認用：1秒ごとに10ダメージ
@@ -389,6 +388,28 @@ void Player::MoveBody()
 	else
 	{
 	}
+
+	// MEMO: PlayerHand側に処理を移動しました。
+	// if (pPlayerInput->IsAction())
+	//{
+	//	// アクション有効にする
+	//	.SetAction(true);
+	//}
+	// 手の更新をする
+	Get<PlayerHand>(objPlayerHand).Update(Data());
+
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	if (objPick)
+	{
+		// GetScene().Destroy(objPick);
+		VCU_LOG("objPick");
+
+		Get<EntitySystem>().Spawn(
+		    Get<IEntity>(objPick).GetItemId(),
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		// objPick
+	}
 }
 
 void Player::DeadAnim()
@@ -441,7 +462,6 @@ void Player::UpdatePickNearestItem()
 {
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
 	// エンティティを拾うことができた場合
-	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
 	if (objPick)
 	{
 		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
@@ -452,10 +472,46 @@ void Player::UpdatePickNearestItem()
 void Player::TryAddItem(
     ItemId _id)
 {
-	if (Get<HotBar>(objHotbar).TrySetItem(_id))
+	/// ----------------------------------------------
+	/// 今のジョブで、引数のアイテムを追加できるか確認
+	/// ----------------------------------------------
+
+	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
+	bool filterAddItemOnJob{ false };
+	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
+	bool canAddItem   = JobCanCraftOrAddItem(itemType, jobType);
+	if (canAddItem == false && filterAddItemOnJob)
+	{
+		SpawnItem(_id);
 		return;
+	}
+
+	/// ---------------------------
+	/// ホットバーに追加できるか確認
+	/// ---------------------------
+	ItemStack itemStack{};
+	HotBar& hotbar = Get<HotBar>(objHotbar);
+	if (hotbar.TrySetItem(_id))
+	{
+		return;
+	}
+	else if (hotbar.SwapItem(itemStack, _id))
+	{
+		if (itemStack.id != EMPTY_ITEM_ID)
+		{
+			for (int i = 0; i < itemStack.count; i++)
+			{
+				SpawnItem(itemStack.id);
+			}
+		}
+
+		return;
+	}
+
+	/// ---------------------------
+	/// バッグに追加できるか確認
+	/// ---------------------------
 	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
-	// バッグに追加できる場合、追加
 	if (bag.CanAddItem(_id))
 	{
 		bag.AddItem(_id);
@@ -463,10 +519,16 @@ void Player::TryAddItem(
 	// 追加できないなら、エンティティとして前方に放り出す
 	else
 	{
-		Get<EntitySystem>().Spawn(
-		    _id,
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-		VCU_LOG("objPawn");
+		SpawnItem(_id);
 	}
+}
+
+void Player::SpawnItem(
+    ItemId _id)
+{
+	Get<EntitySystem>().Spawn(
+	    _id,
+	    transform.position + Vec3::Up() * 2.0f,
+	    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+	VCU_LOG("objPawn");
 }

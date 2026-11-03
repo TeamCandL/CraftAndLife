@@ -3,7 +3,7 @@
 #include <Game/PlayScene/ItemSystem.h>
 #include <limits>
 
-struct ItemStack
+struct BagItemStack
 {
 	// バッグ内における、空のアイテム枠のID。バッグをソートする都合上、ItemId型の最大値に設定している。
 	static constexpr ItemId EMPTY_STACK_ITEM_ID{ std::numeric_limits<ItemId>::max() };
@@ -18,11 +18,11 @@ struct ItemStack
 	{
 		return count <= 0 || id == EMPTY_STACK_ITEM_ID;
 	}
-	static ItemStack EmptyStack()
+	static BagItemStack EmptyStack()
 	{
-		return ItemStack{};
+		return BagItemStack{};
 	}
-	bool operator==(const ItemStack& _other) const = default;
+	bool operator==(const BagItemStack& _other) const = default;
 };
 
 // クラフト時の、素材の充足状況(足りているか、いくら入っているか)をまとめた構造体
@@ -39,7 +39,7 @@ struct PlayerBagData
 	PlayerBagData();
 
   protected:
-	std::vector<ItemStack> items;
+	std::vector<BagItemStack> items;
 
   private:
 	/// @brief バッグの初期容量
@@ -50,7 +50,7 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 {
 	void Start() override;
 	void Update() override;
-	std::vector<ItemStack> GetBagItems()
+	std::vector<BagItemStack> GetBagItems()
 	{
 		return items;
 	}

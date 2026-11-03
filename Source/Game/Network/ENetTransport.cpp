@@ -1,8 +1,6 @@
 #include "ENetTransport.h"
 
-ENetTransport::ENetTransport()
-{
-}
+ENetTransport::ENetTransport() {}
 
 ENetTransport::~ENetTransport()
 {
@@ -43,7 +41,10 @@ void ENetTransport::Shutdown()
 	}
 }
 
-bool ENetTransport::Connect(const std::string& _host, uint16_t _port, size_t _channelCount)
+bool ENetTransport::Connect(
+    const std::string& _host,
+    uint16_t _port,
+    size_t _channelCount)
 {
 	if (!initialized_)
 	{
@@ -62,9 +63,7 @@ bool ENetTransport::Connect(const std::string& _host, uint16_t _port, size_t _ch
 
 	ENetAddress address{};
 
-	if (enet_address_set_hostname(
-		&address,
-		_host.c_str()) != 0)
+	if (enet_address_set_hostname(&address, _host.c_str()) != 0)
 	{
 		enet_host_destroy(pHost_);
 		pHost_ = nullptr;
@@ -74,11 +73,7 @@ bool ENetTransport::Connect(const std::string& _host, uint16_t _port, size_t _ch
 
 	address.port = _port;
 
-	pPeer_ = enet_host_connect(
-		pHost_,
-		&address,
-		_channelCount,
-		0);
+	pPeer_ = enet_host_connect(pHost_, &address, _channelCount, 0);
 
 	if (pPeer_ == nullptr)
 	{
@@ -88,10 +83,18 @@ bool ENetTransport::Connect(const std::string& _host, uint16_t _port, size_t _ch
 		return false;
 	}
 
+	enet_peer_timeout(
+	    pPeer_,
+	    UINT32_MAX,
+	    60000,  // 最低60秒
+	    60000   // 最大60秒
+	);
+
 	return true;
 }
 
-void ENetTransport::Disconnect(const uint32_t _data)
+void ENetTransport::Disconnect(
+    const uint32_t _data)
 {
 	if (pPeer_ == nullptr)
 	{
@@ -111,8 +114,7 @@ bool ENetTransport::IsConnected() const
 	}
 
 	// 接続中であるかを返す
-	return enet_peer_get_state(pPeer_)
-		== ENET_PEER_STATE_CONNECTED;
+	return enet_peer_get_state(pPeer_) == ENET_PEER_STATE_CONNECTED;
 }
 
 bool ENetTransport::IsConnecting() const
@@ -124,13 +126,12 @@ bool ENetTransport::IsConnecting() const
 
 	const ENetPeerState state = enet_peer_get_state(pPeer_);
 
-	return 
-		state == ENET_PEER_STATE_CONNECTING ||
-		state == ENET_PEER_STATE_ACKNOWLEDGING_CONNECT ||
-		state == ENET_PEER_STATE_CONNECTION_PENDING;
+	return state == ENET_PEER_STATE_CONNECTING || state == ENET_PEER_STATE_ACKNOWLEDGING_CONNECT ||
+	       state == ENET_PEER_STATE_CONNECTION_PENDING;
 }
 
-std::vector<ENetTransport::Event> ENetTransport::PollEvents(const uint32_t _timeout)
+std::vector<ENetTransport::Event> ENetTransport::PollEvents(
+    const uint32_t _timeout)
 {
 	std::vector<Event> events{};
 
@@ -142,10 +143,7 @@ std::vector<ENetTransport::Event> ENetTransport::PollEvents(const uint32_t _time
 	ENetEvent event{};
 
 	// 最初のイベント待ち
-	int result = enet_host_service(
-		pHost_,
-		&event,
-		_timeout);
+	int result = enet_host_service(pHost_, &event, _timeout);
 
 	if (result < 0)
 	{
@@ -164,27 +162,20 @@ std::vector<ENetTransport::Event> ENetTransport::PollEvents(const uint32_t _time
 				pPeer_ = event.peer;
 
 				Event transportEvent;
-				transportEvent.type =
-					EventType::Connected;
+				transportEvent.type = EventType::Connected;
 
-				events.push_back(
-					std::move(transportEvent)
-				);
+				events.push_back(std::move(transportEvent));
 
 				break;
 			}
-
 
 			case ENET_EVENT_TYPE_DISCONNECT:
 			case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
 			{
 				Event transportEvent;
-				transportEvent.type =
-					EventType::Disconnected;
+				transportEvent.type = EventType::Disconnected;
 
-				events.push_back(
-					std::move(transportEvent)
-				);
+				events.push_back(std::move(transportEvent));
 
 				if (event.peer == pPeer_)
 				{
@@ -194,54 +185,38 @@ std::vector<ENetTransport::Event> ENetTransport::PollEvents(const uint32_t _time
 				break;
 			}
 
-
 			case ENET_EVENT_TYPE_RECEIVE:
 			{
 				Event transportEvent;
 
-				transportEvent.type =
-					EventType::Received;
+				transportEvent.type = EventType::Received;
 
-				transportEvent.channel =
-					event.channelID;
-
+				transportEvent.channel = event.channelID;
 
 				if (event.packet != nullptr)
 				{
-					transportEvent.data.resize(
-						event.packet->dataLength
-					);
+					transportEvent.data.resize(event.packet->dataLength);
 
 					if (event.packet->dataLength > 0)
 					{
-						std::memcpy(
-							transportEvent.data.data(),
-							event.packet->data,
-							event.packet->dataLength
-						);
+						std::memcpy(transportEvent.data.data(), event.packet->data, event.packet->dataLength);
 					}
 
 					// ENetが確保したPacketを解放
 					enet_packet_destroy(event.packet);
 				}
 
-				events.push_back(
-					std::move(transportEvent)
-				);
+				events.push_back(std::move(transportEvent));
 
 				break;
 			}
-
 
 			default:
 				break;
 			}
 
-
 			// 残っているイベントを回収
-			result = enet_host_check_events(
-				pHost_,
-				&event);
+			result = enet_host_check_events(pHost_, &event);
 
 			if (result <= 0)
 			{
@@ -255,12 +230,11 @@ std::vector<ENetTransport::Event> ENetTransport::PollEvents(const uint32_t _time
 	return std::vector<Event>();
 }
 
-
 bool ENetTransport::Send(
-	const void* data,
-	const size_t size,
-	const uint8_t channel,
-	const ENetSendMode mode)
+    const void* data,
+    const size_t size,
+    const uint8_t channel,
+    const ENetSendMode mode)
 {
 	if (pPeer_ == nullptr)
 	{
@@ -271,7 +245,6 @@ bool ENetTransport::Send(
 	{
 		return false;
 	}
-
 
 	uint32_t flags = ENET_PACKET_FLAG_NONE;
 
@@ -290,26 +263,14 @@ bool ENetTransport::Send(
 		break;
 	}
 
-	ENetPacket* packet =
-		enet_packet_create(
-			data,
-			size,
-			flags
-		);
+	ENetPacket* packet = enet_packet_create(data, size, flags);
 
 	if (packet == nullptr)
 	{
 		return false;
 	}
 
-
-
-	const int result =
-		enet_peer_send(
-			pPeer_,
-			channel,
-			packet
-		);
+	const int result = enet_peer_send(pPeer_, channel, packet);
 
 	if (result != 0)
 	{
@@ -323,18 +284,12 @@ bool ENetTransport::Send(
 	return true;
 }
 
-
 bool ENetTransport::Send(
-	const std::vector<char>& data,
-	const uint8_t channel,
-	const ENetSendMode mode)
+    const std::vector<char>& data,
+    const uint8_t channel,
+    const ENetSendMode mode)
 {
-	return Send(
-		data.data(),
-		data.size(),
-		channel,
-		mode
-	);
+	return Send(data.data(), data.size(), channel, mode);
 }
 
 void ENetTransport::Flush()
@@ -347,7 +302,8 @@ void ENetTransport::Flush()
 	enet_host_flush(pHost_);
 }
 
-bool ENetTransport::CreateHost(const size_t _channelCount)
+bool ENetTransport::CreateHost(
+    const size_t _channelCount)
 {
 	if (!initialized_)
 	{
@@ -358,13 +314,7 @@ bool ENetTransport::CreateHost(const size_t _channelCount)
 		return false;  // ホストがまだ作成されていないならホスト作成処理失敗
 	}
 
-	pHost_ = enet_host_create(
-		nullptr,
-		1,
-		_channelCount,
-		0,
-		0,
-		0);
+	pHost_ = enet_host_create(nullptr, 1, _channelCount, 0, 0, 0);
 
 	return pHost_ != nullptr;  // ちゃんと作成できていたら成功
 }

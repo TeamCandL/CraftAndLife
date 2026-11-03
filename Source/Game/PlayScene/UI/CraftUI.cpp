@@ -12,6 +12,10 @@
 
 void CraftUI::Start()
 {
+	// ジョブによってクラフト可能か切り替えるかどうか。falseにすれば、どのジョブも弓作ったりできる。デバッグ用。
+	bool filterCraftableItemOnJob{ false };
+	playerJobType = Get<Player>(objPlayer).Data().jobType;
+
 	const auto& allItemList = Get<ItemSystem>().Data().allItemList;
 	auto itr                = std::find_if(
         allItemList.begin(),
@@ -26,9 +30,16 @@ void CraftUI::Start()
 	}
 
 	for (const ItemAllInfo& info : allItemList | std::views::filter(
-	                                                 [](const ItemAllInfo& _info)
+	                                                 [this, filterCraftableItemOnJob](const ItemAllInfo& _info)
 	                                                 {
-		                                                 return _info._isCraftable;
+		                                                 // 制作可能アイテム かつ そのジョブがクラフト可能
+		                                                 bool jobCanCraft =
+		                                                     JobCanCraftOrAddItem(_info._type, playerJobType);
+		                                                 if (filterCraftableItemOnJob == false)
+		                                                 {
+			                                                 jobCanCraft = true;
+		                                                 }
+		                                                 return _info._isCraftable && jobCanCraft;
 	                                                 }))
 	{
 		craftableItems.push_back(info);
@@ -178,6 +189,8 @@ void CraftUI::Start()
 
 void CraftUI::Update()
 {
+	DrawDebugItemAddWindow();
+
 	PlayerData& playerData = Get<Player>(objPlayer).Data();
 
 	if (playerData.isOpenCraftUI == false)
@@ -191,6 +204,8 @@ void CraftUI::Update()
 	if (resultItemId == EMPTY_ITEM_ID)
 		return;
 	PlayerBag& playerBag = Get<PlayerBag>(Get<Player>(objPlayer).Data().objPlayerBag);
+
+	ItemInfo info = Get<ItemSystem>().GetInfo(selectedItemId);
 
 	// クラフトを試みて、成功した場合
 	if (playerBag.TryCraft(resultItemId))
@@ -331,4 +346,39 @@ void CraftUI::SetRecipeUIActive(
 		Get<TextObject>(recipe.objRecipeHeldElement).SetActive(_isActive);
 		Get<TextObject>(recipe.objRecipeRequiredElement).SetActive(_isActive);
 	}
+}
+
+void CraftUI::DrawDebugItemAddWindow()
+{
+	auto& allItemList = Get<ItemSystem>().Data().allItemList;
+
+	ImGui::Begin("Debug_Item_Add");
+
+	for (auto& itemAllInfo : allItemList)
+	{
+		if (itemAllInfo._imageId.IsNull() || itemAllInfo._model.IsNull())
+			continue;
+
+		ImGui::Text("%d", itemAllInfo._id);
+		ImGui::SameLine();
+		ImGui::Text("%s", itemAllInfo._name.c_str());
+		ImGui::SameLine();
+		ImGui::Image((void*)itemAllInfo._imageId.Get().pSRV.Get(), ImVec2{ 32, 32 });
+		ImGui::SameLine();
+
+		ImGui::PushID(itemAllInfo._id);
+		if (ImGui::Button("Add"))
+		{
+			Get<Player>(objPlayer).TryAddItem(itemAllInfo._id);
+		}
+		ImGui::PopID();
+	}
+
+	ImGui::End();
+}
+
+CraftUIData::CraftUIData(
+    GameObject _objPlayer) :
+    objPlayer{ _objPlayer }
+{
 }
