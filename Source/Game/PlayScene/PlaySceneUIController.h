@@ -6,12 +6,11 @@ struct PlaySceneUIControllerData
 {
 	PlaySceneUIControllerData(
 	    GameObject objPlayer_,
-	    GameObject objOtherPlayerController_,
-	    GameObject objBoss_)
+	    GameObject objOtherPlayerController_)
 	{
 		objPlayer                = objPlayer_;
 		objOtherPlayerController = objOtherPlayerController_;
-		objBoss                  = objBoss_;
+		// objBoss                  = objBoss_;
 	};
 
 	GameObject objTaskBackground{};  ///< タスク情報の背景
