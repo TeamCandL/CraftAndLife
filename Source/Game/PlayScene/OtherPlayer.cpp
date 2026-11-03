@@ -66,9 +66,9 @@ void OtherPlayer::Draw()
 	    transform.position.z,
 	    transform.rotation.y);*/
 
-	/*models[role]*/ aModel.Get().Draw(Get<DeltaTime>(), animIndex);
+	models[role].Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto& subParts{ /*models[role]*/ aModel.Get().subParts };
+	const auto& subParts{ models[role].Get().subParts };
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
