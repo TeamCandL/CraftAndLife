@@ -276,7 +276,7 @@ void Enemy::SetWanderingCheckPoint(
 void Enemy::RegisterStates(
     StateRegistry& registry) const
 {
-	// registry.Register("hp", hp);
+	registry.Register("hp", hp);
 	// registry.Register("followed", followed);
 	registry.Register("alive", alive);
 	// registry.Register("attacked", attacked);
