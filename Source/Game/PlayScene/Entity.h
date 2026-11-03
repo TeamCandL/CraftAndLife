@@ -16,10 +16,10 @@ struct EntityData
 	Resource<Shader> edgeShader{ "Shader/Unlit.hlsl" };  ///< エッジ(輪郭)描画用シェーダ
 	Resource<Model> model{};                             ///< モデル
 
-	Component<Transform> transform{};  ///< 座標系
-	Component<RigidBody> rigidbody{};  ///< 剛体
-	// Component<DynamicOBB> obb{};           ///< 当たり判定OBB
-	// Component<OBBRenderer> obbRenderer{};  ///< OBB描画
+	Component<Transform> transform{};      ///< 座標系
+	Component<RigidBody> rigidbody{};      ///< 剛体
+	Component<DynamicOBB> obb{};           ///< 当たり判定OBB
+	Component<OBBRenderer> obbRenderer{};  ///< OBB描画
 
 	Vec3 velocity{};  ///< 速度
 	ItemId itemId{};  ///< このエンティティをアイテム化したときのId
