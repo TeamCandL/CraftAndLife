@@ -388,6 +388,28 @@ void Player::MoveBody()
 	else
 	{
 	}
+
+	// MEMO: PlayerHand側に処理を移動しました。
+	// if (pPlayerInput->IsAction())
+	//{
+	//	// アクション有効にする
+	//	.SetAction(true);
+	//}
+	// 手の更新をする
+	Get<PlayerHand>(objPlayerHand).Update(Data());
+
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	if (objPick)
+	{
+		// GetScene().Destroy(objPick);
+		VCU_LOG("objPick");
+
+		Get<EntitySystem>().Spawn(
+		    Get<IEntity>(objPick).GetItemId(),
+		    transform.position + Vec3::Up() * 2.0f,
+		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+		// objPick
+	}
 }
 
 void Player::DeadAnim()
