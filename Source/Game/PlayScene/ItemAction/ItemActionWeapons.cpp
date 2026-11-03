@@ -4,6 +4,7 @@
 #include "../Player.h"
 #include "../MainCamera.h"
 #include <Game/System/RaycastSystem.h>
+#include "../Harvestable.h"
 
 void ItemActionWeapons::Update(
     const ItemId _itemId,
@@ -75,10 +76,36 @@ void ItemActionWeapons::Action(
 	{
 		if (hitInfo.pObject)
 		{
-			Name* pName = TryGet<Name>(hitInfo.pObject->ToGameObject());
+			GameObject objHit = hitInfo.pObject->ToGameObject();
+			Name* pName       = TryGet<Name>(objHit);
 			if (pName)
 			{
 				VCU_LOG("{}に当たった！", pName->content);
+
+				// ハーベスタブルオブジェクトならダメージを与える
+				if (pName->content == "ハーベスタブル")
+				{
+					Harvestable& harvestable = Get<Harvestable>(objHit);
+
+					switch (harvestable.Data().type)
+					{
+					case HarvestableType::Tree:
+					case HarvestableType::TreeHigh:
+						if (_itemId == ITEM_ID_AXE)
+						{
+							harvestable.TakeDamage(1);
+						}
+						break;
+					case HarvestableType::Rock:
+						if (_itemId == ITEM_ID_HAMMER)
+						{
+							harvestable.TakeDamage(1);
+						}
+						break;
+					default:
+						break;
+					}
+				}
 			}
 		}
 	}
