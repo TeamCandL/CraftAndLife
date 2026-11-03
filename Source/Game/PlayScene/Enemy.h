@@ -122,6 +122,35 @@ struct EnemyData
 		scale               = EnemyParam::Scale[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
+	/// @brief
+	/// @param position_	生成位置
+	/// @param enemyType_	敵の種類
+	/// @param isBoss_	ボスかどうか
+	EnemyData(
+	    GameObject objEnemyController_,
+	    const Vec3 position_,
+	    int enemyType_,
+	    bool isBoss_) :
+	    transform{ position_ },
+	    enemyType{ static_cast<EnemyType>(enemyType_) },
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] }
+	{
+		objEnemyController = objEnemyController_;
+		isBoss             = isBoss_;
+
+		modelIndex = enemyType_;
+
+		hp                  = EnemyParam::Hp[enemyType_];
+		damage              = EnemyParam::Damage[enemyType_];
+		speed               = EnemyParam::Speed[enemyType_];
+		hasCloseAttack      = EnemyParam::HasCloseAttack[enemyType_];
+		hasLongAttack       = EnemyParam::HasLongAttack[enemyType_];
+		visibilityDist      = EnemyParam::VisibilityDist[enemyType_];
+		visibilityAngle     = EnemyParam::VisibilityAngle[enemyType_];
+		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
+		scale               = EnemyParam::Scale[enemyType_];
+		transform.scale     = Vec3::One() * scale;
+	}
 
 	/// @brief アニメーションの状態
 	///	@param Start アニメーション開始
@@ -195,6 +224,8 @@ struct EnemyData
 	const float DAMAGED_COOL_TIME{ 0.5f };      ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
 	float scale{ 1.0f };                        ///< モデルの大きさ
+
+	bool isBoss{ false };  ///< ボスかどうか
 
 	bool followed{ false };  ///< 追跡中か
 	bool alive{ true };      ///< 生きているか

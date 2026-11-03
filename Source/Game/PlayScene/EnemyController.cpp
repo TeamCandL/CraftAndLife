@@ -61,3 +61,23 @@ std::vector<EnemyStatus> EnemyController::GetAllEnemyStatus()
 
 	return allStatus;
 }
+
+void EnemyController::DamagedEnemy(
+    int32_t enemyId,
+    int32_t damage)
+{
+	for (const GameObject& enemyObj : allEnemys)
+	{
+		Enemy& enemy = Get<Enemy>(enemyObj);
+
+		if (enemy.GetID() != enemyId)
+		{
+			continue;
+		}
+
+		enemy.Damaged(damage);
+		return;
+	}
+
+	VCU_LOG("ダメージ対象の敵が見つかりません: ID={}", enemyId);
+}

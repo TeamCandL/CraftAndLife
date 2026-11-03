@@ -24,4 +24,9 @@ struct EnemyController : ObjectBase<EnemyControllerData>
 	std::vector<float> GetAllEnemyAngleY();
 	std::vector<int32_t> GetAllEnemyId();
 	std::vector<EnemyStatus> GetAllEnemyStatus();
+
+	/// @brief IDを指定して敵にダメージを与える
+	/// @param enemyId ダメージを受ける敵のID
+	/// @param damage ダメージ量
+	void DamagedEnemy(int32_t enemyId, int32_t damage);
 };
