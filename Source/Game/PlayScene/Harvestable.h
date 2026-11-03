@@ -40,15 +40,19 @@ struct HarvestableData
 	int32_t maxDurability{ 3 };
 	int32_t durability{ 3 };
 
+	uint32_t id{};  ///< このハーベスタブルオブジェクトのId
+
 	// 採取済みかどうか
 	bool isHarvested{ false };
 
 	/// @brief 配置位置と種類を指定して初期化
 	HarvestableData(
+	    uint32_t _id,
 	    HarvestableType _type,
 	    Vec3 _position,
 	    float _scale = 5.0f) :
-	    type{ _type }
+	    type{ _type },
+	    id{ _id }
 	{
 		transform.position = _position;
 		transform.scale    = Vec3::One() * _scale;
@@ -69,4 +73,7 @@ struct Harvestable : ObjectBase<HarvestableData>
 
 	/// @brief 採取済みかどうかを取得する
 	bool IsHarvested() const;
+
+	/// @brief ハーベスタブルオブジェクトを破壊する
+	void Break();
 };

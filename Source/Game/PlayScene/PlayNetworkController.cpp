@@ -14,6 +14,7 @@
 #include <Game/Network/Protocols/UpdateEntityRemove.h>
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
+#include <Game/Network/Protocols/BreakHarvestable.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -23,6 +24,7 @@
 #include <Game/PlayScene/EntitySystem.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
+#include <Game/PlayScene/HarvestableController.h>
 
 using enum NetworkSessionManager::State;
 
@@ -203,6 +205,15 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedDayTime dayTimeMessage{};
 				    converter.ToMessage(_event.data, dayTimeMessage);
 				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec);
+
+				    break;
+			    }
+			    case ProtocolType::BreakHarvestable:
+			    {
+				    Protocol::BreakHarvestable breakHarvestableMessage{};
+				    converter.ToMessage(_event.data, breakHarvestableMessage);
+				    Get<HarvestableController>(objHarvestableController)
+				        .BreakAt(breakHarvestableMessage.breakHarvestableId);
 
 				    break;
 			    }
@@ -495,6 +506,14 @@ void PlayNetworkController::Update()
 		}
 
 		// VCU_LOG("敵更新処理送信: {}", eCount);
+
+		HarvestableController& harvestableController = Get<HarvestableController>(objHarvestableController);
+		while (std::optional<uint32_t> foundId = harvestableController.FindToLocalBokenIds())
+		{
+			Protocol::BreakHarvestable breakHarvestableMessage{};
+
+			networkSessionManager.Send(breakHarvestableMessage);
+		}
 	}
 	break;
 	default:
