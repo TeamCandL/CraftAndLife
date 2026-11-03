@@ -72,6 +72,13 @@ void Entity::Draw()
 void Entity::SetVelocity(
     const Vec3 _velocity)
 {
-	velocity           = _velocity;
-	transform.rotation = Quaternion::FromLookAtQuaternion(Vec3::Zero(), _velocity, Vec3::Up());
+	velocity = _velocity;
+	if (velocity.Length() <= 0.1f)
+	{
+		// 速度が0なら方向はいじらない
+	}
+	else
+	{
+		transform.rotation = Quaternion::FromLookAtQuaternion(Vec3::Zero(), _velocity, Vec3::Up());
+	}
 }
