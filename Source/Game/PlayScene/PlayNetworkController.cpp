@@ -190,7 +190,7 @@ void PlayNetworkController::Update()
 			// 自分のプレイヤーIDを取得
 			auto nameIt = std::find(status.memberNames.begin(), status.memberNames.end(), status.name);
 
-			VCU_LOG("自分の名前: {}", status.name);
+			// VCU_LOG("自分の名前: {}", status.name);
 
 			for (size_t i = 0; i < status.memberNames.size(); ++i)
 			{
