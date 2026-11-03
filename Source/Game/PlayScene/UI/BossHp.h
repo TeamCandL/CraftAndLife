@@ -3,12 +3,6 @@
 
 struct BossHpData
 {
-	BossHpData(
-	    GameObject _objBoss) :
-	    objBoss{ _objBoss }
-	{
-	}
-
 	Resource<Font> font{ FontLoadConfig{}
 		                     .WithFile("Font/Stick/Stick-Regular.ttf")
 		                     .WithFamilyName(L"Stick")
@@ -18,9 +12,11 @@ struct BossHpData
 	Component<UITransform> transform{ Vec2{ 672, 50 }, Vec2{ 547, 38 } };
 	Component<UIText> text{ font, Color::WHITE };
 
-	GameObject objBoss{};  ///< ボスのオブジェクト
-	int32_t maxHP{};       ///< ボスの最大HP
-	int32_t hp{};          ///< ボスの現在HP
+	GameObject objBoss{};        ///< ボスのオブジェクト
+	int32_t maxHP{};             ///< ボスの最大HP
+	int32_t hp{};                ///< ボスの現在HP
+	float rateOfHp{};            ///< ボスのHPの割合
+	bool isBossActive{ false };  ///< ボスがアクティブかどうか
 };
 
 struct BossHp : ObjectBase<BossHpData>
@@ -30,4 +26,16 @@ struct BossHp : ObjectBase<BossHpData>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+
+	void SetBoss(
+	    GameObject objBoss_)
+	{
+		isBossActive = true;
+		objBoss      = objBoss_;
+	}
+
+	float GetRateOfHp() const
+	{
+		return rateOfHp;
+	}
 };

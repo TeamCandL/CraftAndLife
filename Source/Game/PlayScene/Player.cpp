@@ -472,6 +472,23 @@ void Player::UpdatePickNearestItem()
 void Player::TryAddItem(
     ItemId _id)
 {
+	/// ----------------------------------------------
+	/// 今のジョブで、引数のアイテムを追加できるか確認
+	/// ----------------------------------------------
+
+	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
+	bool filterAddItemOnJob{ false };
+	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
+	bool canAddItem   = JobCanCraftOrAddItem(itemType, jobType);
+	if (canAddItem == false && filterAddItemOnJob)
+	{
+		SpawnItem(_id);
+		return;
+	}
+
+	/// ---------------------------
+	/// ホットバーに追加できるか確認
+	/// ---------------------------
 	ItemStack itemStack{};
 	HotBar& hotbar = Get<HotBar>(objHotbar);
 	if (hotbar.TrySetItem(_id))
@@ -491,8 +508,10 @@ void Player::TryAddItem(
 		return;
 	}
 
+	/// ---------------------------
+	/// バッグに追加できるか確認
+	/// ---------------------------
 	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
-	// バッグに追加できる場合、追加
 	if (bag.CanAddItem(_id))
 	{
 		bag.AddItem(_id);
