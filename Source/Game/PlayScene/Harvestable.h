@@ -44,6 +44,7 @@ struct HarvestableData
 
 	// 採取済みかどうか
 	bool isHarvested{ false };
+	bool hasReportedBroken{};  ///< サーバーに報告済みか true / false
 
 	/// @brief 配置位置と種類を指定して初期化
 	HarvestableData(
