@@ -22,6 +22,7 @@
 #include "NetworkActorServer.h"
 #include "UI/MiniMap.h"
 #include "UI/DeathUI.h"
+#include "UI/CraftUI.h"
 
 void PlayScene::Start()
 {
@@ -48,6 +49,9 @@ void PlayScene::Start()
 	Instantiate<PlayNetworkController>(objPlayer, objMainCamera, objNetworkActorServer, objDayController);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController);
+
+	// TODO: あとで消す
+	Instantiate<CraftUI>(objPlayer);
 
 	Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f);
 }

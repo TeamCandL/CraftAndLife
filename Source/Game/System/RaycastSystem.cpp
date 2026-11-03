@@ -1,41 +1,49 @@
 
 #include "RaycastSystem.h"
 
-bool RaycastSystem::Raycast(const Vec3 _origin, const Vec3 _direction, const float _length, RaycastHitInfo* _pOut)
+bool RaycastSystem::Raycast(
+    const Vec3 _origin,
+    const Vec3 _direction,
+    const float _length,
+    RaycastHitInfo* _pOut)
 {
 	// 使用例
 	auto viewStatic = GetView<Transform, StaticOBB>();
 
 	float minDistance{ FLT_MAX };
 	bool isHit{ false };
-	viewStatic.ForEach([this, _pOut, &_origin, &_direction, _length, &isHit, &minDistance](IObject& _object, Transform& _transform, StaticOBB& _obb)
-	{
-		// Transformを渡して、その場でワールド空間のOBBを作る
-		DirectX::BoundingOrientedBox worldOBB = ConvertToDirectXOBB(_obb, _transform);
+	viewStatic.ForEach(
+	    [this, _pOut, &_origin, &_direction, _length, &isHit, &minDistance](
+	        IObject& _object,
+	        Transform& _transform,
+	        StaticOBB& _obb)
+	    {
+		    // Transformを渡して、その場でワールド空間のOBBを作る
+		    DirectX::BoundingOrientedBox worldOBB = ConvertToDirectXOBB(_obb, _transform);
 
-		// Raycast判定
-		float dist = 0.0f;
-		if (worldOBB.Intersects(_origin, _direction, dist))
-		{
-			if (dist > _length)
-			{
-				return;  // 距離が範囲外なら無視
-			}
+		    // Raycast判定
+		    float dist = 0.0f;
+		    if (worldOBB.Intersects(_origin, _direction, dist))
+		    {
+			    if (dist > _length)
+			    {
+				    return;  // 距離が範囲外なら無視
+			    }
 
-			if (dist < minDistance)
-			{
-				minDistance = dist;
+			    if (dist < minDistance)
+			    {
+				    minDistance = dist;
 
-				isHit = true;
-				if (_pOut)
-				{
-					_pOut->pTransform = &_transform;
-					_pOut->pOBB = &_obb;
-					_pOut->pObject = &_object;
-				}
-			}
-		}
-	});
+				    isHit = true;
+				    if (_pOut)
+				    {
+					    _pOut->pTransform = &_transform;
+					    _pOut->pOBB       = &_obb;
+					    _pOut->pObject    = &_object;
+				    }
+			    }
+		    }
+	    });
 
 	if (!isHit)
 	{
@@ -52,7 +60,47 @@ bool RaycastSystem::Raycast(const Vec3 _origin, const Vec3 _direction, const flo
 	return true;  // 当たった！
 }
 
-DirectX::BoundingOrientedBox RaycastSystem::ConvertToDirectXOBB(const StaticOBB& _obb, const Transform& _transform)
+std::vector<RaycastHitInfo> RaycastSystem::RaycastAll(
+    const Vec3 _origin,
+    const Vec3 _direction,
+    const float _length)
+{
+	std::vector<RaycastHitInfo> hitsInfo{};
+
+	// 使用例
+	auto viewStatic = GetView<Transform, StaticOBB>();
+
+	viewStatic.ForEach(
+	    [this, &hitsInfo, &_origin, &_direction, _length](IObject& _object, Transform& _transform, StaticOBB& _obb)
+	    {
+		    // Transformを渡して、その場でワールド空間のOBBを作る
+		    DirectX::BoundingOrientedBox worldOBB = ConvertToDirectXOBB(_obb, _transform);
+
+		    // Raycast判定
+		    float dist = 0.0f;
+		    if (worldOBB.Intersects(_origin, _direction, dist))
+		    {
+			    if (dist > _length)
+			    {
+				    return;  // 距離が範囲外なら無視
+			    }
+
+			    hitsInfo.push_back(RaycastHitInfo{
+			        .pTransform  = &_transform,
+			        .pOBB        = &_obb,
+			        .pObject     = &_object,
+			        .hitDistance = dist,
+			        .hitPosition = _origin + _direction * dist,
+			    });
+		    }
+	    });
+
+	return hitsInfo;
+}
+
+DirectX::BoundingOrientedBox RaycastSystem::ConvertToDirectXOBB(
+    const StaticOBB& _obb,
+    const Transform& _transform)
 {
 	using namespace DirectX;
 
@@ -70,17 +118,28 @@ DirectX::BoundingOrientedBox RaycastSystem::ConvertToDirectXOBB(const StaticOBB&
 
 	// 3. 方向ベクトルのワールド変換とクォータニオン化
 	// Transformからワールド空間の右・上・前方向ベクトルを取得して正規化
-	XMVECTOR right = XMVector3Normalize(_transform.Right());
-	XMVECTOR up = XMVector3Normalize(_transform.Up());
+	XMVECTOR right   = XMVector3Normalize(_transform.Right());
+	XMVECTOR up      = XMVector3Normalize(_transform.Up());
 	XMVECTOR forward = XMVector3Normalize(_transform.Forward());
 
 	// 3本のベクトルから回転行列を作成
 	XMMATRIX rotationMatrix = XMMatrixSet(
-		XMVectorGetX(right), XMVectorGetY(right), XMVectorGetZ(right), 0.0f,
-		XMVectorGetX(up), XMVectorGetY(up), XMVectorGetZ(up), 0.0f,
-		XMVectorGetX(forward), XMVectorGetY(forward), XMVectorGetZ(forward), 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+	    XMVectorGetX(right),
+	    XMVectorGetY(right),
+	    XMVectorGetZ(right),
+	    0.0f,
+	    XMVectorGetX(up),
+	    XMVectorGetY(up),
+	    XMVectorGetZ(up),
+	    0.0f,
+	    XMVectorGetX(forward),
+	    XMVectorGetY(forward),
+	    XMVectorGetZ(forward),
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    1.0f);
 
 	// 行列からクォータニオンを抽出して設定
 	XMVECTOR quaternion = XMQuaternionRotationMatrix(rotationMatrix);
