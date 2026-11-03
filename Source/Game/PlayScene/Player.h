@@ -136,4 +136,5 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void UpdatePickNearestItem();
 	void TryAddItem(ItemId _id);
+	void SpawnItem(ItemId _id);
 };

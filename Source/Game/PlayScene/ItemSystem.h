@@ -46,6 +46,22 @@ struct ItemAllInfo
 	const int32_t _damage{};  ///<	攻撃力
 };
 
+struct ItemStack
+{
+	ItemId id{ EMPTY_ITEM_ID };
+	int count{ 0 };
+
+	/// @brief 空か否か
+	/// @return 空ならtrue
+	bool IsEmpty() const
+	{
+		return count <= 0 || id == EMPTY_ITEM_ID;
+	}
+	static ItemStack EmptyStack()
+	{
+		return ItemStack{};
+	}
+};
 struct ItemSystemData
 {
 	ItemSystemData();

@@ -94,7 +94,7 @@ void HotBar::Update()
 		// スロットのアイテム数のテキスト
 		std::string itemCountStr = "";
 		ItemType type            = Get<ItemSystem>().GetInfo(itemData.id)._type;
-		if (type != ItemType::Weapons && itemData.id != EMPTY_ITEM_ID)
+		if (type != ItemType::Weapons && type != ItemType::WeaponBow && itemData.id != EMPTY_ITEM_ID)
 		{
 			itemCountStr = std::to_string(itemData.count);
 		}
@@ -118,6 +118,32 @@ ItemId HotBar::GetSelectedItemId()
 	return Get<SlotItem>(Get<Slot>(slots[currentSlotIdx]).Data().slotItem).Data().id;
 }
 
+bool HotBar::CanRemoveSelectedItem(
+    int _count)
+{
+	// バッグは除外不可能
+	if (_count == BAG_SLOT_INDEX)
+		return false;
+
+	SlotItemData& itemData = GetSlotItemData(currentSlotIdx);
+	return (itemData.count >= _count || itemData.id == EMPTY_ITEM_ID);
+}
+
+void HotBar::RemoveSelectedItem(
+    int _count)
+{
+	if (CanRemoveSelectedItem(_count) == false)
+		return;
+
+	SlotItemData& itemData = GetSlotItemData(currentSlotIdx);
+	itemData.count -= _count;
+
+	if (itemData.count == 0)
+	{
+		Get<SlotItem>(Get<Slot>(slots[currentSlotIdx]).Data().slotItem).Reset();
+	}
+}
+
 ItemId HotBar::GetConsumableItemId()
 {
 	return Get<SlotItem>(Get<Slot>(slots[CONSUMABLE_SLOT_INDEX]).Data().slotItem).Data().id;
@@ -127,7 +153,7 @@ bool HotBar::CanRemoveConsumableItem(
     int _count)
 {
 	SlotItemData& itemData = GetSlotItemData(CONSUMABLE_SLOT_INDEX);
-	return (itemData.count >= _count);
+	return (itemData.count >= _count || itemData.id == EMPTY_ITEM_ID);
 }
 
 void HotBar::RemoveConsumableItem(
@@ -147,33 +173,148 @@ void HotBar::RemoveConsumableItem(
 bool HotBar::TrySetItem(
     ItemId _id)
 {
-	size_t slotIndex = -1;
 	ItemInfo info    = Get<ItemSystem>().GetInfo(_id);
-	switch (info._type)
+	size_t slotIndex = GetSlotIndexFrom(info._type);
+	bool isWeapon    = false;
+	if (info._type == ItemType::Weapons || info._type == ItemType::WeaponBow)
 	{
-	case ItemType::Weapons:
-		slotIndex = WEAPON_SLOT_INDEX;
-		break;
-	case ItemType::Consumables:
-	case ItemType::Arrow:
-		slotIndex = CONSUMABLE_SLOT_INDEX;
-		break;
-	default:
-		break;
+		isWeapon = true;
 	}
+
 	if (slotIndex == -1)
 		return false;
 
 	SlotItemData& slotItemData = Get<SlotItem>(Get<Slot>(slots[slotIndex]).Data().slotItem).Data();
 
-	if (slotItemData.id == EMPTY_ITEM_ID || slotItemData.id == _id)
+	if (slotItemData.id == EMPTY_ITEM_ID)
 	{
+		slotItemData.id = _id;
+		slotItemData.count++;
+		return true;
+	}
+	if (slotItemData.id == _id)
+	{
+		// 武器をすでに持っている場合、追加不可能
+		if (isWeapon)
+			return false;
 		slotItemData.id = _id;
 		slotItemData.count++;
 		return true;
 	}
 
 	return false;
+}
+
+bool HotBar::SwapWeaponItem(
+    ItemId& _oldItemId,
+    ItemId _newItemId)
+{
+	ItemInfo info = Get<ItemSystem>().GetInfo(_newItemId);
+	if (info._type != ItemType::Weapons && info._type != ItemType::WeaponBow)
+	{
+		_oldItemId = EMPTY_ITEM_ID;
+		return false;
+	}
+	ItemStack itemStack{};
+	bool result = SwapItemImpl(itemStack, _newItemId, WEAPON_SLOT_INDEX);
+	_oldItemId  = itemStack.id;
+	return result;
+}
+bool HotBar::SwapConsumableItem(
+    ItemStack& _oldItemStack,
+    ItemId _newItemId)
+{
+	ItemInfo info = Get<ItemSystem>().GetInfo(_newItemId);
+	if (info._type != ItemType::Consumables && info._type != ItemType::Arrow)
+	{
+		_oldItemStack = ItemStack::EmptyStack();
+		return false;
+	}
+
+	return SwapItemImpl(_oldItemStack, _newItemId, CONSUMABLE_SLOT_INDEX);
+}
+
+bool HotBar::SwapItem(
+    ItemStack& _oldItemStack,
+    ItemId _newItemId)
+{
+	ItemInfo info    = Get<ItemSystem>().GetInfo(_newItemId);
+	size_t slotIndex = GetSlotIndexFrom(info._type);
+	if (slotIndex == -1)
+		return false;
+
+	return SwapItemImpl(_oldItemStack, _newItemId, slotIndex);
+}
+
+bool HotBar::CanRemoveItem(
+    ItemType _itemType,
+    int _count)
+{
+	size_t slotIndex = GetSlotIndexFrom(_itemType);
+	bool isWeapon    = false;
+	if (_itemType == ItemType::Weapons || _itemType == ItemType::WeaponBow)
+	{
+		isWeapon = true;
+	}
+
+	if (slotIndex == -1)
+		return false;
+
+	SlotItemData& itemData = GetSlotItemData(slotIndex);
+	return (itemData.count >= _count || itemData.id == EMPTY_ITEM_ID);
+}
+
+void HotBar::RemoveItem(
+    ItemType _itemType,
+    int _count)
+{
+	size_t slotIndex = GetSlotIndexFrom(_itemType);
+	bool isWeapon    = false;
+	if (_itemType == ItemType::Weapons || _itemType == ItemType::WeaponBow)
+	{
+		isWeapon = true;
+	}
+
+	if (slotIndex == -1)
+		return;
+
+	SlotItemData& itemData = GetSlotItemData(slotIndex);
+
+	if (isWeapon)
+	{
+		itemData.count = 0;
+	}
+	else
+	{
+		itemData.count -= _count;
+	}
+	if (itemData.count == 0)
+	{
+		Get<SlotItem>(Get<Slot>(slots[slotIndex]).Data().slotItem).Reset();
+	}
+}
+
+bool HotBar::SwapItemImpl(
+    ItemStack& _oldItemStack,
+    ItemId _newItemId,
+    int _index)
+{
+
+	SlotItemData& slotItemData = Get<SlotItem>(Get<Slot>(slots[_index]).Data().slotItem).Data();
+
+	if (slotItemData.id == EMPTY_ITEM_ID)
+	{
+		_oldItemStack = ItemStack::EmptyStack();
+		return false;
+	}
+	ItemInfo info         = Get<ItemSystem>().GetInfo(slotItemData.id);
+	ItemId prevSlotItemId = info._id;
+
+	_oldItemStack.count = slotItemData.count;
+	RemoveItem(info._type, slotItemData.count);
+	TrySetItem(_newItemId);
+	_oldItemStack.id = prevSlotItemId;
+	return true;
 }
 
 void HotBar::MoveFocusImpl(
@@ -187,6 +328,28 @@ SlotItemData& HotBar::GetSlotItemData(
     int _idx)
 {
 	return Get<SlotItem>(Get<Slot>(slots[_idx]).Data().slotItem).Data();
+}
+
+size_t HotBar::GetSlotIndexFrom(
+    ItemType _itemType)
+{
+	size_t slotIndex = -1;
+	bool isWeapon    = false;
+	switch (_itemType)
+	{
+	case ItemType::Weapons:
+	case ItemType::WeaponBow:
+		slotIndex = WEAPON_SLOT_INDEX;
+		isWeapon  = true;
+		break;
+	case ItemType::Consumables:
+	case ItemType::Arrow:
+		slotIndex = CONSUMABLE_SLOT_INDEX;
+		break;
+	default:
+		break;
+	}
+	return slotIndex;
 }
 
 void Slot::CalculateUIWorld()

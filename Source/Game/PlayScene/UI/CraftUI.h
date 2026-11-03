@@ -176,4 +176,6 @@ struct CraftUI : ObjectBase<CraftUIData>
 	    const std::vector<CraftMaterialRequirement>& _requirements,
 	    std::vector<RecipeMaterial>& _recipeMaterial);
 	void SetRecipeUIActive(std::vector<RecipeMaterial>& _recipes, const bool _isActive);
+
+	void DrawDebugItemAddWindow();
 };

@@ -178,6 +178,8 @@ void CraftUI::Start()
 
 void CraftUI::Update()
 {
+	DrawDebugItemAddWindow();
+
 	PlayerData& playerData = Get<Player>(objPlayer).Data();
 
 	if (playerData.isOpenCraftUI == false)
@@ -331,4 +333,33 @@ void CraftUI::SetRecipeUIActive(
 		Get<TextObject>(recipe.objRecipeHeldElement).SetActive(_isActive);
 		Get<TextObject>(recipe.objRecipeRequiredElement).SetActive(_isActive);
 	}
+}
+
+void CraftUI::DrawDebugItemAddWindow()
+{
+	auto& allItemList = Get<ItemSystem>().Data().allItemList;
+
+	ImGui::Begin("Debug_Item_Add");
+
+	for (auto& itemAllInfo : allItemList)
+	{
+		if (itemAllInfo._imageId.IsNull() || itemAllInfo._model.IsNull())
+			continue;
+
+		ImGui::Text("%d", itemAllInfo._id);
+		ImGui::SameLine();
+		ImGui::Text("%s", itemAllInfo._name.c_str());
+		ImGui::SameLine();
+		ImGui::Image((void*)itemAllInfo._imageId.Get().pSRV.Get(), ImVec2{ 32, 32 });
+		ImGui::SameLine();
+
+		ImGui::PushID(itemAllInfo._id);
+		if (ImGui::Button("Add"))
+		{
+			Get<Player>(objPlayer).TryAddItem(itemAllInfo._id);
+		}
+		ImGui::PopID();
+	}
+
+	ImGui::End();
 }
