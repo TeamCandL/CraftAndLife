@@ -374,8 +374,10 @@ void Player::MoveBody()
 	// if (pPlayerInput->IsAction())
 	//{
 	//	// アクション有効にする
-	//	Get<PlayerHand>(objPlayerHand).SetAction(true);
+	//	.SetAction(true);
 	//}
+	// 手の更新をする
+	Get<PlayerHand>(objPlayerHand).Update(Data());
 
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
 	if (objPick)

@@ -2,6 +2,8 @@
 #include <Game/Game.h>
 #include "ItemId.h"
 
+struct PlayerData;
+
 /// @brief プレイヤーの手持ちのデータ
 struct PlayerHandData
 {
@@ -22,6 +24,8 @@ struct PlayerHandData
 	ItemId haveItemId{};  ///< 持っているアイテムのId
 
 	GameObject objItemAction{};  ///< アイテムアクションのオブジェクト
+
+	bool isAnimPreviewingDebug{ false };
 };
 
 /// @brief プレイヤーの手持ち
@@ -31,8 +35,11 @@ struct PlayerHand : ObjectBase<PlayerHandData>
 
 	/// @brief 更新処理
 	void Start() override;
+
 	/// @brief 更新処理
-	void Update() override;
+	/// @param _playerData プレイヤーのデータ
+	void Update(PlayerData& _playerData);
+
 	/// @brief 描画処理
 	void Draw() override;
 

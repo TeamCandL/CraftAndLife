@@ -2,6 +2,10 @@
 #include "PlayerHand.h"
 #include "ItemSystem.h"
 #include <Game/System/AbstructInputSystem.h>
+#include "Player.h"
+#include "ItemAction/IItemAction.h"
+#include "ItemAction/ItemActionWeapons.h"
+#include "ItemAction/ItemActionWeaponBow.h"
 
 void PlayerHand::Start()
 {
@@ -32,12 +36,36 @@ void PlayerHand::Start()
 		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
 	};
 
+	transformAnimator.animations["bowstring"] = {
+		TransformAnimationKey{ 0.0f,
+		                       Vec3{ 0.002000f, 0.005000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ -0.593001f, -0.192000f, 0.348000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.1f,
+		                       Vec3{ 0.002000f, 0.005000f, 0.002000f },
+		                       Quaternion::FromEuler(Vec3{ -0.471000f, -0.087000f, 0.453000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.2f,
+		                       Vec3{ 0.002000f, 0.005000f, 0.002000f },
+		                       Quaternion::FromEuler(Vec3{ -0.436000f, -0.139000f, 0.261000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.3f,
+		                       Vec3{ 0.002000f, 0.005000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ -0.419000f, 0.018000f, 0.261000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.4f,
+		                       Vec3{ 0.002000f, 0.005000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ -0.593001f, -0.192000f, 0.348000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+	};
+
 	transformAnimator.playAnimation = "idle";
 
 	SetItem(3);
 }
 
-void PlayerHand::Update()
+void PlayerHand::Update(
+    PlayerData& _playerData)
 {
 	ImGui::Begin("PlayerHand");
 
@@ -86,23 +114,31 @@ void PlayerHand::Update()
 		ofs.close();
 	}
 
-	ImGui::End();
-	ItemInfo itemInfo = Get<ItemSystem>().GetInfo(haveItemId);
-
-	switch (itemInfo._type)
+	if (ImGui::Button(isAnimPreviewingDebug ? "アニメーション設定終了" : "アニメーション設定する"))
 	{
-	case ItemType::Weapons:
-		// TODO: ここは各手の処理にしちゃえばいい
+		isAnimPreviewingDebug = !isAnimPreviewingDebug;
 
-		break;
-	case ItemType::WeaponBow:
-		break;
-	case ItemType::Consumables:
-		break;
-	case ItemType::Materials:
-		break;
-	default:
-		break;
+		if (isAnimPreviewingDebug)
+		{
+			transformAnimator.playAnimation = "";
+		}
+		else
+		{
+			transformAnimator.playAnimation = "idle";
+		}
+	}
+
+	ImGui::End();
+
+	if (isAnimPreviewingDebug)
+	{
+		transformAnimator.playAnimation = "";
+		return;  // アニメーションプレビューデバッグ中なら無視
+	}
+
+	if (!objItemAction.IsEmpty())
+	{
+		Get<IItemAction>(objItemAction).Update(haveItemId, _playerData, Data());
 	}
 }
 
@@ -134,5 +170,24 @@ void PlayerHand::Draw()
 void PlayerHand::SetItem(
     const ItemId _itemId)
 {
+	GetScene().Destroy(objItemAction);
+
+	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(_itemId);
+	switch (ITEM_INFO._type)
+	{
+	case ItemType::Weapons:
+		objItemAction = GetScene().Instantiate<ItemActionWeapons>();
+		break;
+	case ItemType::WeaponBow:
+		objItemAction = GetScene().Instantiate<ItemActionWeaponBow>();
+		break;
+	case ItemType::Consumables:
+		break;
+	case ItemType::Materials:
+		break;
+	default:
+		break;
+	}
+
 	haveItemId = _itemId;
 }
