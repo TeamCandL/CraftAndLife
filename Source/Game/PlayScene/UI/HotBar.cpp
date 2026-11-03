@@ -42,12 +42,13 @@ void HotBar::Update()
 	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
 	{
 		MoveFocusToLeft();
+		OnChangedSelectedItem();
 	}
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
 	{
 		MoveFocusToRight();
+		OnChangedSelectedItem();
 	}
-
 	/// -----------------
 	/// スロットのUI更新
 	/// -----------------
@@ -103,6 +104,8 @@ void HotBar::Update()
 	}
 }
 
+void HotBar::UpdateSlot() {}
+
 void HotBar::MoveFocusToRight()
 {
 	MoveFocusImpl(1);
@@ -141,6 +144,7 @@ void HotBar::RemoveSelectedItem(
 	if (itemData.count == 0)
 	{
 		Get<SlotItem>(Get<Slot>(slots[currentSlotIdx]).Data().slotItem).Reset();
+		OnChangedSelectedItem();
 	}
 }
 
@@ -167,6 +171,7 @@ void HotBar::RemoveConsumableItem(
 	if (itemData.count == 0)
 	{
 		Get<SlotItem>(Get<Slot>(slots[CONSUMABLE_SLOT_INDEX]).Data().slotItem).Reset();
+		OnChangedSelectedItem();
 	}
 }
 
@@ -190,6 +195,8 @@ bool HotBar::TrySetItem(
 	{
 		slotItemData.id = _id;
 		slotItemData.count++;
+		if (slotIndex == currentSlotIdx)
+			OnChangedSelectedItem();
 		return true;
 	}
 	if (slotItemData.id == _id)
@@ -291,6 +298,8 @@ void HotBar::RemoveItem(
 	if (itemData.count == 0)
 	{
 		Get<SlotItem>(Get<Slot>(slots[slotIndex]).Data().slotItem).Reset();
+		if (slotIndex == currentSlotIdx)
+			OnChangedSelectedItem();
 	}
 }
 
@@ -350,6 +359,12 @@ size_t HotBar::GetSlotIndexFrom(
 		break;
 	}
 	return slotIndex;
+}
+
+void HotBar::OnChangedSelectedItem()
+{
+	if (onChangeSelectedItem)
+		onChangeSelectedItem();
 }
 
 void Slot::CalculateUIWorld()

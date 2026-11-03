@@ -76,6 +76,8 @@ struct HotBarData
 	int slotMargin{ 18 };
 	// 左のスロットのアイテム数の座標(パネルとの相対座標)
 	Vec2 leftSlotItemCountBegin{ 67, 58 };
+
+	std::function<void()> onChangeSelectedItem{ nullptr };
 };
 
 struct HotBar : ObjectBase<HotBarData>
@@ -84,6 +86,9 @@ struct HotBar : ObjectBase<HotBarData>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+	/// @brief スロットの動作を更新
+	void UpdateSlot();
+
 	/// @brief スロットのフォーカスを右に進める
 	void MoveFocusToRight();
 	/// @brief スロットのフォーカスを左に進める
@@ -117,6 +122,8 @@ struct HotBar : ObjectBase<HotBarData>
 	bool SwapConsumableItem(ItemStack& _oldItemStack, ItemId _newItemId);
 	bool SwapItem(ItemStack& _oldItemStack, ItemId _newItemId);
 
+	template <typename T> void SetOnChangedSelectedItemCallback(T&& _func);
+
   private:
 	bool CanRemoveItem(ItemType _itemType, int _count = 0);
 	void RemoveItem(ItemType _itemType, int _count = 0);
@@ -127,4 +134,16 @@ struct HotBar : ObjectBase<HotBarData>
 	void MoveFocusImpl(int _dir);
 	SlotItemData& GetSlotItemData(int _idx);
 	size_t GetSlotIndexFrom(ItemType _itemType);
+	void OnChangedSelectedItem();
 };
+
+template <typename T>
+inline void HotBar::SetOnChangedSelectedItemCallback(
+    T&& _func)
+{
+	static_assert(std::is_invocable_v<T>);
+	if constexpr (std::is_invocable_v<T>)
+	{
+		onChangeSelectedItem = std::forward<T>(_func);
+	}
+}

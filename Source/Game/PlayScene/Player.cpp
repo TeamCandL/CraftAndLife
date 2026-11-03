@@ -42,6 +42,13 @@ void Player::Start()
 	objPlayerBag = GetScene().Instantiate<PlayerBag>();
 
 	objHotbar = GetScene().Instantiate<HotBar>();
+	Get<HotBar>(objHotbar).SetOnChangedSelectedItemCallback(
+	    [this]()
+	    {
+		    HotBar& hotbar = Get<HotBar>(objHotbar);
+		    Get<PlayerHand>(objPlayerHand).SetItem(hotbar.GetSelectedItemId());
+		    VCU_LOG("change selected item");
+	    });
 
 	SetJob(PlayerJobType_Healer);
 }
@@ -102,7 +109,6 @@ void Player::Update()
 	{
 		isOpenCraftUI = !isOpenCraftUI;
 	}
-	Get<PlayerHand>(objPlayerHand).SetItem(Get<HotBar>(objHotbar).GetSelectedItemId());
 	/*
 	//テスト用
 	 // HPゲージ動作確認用：1秒ごとに10ダメージ
