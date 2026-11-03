@@ -6,12 +6,10 @@ struct PlaySceneUIControllerData
 {
 	PlaySceneUIControllerData(
 	    GameObject objPlayer_,
-	    GameObject objOtherPlayerController_,
-	    GameObject objBoss_)
+	    GameObject objOtherPlayerController_)
 	{
 		objPlayer                = objPlayer_;
 		objOtherPlayerController = objOtherPlayerController_;
-		objBoss                  = objBoss_;
 	};
 
 	GameObject objTaskBackground{};  ///< タスク情報の背景
@@ -30,10 +28,10 @@ struct PlaySceneUIControllerData
 	GameObject objName2{};           ///< 仲間の名前２
 	GameObject objName3{};           ///< 仲間の名前３
 	GameObject objName4{};           ///< 仲間の名前４
-	GameObject objBossGaugeR{};      ///< ボスのゲージ、赤
-	GameObject objBossGauge{};       ///< ボスのゲージ、オレンジ
 	GameObject objBossName{};        ///< ボスの名前
 	GameObject objBossHp{};          ///< ボスのHP数値
+	GameObject objBossGaugeR{};      ///< ボスのゲージ、赤
+	GameObject objBossGauge{};       ///< ボスのゲージ、オレンジ
 	GameObject objCraftUI{};         ///< クラフト画面
 	GameObject objPlayerIcon2{};     ///< プレイヤー２ミニマップアイコン
 	GameObject objPlayerIcon3{};     ///< プレイヤー３ミニマップアイコン
@@ -41,7 +39,6 @@ struct PlaySceneUIControllerData
 
 	GameObject objPlayer{};  ///< MyGaugeに渡すプレイヤー
 	GameObject objOtherPlayerController{};
-	GameObject objBoss{};  ///< BossHpに渡すボス
 };
 
 /// @brief プレイシーンのUI操作

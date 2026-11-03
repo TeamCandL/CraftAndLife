@@ -61,3 +61,16 @@ std::vector<EnemyStatus> EnemyController::GetAllEnemyStatus()
 
 	return allStatus;
 }
+
+ActiveBoss EnemyController::GetActiveBoss()
+{
+	for (const GameObject& obj : allEnemys)
+	{
+		if (Get<Enemy>(obj).Data().isBoss)
+		{
+			return { true, obj };
+		}
+	}
+
+	return { false, allEnemys.front() };
+}

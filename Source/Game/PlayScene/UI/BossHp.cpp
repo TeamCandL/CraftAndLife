@@ -5,13 +5,21 @@
 
 void BossHp::Start()
 {
-	Enemy& boss = Get<Enemy>(objBoss);
-	maxHP       = boss.Data().hp;
+	isBossActive = false;
 }
 
 void BossHp::Update()
 {
-	Enemy& boss  = Get<Enemy>(objBoss);
-	hp           = boss.Data().hp;
-	text.content = "%d / %d", hp, maxHP;
+	if (isBossActive)
+	{
+		Enemy& boss  = Get<Enemy>(objBoss);
+		hp           = boss.Data().hp;
+		rateOfHp     = static_cast<float>(hp) / static_cast<float>(maxHP);
+		text.content = "%d / %d", hp, maxHP;
+
+		if (hp <= 0)
+		{
+			isBossActive = false;
+		}
+	}
 }

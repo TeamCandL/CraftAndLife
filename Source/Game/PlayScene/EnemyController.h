@@ -2,6 +2,12 @@
 #include <Game/Game.h>
 #include "EnemyStatus.h"
 
+struct ActiveBoss
+{
+	bool isActiveBoss = false;  ///< ボスがアクティブかどうか
+	GameObject objBoss{};       ///< ボスのオブジェクト
+};
+
 struct EnemyControllerData
 {
 	std::vector<GameObject> allEnemys;  ///< 全ての敵の情報を格納する
@@ -24,4 +30,5 @@ struct EnemyController : ObjectBase<EnemyControllerData>
 	std::vector<float> GetAllEnemyAngleY();
 	std::vector<int32_t> GetAllEnemyId();
 	std::vector<EnemyStatus> GetAllEnemyStatus();
+	ActiveBoss GetActiveBoss();
 };
