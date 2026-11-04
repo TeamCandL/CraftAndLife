@@ -2,24 +2,19 @@
 #include "BossHp.h"
 #include <Game/Manager/SessionManager.h>
 #include "../Enemy.h"
+#include "BossInfo.h"
 
 void BossHp::Start()
 {
-	isBossActive = false;
+	SetActive(false);
 }
 
 void BossHp::Update()
 {
-	if (isBossActive)
+	SetActive(Get<BossInfo>(objBossInfo).IsBossActive());
+	if (IsActive())
 	{
-		Enemy& boss  = Get<Enemy>(objBoss);
-		hp           = boss.Data().hp;
-		rateOfHp     = static_cast<float>(hp) / static_cast<float>(maxHP);
-		text.content = "%d / %d", hp, maxHP;
-
-		if (hp <= 0)
-		{
-			isBossActive = false;
-		}
+		HpInfo hpInfo = Get<BossInfo>(objBossInfo).GetHpInfo();
+		text.content  = std::to_string(hpInfo.hp) + " / " + std::to_string(hpInfo.maxHP);
 	}
 }

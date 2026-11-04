@@ -4,8 +4,8 @@
 struct BossGaugeData
 {
 	BossGaugeData(
-	    GameObject _objBossHp) :
-	    objBossHp{ _objBossHp }
+	    GameObject _objBossInfo) :
+	    objBossInfo{ _objBossInfo }
 	{
 	}
 
@@ -14,8 +14,8 @@ struct BossGaugeData
 	Component<UITransform> transform{ Vec2{ 672, 50 }, Vec2{ 547, 38 } };
 	Component<UIImage> image{ texture };
 
-	float rateOfHp{};        ///< ボスのHPの割合
-	GameObject objBossHp{};  ///< ボスのHP数値
+	float rateOfHp{};          ///< ボスのHPの割合
+	GameObject objBossInfo{};  ///< ボスのHP数値
 };
 
 struct BossGauge : ObjectBase<BossGaugeData>
