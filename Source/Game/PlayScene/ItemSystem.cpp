@@ -85,7 +85,7 @@ ItemSystemData::ItemSystemData()
 	craft.push_back({ 8, 5 });
 	craft.push_back({ 9, 3 });
 	allItemList.push_back({ 5,
-	                        ItemType::Weapons,
+	                        ItemType::Tools,
 	                        "ハンマー",
 	                        "Image/Item/IconHummer.png",
 	                        "Model/HandWeapon/HandHummer.fbx",
@@ -119,7 +119,7 @@ ItemSystemData::ItemSystemData()
 	craft.push_back({ 8, 3 });
 	craft.push_back({ 9, 3 });
 	allItemList.push_back({ 7,
-	                        ItemType::Weapons,
+	                        ItemType::Tools,
 	                        "斧",
 	                        "Image/Item/IconAxe.png",
 	                        "Model/HandWeapon/HandAxe.fbx",
@@ -241,6 +241,22 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
+	craft.clear();
+	craft.push_back({ 8, 3 });
+	craft.push_back({ 9, 10 });
+	allItemList.push_back({ 17,
+	                        ItemType::Shield,
+	                        "盾",
+	                        "Image/Item/IconShield.png",
+	                        "Model/HandWeapon/HandShield.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0,
+	                        PlayerJobType_Tank });
 }
 
 ItemInfo ItemSystem::GetInfo(

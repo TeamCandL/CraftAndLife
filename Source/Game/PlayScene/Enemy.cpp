@@ -11,6 +11,7 @@
 #include "EnemyController.h"
 #include "StateRegistry.h"
 #include "../Manager/SessionManager.h"
+#include "EntitySystem.h"
 
 void Enemy::Start()
 {
@@ -271,6 +272,11 @@ void Enemy::SetWanderingCheckPoint(
 
 	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position_);
 	followed               = false;
+}
+
+void Enemy::DropItem()
+{
+	Get<EntitySystem>().Spawn(dropItemID, transform.position, { 0.0f, 0.0f, 0.0f });
 }
 
 void Enemy::RegisterStates(

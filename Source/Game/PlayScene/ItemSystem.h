@@ -7,7 +7,9 @@
 enum ItemType
 {
 	Weapons = 0,  ///<	武器
+	Tools,        ///<	道具
 	WeaponBow,    ///<	弓
+	Shield,       ///<	盾
 	Arrow,        ///<	矢
 	Consumables,  ///<	消費アイテム
 	Materials,    ///<	素材アイテム
