@@ -23,9 +23,9 @@ struct AudioManager : IManager
 	void Play(Resource<ResourceType::Audio>& _resource);
 
 	/// @brief 毎フレーム呼ばれる更新処理
-	void LateUpdate(float DeltaTime);
+	void LateUpdate(const float _deltaTime);
 	/// @brief 廃棄処理
-	void OnDestroy();
+	void Release() override;
 
 	// 足音を再生する
 	void PlayFootstep(Resource<ResourceType::Audio>& _resource);

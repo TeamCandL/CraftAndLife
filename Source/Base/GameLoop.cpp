@@ -166,6 +166,7 @@ void cha::GameLoop::Run(
 	IGameLoopCallable& callableSceneManager{ sceneManager };
 
 	AudioManager& audioManager = ManagerRegistry::Add<AudioManager>();
+	audioManager.Start();
 
 	while (true)
 	{
@@ -216,6 +217,8 @@ void cha::GameLoop::Run(
 
 		// ライトの更新
 		lightManager.Update();
+
+		audioManager.LateUpdate(ManagerRegistry::Ref<DeltaTime>());
 #pragma endregion
 
 #pragma region シャドウマップ描画

@@ -117,13 +117,11 @@ void AudioManager::StopFootstep()
 }
 
 void AudioManager::LateUpdate(
-    float DeltaTaime)
+    const float _deltaTime)
 {
-	const float delta = Get<DeltaTime>();
-
 	for (size_t i = 0; i < players.size();)
 	{
-		players[i].timeLeftSec -= delta;
+		players[i].timeLeftSec -= _deltaTime;
 		if (players[i].timeLeftSec <= 0.0f)
 		{
 			if (players[i].pSourceVoice)
@@ -220,9 +218,8 @@ void AudioManager::SetBGMStart()
 	}
 }
 
-void AudioManager::OnDestroy()
+void AudioManager::Release()
 {
-
 	// 足音を停止
 	StopFootstep();
 
