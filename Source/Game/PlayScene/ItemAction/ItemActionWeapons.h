@@ -6,7 +6,7 @@
 struct ItemActionWeaponsData
 {
 	const ItemId ITEM_ID_HAMMER{ 5 };  ///< ハンマーのアイテムId
-	const ItemId ITEM_ID_AXE{ 6 };     ///< oh-noのアイテムId
+	const ItemId ITEM_ID_AXE{ 7 };     ///< oh-noのアイテムId
 };
 
 struct ItemActionWeapons : ObjectBase<ItemActionWeaponsData>, IItemAction
