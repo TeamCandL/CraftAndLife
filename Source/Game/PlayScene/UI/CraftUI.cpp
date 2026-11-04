@@ -33,13 +33,11 @@ void CraftUI::Start()
 	                                                 [this, filterCraftableItemOnJob](const ItemAllInfo& _info)
 	                                                 {
 		                                                 // 制作可能アイテム かつ そのジョブがクラフト可能
-		                                                 bool jobCanCraft =
-		                                                     JobCanCraftOrAddItem(_info._type, playerJobType);
-		                                                 if (filterCraftableItemOnJob == false)
-		                                                 {
-			                                                 jobCanCraft = true;
-		                                                 }
-		                                                 return _info._isCraftable && jobCanCraft;
+		                                                 bool playerCanCraft =
+		                                                     _info.canUseJobType == PlayerJobType_Max ||
+		                                                     _info.canUseJobType == playerJobType ||
+		                                                     filterCraftableItemOnJob == false;
+		                                                 return _info._isCraftable && playerCanCraft;
 	                                                 }))
 	{
 		craftableItems.push_back(info);
