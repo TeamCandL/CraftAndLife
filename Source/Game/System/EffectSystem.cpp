@@ -146,8 +146,8 @@ void EffectSystem::Update()
 			    if (handle >= 0)
 			    {
 				    managerRef_->StopEffect(handle);
+				    _effect.Reset();
 			    }
-			    // インスタンスを解放
 			    return;
 		    }
 

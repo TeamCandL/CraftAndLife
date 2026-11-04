@@ -5,6 +5,7 @@
 #include "../MainCamera.h"
 #include <Game/System/RaycastSystem.h>
 #include "../Harvestable.h"
+#include <Game/Common/EffectObject.h>
 
 void ItemActionWeapons::Update(
     const ItemId _itemId,
@@ -94,12 +95,14 @@ void ItemActionWeapons::Action(
 						if (_itemId == ITEM_ID_AXE)
 						{
 							harvestable.TakeDamage(1);
+							GetScene().Instantiate<OnceEffectObject>("Effect/ScoreItem.efkefc", hitInfo.hitPosition);
 						}
 						break;
 					case HarvestableType::Rock:
 						if (_itemId == ITEM_ID_HAMMER)
 						{
 							harvestable.TakeDamage(1);
+							GetScene().Instantiate<OnceEffectObject>("Effect/ScoreItem.efkefc", hitInfo.hitPosition);
 						}
 						break;
 					default:

@@ -26,6 +26,7 @@
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/ItemSystem.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/System/EffectSystem.h>
 
 void GameManager::Start()
 {
@@ -34,6 +35,7 @@ void GameManager::Start()
 	GetScene().Instantiate<AbstructInputSystem>();
 	GetScene().Instantiate<CursorSystem>();
 	GetScene().Instantiate<AudioSystem>();
+	GetScene().Instantiate<EffectSystem>();
 	// GetScene().Instantiate<DiscordSystem>();
 	GetScene().Instantiate<AnimationSystem>();
 	GetScene().Instantiate<TranslationSystem>();

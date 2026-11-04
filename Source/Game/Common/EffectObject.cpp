@@ -5,6 +5,24 @@ EffectObjectData::EffectObjectData(
 {
 }
 
+EffectObjectData::EffectObjectData(
+    const fs::path& _effectFilePath,
+    const Vec3& _position) :
+    EffectObjectData(_effectFilePath)
+{
+	transform.position = _position;
+}
+
+EffectObjectData::EffectObjectData(
+    const fs::path& _effectFilePath,
+    const GameObject& _parent) :
+    EffectObjectData(_effectFilePath)
+{
+	transform.parent = _parent;
+}
+
+void EffectObject::Update() {}
+
 void EffectObject::Start() {}
 
 void EffectObject::Play()
@@ -15,4 +33,20 @@ void EffectObject::Play()
 void EffectObject::OnDestroy()
 {
 	effectPlayer.destroyMe = true;
+}
+
+void OnceEffectObject::Start()
+{
+	EffectObject::Start();
+	Play();
+}
+
+void OnceEffectObject::Update()
+{
+	EffectObject::Update();
+	if (effectPlayer.ref == nullptr)
+	{
+		effectPlayer.destroyMe = true;
+		DestroyMe();
+	}
 }
