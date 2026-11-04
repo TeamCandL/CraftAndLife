@@ -24,8 +24,7 @@ struct OtherEnemyData
 		Resource<Model>{ "Model/Enemy/Dragon.fbx" },
 	};
 
-	Component<Transform> transform{ Vec3{},
-		                            Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, 0.0f, 0.0f }) };  ///< 座標系
+	Component<Transform> transform{ Vec3{}, Quaternion::FromEuler(Vec3{ 90.0f, 0.0f, 0.0f }) };  ///< 座標系
 
 	int32_t animIndex{};
 

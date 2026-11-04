@@ -14,6 +14,7 @@ struct EntitySystemData
 		float pickupCooldownSec{};       ///< 拾えない時間(秒)
 		float despawnTimeLeft{};         ///< 自然消滅までの時間(秒)
 		bool isRemoveRequested = false;  ///< 削除要求が済んでるかの判定
+		bool isJustSpawned     = true;   ///< 生成直後かどうかの判定
 	};
 
 	std::vector<EntityInfo> entities{};                 ///< エンティティ管理用

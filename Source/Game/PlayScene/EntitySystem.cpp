@@ -13,9 +13,17 @@ void EntitySystem::Update()
 {
 	const float DELTA_TIME{ Get<DeltaTime>() };
 
+	std::vector<int32_t> justSpawnedIds;  // 生成直後のエンティティIDを記録するためのベクター
+
 	for (auto& info : entities)
 	{
 		info.pickupCooldownSec -= DELTA_TIME;
+
+		if (info.isJustSpawned)
+		{
+			info.isJustSpawned = false;
+			continue;
+		}
 	}
 
 	// 自然消滅タイマーはホストだけが管理
@@ -23,17 +31,19 @@ void EntitySystem::Update()
 	{
 		for (auto& info : entities)
 		{
+			if (info.isJustSpawned)
+			{
+				continue;
+			}
+
 			info.despawnTimeLeft -= DELTA_TIME;
 		}
-	}
 
-	if (Data().isHost)
-	{
 		std::vector<int32_t> removeIds;
 
 		for (const auto& info : entities)
 		{
-			if (!info.isRemoveRequested && info.despawnTimeLeft <= 0.0f)
+			if (!info.isJustSpawned && !info.isRemoveRequested && info.despawnTimeLeft <= 0.0f)
 			{
 				removeIds.push_back(info.entityId);
 			}
@@ -42,6 +52,15 @@ void EntitySystem::Update()
 		for (int32_t entityId : removeIds)
 		{
 			Remove(entityId);
+		}
+	}
+
+	// Updateの最後に生成直後フラグを解除
+	for (auto& info : entities)
+	{
+		if (std::find(justSpawnedIds.begin(), justSpawnedIds.end(), info.entityId) != justSpawnedIds.end())
+		{
+			info.isJustSpawned = false;
 		}
 	}
 }
@@ -144,16 +163,24 @@ void EntitySystem::SpawnFromNetwork(
 	}
 
 	// エンティティを生成
-	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 3.0f, 60.0f * 5.0f);
+	// entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 60.0f * 5.0f, 3.0f);
 
-	EntityInfo& info = entities.back();
-
-	info.entityId = _entityId;
+	EntitySystemData::EntityInfo info{};
+	info.obj               = GetScene().Instantiate<Entity>(_itemId);
+	info.pickupCooldownSec = 3.0f;
+	info.despawnTimeLeft   = 60.0f * 5.0f;
+	info.entityId          = _entityId;
+	info.isJustSpawned     = true;
 
 	IEntity& entity = Get<IEntity>(info.obj);
 
+	// entities.push_back(std::move(info));
+	// EntityInfo& info = entities.back();
+
 	entity.SetPosition(_position);
 	entity.SetVelocity(_velocity);
+
+	entities.push_back(std::move(info));
 }
 
 const std::vector<EntitySpawnData>& EntitySystem::GetPendingSpawnData() const

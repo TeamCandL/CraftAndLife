@@ -127,6 +127,24 @@ namespace
 
 			const std::string& name = stateNames[i];
 
+			std::visit(
+			    [id, &name](const auto& stateValue)
+			    {
+				    using T = std::decay_t<decltype(stateValue)>;
+
+				    std::string valueText;
+
+				    if constexpr (std::is_same_v<T, bool>)
+					    valueText = stateValue ? "true" : "false";
+				    else if constexpr (std::is_same_v<T, std::string>)
+					    valueText = stateValue;
+				    else
+					    valueText = std::to_string(stateValue);
+
+				    VCU_LOG("ステート受信: ID={}, Name={}, Value={}", id, name, valueText);
+			    },
+			    value);
+
 			auto& states = status->states;
 			auto stateIt = states.find(name);
 
@@ -418,7 +436,7 @@ bool SessionManager::UpdateEnemyStates(
 
 		    if (it == inSessionStatus_.enemiesStatus.end())
 		    {
-			    VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", enemyId);
+			    VCU_LOG("ステート更新失敗：敵ID={} が存在しません", enemyId);
 			    return nullptr;
 		    }
 
