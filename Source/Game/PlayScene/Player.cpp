@@ -18,6 +18,7 @@
 #include "Player/PlayerJobControllerFighter.h"
 #include "Player/PlayerJobControllerArcher.h"
 #include "StateRegistry.h"
+#include <Game/System/AudioSystem.h>
 
 void Player::Start()
 {
@@ -257,6 +258,7 @@ void Player::MoveBody()
 	nextPosition += moveDirection * moveSpeed;
 
 	animSpeed = (moveDirection * moveSpeed).Length() / 0.1f;
+
 	if (animSpeed > 0.0f)
 	{
 		animIndex = PlayerAnimType_Walk;
@@ -271,6 +273,25 @@ void Player::MoveBody()
 	{
 		animIndex = PlayerAnimType_Idle;
 		animSpeed = 1.0f;
+	}
+
+	// --------------------------------
+	// 足音SE
+	// --------------------------------
+	if (animIndex == PlayerAnimType_Walk && !isJumping)
+	{
+		footstepTimer += Get<DeltaTime>();
+
+		if (footstepTimer >= FOOTSTEP_INTERVAL)
+		{
+			Get<AudioSystem>().Play(footstepSE);
+
+			footstepTimer = 0.0f;
+		}
+	}
+	else
+	{
+		footstepTimer = 0.0f;
 	}
 
 	// TerrainSystemを取得
