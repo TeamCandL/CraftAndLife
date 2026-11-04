@@ -48,8 +48,8 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 9, 3 });
-	craft.push_back({ 11, 2 });
+	craft.push_back({ 8, 3 });
+	craft.push_back({ 10, 2 });
 	allItemList.push_back({ 3,
 	                        ItemType::WeaponBow,
 	                        "弓",
@@ -65,8 +65,8 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Archer });
 	craft.clear();
-	craft.push_back({ 8, 3 });
-	craft.push_back({ 9, 2 });
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 2 });
 	allItemList.push_back({ 4,
 	                        ItemType::Weapons,
 	                        "剣",
@@ -82,8 +82,8 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 8, 5 });
-	craft.push_back({ 9, 3 });
+	craft.push_back({ 7, 5 });
+	craft.push_back({ 8, 3 });
 	allItemList.push_back({ 5,
 	                        ItemType::Tools,
 	                        "ハンマー",
@@ -99,26 +99,9 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 8, 7 });
-	craft.push_back({ 9, 4 });
-	allItemList.push_back({ 6,
-	                        ItemType::Weapons,
-	                        "大剣",
-	                        "Image/Item/IconSwordBig.png",
-	                        "Model/HandWeapon/HandSwordBig.fbx",
-
-	                        true,
-	                        craft,
-
-	                        2.0f,
-	                        35,
-	                        10,
-
-	                        PlayerJobType_Fighter });
-	craft.clear();
+	craft.push_back({ 7, 3 });
 	craft.push_back({ 8, 3 });
-	craft.push_back({ 9, 3 });
-	allItemList.push_back({ 7,
+	allItemList.push_back({ 6,
 	                        ItemType::Tools,
 	                        "斧",
 	                        "Image/Item/IconAxe.png",
@@ -130,7 +113,7 @@ ItemSystemData::ItemSystemData()
 	                        0.8f,
 	                        0,
 	                        10 });
-	allItemList.push_back({ 8,
+	allItemList.push_back({ 7,
 	                        ItemType::Materials,
 	                        "石",
 	                        "Image/Item/IconRock.png",
@@ -142,7 +125,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 9,
+	allItemList.push_back({ 8,
 	                        ItemType::Materials,
 	                        "木材",
 	                        "Image/Item/IconWood.png",
@@ -154,7 +137,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 10,
+	allItemList.push_back({ 9,
 	                        ItemType::Materials,
 	                        "骨",
 	                        "Image/Item/IconBone.png",
@@ -166,7 +149,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 11,
+	allItemList.push_back({ 10,
 	                        ItemType::Materials,
 	                        "蜘蛛の糸",
 	                        "Image/Item/IconString.png",
@@ -178,7 +161,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 12,
+	allItemList.push_back({ 11,
 	                        ItemType::Materials,
 	                        "生肉",
 	                        "Image/Item/IconMeat.png",
@@ -190,7 +173,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 13,
+	allItemList.push_back({ 12,
 	                        ItemType::Materials,
 	                        "爪",
 	                        "Image/Item/IconClaw.png",
@@ -202,7 +185,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 14,
+	allItemList.push_back({ 13,
 	                        ItemType::Consumables,
 	                        "焼肉",
 	                        "Image/InvalidImage.png",
@@ -214,7 +197,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 15,
+	allItemList.push_back({ 14,
 	                        ItemType::Consumables,
 	                        "キノコ",
 	                        "Image/Item/IconMushroom.png",
@@ -229,7 +212,7 @@ ItemSystemData::ItemSystemData()
 	craft.clear();
 	craft.push_back({ 8, 1 });
 	craft.push_back({ 9, 2 });
-	allItemList.push_back({ 16,
+	allItemList.push_back({ 15,
 	                        ItemType::Arrow,
 	                        "矢",
 	                        "Image/Item/IconArrow.png",
@@ -245,7 +228,7 @@ ItemSystemData::ItemSystemData()
 	craft.clear();
 	craft.push_back({ 8, 3 });
 	craft.push_back({ 9, 10 });
-	allItemList.push_back({ 17,
+	allItemList.push_back({ 16,
 	                        ItemType::Shield,
 	                        "盾",
 	                        "Image/Item/IconShield.png",
@@ -258,6 +241,23 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        0,
 	                        PlayerJobType_Tank });
+	craft.clear();
+	craft.push_back({ 7, 7 });
+	craft.push_back({ 8, 4 });
+	allItemList.push_back({ 17,
+	                        ItemType::Weapons,
+	                        "大剣",
+	                        "Image/Item/IconSwordBig.png",
+	                        "Model/HandWeapon/HandSwordBig.fbx",
+
+	                        true,
+	                        craft,
+
+	                        2.0f,
+	                        35,
+	                        10,
+
+	                        PlayerJobType_Fighter });
 }
 
 ItemInfo ItemSystem::GetInfo(
