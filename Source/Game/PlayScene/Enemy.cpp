@@ -71,7 +71,7 @@ void Enemy::Update()
 		if (!objWanderingCheckPoint.IsEmpty())
 		{
 			// チェックポイントに到達したら新しいチェックポイントを生成する
-			if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3()).Length() < speed)
+			if ((Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3() - transform.position).Length() < speed)
 			{
 				SetWanderingCheckPoint(transform.position);
 			}
@@ -193,8 +193,8 @@ void Enemy::Sensor()
 		{
 			GetScene().Destroy(objWanderingCheckPoint);
 		}
-		targetPos = targetPos_;
-		followed  = true;
+		// targetPos = targetPos_;
+		// followed  = true;
 	}
 	else
 	{
