@@ -15,7 +15,7 @@ namespace EnemyParam
 {
 	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };           ///< 体力
 	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };           ///< 攻撃力
-	const std::vector<float> Speed{ 2.0f, 1.5f, 3.0f, 3.5f, 2.5f };  ///< 移動速度
+	const std::vector<float> Speed{ 5.0f, 3.5f, 6.5f, 7.5f, 4.5f };  ///< 移動速度
 	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };
 	const std::vector<bool> HasLongAttack{ false, false, false, false, true };
 	const std::vector<float> VisibilityDist{ 100.0f, 200.0f, 100.0f, 80.0f, 300.0f };
