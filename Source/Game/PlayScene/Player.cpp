@@ -175,7 +175,7 @@ void Player::Update()
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
-		hp -= 10;
+		Damaged(10);
 	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
