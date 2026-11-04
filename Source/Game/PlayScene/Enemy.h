@@ -4,6 +4,12 @@
 #include "EnemyType.h"
 #include "EnemyStatus.h"
 
+struct TargetInfo
+{
+	Vec3 _pos{};
+	int32_t _attentionLevel{ 5 };
+};
+
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
 {
