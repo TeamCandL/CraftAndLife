@@ -57,9 +57,10 @@ struct PlayerData
 	float animSpeed{ 1.0f };     ///< アニメーションの再生速度 通常が1.0f
 
 	// パラメータ
-	int32_t maxHP{ 100 };  // 最大HP
-	int32_t hp{ 100 };     // 現在HP
-	int32_t damage{ 10 };  // 攻撃力
+	int32_t maxHP{ 100 };         ///< 最大HP
+	int32_t hp{ 100 };            ///< 現在HP
+	int32_t damage{ 10 };         ///< 攻撃力
+	int32_t attentionLevel{ 5 };  ///< 敵からの注目度 基本値：5 数値が高いほど狙われやすい
 
 	const float ATTACK_COOL_TIME{ 5.0f };
 	float nowAttackCoolTime{ 0.0f };
@@ -78,6 +79,15 @@ struct PlayerData
 	const float GROUND_HEIGHT{ 0.0f };  ///< 地面の高さ
 	const float JUMP_CUT_RATE{ 0.5f };  ///< ボタンを離したときの速度倍率
 	bool isJumping{ false };            ///< ジャンプ中かどうか
+
+	// 足音SE
+	Resource<Audio> footstepSE{ "BGM_SE/footsteps.mp3" };
+
+	// 足音を鳴らす間隔
+	float footstepTimer{ 0.0f };
+
+	// 足音の間隔（秒）
+	const float FOOTSTEP_INTERVAL{ 0.4f };
 
 	// HP減少テスト用
 	float hpTestTimer{ 0.0f };

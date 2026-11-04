@@ -2,7 +2,12 @@
 #include "ListBox.h"
 #include <Game/System/AbstructInputSystem.h>
 
-void UI::ListBox::Start() {}
+void UI::ListBox::Start()
+{
+	selectedElementCursor = GetScene().Instantiate<SelectedElementCursor>();
+	Get<SelectedElementCursor>(selectedElementCursor).Data().transform.layerOrder = 6;
+	Get<SelectedElementCursor>(selectedElementCursor).Data().transform.scale      = Vec2{ 32, 32 };
+}
 
 void UI::ListBox::Update()
 {
@@ -20,6 +25,12 @@ void UI::ListBox::Update()
 	{
 		Get<ListElement>(elements[i]).Update((i == currentIndex));
 	}
+	UITransform& elementTransform = Get<UITransform>(elements[currentIndex]);
+	UIImage& elementImage         = Get<UIImage>(elements[currentIndex]);
+
+	// 選択項目の矢印の位置
+	UITransform& cursorTransform = Get<UITransform>(selectedElementCursor);
+	cursorTransform.position     = elementTransform.position + Vec2{ 0.0f, 1.0f };
 }
 
 std::string UI::ListBox::GetSelectionData()
@@ -46,6 +57,7 @@ void UI::ListBox::SetActiveAll(
 		auto& collection = GetScene().RefGameObjectCollection();
 		collection.At<IObject>(obj).SetActive(_isActive);
 	}
+	Get<SelectedElementCursor>(selectedElementCursor).SetActive(_isActive);
 }
 
 void UI::ListBox::MoveFocus(

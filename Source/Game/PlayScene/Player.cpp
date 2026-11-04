@@ -18,6 +18,7 @@
 #include "Player/PlayerJobControllerFighter.h"
 #include "Player/PlayerJobControllerArcher.h"
 #include "StateRegistry.h"
+#include <Game/System/AudioSystem.h>
 
 void Player::Start()
 {
@@ -145,11 +146,11 @@ void Player::Update()
 	// お試しで出してるエンティティ
 	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 	{
-		SpawnItem(8);
+		SpawnItem(9);
 	}
 	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		SpawnItem(7);
+		SpawnItem(8);
 	}
 
 	// 近くのアイテムを拾う
@@ -325,6 +326,29 @@ void Player::MoveBody()
 	{
 		animIndex = PlayerAnimType_Idle;
 		animSpeed = 1.0f;
+	}
+
+	// --------------------------------
+	// 足音SE
+	// --------------------------------
+	if (animIndex == PlayerAnimType_Walk && !isJumping)
+	{
+		footstepTimer += Get<DeltaTime>();
+
+		if (footstepTimer >= FOOTSTEP_INTERVAL)
+		{
+			Get<AudioSystem>().PlayFootstep(footstepSE);
+
+			footstepTimer = 0.0f;
+		}
+	}
+	else
+	{
+		// 足音を停止
+		Get<AudioSystem>().StopFootstep();
+
+		// タイマーをリセット
+		footstepTimer = 0.0f;
 	}
 
 	// TerrainSystemを取得
@@ -537,9 +561,9 @@ void Player::TryAddItem(
 
 	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
 	bool filterAddItemOnJob{ false };
-	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
-	bool canAddItem   = JobCanCraftOrAddItem(itemType, jobType);
-	if (canAddItem == false && filterAddItemOnJob)
+	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
+	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);
+	if (playerCanUse == false && filterAddItemOnJob)
 	{
 		SpawnItem(_id);
 		return;

@@ -44,10 +44,12 @@ ItemSystemData::ItemSystemData()
 
 	                        2.0f,
 	                        0,
-	                        25 });
+	                        25,
+
+	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 8, 3 });
-	craft.push_back({ 10, 2 });
+	craft.push_back({ 9, 3 });
+	craft.push_back({ 11, 2 });
 	allItemList.push_back({ 3,
 	                        ItemType::WeaponBow,
 	                        "弓",
@@ -59,10 +61,12 @@ ItemSystemData::ItemSystemData()
 
 	                        0.5f,
 	                        8,
-	                        0 });
+	                        0,
+
+	                        PlayerJobType_Archer });
 	craft.clear();
-	craft.push_back({ 7, 3 });
-	craft.push_back({ 8, 2 });
+	craft.push_back({ 8, 3 });
+	craft.push_back({ 9, 2 });
 	allItemList.push_back({ 4,
 	                        ItemType::Weapons,
 	                        "剣",
@@ -74,27 +78,48 @@ ItemSystemData::ItemSystemData()
 
 	                        0.6f,
 	                        12,
-	                        0 });
+	                        0,
+
+	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 7, 5 });
-	craft.push_back({ 8, 3 });
+	craft.push_back({ 8, 5 });
+	craft.push_back({ 9, 3 });
 	allItemList.push_back({ 5,
-	                        ItemType::Weapons,
+	                        ItemType::Tools,
 	                        "ハンマー",
-	                        "Image/InvalidImage.png",
-	                        "Model/HandWeapon/HandAxe.fbx",
+	                        "Image/Item/IconHammer.png",
+	                        "Model/HandWeapon/HandHammer.fbx",
 
 	                        true,
 	                        craft,
 
 	                        1.0f,
 	                        0,
-	                        20 });
+	                        20,
+
+	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 7, 3 });
-	craft.push_back({ 8, 3 });
+	craft.push_back({ 8, 7 });
+	craft.push_back({ 9, 4 });
 	allItemList.push_back({ 6,
 	                        ItemType::Weapons,
+	                        "大剣",
+	                        "Image/Item/IconSwordBig.png",
+	                        "Model/HandWeapon/HandSwordBig.fbx",
+
+	                        true,
+	                        craft,
+
+	                        2.0f,
+	                        35,
+	                        10,
+
+	                        PlayerJobType_Fighter });
+	craft.clear();
+	craft.push_back({ 8, 3 });
+	craft.push_back({ 9, 3 });
+	allItemList.push_back({ 7,
+	                        ItemType::Tools,
 	                        "斧",
 	                        "Image/Item/IconAxe.png",
 	                        "Model/HandWeapon/HandAxe.fbx",
@@ -105,23 +130,11 @@ ItemSystemData::ItemSystemData()
 	                        0.8f,
 	                        0,
 	                        10 });
-	allItemList.push_back({ 7,
-	                        ItemType::Materials,
-	                        "石",
-	                        "Image/InvalidImage.png",
-	                        "Model/HandMaterial/HandRock.fbx",
-
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
 	allItemList.push_back({ 8,
 	                        ItemType::Materials,
-	                        "木材",
-	                        "Image/InvalidImage.png",
-	                        "Model/HandMaterial/HandWood.fbx",
+	                        "石",
+	                        "Image/Item/IconRock.png",
+	                        "Model/HandMaterial/HandRock.fbx",
 
 	                        false,
 	                        craft,
@@ -131,9 +144,9 @@ ItemSystemData::ItemSystemData()
 	                        0 });
 	allItemList.push_back({ 9,
 	                        ItemType::Materials,
-	                        "骨",
-	                        "Image/InvalidImage.png",
-	                        "Model/HandMaterial/HandRock.fbx",
+	                        "木材",
+	                        "Image/Item/IconWood.png",
+	                        "Model/HandMaterial/HandWood.fbx",
 
 	                        false,
 	                        craft,
@@ -143,9 +156,9 @@ ItemSystemData::ItemSystemData()
 	                        0 });
 	allItemList.push_back({ 10,
 	                        ItemType::Materials,
-	                        "蜘蛛の糸",
-	                        "Image/InvalidImage.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "骨",
+	                        "Image/Item/IconBone.png",
+	                        "Model/HandMaterial/HandBone.fbx",
 
 	                        false,
 	                        craft,
@@ -155,9 +168,9 @@ ItemSystemData::ItemSystemData()
 	                        0 });
 	allItemList.push_back({ 11,
 	                        ItemType::Materials,
-	                        "生肉",
-	                        "Image/InvalidImage.png",
-	                        "Model/HandFood/HandMeat.fbx",
+	                        "蜘蛛の糸",
+	                        "Image/Item/IconString.png",
+	                        "Model/HandMaterial/HandString.fbx",
 
 	                        false,
 	                        craft,
@@ -167,9 +180,9 @@ ItemSystemData::ItemSystemData()
 	                        0 });
 	allItemList.push_back({ 12,
 	                        ItemType::Materials,
-	                        "爪",
-	                        "Image/InvalidImage.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "生肉",
+	                        "Image/Item/IconMeat.png",
+	                        "Model/HandFood/HandMeat.fbx",
 
 	                        false,
 	                        craft,
@@ -178,6 +191,18 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        0 });
 	allItemList.push_back({ 13,
+	                        ItemType::Materials,
+	                        "爪",
+	                        "Image/Item/IconClaw.png",
+	                        "Model/HandMaterial/DragonClaw.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 14,
 	                        ItemType::Consumables,
 	                        "焼肉",
 	                        "Image/InvalidImage.png",
@@ -189,7 +214,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 14,
+	allItemList.push_back({ 15,
 	                        ItemType::Consumables,
 	                        "キノコ",
 	                        "Image/Item/IconMushroom.png",
@@ -202,9 +227,9 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        0 });
 	craft.clear();
-	craft.push_back({ 7, 1 });
-	craft.push_back({ 8, 2 });
-	allItemList.push_back({ 15,
+	craft.push_back({ 8, 1 });
+	craft.push_back({ 9, 2 });
+	allItemList.push_back({ 16,
 	                        ItemType::Arrow,
 	                        "矢",
 	                        "Image/Item/IconArrow.png",
@@ -215,7 +240,24 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
-	                        0 });
+	                        0,
+	                        PlayerJobType_Archer });
+	craft.clear();
+	craft.push_back({ 8, 3 });
+	craft.push_back({ 9, 10 });
+	allItemList.push_back({ 17,
+	                        ItemType::Shield,
+	                        "盾",
+	                        "Image/Item/IconShield.png",
+	                        "Model/HandWeapon/HandShield.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0,
+	                        PlayerJobType_Tank });
 }
 
 ItemInfo ItemSystem::GetInfo(
@@ -233,6 +275,8 @@ ItemInfo ItemSystem::GetInfo(
 	info._coolTime        = allItemList[id]._coolTime;
 	info._damageForEnemy  = allItemList[id]._damageForEnemy;
 	info._damageForObject = allItemList[id]._damageForObject;
+
+	info.canUseJobType = allItemList[id].canUseJobType;
 	return info;
 }
 

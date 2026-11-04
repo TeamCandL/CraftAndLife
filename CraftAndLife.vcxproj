@@ -552,6 +552,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\TitleScene\LobbyTeamName.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TeamSelect.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TeamSelectStartGuide.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitleBGM.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleLogo.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleLogoStartGuide.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleNetworkController.cpp" />
@@ -913,6 +914,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TitleScene\LobbyTeamName.h" />
     <ClInclude Include="Source\Game\TitleScene\TeamSelect.h" />
     <ClInclude Include="Source\Game\TitleScene\TeamSelectStartGuide.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitleBGM.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleLogo.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleLogoStartGuide.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleNetworkController.h" />

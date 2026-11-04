@@ -56,13 +56,13 @@ struct HotBarData
 	Resource<Texture> slotSelectedTexture{ "Image/UI/slot_selected.png" };
 
 	// パネルのトランスフォーム
-	Component<UITransform> transform{ Vec2{ 1528, 908 }, Vec2{ 350, 128 } };
+	Component<UITransform> transform{ Vec2{ 1417, 908 }, Vec2{ 461, 128 } };
 	// パネルの画像
 	Component<UIImage> image{ panelTexture };
 
 	// スロット数
-	static constexpr int SLOT_COUNT{ 3 };
-	std::array<GameObject, 3> slots{};
+	static constexpr int SLOT_COUNT{ 4 };
+	std::array<GameObject, 4> slots{};
 	// 現在選択されているスロットのインデックス
 	int currentSlotIdx{ 0 };
 
