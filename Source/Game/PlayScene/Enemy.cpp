@@ -114,7 +114,7 @@ void Enemy::Move(
 	transform.rotation = Quaternion::FromEuler(angles);
 
 	Vec3 move{ transform.Forward() * speed };
-	transform.position += move;
+	transform.position += move * Get<DeltaTime>();
 
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 }
