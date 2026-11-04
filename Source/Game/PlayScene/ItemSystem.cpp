@@ -240,7 +240,8 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
-	                        0 });
+	                        0,
+	                        PlayerJobType_Archer });
 	craft.clear();
 	craft.push_back({ 8, 3 });
 	craft.push_back({ 9, 10 });

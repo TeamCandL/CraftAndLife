@@ -97,7 +97,7 @@ void Player::Update()
 	}
 	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		SpawnItem(7);
+		SpawnItem(11);
 	}
 
 	// 近くのアイテムを拾う
@@ -483,9 +483,9 @@ void Player::TryAddItem(
 
 	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
 	bool filterAddItemOnJob{ false };
-	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
-	bool canAddItem   = JobCanCraftOrAddItem(itemType, jobType);
-	if (canAddItem == false && filterAddItemOnJob)
+	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
+	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);
+	if (playerCanUse == false && filterAddItemOnJob)
 	{
 		SpawnItem(_id);
 		return;
