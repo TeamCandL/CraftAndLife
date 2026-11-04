@@ -38,8 +38,25 @@ struct DayControllerData
 	};
 
 	float boost{ 1.0f };
+
+	// 朝・夜の切り替わりSE
+	Resource<Audio> morningSE{ "BGM_SE/The sound of morning arriving.wav" };
+	Resource<Audio> nightfallSE{ "BGM_SE/The sound of nightfall.mp3" };
+
+	// 現在の時間帯
+	bool isNight{ false };
+
 	float currentTimeSec{};
 	GameObject objSky{};
+
+	// 昼の環境音
+	Resource<Audio> daytimeAmbientSE{ "BGM_SE/Daytime ambient sounds.mp3" };
+
+	// 夜の環境音
+	Resource<Audio> nighttimeAmbientSE{ "BGM_SE/Nighttime ambient sounds.mp3" };
+
+	// 環境音の初期化が済んでいるか
+	bool isAmbientInitialized{ false };
 };
 
 struct DayController : ObjectBase<DayControllerData>

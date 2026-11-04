@@ -24,9 +24,13 @@
 #include "UI/DeathUI.h"
 #include "UI/CraftUI.h"
 #include "HarvestableController.h"
+#include <Game/Manager/AudioManager.h>
 
 void PlayScene::Start()
 {
+	// タイトルBGMを停止
+	ManagerRegistry::Ref<AudioManager>().SetBGMStop();
+
 	Instantiate<GameManager>();
 	GameObject objSky = Instantiate<Sky>();
 
@@ -45,6 +49,10 @@ void PlayScene::Start()
 
 	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 
+	// debaug用に敵を生成する
+	// GameObject objEnemyController = Instantiate<EnemyController>();
+	// GameObject objSampleEnemy     = Instantiate<Enemy>(objEnemyController, EnemyType::Dragon);
+
 	Instantiate<Reticle>();
 
 	// ミニマップを生成してプレイヤーを渡す
@@ -56,9 +64,5 @@ void PlayScene::Start()
 	    objHarvestableController);
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController);
-
-	// TODO: あとで消す
-	Instantiate<CraftUI>(objPlayer);
-
 	// Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f);
 }

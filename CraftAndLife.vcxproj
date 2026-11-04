@@ -517,8 +517,8 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalUIInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.cpp" />
     <ClCompile Include="Source\Game\System\AnimationSystem.cpp" />
-    <ClCompile Include="Source\Game\System\AudioSystem.cpp" />
-    <ClCompile Include="Source\Game\System\AudioSystem\AudioPlayer.cpp" />
+    <ClCompile Include="Source\Game\Manager\AudioManager.cpp" />
+    <ClCompile Include="Source\Game\Manager\AudioManager\AudioPlayer.cpp" />
     <ClCompile Include="Source\Game\System\CameraSystem.cpp" />
     <ClCompile Include="Source\Game\System\CursorSystem.cpp" />
     <ClCompile Include="Source\Game\System\DebugSystems\ImGuiRenderingSystem.cpp" />
@@ -552,6 +552,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\TitleScene\LobbyTeamName.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TeamSelect.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TeamSelectStartGuide.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitleBGM.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleLogo.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleLogoStartGuide.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleNetworkController.cpp" />
@@ -870,8 +871,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\System\AbstructInputSystem\IUIInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\NormalPlayerInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\NormalUIInput.h" />
-    <ClInclude Include="Source\Game\System\AudioSystem.h" />
-    <ClInclude Include="Source\Game\System\AudioSystem\AudioPlayer.h" />
+    <ClInclude Include="Source\Game\Manager\AudioManager.h" />
+    <ClInclude Include="Source\Game\Manager\AudioManager\AudioPlayer.h" />
     <ClInclude Include="Source\Game\System\CameraSystem.h" />
     <ClInclude Include="Source\Game\System\CameraSystem\CameraMaterialProperty.h" />
     <ClInclude Include="Source\Game\System\CursorSystem.h" />
@@ -913,6 +914,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TitleScene\LobbyTeamName.h" />
     <ClInclude Include="Source\Game\TitleScene\TeamSelect.h" />
     <ClInclude Include="Source\Game\TitleScene\TeamSelectStartGuide.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitleBGM.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleLogo.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleLogoStartGuide.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleNetworkController.h" />

@@ -1,7 +1,6 @@
 
 #include "GameManager.h"
 #include "../System/InputSystem.h"
-#include "../System/AudioSystem.h"
 #include "../System/DiscordSystem.h"
 #include "../System/TranslationSystem.h"
 #include "../System/CameraSystem.h"
@@ -33,7 +32,6 @@ void GameManager::Start()
 	GetScene().Instantiate<PadInputSystem>();
 	GetScene().Instantiate<AbstructInputSystem>();
 	GetScene().Instantiate<CursorSystem>();
-	GetScene().Instantiate<AudioSystem>();
 	// GetScene().Instantiate<DiscordSystem>();
 	GetScene().Instantiate<AnimationSystem>();
 	GetScene().Instantiate<TranslationSystem>();

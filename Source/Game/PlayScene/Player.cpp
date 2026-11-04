@@ -18,6 +18,7 @@
 #include "Player/PlayerJobControllerFighter.h"
 #include "Player/PlayerJobControllerArcher.h"
 #include "StateRegistry.h"
+#include <Game/Manager/AudioManager.h>
 
 void Player::Start()
 {
@@ -50,7 +51,7 @@ void Player::Start()
 		    VCU_LOG("change selected item");
 	    });
 
-	SetJob(PlayerJobType_Healer);
+	SetJob(PlayerJobType_Archer);
 }
 
 void Player::Update()
@@ -65,7 +66,59 @@ void Player::Update()
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
+	ImGui::Separator();
+	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+	Vec3 angles = transform.rotation.ToEuler();
+	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+	transform.rotation = Quaternion::FromEuler(angles);
+
+	if (ImGui::Button("出力"))
+	{
+		fs::path filePath{ "./animDumpForPlayer.txt" };
+		std::ofstream ofs{ filePath, std::ios::app };
+		if (ofs)
+		{
+			ofs << std::format(
+			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:f}f, {:f}f, {:f}f }}, Quaternion::FromEuler(Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }}), Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }} }}",
+			           transform.position.x,
+			           transform.position.y,
+			           transform.position.z,
+			           angles.x,
+			           angles.y,
+			           angles.z,
+			           transform.scale.x,
+			           transform.scale.y,
+			           transform.scale.z)
+			    << std::endl;
+		}
+		ofs.close();
+	}
+
+	if (ImGui::Button(isAnimPreviewingDebug ? "アニメーション設定終了" : "アニメーション設定する"))
+	{
+		isAnimPreviewingDebug = !isAnimPreviewingDebug;
+
+		if (isAnimPreviewingDebug)
+		{
+			transformAnimator.playAnimation = "";
+		}
+		else
+		{
+			transformAnimator.playAnimation = "idle";
+		}
+	}
+
 	ImGui::End();
+
+	if (isAnimPreviewingDebug)
+	{
+		transformAnimator.playAnimation = "";
+		return;  // アニメーションプレビューデバッグ中なら無視
+	}
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
 	{
@@ -93,11 +146,11 @@ void Player::Update()
 	// お試しで出してるエンティティ
 	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 	{
-		SpawnItem(8);
+		SpawnItem(9);
 	}
 	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		SpawnItem(7);
+		SpawnItem(8);
 	}
 
 	// 近くのアイテムを拾う
@@ -120,6 +173,13 @@ void Player::Update()
 	     hpTestTimer = 0.0f;
 	 }
 	*/
+
+	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
+	{
+		Damaged(10);
+	}
+
+	Get<IPlayerJobController>(objJobController).Update(Data());
 }
 
 void Player::Draw()
@@ -174,6 +234,10 @@ void Player::Damaged(
 void Player::SetHelthState(
     const HelthState _state)
 {
+	if (helthState == _state)
+	{
+		return;
+	}
 	switch (_state)
 	{
 	case HelthState_Live:
@@ -249,10 +313,10 @@ void Player::MoveBody()
 
 	// 地形に沿った移動
 	Vec3 nextPosition = transform.position;
-	nextPosition += moveDirection * moveSpeed;
+	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
 
-	animSpeed = (moveDirection * moveSpeed).Length() / 0.1f;
-	if (animSpeed > 0.0f)
+	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
+	if (animSpeed > 0.01f)
 	{
 		animIndex = PlayerAnimType_Walk;
 
@@ -266,6 +330,29 @@ void Player::MoveBody()
 	{
 		animIndex = PlayerAnimType_Idle;
 		animSpeed = 1.0f;
+	}
+
+	// --------------------------------
+	// 足音SE
+	// --------------------------------
+	if (animIndex == PlayerAnimType_Walk && !isJumping)
+	{
+		footstepTimer += Get<DeltaTime>();
+
+		if (footstepTimer >= FOOTSTEP_INTERVAL)
+		{
+			Get<AudioManager>().PlayFootstep(footstepSE);
+
+			footstepTimer = 0.0f;
+		}
+	}
+	else
+	{
+		// 足音を停止
+		Get<AudioManager>().StopFootstep();
+
+		// タイマーをリセット
+		footstepTimer = 0.0f;
 	}
 
 	// TerrainSystemを取得
@@ -478,9 +565,9 @@ void Player::TryAddItem(
 
 	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
 	bool filterAddItemOnJob{ false };
-	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
-	bool canAddItem   = JobCanCraftOrAddItem(itemType, jobType);
-	if (canAddItem == false && filterAddItemOnJob)
+	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
+	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);
+	if (playerCanUse == false && filterAddItemOnJob)
 	{
 		SpawnItem(_id);
 		return;

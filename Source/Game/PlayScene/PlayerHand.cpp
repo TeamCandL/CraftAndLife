@@ -176,6 +176,7 @@ void PlayerHand::SetItem(
 	switch (ITEM_INFO._type)
 	{
 	case ItemType::Weapons:
+	case ItemType::Tools:
 		objItemAction = GetScene().Instantiate<ItemActionWeapons>();
 		break;
 	case ItemType::WeaponBow:

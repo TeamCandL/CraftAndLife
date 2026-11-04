@@ -48,9 +48,9 @@ struct EnemyAttackCollData
 	// パラメータ//-----------------------------//
 	//-----------------------------------------//
 	int32_t damage{};
-	float lifeTime{};  ///< 寿命
-	Vec3 forward{};    ///< 進行方向
-	float speed{};     ///< 進行速度
+	float lifeTime{};     ///< 寿命
+	Vec3 forward{};       ///< 進行方向
+	float speed{ 0.0f };  ///< 進行速度
 
 	const Vec3 OBB_OFFSET{ 0.0f, 0.5f, 0.0f };  ///< OBBのオフセット(位置)
 	const float OBB_SCALE{ 1.0f };              ///< OBBのスケール

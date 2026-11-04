@@ -48,8 +48,8 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 9, 3 });
-	craft.push_back({ 11, 2 });
+	craft.push_back({ 8, 3 });
+	craft.push_back({ 10, 2 });
 	allItemList.push_back({ 3,
 	                        ItemType::WeaponBow,
 	                        "弓",
@@ -65,8 +65,8 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Archer });
 	craft.clear();
-	craft.push_back({ 8, 3 });
-	craft.push_back({ 9, 2 });
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 2 });
 	allItemList.push_back({ 4,
 	                        ItemType::Weapons,
 	                        "剣",
@@ -82,13 +82,13 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 8, 5 });
-	craft.push_back({ 9, 3 });
+	craft.push_back({ 7, 5 });
+	craft.push_back({ 8, 3 });
 	allItemList.push_back({ 5,
-	                        ItemType::Weapons,
+	                        ItemType::Tools,
 	                        "ハンマー",
 	                        "Image/Item/IconHammer.png",
-	                        "Model/HandWeapon/Hammer.fbx",
+	                        "Model/HandWeapon/HandHammer.fbx",
 
 	                        true,
 	                        craft,
@@ -99,9 +99,152 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 8, 7 });
-	craft.push_back({ 9, 4 });
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 3 });
 	allItemList.push_back({ 6,
+	                        ItemType::Tools,
+	                        "斧",
+	                        "Image/Item/IconAxe.png",
+	                        "Model/HandWeapon/HandAxe.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.8f,
+	                        0,
+	                        10 });
+	allItemList.push_back({ 7,
+	                        ItemType::Materials,
+	                        "石",
+	                        "Image/Item/IconRock.png",
+	                        "Model/HandMaterial/HandRock.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 8,
+	                        ItemType::Materials,
+	                        "木材",
+	                        "Image/Item/IconWood.png",
+	                        "Model/HandMaterial/HandWood.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 9,
+	                        ItemType::Materials,
+	                        "骨",
+	                        "Image/Item/IconBone.png",
+	                        "Model/HandMaterial/HandBone.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 10,
+	                        ItemType::Materials,
+	                        "蜘蛛の糸",
+	                        "Image/Item/IconString.png",
+	                        "Model/HandMaterial/HandString.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 11,
+	                        ItemType::Materials,
+	                        "生肉",
+	                        "Image/Item/IconMeat.png",
+	                        "Model/HandFood/HandMeat.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 12,
+	                        ItemType::Materials,
+	                        "爪",
+	                        "Image/Item/IconClaw.png",
+	                        "Model/HandMaterial/DragonClaw.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 13,
+	                        ItemType::Consumables,
+	                        "焼肉",
+	                        "Image/InvalidImage.png",
+	                        "Model/Harvestable/Rock.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 14,
+	                        ItemType::Consumables,
+	                        "キノコ",
+	                        "Image/Item/IconMushroom.png",
+	                        "Model/HandFood/HandMushroom.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
+	craft.clear();
+	craft.push_back({ 7, 1 });
+	craft.push_back({ 8, 2 });
+	allItemList.push_back({ 15,
+	                        ItemType::Arrow,
+	                        "矢",
+	                        "Image/Item/IconArrow.png",
+	                        "Model/HandWeapon/Arrow.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0,
+	                        PlayerJobType_Archer });
+	craft.clear();
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 10 });
+	allItemList.push_back({ 16,
+	                        ItemType::Shield,
+	                        "盾",
+	                        "Image/Item/IconShield.png",
+	                        "Model/HandWeapon/HandShield.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0,
+	                        PlayerJobType_Tank });
+	craft.clear();
+	craft.push_back({ 7, 7 });
+	craft.push_back({ 8, 4 });
+	allItemList.push_back({ 17,
 	                        ItemType::Weapons,
 	                        "大剣",
 	                        "Image/Item/IconSwordBig.png",
@@ -116,131 +259,22 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Fighter });
 	craft.clear();
-	craft.push_back({ 8, 3 });
-	craft.push_back({ 9, 3 });
-	allItemList.push_back({ 7,
-	                        ItemType::Weapons,
-	                        "斧",
-	                        "Image/Item/IconAxe.png",
-	                        "Model/HandWeapon/HandAxe.fbx",
-
-	                        true,
-	                        craft,
-
-	                        0.8f,
-	                        0,
-	                        10 });
-	allItemList.push_back({ 8,
-	                        ItemType::Materials,
-	                        "石",
-	                        "Image/Item/IconRock.png",
+	craft.push_back({ 7, 7 });
+	craft.push_back({ 8, 4 });
+	allItemList.push_back({ 18,
+	                        ItemType::ItemTypeMax,
+	                        "医療キット",
+	                        "Image/InvalidImage.png",
 	                        "Model/HandMaterial/HandRock.fbx",
 
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
-	allItemList.push_back({ 9,
-	                        ItemType::Materials,
-	                        "木材",
-	                        "Image/Item/IconWood.png",
-	                        "Model/HandMaterial/HandWood.fbx",
-
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
-	allItemList.push_back({ 10,
-	                        ItemType::Materials,
-	                        "骨",
-	                        "Image/Item/IconBone.png",
-	                        "Model/HandMaterial/HandBone.fbx",
-
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
-	allItemList.push_back({ 11,
-	                        ItemType::Materials,
-	                        "蜘蛛の糸",
-	                        "Image/Item/IconString.png",
-	                        "Model/HandMaterial/HandString.fbx",
-
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
-	allItemList.push_back({ 12,
-	                        ItemType::Materials,
-	                        "生肉",
-	                        "Image/Item/IconMeat.png",
-	                        "Model/HandFood/HandMeat.fbx",
-
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
-	allItemList.push_back({ 13,
-	                        ItemType::Materials,
-	                        "爪",
-	                        "Image/Item/IconClaw.png",
-	                        "Model/HandMaterial/DragonClaw.fbx",
-
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
-	allItemList.push_back({ 14,
-	                        ItemType::Consumables,
-	                        "焼肉",
-	                        "Image/InvalidImage.png",
-	                        "Model/Harvestable/Rock.fbx",
-
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
-	allItemList.push_back({ 15,
-	                        ItemType::Consumables,
-	                        "キノコ",
-	                        "Image/Item/IconMushroom.png",
-	                        "Model/HandFood/HandMushroom.fbx",
-
-	                        false,
-	                        craft,
-
-	                        0.0f,
-	                        0,
-	                        0 });
-	craft.clear();
-	craft.push_back({ 8, 1 });
-	craft.push_back({ 9, 2 });
-	allItemList.push_back({ 16,
-	                        ItemType::Arrow,
-	                        "矢",
-	                        "Image/Item/IconArrow.png",
-	                        "Model/HandWeapon/Arrow.fbx",
-
 	                        true,
 	                        craft,
 
-	                        0.0f,
+	                        5.0f,
 	                        0,
-	                        0 });
+	                        0,
+
+	                        PlayerJobType_Healer });
 }
 
 ItemInfo ItemSystem::GetInfo(

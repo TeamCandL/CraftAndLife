@@ -95,10 +95,10 @@ void NetworkActorServer::CreateEnemies()
 	// CreateEnemy(EnemyType::Skeleton);
 	CreateEnemy(EnemyType::Skeleton, Vec3{ 1.0f, 7.0f, 2.0f });
 	// CreateEnemy(EnemyType::Spider, Vec3{ -1.0f, 7.0f, 2.0f });
-	// CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
 	// CreateEnemy(EnemyType::BossSkeleton, Vec3{ 1.0f, 5.0f, 2.0f });
 	// CreateEnemy(EnemyType::Bat, Vec3{ 1.0f, 7.0f, 5.0f });
-	CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
+	// CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
 
 	//  生成済みにする
 	Data().isInitialized = true;

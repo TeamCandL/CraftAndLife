@@ -3,6 +3,8 @@
 
 struct PlayerJobControllerHealerData
 {
+	float downLookAngleThresholdRad{ DirectX::XM_PI / 180.0f *
+		                             10.0f };  ///< ダウンしたプレイヤーを見ていると判定する角度(ラジアン)
 };
 
 /// @brief ヒーラー固有の処理
