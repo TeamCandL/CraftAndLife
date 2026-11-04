@@ -207,8 +207,9 @@ struct EnemyData
 	Component<Transform> transform{ Vec3{},
 		                            Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, 0.0f, 0.0f }) };  ///< 座標系
 	Component<RigidBody> rigidBody{};                                                                  ///< 剛体
-	Component<StaticOBB> obb{};       ///< OBB当たり判定
-	Component<Name> name{ "Enemy" };  ///< 名前
+	Component<StaticOBB> obb{};            ///< OBB当たり判定
+	Component<OBBRenderer> obbRenderer{};  ///< OBB描画
+	Component<Name> name{ "Enemy" };       ///< 名前
 
 	float angleX{};
 	float angleY{};

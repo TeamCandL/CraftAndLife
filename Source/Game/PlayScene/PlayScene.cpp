@@ -45,6 +45,10 @@ void PlayScene::Start()
 
 	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 
+	// debaug用に敵を生成する
+	// GameObject objEnemyController = Instantiate<EnemyController>();
+	// GameObject objSampleEnemy     = Instantiate<Enemy>(objEnemyController, EnemyType::Dragon);
+
 	Instantiate<Reticle>();
 
 	// ミニマップを生成してプレイヤーを渡す

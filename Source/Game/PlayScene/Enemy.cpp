@@ -21,6 +21,7 @@ void Enemy::Start()
 	nowAttackCoolTime  = ATTACK_COOL_TIME;
 	nowDamagedCoolTime = DAMAGED_COOL_TIME;
 
+	obb.offset    = { 0.0f, 0.5f, 0.25f };
 	obb.isTrigger = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
 }
 
@@ -42,6 +43,10 @@ void Enemy::Update()
 	// 徘徊チェックポイントとの距離(差分)
 	if (!followed)
 	{
+		if (objWanderingCheckPoint.IsEmpty())
+		{
+			objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(transform.position);
+		}
 		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
 
@@ -66,14 +71,10 @@ void Enemy::Update()
 		if (!objWanderingCheckPoint.IsEmpty())
 		{
 			// チェックポイントに到達したら新しいチェックポイントを生成する
-			if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3()).Length() < 1.0f)
+			if ((transform.position - Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3()).Length() < speed)
 			{
 				SetWanderingCheckPoint(transform.position);
 			}
-		}
-		else
-		{
-			SetWanderingCheckPoint(transform.position);
 		}
 	}
 
@@ -85,7 +86,17 @@ void Enemy::Update()
 
 	ImGui::End();
 
-	if (!alive)
+	if (alive)
+	{
+		// モデルの向きを正面にする
+		Vec3 angles        = transform.rotation.ToEuler();
+		angles.x           = -DirectX::XM_PIDIV2;
+		angles.z           = 0.0f;
+		transform.rotation = Quaternion::FromEuler(angles);
+		angles             = transform.rotation.ToEuler();
+		angles             = transform.rotation.ToEuler();
+	}
+	else
 	{
 		// 敵IDを使って死亡通知を送信キューに登録
 		// Registryの登録を解除
@@ -107,7 +118,7 @@ void Enemy::Move(
 	Vec3 ePos{ ex, 0.0f, ez };
 	float length = (tPos - ePos).Length();
 
-	if (length > speed)
+	if ((length > speed && followed) || !followed)
 	{
 		Vec3 crossed = Math::GetCrossProduct(Fwd, tPos - ePos);
 
@@ -115,6 +126,7 @@ void Enemy::Move(
 
 		Vec3 angles        = transform.rotation.ToEuler();
 		angles.y           = torque;
+		angles.z           = 0.0f;
 		transform.rotation = Quaternion::FromEuler(angles);
 
 		Vec3 move{ transform.Forward() * speed };
@@ -143,7 +155,7 @@ void Enemy::Sensor()
 			float visibilityDot = std::cosf(visibilityAngle);
 			if (dot >= visibilityDot)
 			{
-				if (objPlayer._attentionLevel > targetAttentionLevel)
+				if (objPlayer._attentionLevel >= targetAttentionLevel)
 				{
 					if (targetDist < 0.0f)
 					{
@@ -174,11 +186,11 @@ void Enemy::Sensor()
 			GetScene().Destroy(objWanderingCheckPoint);
 		}
 		targetPos = targetPos_;
-		followed  = true;
+		followed  = false;
 	}
 	else
 	{
-		// followed = false;
+		followed = false;
 	}
 }
 
