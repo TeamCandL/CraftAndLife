@@ -27,10 +27,18 @@ struct AudioSystem : SystemObjectBase<AudioSystem>
 	/// @brief 廃棄処理
 	void OnDestroy() override;
 
-private:
+	// 足音を再生する
+	void PlayFootstep(Resource<ResourceType::Audio>& _resource);
+
+	// 足音を停止する
+	void StopFootstep();
+
+  private:
 	ComPtr<IXAudio2> pXAudio2{};
 	IXAudio2MasteringVoice* pMasterVoice{ nullptr };
 	IXAudio2SourceVoice* pBGMSourceVoice{ nullptr };  // BGM用の音声ソース
 
-	std::vector<AudioPlayer> players{}; // 再生中の音声プレイヤー
+	IXAudio2SourceVoice* pFootstepSourceVoice{ nullptr };
+
+	std::vector<AudioPlayer> players{};  // 再生中の音声プレイヤー
 };

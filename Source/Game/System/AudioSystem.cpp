@@ -8,7 +8,8 @@ void AudioSystem::Start()
 	pXAudio2->CreateMasteringVoice(&pMasterVoice);
 }
 
-void AudioSystem::Play(Resource<ResourceType::Audio>& _resource)
+void AudioSystem::Play(
+    Resource<ResourceType::Audio>& _resource)
 {
 	AudioResource& audio = _resource.Get();
 
@@ -18,23 +19,22 @@ void AudioSystem::Play(Resource<ResourceType::Audio>& _resource)
 	}
 
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
-	HRESULT hResult = pXAudio2->CreateSourceVoice(&pSourceVoice, &audio.waveFormatEx.Format);
+	HRESULT hResult                   = pXAudio2->CreateSourceVoice(&pSourceVoice, &audio.waveFormatEx.Format);
 	if (FAILED(hResult) || pSourceVoice == nullptr)
 	{
-		return; // 失敗
+		return;  // 失敗
 	}
 
-	const XAUDIO2_BUFFER BUFFER
-	{
-		.Flags = XAUDIO2_END_OF_STREAM,
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
 		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
 		.pAudioData = audio.buffer.data(),
-		.PlayBegin = 0,
+		.PlayBegin  = 0,
 		.PlayLength = 0,
-		.LoopBegin = 0,
+		.LoopBegin  = 0,
 		.LoopLength = 0,
-		.LoopCount = 0,
-		.pContext = 0,
+		.LoopCount  = 0,
+		.pContext   = 0,
 	};
 
 	hResult = pSourceVoice->SubmitSourceBuffer(&BUFFER);
@@ -54,6 +54,68 @@ void AudioSystem::Play(Resource<ResourceType::Audio>& _resource)
 	// AudioPlayer を作成して管理リストに追加
 	players.emplace_back(pSourceVoice, _resource);
 	players.back().Play(_resource);
+}
+
+// 足音を再生
+void AudioSystem::PlayFootstep(
+    Resource<ResourceType::Audio>& _resource)
+{
+	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// 前回の足音が残っていたら破棄
+	StopFootstep();
+
+	// 音声ソースを作成
+	HRESULT hResult = pXAudio2->CreateSourceVoice(&pFootstepSourceVoice, &audio.waveFormatEx.Format);
+
+	if (FAILED(hResult) || pFootstepSourceVoice == nullptr)
+	{
+		return;
+	}
+
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
+		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
+		.pAudioData = audio.buffer.data(),
+		.PlayBegin  = 0,
+		.PlayLength = 0,
+		.LoopBegin  = 0,
+		.LoopLength = 0,
+		.LoopCount  = 0,
+		.pContext   = 0,
+	};
+
+	hResult = pFootstepSourceVoice->SubmitSourceBuffer(&BUFFER);
+
+	if (FAILED(hResult))
+	{
+		StopFootstep();
+		return;
+	}
+
+	hResult = pFootstepSourceVoice->Start();
+
+	if (FAILED(hResult))
+	{
+		StopFootstep();
+		return;
+	}
+}
+
+// 足音を停止
+void AudioSystem::StopFootstep()
+{
+	if (pFootstepSourceVoice)
+	{
+		pFootstepSourceVoice->Stop();
+		pFootstepSourceVoice->DestroyVoice();
+		pFootstepSourceVoice = nullptr;
+	}
 }
 
 void AudioSystem::LateUpdate()
@@ -85,11 +147,10 @@ void AudioSystem::LateUpdate()
 	}
 }
 
-void AudioSystem::Update()
-{
-}
+void AudioSystem::Update() {}
 
-void AudioSystem::SetBGM(Resource<ResourceType::Audio>& _resource)
+void AudioSystem::SetBGM(
+    Resource<ResourceType::Audio>& _resource)
 {
 	AudioResource& audio = _resource.Get();
 
@@ -109,17 +170,16 @@ void AudioSystem::SetBGM(Resource<ResourceType::Audio>& _resource)
 		return;  // 失敗
 	}
 
-	const XAUDIO2_BUFFER BUFFER
-	{
-		.Flags = XAUDIO2_END_OF_STREAM,
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
 		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
 		.pAudioData = audio.buffer.data(),
-		.PlayBegin = 0,
+		.PlayBegin  = 0,
 		.PlayLength = 0,
-		.LoopBegin = 0,
+		.LoopBegin  = 0,
 		.LoopLength = 0,
-		.LoopCount = XAUDIO2_LOOP_INFINITE,
-		.pContext = 0,
+		.LoopCount  = XAUDIO2_LOOP_INFINITE,
+		.pContext   = 0,
 	};
 
 	hResult = pBGMSourceVoice->SubmitSourceBuffer(&BUFFER);
@@ -163,6 +223,10 @@ void AudioSystem::SetBGMStart()
 
 void AudioSystem::OnDestroy()
 {
+
+	// 足音を停止
+	StopFootstep();
+
 	if (pBGMSourceVoice)
 	{
 		pBGMSourceVoice->Stop();

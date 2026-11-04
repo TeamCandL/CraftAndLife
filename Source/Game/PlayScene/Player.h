@@ -79,6 +79,15 @@ struct PlayerData
 	const float JUMP_CUT_RATE{ 0.5f };  ///< ボタンを離したときの速度倍率
 	bool isJumping{ false };            ///< ジャンプ中かどうか
 
+	// 足音SE
+	Resource<Audio> footstepSE{ "BGM_SE/footsteps.mp3" };
+
+	// 足音を鳴らす間隔
+	float footstepTimer{ 0.0f };
+
+	// 足音の間隔（秒）
+	const float FOOTSTEP_INTERVAL{ 0.4f };
+
 	// HP減少テスト用
 	float hpTestTimer{ 0.0f };
 
