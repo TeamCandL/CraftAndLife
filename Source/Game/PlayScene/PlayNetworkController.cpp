@@ -14,6 +14,7 @@
 #include <Game/Network/Protocols/UpdateEntityRemove.h>
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
+#include <Game/Network/Protocols/BreakHarvestable.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -23,6 +24,7 @@
 #include <Game/PlayScene/EntitySystem.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
+#include <Game/PlayScene/HarvestableController.h>
 
 using enum NetworkSessionManager::State;
 
@@ -41,6 +43,13 @@ void PlayNetworkController::Update()
 	}
 
 	NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
+
+	NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
+
+	EntitySystem& entitySystem = Get<EntitySystem>();
+
+	// ホスト情報を更新
+	entitySystem.SetHost(actorServer.IsHost());
 
 	MessageConverter converter{};
 
@@ -185,6 +194,18 @@ void PlayNetworkController::Update()
 				        Vec3{ message.positionX, message.positionY, message.positionZ },
 				        Vec3{ message.velocityX, message.velocityY, message.velocityZ });
 
+				    Vec3 pos  = { message.positionX, message.positionY, message.positionZ };
+				    Vec3 velo = { message.velocityX, message.velocityY, message.velocityZ };
+				    VCU_LOG(
+				        "Receve UpdateEntitySpawn: ID={}, Pos={},{},{}, velo={},{},{}",
+				        message.entityId,
+				        pos.x,
+				        pos.y,
+				        pos.z,
+				        velo.x,
+				        velo.y,
+				        velo.z);
+
 				    break;
 			    }
 			    case ProtocolType::UpdateEntityRemove:
@@ -203,6 +224,15 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedDayTime dayTimeMessage{};
 				    converter.ToMessage(_event.data, dayTimeMessage);
 				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec);
+
+				    break;
+			    }
+			    case ProtocolType::BreakHarvestable:
+			    {
+				    Protocol::BreakHarvestable breakHarvestableMessage{};
+				    converter.ToMessage(_event.data, breakHarvestableMessage);
+				    Get<HarvestableController>(objHarvestableController)
+				        .BreakAt(breakHarvestableMessage.breakHarvestableId);
 
 				    break;
 			    }
@@ -232,7 +262,6 @@ void PlayNetworkController::Update()
 		networkSessionManager.Send(message);
 
 		// プレイヤーステート送信処理
-		NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
 
 		StateRegistry& playerRegistry = actorServer.GetPlayerStateRegistry();
 		const auto playerChanges      = playerRegistry.GetChanges();
@@ -450,6 +479,13 @@ void PlayNetworkController::Update()
 			entityMessage.velocityZ = spawnData.velocity.z;
 
 			networkSessionManager.Send(entityMessage);
+			VCU_LOG(
+			    "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
+			    entityMessage.entityId,
+			    entityMessage.itemId,
+			    entityMessage.sourceType,
+			    entityMessage.positionX,
+			    entityMessage.velocityX);
 		}
 
 		// 送信後に送信待ちデータをクリア
@@ -495,6 +531,14 @@ void PlayNetworkController::Update()
 		}
 
 		// VCU_LOG("敵更新処理送信: {}", eCount);
+
+		HarvestableController& harvestableController = Get<HarvestableController>(objHarvestableController);
+		if (std::optional<uint32_t> foundId = harvestableController.FindToLocalBokenIds())
+		{
+			Protocol::BreakHarvestable breakHarvestableMessage{};
+			breakHarvestableMessage.breakHarvestableId = *foundId;
+			networkSessionManager.Send(breakHarvestableMessage);
+		}
 	}
 	break;
 	default:

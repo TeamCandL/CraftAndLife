@@ -109,3 +109,8 @@ bool Harvestable::IsHarvested() const
 {
 	return isHarvested;
 }
+
+void Harvestable::Break()
+{
+	DestroyMe();
+}

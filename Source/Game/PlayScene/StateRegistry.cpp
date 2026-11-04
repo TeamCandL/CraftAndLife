@@ -38,12 +38,14 @@ std::vector<StateChange> StateRegistry::GetChanges() const
 
 		if (currentValue == state.previousValue)
 		{
+			VCU_LOG("変更なし: {}", state.name);
 			continue;
 		}
 
+		VCU_LOG("変更検出: {}", state.name);
 		changes.push_back({ state.name, currentValue });
 	}
-
+	VCU_LOG("StateRegistry::GetChanges 終了: 変更数={}", changes.size());
 	return changes;
 }
 

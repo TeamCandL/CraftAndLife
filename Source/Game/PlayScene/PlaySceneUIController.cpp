@@ -41,9 +41,9 @@ void PlaySceneUIController::Start()
 	objName2          = GetScene().Instantiate<Name2>();
 	objName3          = GetScene().Instantiate<Name3>();
 	objName4          = GetScene().Instantiate<Name4>();
-	objBossGaugeR     = GetScene().Instantiate<BossGaugeR>();
-	objBossGauge      = GetScene().Instantiate<BossGauge>();
 	objBossName       = GetScene().Instantiate<BossName>();
-	// objBossHp         = GetScene().Instantiate<BossHp>(objBoss);
-	objCraftUI = GetScene().Instantiate<CraftUI>(objPlayer);
+	objBossHp         = GetScene().Instantiate<BossHp>();
+	objBossGaugeR     = GetScene().Instantiate<BossGaugeR>();
+	objBossGauge      = GetScene().Instantiate<BossGauge>(objBossHp);
+	objCraftUI        = GetScene().Instantiate<CraftUI>(objPlayer);
 }

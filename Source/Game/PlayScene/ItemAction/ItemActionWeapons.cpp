@@ -1,6 +1,10 @@
 #include "pch\pch.h"
 #include "ItemActionWeapons.h"
 #include "../PlayerHand.h"
+#include "../Player.h"
+#include "../MainCamera.h"
+#include <Game/System/RaycastSystem.h>
+#include "../Harvestable.h"
 
 void ItemActionWeapons::Update(
     const ItemId _itemId,
@@ -37,13 +41,13 @@ void ItemActionWeapons::Update(
 	{
 		if (_playerHandData.transformAnimator.onFinished)
 		{
-			VCU_LOG("アクション！");
 			Action(_itemId, _playerData, _playerHandData);
 		}
 
 		if (_playerHandData.transformAnimator.isFinished)
 		{
 			_playerHandData.isActing = false;
+			Action(_itemId, _playerData, _playerHandData);
 		}
 	}
 	else
@@ -62,4 +66,47 @@ void ItemActionWeapons::Action(
     PlayerData& _playerData,
     PlayerHandData& _playerHandData)
 {
+	Vec3 positionFrom = _playerData.transform.position + Vec3::Up() * 1.0f;
+	Vec3 positionTo   = Get<MainCamera>(_playerData.objMainCamera).GetFocusPosition();
+
+	std::vector<RaycastHitInfo> hitsInfo =
+	    Get<RaycastSystem>().RaycastAll(positionFrom, (positionTo - positionFrom).Normalize(), 5.0f);
+
+	for (auto& hitInfo : hitsInfo)
+	{
+		if (hitInfo.pObject)
+		{
+			GameObject objHit = hitInfo.pObject->ToGameObject();
+			Name* pName       = TryGet<Name>(objHit);
+			if (pName)
+			{
+				VCU_LOG("{}に当たった！", pName->content);
+
+				// ハーベスタブルオブジェクトならダメージを与える
+				if (pName->content == "ハーベスタブル")
+				{
+					Harvestable& harvestable = Get<Harvestable>(objHit);
+
+					switch (harvestable.Data().type)
+					{
+					case HarvestableType::Tree:
+					case HarvestableType::TreeHigh:
+						if (_itemId == ITEM_ID_AXE)
+						{
+							harvestable.TakeDamage(1);
+						}
+						break;
+					case HarvestableType::Rock:
+						if (_itemId == ITEM_ID_HAMMER)
+						{
+							harvestable.TakeDamage(1);
+						}
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+	}
 }

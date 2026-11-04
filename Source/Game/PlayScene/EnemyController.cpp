@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "EnemyController.h"
 #include "Enemy.h"
+#include "UI/BossHp.h"
 
 void EnemyController::Start() {}
 
@@ -12,6 +13,11 @@ void EnemyController::AddEnemy(
 	// 敵に固有IDを割り振る
 	Get<Enemy>(_enemy).SetID(nextEnemyId++);
 	allEnemys.push_back(_enemy);
+
+	if (Get<Enemy>(_enemy).Data().isBoss)
+	{
+		Get<BossHp>(objBossHp).SetBoss(_enemy);
+	}
 }
 
 std::vector<Vec3> EnemyController::GetAllEnemyPosition()

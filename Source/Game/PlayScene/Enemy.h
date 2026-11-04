@@ -4,6 +4,12 @@
 #include "EnemyType.h"
 #include "EnemyStatus.h"
 
+struct TargetInfo
+{
+	Vec3 _pos{};
+	int32_t _attentionLevel{ 5 };
+};
+
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
 {
@@ -17,6 +23,7 @@ namespace EnemyParam
 	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.5f, 1.0f, 3.0f };
 	const std::vector<float> RotationAnglePerSec{ 30.0f, 20.0f, 45.0f, 40.0f, 35.0f };
 	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };
+	const std::vector<int32_t> DropItemId{ 10, 10, 11, 12, 13 };
 }  // namespace EnemyParam
 
 struct StateRegistry;
@@ -46,6 +53,7 @@ struct EnemyData
 		visibilityAngle     = EnemyParam::VisibilityAngle[static_cast<int>(EnemyType::Skeleton)];
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[static_cast<int>(EnemyType::Skeleton)];
 		scale               = EnemyParam::Scale[static_cast<int>(EnemyType::Skeleton)];
+		dropItemID          = EnemyParam::DropItemId[static_cast<int>(EnemyType::Skeleton)];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 位置指定生成
@@ -69,6 +77,7 @@ struct EnemyData
 		visibilityAngle     = EnemyParam::VisibilityAngle[static_cast<int>(EnemyType::Skeleton)];
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[static_cast<int>(EnemyType::Skeleton)];
 		scale               = EnemyParam::Scale[static_cast<int>(EnemyType::Skeleton)];
+		dropItemID          = EnemyParam::DropItemId[static_cast<int>(EnemyType::Skeleton)];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 種類指定生成
@@ -94,6 +103,7 @@ struct EnemyData
 		visibilityAngle     = EnemyParam::VisibilityAngle[enemyType_];
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
+		dropItemID          = EnemyParam::DropItemId[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 位置、種類指定生成
@@ -120,6 +130,7 @@ struct EnemyData
 		visibilityAngle     = EnemyParam::VisibilityAngle[enemyType_];
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
+		dropItemID          = EnemyParam::DropItemId[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief
@@ -149,6 +160,7 @@ struct EnemyData
 		visibilityAngle     = EnemyParam::VisibilityAngle[enemyType_];
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
+		dropItemID          = EnemyParam::DropItemId[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 
@@ -241,7 +253,9 @@ struct EnemyData
 	Vec3 targetPos{};                     ///< 追跡地点
 	GameObject objWanderingCheckPoint{};  ///< 徘徊時のチェックポイント
 	float rotationAnglePerSec{};          ///< 回転速度
-	float torque{};
+	float torque{};                       ///< 回転力
+
+	int32_t dropItemID{};  ///< ドロップアイテムのID
 };
 
 /// @brief 敵
@@ -322,6 +336,8 @@ struct Enemy : ObjectBase<EnemyData>
 	{
 		id = id_;
 	};
+
+	void DropItem();
 
 	void RegisterStates(StateRegistry& registry) const;
 };

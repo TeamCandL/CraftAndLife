@@ -27,5 +27,7 @@ enum struct ProtocolType : uint8_t
 	LeaveRoom,            ///< 部屋から離脱
 	FireEnemy,            ///< 敵が攻撃っした
 
+	BreakHarvestable,  ///< ハーベスタブルオブジェクトを破壊
+
 	Idk,
 };
