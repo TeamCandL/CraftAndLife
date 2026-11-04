@@ -1,6 +1,7 @@
 
 #include "pch/pch.h"
 #include "Harvestable.h"
+#include "EntitySystem.h"
 
 /// @brief 初期化
 void Harvestable::Start()
@@ -101,6 +102,7 @@ void Harvestable::TakeDamage(
 	{
 		durability  = 0;
 		isHarvested = true;
+		OnBroken();
 	}
 }
 
@@ -113,4 +115,27 @@ bool Harvestable::IsHarvested() const
 void Harvestable::Break()
 {
 	DestroyMe();
+}
+
+void Harvestable::OnBroken()
+{
+	switch (type)
+	{
+	case HarvestableType::Tree:
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
+		break;
+
+	case HarvestableType::TreeHigh:
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
+		break;
+
+	case HarvestableType::Rock:
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 20.0f);
+		break;
+
+	default:
+		// 未定義の種類は何も落とさない
+		break;
+	}
 }
