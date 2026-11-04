@@ -2,7 +2,7 @@
 #include "DayController.h"
 #include <Game/Common/Sky.h>
 #include <Game/Manager/SessionManager.h>
-#include <Game/System/AudioSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 void DayController::Update()
 {
@@ -51,13 +51,13 @@ void DayController::Update()
 	// 昼から夜に切り替わった
 	if (nowNight && !isNight)
 	{
-		Get<AudioSystem>().Play(nightfallSE);
+		Get<AudioManager>().Play(nightfallSE);
 	}
 
 	// 夜から昼に切り替わった
 	else if (!nowNight && isNight)
 	{
-		Get<AudioSystem>().Play(morningSE);
+		Get<AudioManager>().Play(morningSE);
 	}
 
 	// 現在の時間帯を更新

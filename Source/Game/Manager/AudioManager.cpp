@@ -1,14 +1,12 @@
+#include "AudioManager.h"
 
-#include "AudioSystem.h"
-#include <Base/Manager/DeltaTime.h>
-
-void AudioSystem::Start()
+void AudioManager::Start()
 {
 	XAudio2Create(pXAudio2.GetAddressOf(), 0, XAUDIO2_DEFAULT_PROCESSOR);
 	pXAudio2->CreateMasteringVoice(&pMasterVoice);
 }
 
-void AudioSystem::Play(
+void AudioManager::Play(
     Resource<ResourceType::Audio>& _resource)
 {
 	AudioResource& audio = _resource.Get();
@@ -57,7 +55,7 @@ void AudioSystem::Play(
 }
 
 // 足音を再生
-void AudioSystem::PlayFootstep(
+void AudioManager::PlayFootstep(
     Resource<ResourceType::Audio>& _resource)
 {
 	AudioResource& audio = _resource.Get();
@@ -108,7 +106,7 @@ void AudioSystem::PlayFootstep(
 }
 
 // 足音を停止
-void AudioSystem::StopFootstep()
+void AudioManager::StopFootstep()
 {
 	if (pFootstepSourceVoice)
 	{
@@ -118,7 +116,8 @@ void AudioSystem::StopFootstep()
 	}
 }
 
-void AudioSystem::LateUpdate()
+void AudioManager::LateUpdate(
+    float DeltaTaime)
 {
 	const float delta = Get<DeltaTime>();
 
@@ -147,9 +146,9 @@ void AudioSystem::LateUpdate()
 	}
 }
 
-void AudioSystem::Update() {}
+void AudioManager::Update() {}
 
-void AudioSystem::SetBGM(
+void AudioManager::SetBGM(
     Resource<ResourceType::Audio>& _resource)
 {
 	AudioResource& audio = _resource.Get();
@@ -197,7 +196,7 @@ void AudioSystem::SetBGM(
 	}
 }
 
-void AudioSystem::SetBGMExitLoop()
+void AudioManager::SetBGMExitLoop()
 {
 	if (pBGMSourceVoice)
 	{
@@ -205,7 +204,7 @@ void AudioSystem::SetBGMExitLoop()
 	}
 }
 
-void AudioSystem::SetBGMStop()
+void AudioManager::SetBGMStop()
 {
 	if (pBGMSourceVoice)
 	{
@@ -213,7 +212,7 @@ void AudioSystem::SetBGMStop()
 	}
 }
 
-void AudioSystem::SetBGMStart()
+void AudioManager::SetBGMStart()
 {
 	if (pBGMSourceVoice)
 	{
@@ -221,7 +220,7 @@ void AudioSystem::SetBGMStart()
 	}
 }
 
-void AudioSystem::OnDestroy()
+void AudioManager::OnDestroy()
 {
 
 	// 足音を停止

@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "EnemyAttackColl.h"
 #include "pch\pch.h"
-#include <Game/System/AudioSystem.h>
+#include <Game/Manager/AudioManager.h>
 #include <shigaLibrary/SgRandom.h>
 #include <shigaLibrary/SgMath.h>
 #include <Game/PlayScene/TerrainSystem.h>
@@ -237,7 +237,7 @@ void Enemy::CloseAttack()
 void Enemy::AttackCollider()
 {
 	attacked = true;
-	Get<AudioSystem>().Play(attackSE);
+	Get<AudioManager>().Play(attackSE);
 
 	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
@@ -247,7 +247,7 @@ void Enemy::AttackCollider(
     const Vec3& forward_)
 {
 	attacked = true;
-	Get<AudioSystem>().Play(attackSE);
+	Get<AudioManager>().Play(attackSE);
 
 	GetScene()
 	    .Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 100.0f, forward_, 10.0f);

@@ -37,6 +37,8 @@
 
 #include "ManagerRegistry.h"
 
+#include "Game/Manager/AudioManager.h"
+
 cha::GameLoop::GameLoop(
     const ClientConfig _clientConfig) :
     clientConfig_{ _clientConfig }
@@ -162,6 +164,8 @@ void cha::GameLoop::Run(
 #endif
 
 	IGameLoopCallable& callableSceneManager{ sceneManager };
+
+	AudioManager& audioManager = ManagerRegistry::Add<AudioManager>();
 
 	while (true)
 	{

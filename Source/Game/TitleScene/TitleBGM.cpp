@@ -1,8 +1,8 @@
 #include "pch\pch.h"
 #include "TitleBGM.h"
-#include <Game/System/AudioSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 void TitleBGM::Start()
 {
-	Get<AudioSystem>().SetBGM(Data().titleBGM);
+	Get<AudioManager>().SetBGM(Data().titleBGM);
 }
