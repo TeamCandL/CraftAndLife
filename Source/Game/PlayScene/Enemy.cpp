@@ -17,7 +17,7 @@ void Enemy::Start()
 {
 	Get<EnemyController>(objEnemyController).AddEnemy(ToGameObject());
 
-	SetWanderingCheckPoint(transform.position);
+	// SetWanderingCheckPoint(transform.position);
 	nowAttackCoolTime  = ATTACK_COOL_TIME;
 	nowDamagedCoolTime = DAMAGED_COOL_TIME;
 
@@ -43,16 +43,16 @@ void Enemy::Update()
 	// 徘徊チェックポイントとの距離(差分)
 	if (!followed)
 	{
-		if (objWanderingCheckPoint.IsEmpty())
+		if (!objWanderingCheckPoint.IsEmpty())
 		{
-			objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(transform.position);
+			targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 		}
-		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
+		ImGui::Begin("CheckPoint");
+		ImGui::DragFloat3("position", targetPos.v);
+		ImGui::End();
 	}
 
 	Sensor();
-
-	targetPos.y = Get<TerrainSystem>().GetHeight(targetPos.x, targetPos.z);
 
 	// VCU_LOG("敵の追跡状況：{}", followed);
 
@@ -76,6 +76,10 @@ void Enemy::Update()
 				SetWanderingCheckPoint(transform.position);
 			}
 		}
+		else
+		{
+			SetWanderingCheckPoint(transform.position);
+		}
 	}
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
@@ -94,7 +98,6 @@ void Enemy::Update()
 		angles.z           = 0.0f;
 		transform.rotation = Quaternion::FromEuler(angles);
 		angles             = transform.rotation.ToEuler();
-		angles             = transform.rotation.ToEuler();
 	}
 	else
 	{
@@ -105,6 +108,11 @@ void Enemy::Update()
 	}
 }
 
+/// @brief ターゲットの方向に移動する
+/// @param target_ ターゲットの位置
+/// @param pos_ 自身の位置
+/// @param Fwd 自身の向いている方向
+/// @param spd_ 自身の移動速度
 void Enemy::Move(
     Vec3 target_,
     Vec3 pos_,
@@ -129,7 +137,7 @@ void Enemy::Move(
 		angles.z           = 0.0f;
 		transform.rotation = Quaternion::FromEuler(angles);
 
-		Vec3 move{ transform.Forward() * speed };
+		Vec3 move{ (transform.Down() + transform.Right() * 0.05f) * speed };
 		transform.position += move * Get<DeltaTime>();
 	}
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
@@ -153,7 +161,7 @@ void Enemy::Sensor()
 		{
 			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayer._pos - transform.position));
 			float visibilityDot = std::cosf(visibilityAngle);
-			if (dot >= visibilityDot)
+			if (dot <= visibilityDot)
 			{
 				if (objPlayer._attentionLevel >= targetAttentionLevel)
 				{
@@ -186,7 +194,7 @@ void Enemy::Sensor()
 			GetScene().Destroy(objWanderingCheckPoint);
 		}
 		targetPos = targetPos_;
-		followed  = false;
+		followed  = true;
 	}
 	else
 	{
@@ -282,16 +290,15 @@ void Enemy::Damaged(
 void Enemy::SetWanderingCheckPoint(
     Vec3 position_)
 {
-	if (objWanderingCheckPoint)
-	{
+	if (!objWanderingCheckPoint.IsEmpty())
 		GetScene().Destroy(objWanderingCheckPoint);
-	}
 
 	Vec3 range_{ WAN_REFERENCE - Random::GetRandom(WAN_RANGE), 0.0f, WAN_REFERENCE - Random::GetRandom(WAN_RANGE) };
 
-	position_ += range_;
+	Vec3 position = position_;
+	position      = position + range_;
 
-	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position_);
+	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position);
 	followed               = false;
 }
 

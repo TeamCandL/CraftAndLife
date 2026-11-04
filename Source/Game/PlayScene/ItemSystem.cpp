@@ -210,8 +210,8 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        0 });
 	craft.clear();
-	craft.push_back({ 8, 1 });
-	craft.push_back({ 9, 2 });
+	craft.push_back({ 7, 1 });
+	craft.push_back({ 8, 2 });
 	allItemList.push_back({ 15,
 	                        ItemType::Arrow,
 	                        "矢",
@@ -226,8 +226,8 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        PlayerJobType_Archer });
 	craft.clear();
-	craft.push_back({ 8, 3 });
-	craft.push_back({ 9, 10 });
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 10 });
 	allItemList.push_back({ 16,
 	                        ItemType::Shield,
 	                        "盾",
@@ -258,6 +258,23 @@ ItemSystemData::ItemSystemData()
 	                        10,
 
 	                        PlayerJobType_Fighter });
+	craft.clear();
+	craft.push_back({ 7, 7 });
+	craft.push_back({ 8, 4 });
+	allItemList.push_back({ 18,
+	                        ItemType::ItemTypeMax,
+	                        "医療キット",
+	                        "Image/InvalidImage.png",
+	                        "Model/HandMaterial/HandRock.fbx",
+
+	                        true,
+	                        craft,
+
+	                        5.0f,
+	                        0,
+	                        0,
+
+	                        PlayerJobType_Healer });
 }
 
 ItemInfo ItemSystem::GetInfo(
