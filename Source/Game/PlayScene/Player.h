@@ -32,7 +32,8 @@ struct PlayerData
 	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
 	Component<Transform> transform{};
-	Component<TransformAnimator> animator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
+	Component<TransformAnimator> transformAnimator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
+	bool isAnimPreviewingDebug{};                      ///< アニメーションテスト用ふらぐ
 	Component<RigidBody> rigidBody{};
 	Component<StaticOBB> obb{};
 	Component<OBBRenderer> obbRenderer{};

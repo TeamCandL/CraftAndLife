@@ -50,7 +50,7 @@ void Player::Start()
 		    VCU_LOG("change selected item");
 	    });
 
-	SetJob(PlayerJobType_Healer);
+	SetJob(PlayerJobType_Archer);
 }
 
 void Player::Update()
@@ -65,7 +65,59 @@ void Player::Update()
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
+	ImGui::Separator();
+	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+	Vec3 angles = transform.rotation.ToEuler();
+	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+	transform.rotation = Quaternion::FromEuler(angles);
+
+	if (ImGui::Button("出力"))
+	{
+		fs::path filePath{ "./animDumpForPlayer.txt" };
+		std::ofstream ofs{ filePath, std::ios::app };
+		if (ofs)
+		{
+			ofs << std::format(
+			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:f}f, {:f}f, {:f}f }}, Quaternion::FromEuler(Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }}), Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }} }}",
+			           transform.position.x,
+			           transform.position.y,
+			           transform.position.z,
+			           angles.x,
+			           angles.y,
+			           angles.z,
+			           transform.scale.x,
+			           transform.scale.y,
+			           transform.scale.z)
+			    << std::endl;
+		}
+		ofs.close();
+	}
+
+	if (ImGui::Button(isAnimPreviewingDebug ? "アニメーション設定終了" : "アニメーション設定する"))
+	{
+		isAnimPreviewingDebug = !isAnimPreviewingDebug;
+
+		if (isAnimPreviewingDebug)
+		{
+			transformAnimator.playAnimation = "";
+		}
+		else
+		{
+			transformAnimator.playAnimation = "idle";
+		}
+	}
+
 	ImGui::End();
+
+	if (isAnimPreviewingDebug)
+	{
+		transformAnimator.playAnimation = "";
+		return;  // アニメーションプレビューデバッグ中なら無視
+	}
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
 	{
@@ -125,6 +177,8 @@ void Player::Update()
 	{
 		hp -= 10;
 	}
+
+	Get<IPlayerJobController>(objJobController).Update(Data());
 }
 
 void Player::Draw()

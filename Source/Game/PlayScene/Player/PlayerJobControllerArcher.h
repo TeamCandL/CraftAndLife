@@ -3,6 +3,8 @@
 
 struct PlayerJobControllerArcherData
 {
+	Vec3 dodgeVelocity{};     ///< 回避アクション時の速度
+	float friction{ 0.09f };  ///< 回避アクションの速度減衰
 };
 
 /// @brief アーチャー固有の処理
