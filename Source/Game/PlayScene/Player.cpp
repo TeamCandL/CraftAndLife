@@ -110,6 +110,19 @@ void Player::Update()
 	{
 		isOpenCraftUI = !isOpenCraftUI;
 	}
+
+	// 選択スロットのアイテムを投げ捨てる
+	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && isOpenCraftUI == false)
+	{
+		HotBar& hotbar = Get<HotBar>(objHotbar);
+		if (hotbar.CanRemoveSelectedItem())
+		{
+			ItemId selectedItemId = hotbar.GetSelectedItemId();
+			hotbar.RemoveSelectedItem();
+			SpawnItem(selectedItemId);
+		}
+	}
+
 	/*
 	//テスト用
 	 // HPゲージ動作確認用：1秒ごとに10ダメージ
