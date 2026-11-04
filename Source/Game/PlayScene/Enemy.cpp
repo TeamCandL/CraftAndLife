@@ -249,8 +249,7 @@ void Enemy::AttackCollider(
 	attacked = true;
 	Get<AudioSystem>().Play(attackSE);
 
-	GetScene()
-	    .Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 100.0f, forward_, 10.0f);
+	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f, forward_, 10.0f);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
