@@ -234,6 +234,10 @@ void Player::Damaged(
 void Player::SetHelthState(
     const HelthState _state)
 {
+	if (helthState == _state)
+	{
+		return;
+	}
 	switch (_state)
 	{
 	case HelthState_Live:
