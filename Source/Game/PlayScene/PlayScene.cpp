@@ -24,9 +24,13 @@
 #include "UI/DeathUI.h"
 #include "UI/CraftUI.h"
 #include "HarvestableController.h"
+#include <Game/Manager/AudioManager.h>
 
 void PlayScene::Start()
 {
+	// タイトルBGMを停止
+	ManagerRegistry::Ref<AudioManager>().SetBGMStop();
+
 	Instantiate<GameManager>();
 	GameObject objSky = Instantiate<Sky>();
 
