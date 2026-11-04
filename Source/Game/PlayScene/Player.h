@@ -96,6 +96,7 @@ struct PlayerData
 	{
 		float moveSpeed{ 0.1f };
 		Vec3 moveVelocity{};
+		float maxHpBoost{ 0.0f };
 	} jobStatus;  ///< プレイヤーの役職固有のステータス
 
 	// inline static const float DIE_ANIM_TIME_SEC_MAX{ 21.0f / 60.0f };  ///< 死亡アニメーションの時間
