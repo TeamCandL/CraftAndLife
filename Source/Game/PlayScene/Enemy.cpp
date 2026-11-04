@@ -123,32 +123,38 @@ void Enemy::Sensor()
 {
 	Vec3 targetPos_{ DEFAULT_TARGET_POS };
 	float targetDist{ -1.0f };
-	std::vector<Vec3> playerPositions;
+	int32_t targetAttentionLevel{ 0 };
+	std::vector<TargetInfo> players;
 	Get<SessionManager>().ForeachPlayerStatus(
-	    [&playerPositions](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
+	    [&players](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
 	    {
-		    playerPositions.push_back(_status.position);
+		    players.push_back({ _status.position, _status.attentionLevel });
 	    });
-	for (Vec3 objPlayerPos : playerPositions)
+	for (TargetInfo objPlayer : players)
 	{
-		float playerDist = (transform.position - objPlayerPos).Length();
+		float playerDist = (transform.position - objPlayer._pos).Length();
 		if (playerDist <= visibilityDist)
 		{
-			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayerPos - transform.position));
+			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayer._pos - transform.position));
 			float visibilityDot = std::cosf(visibilityAngle);
 			if (dot >= visibilityDot)
 			{
-				if (targetDist < 0.0f)
+				if (objPlayer._attentionLevel > targetAttentionLevel)
 				{
-					targetPos_ = objPlayerPos;
-					targetDist = playerDist;
-				}
-				else
-				{
-					if (targetDist > playerDist)
+					if (targetDist < 0.0f)
 					{
-						targetPos_ = objPlayerPos;
-						targetDist = playerDist;
+						targetPos_           = objPlayer._pos;
+						targetDist           = playerDist;
+						targetAttentionLevel = objPlayer._attentionLevel;
+					}
+					else
+					{
+						if (targetDist > playerDist)
+						{
+							targetPos_           = objPlayer._pos;
+							targetDist           = playerDist;
+							targetAttentionLevel = objPlayer._attentionLevel;
+						}
 					}
 				}
 			}

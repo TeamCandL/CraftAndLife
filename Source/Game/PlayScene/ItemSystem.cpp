@@ -88,7 +88,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Tools,
 	                        "ハンマー",
 	                        "Image/Item/IconHammer.png",
-	                        "Model/HandWeapon/Hammer.fbx",
+	                        "Model/HandWeapon/HandHammer.fbx",
 
 	                        true,
 	                        craft,

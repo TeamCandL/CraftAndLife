@@ -8,9 +8,10 @@ struct InSessionStatus
 	/// @brief プレイヤーのステータス
 	struct PlayerStatus
 	{
-		Vec3 position{ 0, 10, 0 };  ///< 座標
-		Vec2 rotation{ 0, 0 };      ///< 角度データ
-		bool updatedFlag{ false };  ///< 更新時のフラグ false / true 切り替え用
+		Vec3 position{ 0, 10, 0 };    ///< 座標
+		Vec2 rotation{ 0, 0 };        ///< 角度データ
+		bool updatedFlag{ false };    ///< 更新時のフラグ false / true 切り替え用
+		int32_t attentionLevel{ 5 };  ///< 注目度
 
 		std::unordered_map<std::string, StateValue> states{};
 	};
