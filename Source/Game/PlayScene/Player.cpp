@@ -284,13 +284,17 @@ void Player::MoveBody()
 
 		if (footstepTimer >= FOOTSTEP_INTERVAL)
 		{
-			Get<AudioSystem>().Play(footstepSE);
+			Get<AudioSystem>().PlayFootstep(footstepSE);
 
 			footstepTimer = 0.0f;
 		}
 	}
 	else
 	{
+		// 足音を停止
+		Get<AudioSystem>().StopFootstep();
+
+		// タイマーをリセット
 		footstepTimer = 0.0f;
 	}
 
