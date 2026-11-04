@@ -308,10 +308,10 @@ void Player::MoveBody()
 
 	// 地形に沿った移動
 	Vec3 nextPosition = transform.position;
-	nextPosition += moveDirection * moveSpeed;
+	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
 
-	animSpeed = (moveDirection * moveSpeed).Length() / 0.1f;
-	if (animSpeed > 0.0f)
+	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
+	if (animSpeed > 0.01f)
 	{
 		animIndex = PlayerAnimType_Walk;
 

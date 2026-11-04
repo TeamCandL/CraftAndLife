@@ -23,8 +23,7 @@ void PlayerJobControllerHealer::Update(
 			    return;
 		    }
 
-		    //_status.states[]
-		    bool isDown = false;  /// TODO: 仮でダウンさせている
+		    bool isDown = std::get<bool>(_status.states.at("alive"));
 
 		    if (isDown)
 		    {

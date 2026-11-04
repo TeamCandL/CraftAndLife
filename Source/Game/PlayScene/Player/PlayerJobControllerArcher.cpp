@@ -15,13 +15,18 @@ void PlayerJobControllerArcher::Update(
 
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
 
+	Vec2 dir2D = (bodyMove + Vec2::Down() * 1.0f).Normalize();
+
+	Vec3 dir = DirectX::XMVector3Transform(Vec3{ dir2D.x, 0.0f, dir2D.y }, _data.transform.world);
+
 	if (pPlayerInput->IsSubActionBegin())
 	{
+		_data.jobStatus.moveVelocity = dir * dashForce;
 	}
 
-	_data.transform.position = _data.transform.position + dodgeVelocity * DELTA_TIME;
+	//_data.transform.position = _data.transform.position + _data.jobStatus.moveVelocity * DELTA_TIME;
 
-	dodgeVelocity *= std::pow(friction, DELTA_TIME);
+	_data.jobStatus.moveVelocity *= std::pow(friction, DELTA_TIME);
 }
 
 void PlayerJobControllerArcher::Start(
