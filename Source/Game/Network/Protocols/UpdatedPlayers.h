@@ -15,7 +15,8 @@ namespace Protocol
 
 		/// @brief メンバーをロードする
 		/// @param _registry メンバーを登録するやつ
-		void LoadMembers(MessageRegistry& _registry) override
+		void LoadMembers(
+		    MessageRegistry& _registry) override
 		{
 			_registry.AddMember(playerNames).AddMember(positions).AddMember(rotations).AddMember(flag);
 		}
@@ -37,4 +38,4 @@ namespace Protocol
 
 		int32_t flag{};
 	};
-} // namespace Protocol
+}  // namespace Protocol

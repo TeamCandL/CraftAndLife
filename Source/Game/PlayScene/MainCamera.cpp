@@ -6,16 +6,16 @@
 
 void MainCamera::Start()
 {
-	objUpdater = GetScene().Instantiate<GhostCamera>();
-	position = {0.0f, 0.0f, -10.0f};
+	objUpdater = GetScene().Instantiate<TPSCamera>();
+	position   = { 0.0f, 0.0f, -10.0f };
 }
 
 void MainCamera::Update()
 {
 	RawMouseInputManager& rawMouseInput = Get<cha::RawMouseInputManager>();
-	CursorSystem& cursor = Get<CursorSystem>();
-	InputSystem& input = Get<InputSystem>();
-	CameraSystemData& camera = Get<CameraSystem>().Data();
+	CursorSystem& cursor                = Get<CursorSystem>();
+	InputSystem& input                  = Get<InputSystem>();
+	CameraSystemData& camera            = Get<CameraSystem>().Data();
 
 	ImGui::Begin("DebugCamera");
 
@@ -25,6 +25,10 @@ void MainCamera::Update()
 
 	ImGui::DragFloat("rotationY", &camera.transform.rotation.y);
 
+	if (ImGui::Button("Clear"))
+	{
+		GetScene().Destroy(objUpdater);
+	}
 	if (ImGui::Button("Ghost"))
 	{
 		GetScene().Destroy(objUpdater);
@@ -50,7 +54,7 @@ void MainCamera::Update()
 	if (rawMouseInput.GetMouseDown(MouseCode_Left))
 	{
 		isHideCursor = true;
-		cursor.SetVisible(false); // 非表示に
+		cursor.SetVisible(false);  // 非表示に
 		cursor.ChangeMode(CursorMode_CenterLock);
 	}
 
@@ -62,14 +66,14 @@ void MainCamera::Update()
 	if (input.GetKeyDown(KeyCode::Escape))
 	{
 		isHideCursor = false;
-		cursor.SetVisible(true); // 表示する
+		cursor.SetVisible(true);  // 表示する
 		cursor.ChangeMode(CursorMode_Free);
 		return;
 	}
 
 	// if (cursor.IsVisible())
 	//{
-	//	return; // カーソルが表示されているなら操作しない
+	//	return;  // カーソルが表示されているなら操作しない
 	// }
 
 	if (objUpdater)
@@ -78,23 +82,46 @@ void MainCamera::Update()
 	}
 }
 
-void MainCamera::SetPosition(const Vec3 _worldPosition)
+void MainCamera::SetPosition(
+    const Vec3 _worldPosition)
 {
 	position = _worldPosition;
 
-	CameraSystemData& cameraSystemData = Get<CameraSystem>().Data();
+	CameraSystemData& cameraSystemData  = Get<CameraSystem>().Data();
 	cameraSystemData.transform.position = position;
 }
 
-void MainCamera::ChangeUpdater(const GameObject _objUpdater)
+void MainCamera::ChangeUpdater(
+    const GameObject _objUpdater)
 {
-	VCU_ASSERT(_objUpdater.IsEmpty() && "渡された更新処理オブジェクトが空っぽであった");
-
 	GetScene().Destroy(objUpdater);
 	objUpdater = _objUpdater;
 }
 
-void MainCamera::UpdatePositionFromTarget(const GameObject _objTarget)
+void MainCamera::SetCameraType(
+    const MainCameraType _type)
+{
+	switch (_type)
+	{
+	case MainCameraType_TPS:
+		ChangeUpdater(GetScene().Instantiate<TPSCamera>());
+		break;
+	case MainCameraType_Ghost:
+		ChangeUpdater(GetScene().Instantiate<GhostCamera>());
+		break;
+	default:
+		VCU_ASSERT(false && "不正なカメラの種類だよ");
+		return;
+	}
+}
+
+Vec3 MainCamera::GetFocusPosition()
+{
+	return Get<IMainCameraUpdater>(objUpdater).GetFocusPosition();
+}
+
+void MainCamera::UpdatePositionFromTarget(
+    const GameObject _objTarget)
 {
 	if (!objUpdater.IsEmpty())
 	{

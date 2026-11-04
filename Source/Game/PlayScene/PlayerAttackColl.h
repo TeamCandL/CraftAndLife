@@ -5,26 +5,31 @@ struct Enemy;
 
 struct PlayerAttackCollData
 {
-	PlayerAttackCollData()
-	{
-	}
-	PlayerAttackCollData(const Vec3 position_) :
-		transform{position_}
+	PlayerAttackCollData() {}
+	PlayerAttackCollData(
+	    const Vec3 position_,
+	    const int32_t damage_,
+	    const float lifeTime_) :
+	    transform{ position_ },
+	    damage{ damage_ },
+	    lifeTime{ lifeTime_ }
 	{
 	}
 
 	/*Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
 	{
-		"Shader/Unlit.hlsl",
-		RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
+	    "Shader/Unlit.hlsl",
+	    RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
 	};
 	Resource<Shader> shaderBack  ///< モデル描画用シェーダー(裏面)
 	{
-		"Shader/Unlit.hlsl",
-		RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
+	    "Shader/Unlit.hlsl",
+	    RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
 	};*/
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };  ///< シェーダ
-	Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx" };  ///< モデル
+	Resource<Model> model{
+		"Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"
+	};  ///< モデル
 
 	Component<Transform> transform{};  ///< 座標系
 	Component<RigidBody> rigidBody{};  ///< 剛体
@@ -36,10 +41,10 @@ struct PlayerAttackCollData
 	int animIndex{};  ///< アニメーションのインデクス
 
 	//-----------------------------------------//
-	//パラメータ//-----------------------------//
+	// パラメータ//-----------------------------//
 	//-----------------------------------------//
 	int32_t damage{};
-
+	float lifeTime{};  ///< 寿命
 };
 
 /// @brief 敵の攻撃当たり判定
@@ -52,6 +57,9 @@ struct PlayerAttackColl : ObjectBase<PlayerAttackCollData>
 
 	/// @brief 更新処理
 	void Update() override;
+
+	/// @brief 当たり判定の移動
+	void Move();
 
 	/// 対象へのダメージ付与
 	void SendDamage(Enemy& enemy, int32_t);

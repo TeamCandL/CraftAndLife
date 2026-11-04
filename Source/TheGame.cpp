@@ -5,23 +5,24 @@
 #include <Base/GameLoop.h>
 
 /// @brief ゲームのエントリポイント
-void Main(const HINSTANCE _hInstance)
+void Main(
+    const HINSTANCE _hInstance)
 {
-	cha::GameLoop gameLoop{{
+	cha::GameLoop gameLoop{ {
 #if 0
 		.clientSize = { 1920, 1080 },
-		.targetFPS = 60,
-		.isWindow = false,
-#elif 0
-	    .clientSize = {1920, 1080},
-	    .targetFPS = 60,
-	    .isWindow = true,
+		.targetFPS  = 60,
+		.isWindow   = false,
+#elif 1
+		.clientSize = { 1920, 1080 },
+		.targetFPS  = 60,
+		.isWindow   = true,
 #else
-	    .clientSize = {1600, 900},
-	    .targetFPS = 60,
-	    .isWindow = true,
+		.clientSize = { 1600, 900 },
+		.targetFPS  = 60,
+		.isWindow   = true,
 #endif
-	}};
+	} };
 
 	gameLoop.Run(_hInstance);
 }

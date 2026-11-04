@@ -3,37 +3,25 @@
 
 struct EnemyCheckPointData
 {
-	EnemyCheckPointData()
-	{
-	}
-	EnemyCheckPointData(const Vec3 position_) :
-	    transform{position_}
+	EnemyCheckPointData() {}
+	EnemyCheckPointData(
+	    const Vec3 position_) :
+	    transform{ position_ }
 	{
 	}
 
-	/*
-	Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
-	{
-	    "Shader/Unlit.hlsl",
-	    RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};
-	Resource<Shader> shaderBack  ///< モデル描画用シェーダー(裏面)
-	{
-	    "Shader/Unlit.hlsl",
-	    RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};
-	Resource<Shader> shader{"Shader/Unlit.hlsl"}; ///< シェーダ
-	Resource<Model> model{
-	    "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"}; ///< モデル
-	*/
-	Component<Transform> transform{}; ///< 座標系
-	Component<RigidBody> rigidBody{}; ///< 剛体
-	Component<DynamicOBB> obb{};      ///< OBB当たり判定
+	Component<Transform> transform{};      ///< 座標系
+	Component<RigidBody> rigidBody{};      ///< 剛体
+	Component<StaticOBB> obb{};            ///< OBB当たり判定
+	Component<OBBRenderer> obbRenderer{};  ///< OBB描画
 
 	float angleX{};
 	float angleY{};
 
-	int animIndex{}; ///< アニメーションのインデクス
+	int animIndex{};  ///< アニメーションのインデクス
+
+	Vec3 OBB_OFFSET{ 0.0f, 0.1f, 0.0f };  ///< OBBのオフセット(位置)
+	const float OBB_SCALE{ 0.25f };       ///< OBBのスケール
 };
 
 /// @brief 敵
@@ -47,7 +35,11 @@ struct EnemyCheckPoint : ObjectBase<EnemyCheckPointData>
 	/// @brief 更新処理
 	void Update() override;
 
-	Vec3 GetPosition()
+	Vec2 GetPositionVec2()
+	{
+		return { transform.position.x, transform.position.z };
+	}
+	Vec3 GetPositionVec3()
 	{
 		return transform.position;
 	}

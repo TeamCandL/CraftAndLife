@@ -1,27 +1,70 @@
 #pragma once
 #include <math.h>
+#include <cmath>
 
 struct Math
 {
-	// 三平方の定理。斜辺の値を返します
+	/// @brief 三平方の定理を使って、2点間の距離を求める。
+	/// @param num1 辺の長さ1
+	/// @param num2 辺の長さ2
+	/// @return 斜辺の長さ
 	static float GetThreeSquares(float num1, float num2)
 	{
 		return sqrt(num1 * num1 + num2 * num2);
 	}
 
-	/*
-	num1には、軸に対する変化の割合を求めたい値を入れる。
-	x軸に対する変化の割合を求めたい場合は、num1にx軸の変化量を入れ、num2にy軸の変化量を入れる。
-	y軸に対する変化の割合を求めたい場合は、num1にy軸の変化量を入れ、num2にx軸の変化量を入れる。
-	*/
+	/// @brief 辺の変化の割合を求める。
+	/// @param num1 辺１、変化の割合を求めたい辺の長さ
+	/// @param num2 辺２、もう１つの辺の長さ
+	/// @return 辺１の変化の割合
 	static float GetSquareVec(float num1, float num2)
 	{
-		return 0.0f;
-		//return num1 / GetThreeSquares(num1 * num1 + num2 * num2);
+		float length = GetThreeSquares(num1, num2);
+
+		// 長さが0なら、方向ベクトルを0にする
+		if (length <= 0.00001f)
+		{
+			return 0.0f;
+		}
+
+		return num1 / length;
 	}
-	/// キャラの向いている方向を求める。
-	static float GetAngle(float num1, float num2)
+
+	/// @brief 角度を求める。
+	/// @param num1 目的地までのx軸の距離
+	/// @param num2	目的地までのz軸の距離
+	/// @return 角度
+	static float GetAngle(float x, float z)
 	{
-		return atan2f(num1, num2);
+		return atan2f(x, z);
+	}
+
+	static float GetDeg(float angle_)
+	{
+		return angle_ * 180 / DirectX::XM_PI;
+	}
+	static float GetRad(float deg_)
+	{
+		return deg_ * DirectX::XM_PI / 180;
+	}
+
+	/// @brief 二つの３次元ベクトルの内積を取得
+	/// @param v1 
+	/// @param v2 
+	/// @return cosθの結果の値
+	static float GetDotProduct(Vec3 v1, Vec3 v2)
+	{
+		/// メモ　ノーマライズして長さは１にする。求めたいのは角度だけなので変化の割合だけ欲しい。
+		///		これをしないと内積の値が無駄にデカくなる。
+		Vec3 v = DirectX::XMVector3Dot(v1.Normalize(), v2.Normalize());
+		return v.x;
+	}
+	/// @brief 二つの３次元ベクトルに垂直なベクトルを求める
+	/// @param v1 
+	/// @param v2 
+	/// @return 
+	static Vec3 GetCrossProduct(Vec3 v1, Vec3 v2)
+	{
+		return DirectX::XMVector3Cross(v1, v2);
 	}
 };

@@ -1,9 +1,13 @@
 
 #include "D2DManager.h"
 #include <Base/Manager/Dx11Manager.h>
+#include "../Core/Resource.h"
 
-cha::D2DManager::D2DManager(Dx11Manager& _dx11) :
-	dx11_{ _dx11 }
+#include "../Core/Resource/Font.h"
+
+cha::D2DManager::D2DManager(
+    Dx11Manager& _dx11) :
+    dx11_{ _dx11 }
 {
 }
 
@@ -18,9 +22,10 @@ bool cha::D2DManager::Initialize()
 	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 #endif
 	hResult = D2D1CreateFactory(
-		D2D1_FACTORY_TYPE_SINGLE_THREADED,
-		__uuidof(ID2D1Factory1), &options,
-		reinterpret_cast<void**>(pD2DFactory_.ReleaseAndGetAddressOf()));
+	    D2D1_FACTORY_TYPE_SINGLE_THREADED,
+	    __uuidof(ID2D1Factory1),
+	    &options,
+	    reinterpret_cast<void**>(pD2DFactory_.ReleaseAndGetAddressOf()));
 	if (FAILED(hResult))
 	{
 		VCU_ASSERT(SUCCEEDED(hResult) && "D2D1の作成に失敗");
@@ -29,10 +34,8 @@ bool cha::D2DManager::Initialize()
 
 	// NOTE: IUnknown** な点注意
 	ComPtr<IUnknown> pUnknownFactory{};
-	hResult = DWriteCreateFactory(
-		DWRITE_FACTORY_TYPE_SHARED,
-		__uuidof(IDWriteFactory3),
-		pUnknownFactory.GetAddressOf());
+	hResult =
+	    DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory3), pUnknownFactory.GetAddressOf());
 	if (FAILED(hResult))
 	{
 		VCU_ASSERT(SUCCEEDED(hResult) && "IDWriteFactoryの作成に失敗");
@@ -48,12 +51,13 @@ bool cha::D2DManager::Initialize()
 	}
 
 	ComPtr<IDXGIDevice> pDxgiDevice{};
-	dx11_.Ref([&hResult, &pDxgiDevice](const ComPtr<ID3D11Device>& _pDevice)
-	{
-		hResult = _pDevice->QueryInterface(
-			__uuidof(IDXGIDevice),
-			reinterpret_cast<void**>(pDxgiDevice.ReleaseAndGetAddressOf()));
-	});
+	dx11_.Ref(
+	    [&hResult, &pDxgiDevice](const ComPtr<ID3D11Device>& _pDevice)
+	    {
+		    hResult = _pDevice->QueryInterface(
+		        __uuidof(IDXGIDevice),
+		        reinterpret_cast<void**>(pDxgiDevice.ReleaseAndGetAddressOf()));
+	    });
 	if (FAILED(hResult))
 	{
 		VCU_ASSERT(SUCCEEDED(hResult) && "pDxgiDeviceの取得に失敗");
@@ -76,10 +80,11 @@ bool cha::D2DManager::Initialize()
 
 	// --- Step 3: スワップチェーンのバックバッファを D2D のレンダーターゲットとして紐付ける ---
 	ComPtr<IDXGISurface> pBackBuffer{};
-	dx11_.RefSwapChain([&hResult, &pBackBuffer](const ComPtr<IDXGISwapChain>& _pSwapChain)
-	{
-		hResult = _pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), &pBackBuffer);
-	});
+	dx11_.RefSwapChain(
+	    [&hResult, &pBackBuffer](const ComPtr<IDXGISwapChain>& _pSwapChain)
+	    {
+		    hResult = _pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), &pBackBuffer);
+	    });
 	if (FAILED(hResult))
 	{
 		VCU_ASSERT(SUCCEEDED(hResult) && "_pSwapChain->GetBufferに失敗");
@@ -88,9 +93,8 @@ bool cha::D2DManager::Initialize()
 
 	// DPIの取得とピクセルプロパティの設定
 	D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(
-		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
-	);
+	    D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+	    D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
 
 	hResult = pD2DContext_->CreateBitmapFromDxgiSurface(pBackBuffer.Get(), &bitmapProperties, &pD2DTargetBitmap_);
 	if (FAILED(hResult))
@@ -101,35 +105,6 @@ bool cha::D2DManager::Initialize()
 
 	// D2Dの描画先を設定
 	pD2DContext_->SetTarget(pD2DTargetBitmap_.Get());
-
-	//// 7. DirectWrite テキストフォーマットの作成 (フォント名、サイズ等の指定)
-	//HRESULT hResult = pDWriteFactory_->CreateTextFormat(
-	//	L"Meiryo",                // フォントファミリ名
-	//	nullptr,                  // フォントコレクション (nullptrでシステムフォント)
-	//	DWRITE_FONT_WEIGHT_NORMAL,
-	//	DWRITE_FONT_STYLE_NORMAL,
-	//	DWRITE_FONT_STRETCH_NORMAL,
-	//	24.0f,                    // フォントサイズ (DIP単位)
-	//	L"ja-jp",                 // ロケール
-	//	&pTextFormat_
-	//);
-	//if (FAILED(hResult))
-	//{
-	//	VCU_ASSERT(SUCCEEDED(hResult) && "CreateTextFormatに失敗");
-	//	return hResult;
-	//}
-	// フォントの設定
-	hResult = InitializeLocalFont();
-	if (FAILED(hResult))
-	{
-		VCU_ASSERT(SUCCEEDED(hResult) && "InitializeLocalFontに失敗");
-		return false;
-	}
-
-	// テキストの整列設定
-	pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	//pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	InitializeBrushes();
 
@@ -178,7 +153,12 @@ void cha::D2DManager::End()
 	}
 }
 
-void cha::D2DManager::DrawString(const std::wstring_view _text, const Vec2 _begin, const Vec2 _size)
+void cha::D2DManager::DrawString(
+    const Resource<ResourceType::Font>& _font,
+    const std::wstring_view _text,
+    const Vec2 _begin,
+    const Vec2 _size,
+    const Color _color)
 {
 	if (!pD2DContext_)
 	{
@@ -192,16 +172,23 @@ void cha::D2DManager::DrawString(const std::wstring_view _text, const Vec2 _begi
 
 	D2D1_RECT_F renderRect = D2D1::RectF(_begin.x, _begin.y, _begin.x + _size.x, _begin.y + _size.y);
 
+	pTextBrush_->SetColor(D2D1::ColorF(_color.r, _color.g, _color.b, _color.a));
+
 	// いざ描画
 	pD2DContext_->DrawTextW(
-		_text.data(),
-		static_cast<UINT32>(_text.size()),
-		pTextFormat_.Get(),
-		renderRect,
-		pTextBrush_.Get());
+	    _text.data(),
+	    static_cast<UINT32>(_text.size()),
+	    _font.Get().pTextFormat.Get(),
+	    renderRect,
+	    pTextBrush_.Get());
 }
 
-void cha::D2DManager::DrawString(const std::string_view _text, const Vec2 _begin, const Vec2 _size)
+void cha::D2DManager::DrawString(
+    const Resource<ResourceType::Font>& _font,
+    const std::string_view _text,
+    const Vec2 _begin,
+    const Vec2 _size,
+    const Color _color)
 {
 	if (_text.empty())
 	{
@@ -215,77 +202,5 @@ void cha::D2DManager::DrawString(const std::string_view _text, const Vec2 _begin
 
 	MultiByteToWideChar(CP_UTF8, 0, _text.data(), static_cast<int>(_text.size()), &wstr[0], neededSize);
 
-	DrawString(wstr, _begin, _size);
-}
-
-HRESULT cha::D2DManager::InitializeLocalFont()
-{
-	HRESULT hResult = S_OK;
-
-	// TODO: マジックを消す
-	const fs::path FONT_FILE{ "Font/YuseiMagic/YuseiMagic-Regular.ttf" };
-
-	// 1. フォントファイルの参照を作成 (例: 実行ファイルと同じ場所の "myfont.ttf")
-	ComPtr<IDWriteFontFile> pFontFile{};
-	hResult = pDWriteFactory_->CreateFontFileReference(FONT_FILE.c_str(), nullptr, &pFontFile);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	ComPtr<IDWriteFontFaceReference> pFontFaceReference{};
-	hResult = pDWriteFactory_->CreateFontFaceReference(
-		pFontFile.Get(),
-		0,                               // faceIndex (通常は0)
-		DWRITE_FONT_SIMULATIONS_NONE,    // フォントのシミュレーション（斜体や太字の強制変形なし）
-		&pFontFaceReference
-	);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	// 2. フォントセットビルダーを使って、このファイルを含むフォントセットを作成
-	ComPtr<IDWriteFontSetBuilder> pFontSetBuilder{};
-	hResult = pDWriteFactory_->CreateFontSetBuilder(&pFontSetBuilder);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = pFontSetBuilder->AddFontFaceReference(pFontFaceReference.Get());
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	ComPtr<IDWriteFontSet> pFontSet{};
-	hResult = pFontSetBuilder->CreateFontSet(&pFontSet);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	// 3. フォントセットからフォントコレクションを作成
-	ComPtr<IDWriteFontCollection1> pFontCollection{};
-	hResult = pDWriteFactory_->CreateFontCollectionFromFontSet(pFontSet.Get(), &pFontCollection);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	// 4. 作成したフォントコレクションを渡して TextFormat を作成
-	// ※フォントファミリ名は、システム名ではなく「フォントファイルが内部で持っている正式名」を指定します
-	hResult = pDWriteFactory_->CreateTextFormat(
-		L"Yusei Magic",               // NOTE: フォント内の正確なファミリ名でなければいけない
-		pFontCollection.Get(),
-		DWRITE_FONT_WEIGHT_NORMAL,
-		DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL,
-		32.0f,
-		L"ja-jp",
-		pTextFormat_.GetAddressOf()
-	);
-
-	return hResult;
+	DrawString(_font, wstr, _begin, _size, _color);
 }

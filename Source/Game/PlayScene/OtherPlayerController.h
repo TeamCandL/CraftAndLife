@@ -3,14 +3,21 @@
 
 struct OtherPlayerControllerData
 {
-	std::map<std::string, GameObject> nameToObjOtherPlayer{}; ///< ほかプレイヤーのオブジェクト
+	// 他プレイヤーのGameObject
+	std::map<std::string, GameObject> nameToObjOtherPlayer{};
+
+	// 他プレイヤーの死亡UI
+	std::map<std::string, GameObject> nameToObjDeathUI{};
+
+	// 他プレイヤーの名前UI
+	std::map<std::string, GameObject> nameToObjPlayerName{};
 };
 
-/// @brief ほかプレイヤーオブジェクトを操作する
 struct OtherPlayerController : ObjectBase<OtherPlayerControllerData>
 {
-	/// @brief 開始処理
 	void Start() override;
-	/// @brief 更新処理
 	void Update() override;
+
+	GameObject GetFirstOtherPlayer() const;
+	std::vector<GameObject> GetOtherPlayers() const;
 };

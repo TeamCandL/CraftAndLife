@@ -4,7 +4,7 @@
 /// @brief プレイヤー共通のインタフェース
 class IPlayer
 {
-public:
+  public:
 	/// @brief コンストラクタ
 	IPlayer() = default;
 	/// @brief デストラクタ

@@ -3,56 +3,77 @@
 #include "GameObjectCollection.h"
 
 cha::SceneBase::SceneBase() :
-	pGameObjectCollection_{ std::make_unique<GameObjectCollection>() }
+    pGameObjectCollection_{ std::make_unique<GameObjectCollection>() }
 {
 }
 
-void cha::SceneBase::Destroy(GameObject& _gameObject)
+void cha::SceneBase::Destroy(
+    GameObject& _gameObject)
 {
+	if (_gameObject.IsEmpty())
+	{
+		return;  // 既に空っぽなら消せない
+	}
 	pGameObjectCollection_->DestroyAt(_gameObject);
 	_gameObject = GameObject::Empty();
 }
 
+void cha::SceneBase::Destroy(
+    const GameObject& _gameObject)
+{
+	if (_gameObject.IsEmpty())
+	{
+		return;  // 既に空っぽなら消せない
+	}
+	pGameObjectCollection_->DestroyAt(_gameObject);
+}
+
 void cha::SceneBase::Update()
 {
-	pGameObjectCollection_->ForEach([](IObject& _object)
-	{
-		_object.Update();
-	});
+	pGameObjectCollection_->ForEach(
+	    [](IObject& _object)
+	    {
+		    _object.Update();
+	    });
 }
 
 void cha::SceneBase::LateUpdate()
 {
-	pGameObjectCollection_->ForEachSystem([](ISystemObject& _systemObject)
-	{
-		_systemObject.LateUpdate();
-	});
+	pGameObjectCollection_->ForEachSystem(
+	    [](ISystemObject& _systemObject)
+	    {
+		    _systemObject.LateUpdate();
+	    });
 }
 
-void cha::SceneBase::Draw(const bool _isShadowing)
+void cha::SceneBase::Draw(
+    const bool _isShadowing)
 {
 	if (_isShadowing)
 	{
-		pGameObjectCollection_->ForEach([](IObject& _object)
-		{
-			_object.DrawShadowMap();
-		});
+		pGameObjectCollection_->ForEach(
+		    [](IObject& _object)
+		    {
+			    _object.DrawShadowMap();
+		    });
 	}
 	else
 	{
-		pGameObjectCollection_->ForEach([](IObject& _object)
-		{
-			_object.Draw();
-		});
+		pGameObjectCollection_->ForEach(
+		    [](IObject& _object)
+		    {
+			    _object.Draw();
+		    });
 	}
 }
 
 void cha::SceneBase::End()
 {
-	pGameObjectCollection_->ForEach([](IObject& _object)
-	{
-		_object.OnDestroy();
-	});
+	pGameObjectCollection_->ForEach(
+	    [](IObject& _object)
+	    {
+		    _object.OnDestroy();
+	    });
 	pGameObjectCollection_->Clear();
 }
 

@@ -7,7 +7,7 @@
 void AbstructInputSystem::Start()
 {
 	SetPlayerInput<NormalPlayerInput>();
-	//SetPlayerInput<PadOnlyPlayerInput>();
+	// SetPlayerInput<PadOnlyPlayerInput>();
 	SetUIInput<NormalUIInput>();
 }
 
@@ -16,10 +16,10 @@ void AbstructInputSystem::Update()
 	if (pPlayerInput && pUIInput)
 	{
 		PadInputSystem& padInputSystem = Get<PadInputSystem>();
-		
+
+		ImGui::Begin("AbstrucInputSystem");
 		if (padInputSystem.IsConnected())
 		{
-			ImGui::Begin("AbstrucInputSystem");
 			ImGui::Text("LT %3.2f", padInputSystem.GetLeftTrigger());
 			ImGui::Text("RT %3.2f", padInputSystem.GetRightTrigger());
 
@@ -68,13 +68,13 @@ void AbstructInputSystem::Update()
 			ImGui::Text("IsMovedRight: %s", pUIInput->IsMovedRight() ? "TRUE" : "FALSE");
 			ImGui::Text("IsSelected: %s", pUIInput->IsSelected() ? "TRUE" : "FALSE");
 			ImGui::Text("IsChanneled: %s", pUIInput->IsChanneled() ? "TRUE" : "FALSE");
-
-			ImGui::End();
 		}
 		else
 		{
-			VCU_LOG("コントローラー未接続");
+			// VCU_LOG("コントローラー未接続");
+			ImGui::Text("コントローラーは未接続です。");
 		}
+		ImGui::End();
 	}
 }
 

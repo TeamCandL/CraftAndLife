@@ -26,6 +26,7 @@
 #include "Component/DynamicOBB.h"
 #include "Component/OBBRenderer.h"
 #include "Component/RigidBody.h"
+#include "Component/TransformAnimator.h"
 
 #include "Utility/File/JsonLoader.h"
 

@@ -1,5 +1,6 @@
 #include "PlayScene.h"
 #include "Enemy.h"
+#include "EnemyController.h"
 #include "MainCamera.h"
 #include "OtherPlayer.h"
 #include "OtherPlayerController.h"
@@ -10,21 +11,50 @@
 #include <Game/Common/GameManager.h>
 #include <Game/Common/Sky.h>
 #include <Game/Terrain/Terrain.h>
+#include "DayController.h"
+#include "OtherEnemy.h"
+#include "OtherEnemyController.h"
+#include "PlaySceneUIController.h"
+#include "PlayerBag.h"
+#include <../Resource/MAP/MAP.h>
+#include "Harvestable.h"
+#include "UI/MyGauge.h"
+#include "NetworkActorServer.h"
+#include "UI/MiniMap.h"
+#include "UI/DeathUI.h"
+#include "UI/CraftUI.h"
+#include "HarvestableController.h"
 
 void PlayScene::Start()
 {
 	Instantiate<GameManager>();
-	Instantiate<Sky>();
+	GameObject objSky = Instantiate<Sky>();
 
-	GameObject objTerrain = Instantiate<Terrain>();
+	GameObject objHarvestableController = Instantiate<HarvestableController>();
+	GameObject objTerrain               = Instantiate<MAP>(objHarvestableController);
+	// GameObject objTerrain = Instantiate<Terrain>();
 
-	Instantiate<OtherPlayer>("てすとん");
+	GameObject objDayController = Instantiate<DayController>(objSky);
 
-	Instantiate<OtherPlayerController>();
-
-	Instantiate<Enemy>(); // 仮設置
-	Instantiate<Reticle>();
 	GameObject objMainCamera = Instantiate<MainCamera>();
-	GameObject objPlayer = Instantiate<Player>(objMainCamera);
-	Instantiate<PlayNetworkController>(objPlayer, objMainCamera);
+	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
+	Instantiate<DeathUI>(objPlayer, true);
+
+	// ホスト判定オブジェクトを生成
+	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer);
+
+	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
+
+	Instantiate<Reticle>();
+
+	// ミニマップを生成してプレイヤーを渡す
+	Instantiate<PlayNetworkController>(
+	    objPlayer,
+	    objMainCamera,
+	    objNetworkActorServer,
+	    objDayController,
+	    objHarvestableController);
+
+	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController);
+	// Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f);
 }

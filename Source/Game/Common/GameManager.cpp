@@ -12,6 +12,7 @@
 #include "../System/RaycastSystem.h"
 #include "../System/ShaderTimeSystem.h"
 #include "../System/UITranslationSystem.h"
+#include "../System/AnimationSystem.h"
 
 #include <Game/Common/Canvas.h>
 
@@ -22,6 +23,9 @@
 #include <Game/System/IMESystem.h>
 #include <Game/System/PadInputSystem.h>
 #include <Game/System/AbstructInputSystem.h>
+#include <Game/PlayScene/TerrainSystem.h>
+#include <Game/PlayScene/ItemSystem.h>
+#include <Game/PlayScene/EntitySystem.h>
 
 void GameManager::Start()
 {
@@ -31,10 +35,10 @@ void GameManager::Start()
 	GetScene().Instantiate<CursorSystem>();
 	GetScene().Instantiate<AudioSystem>();
 	// GetScene().Instantiate<DiscordSystem>();
+	GetScene().Instantiate<AnimationSystem>();
 	GetScene().Instantiate<TranslationSystem>();
 	GetScene().Instantiate<PhysicsSystem>();
 	GetScene().Instantiate<RaycastSystem>();
-	GetScene().Instantiate<EffectSystem>();
 
 	GetScene().Instantiate<CameraSystem>();
 	GetScene().Instantiate<ShaderTimeSystem>();
@@ -49,6 +53,10 @@ void GameManager::Start()
 	GetScene().Instantiate<ImGuiRenderingSystem>();
 
 	GetScene().Instantiate<IMESystem>();
+
+	GetScene().Instantiate<TerrainSystem>();
+	GetScene().Instantiate<ItemSystem>();
+	GetScene().Instantiate<EntitySystem>();
 }
 
 void GameManager::Update()

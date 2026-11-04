@@ -15,19 +15,23 @@ namespace cha
 	struct ShaderProLoadConfig
 	{
 		inline ShaderProLoadConfig(
-			ShaderProBuilder&& _builder) :
-			builder{ std::move(_builder) }
+		    ShaderProBuilder&& _builder) :
+		    builder{ std::move(_builder) }
 		{
 		}
+		HashValue GetHash() const
+		{
+			return 0;
+		}
 
-		ShaderProBuilder builder;           // シェーダプロのビルダー
+		ShaderProBuilder builder;  // シェーダプロのビルダー
 	};
 
 	/// @brief シェーダリソースを格納
 	class ShaderProRegistry : public ResourceRegistryBase<ShaderProResource, ShaderProLoadConfig>
 	{
-	public:
-		ShaderProRegistry() = default;
+	  public:
+		ShaderProRegistry()  = default;
 		~ShaderProRegistry() = default;
 
 		/// @brief 試しにシェーダをロードする
@@ -37,10 +41,10 @@ namespace cha
 		bool TryLoad(ShaderProLoadConfig&& _config, ShaderProResource& _out) override;
 	};
 
-	template<> struct ResourceTraits<ResourceType::ShaderPro>
+	template <> struct ResourceTraits<ResourceType::ShaderPro>
 	{
-		using DataT = ShaderProResource;
-		using RegistryT = ShaderProRegistry;
+		using DataT       = ShaderProResource;
+		using RegistryT   = ShaderProRegistry;
 		using LoadConfigT = ShaderProLoadConfig;
 	};
-}
+}  // namespace cha

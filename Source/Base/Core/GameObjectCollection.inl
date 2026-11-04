@@ -83,6 +83,7 @@ namespace cha
 		// コンポーネントプールへ先に登録する（遅延登録と二重登録になるが安全）
 		// UpdateComponentRegistry(componentFlag, ID, toAdd_.size() - 1);
 
+		// まだregistry_にはないがIdは決まっているため返せる
 		return GameObject{ ID, this };
 	}
 

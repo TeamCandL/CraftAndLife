@@ -7,8 +7,8 @@ void Transform::UpdateFamily()
 
 	SceneManager& sceneManager = ManagerRegistry::Ref<SceneManager>();
 
-	Transform* pParentTransform{nullptr};
-	if (!parent.IsEmpty()) // 軽量な有無チェック
+	Transform* pParentTransform{ nullptr };
+	if (!parent.IsEmpty())  // 軽量な有無チェック
 	{
 		pParentTransform = sceneManager.FindComponent<Transform>(parent);
 		if (pParentTransform)
@@ -24,12 +24,12 @@ void Transform::UpdateFamily()
 	{
 		// 親がいるなら親の行列を掛ける
 		normal = localNormal * pParentTransform->normal;
-		world = local * pParentTransform->world;
+		world  = local * pParentTransform->world;
 	}
 	else
 	{
 		normal = localNormal;
-		world = local;
+		world  = local;
 	}
 }
 

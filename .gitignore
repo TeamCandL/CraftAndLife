@@ -442,4 +442,4 @@ Library/Release/*
 !Library/Release/*.lib
 
 /x64/Debug.zip
-
+/Resource/imgui.ini

@@ -7,17 +7,28 @@ class MessageRegistry
 {
 	friend class MessageConverter;
 
-public:
+  public:
 	template <typename T> MessageRegistry& AddMember(T& _v);
 
-private:
-	MessageRegistry() = default;
+  private:
+	MessageRegistry()  = default;
 	~MessageRegistry() = default;
 
-private:
+  private:
 	std::vector<std::variant<
-	    int8_t*, uint8_t*, int16_t*, uint16_t*, int32_t*, uint32_t*, int64_t*, uint64_t*, bool*, float*, double*,
-	    std::string*, ISizedBuffer*>>
+	    int8_t*,
+	    uint8_t*,
+	    int16_t*,
+	    uint16_t*,
+	    int32_t*,
+	    uint32_t*,
+	    int64_t*,
+	    uint64_t*,
+	    bool*,
+	    float*,
+	    double*,
+	    std::string*,
+	    ISizedBuffer*>>
 	    members{};
 };
 

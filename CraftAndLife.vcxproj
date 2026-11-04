@@ -114,6 +114,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -149,6 +153,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -163,6 +171,7 @@
       <PrecompiledHeaderFile>pch\pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>pch\pch.h</ForcedIncludeFiles>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,6 +191,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -217,6 +230,10 @@
       <ShaderModel>5.1</ShaderModel>
       <ObjectFileOutput>$(ProjectDir)Out\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>pip install pre-commit
+pre-commit install</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Library\enet\enet.c">
@@ -374,9 +391,11 @@
     <ClCompile Include="Source\Base\Core\ResourceManager.cpp" />
     <ClCompile Include="Source\Base\Core\ResourceTraits.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Audio.cpp" />
+    <ClCompile Include="Source\Base\Core\Resource\Font.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Material.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model\ModelMaterial.cpp" />
+    <ClCompile Include="Source\Base\Core\Resource\ResourceRegistryBase.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Shader.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\ShaderPro.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\ShaderPro\ShaderProBuilder.cpp" />
@@ -414,6 +433,7 @@
     <ClCompile Include="Source\Game\Component\EffectPlayer\EffectPlayer.cpp" />
     <ClCompile Include="Source\Game\Component\SoundManager.cpp" />
     <ClCompile Include="Source\Game\Component\Transform.cpp" />
+    <ClCompile Include="Source\Game\Component\TransformAnimator.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyNetworkController.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyReadyButton.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyScene.cpp" />
@@ -426,28 +446,79 @@
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\DayController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Harvestable.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\FPSCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\GhostCamera.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\IMainCameraUpdater.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera\TPSCamera.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\NetworkActorServer.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemy.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayer.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayerAttackColl.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\PlayerHand.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\PlayerBag.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Player\PlayerControllerNormal.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerArcher.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerFighter.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerHealer.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Player\PlayerJobControllerTank.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayNetworkController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\PlayScene.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\PlaySceneUIController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\TerrainSystem.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\BossGaugeR.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\BossGauge.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\BossHp.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\BossInfo.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\BossName.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\DeathUI.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\CraftUI.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Gauge1.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Gauge2.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Gauge3.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Gauge4.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\HotBar.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\ListBox.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\MiniMap.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\MiniMapPoint.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\MyGauge.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\MyName.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Name1.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Name2.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Name3.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\Name4.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\OtherInfo.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon2.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon3.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerIcon4.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\PlayerName.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\TaskBackground.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalPlayerInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalUIInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.cpp" />
+    <ClCompile Include="Source\Game\System\AnimationSystem.cpp" />
     <ClCompile Include="Source\Game\System\AudioSystem.cpp" />
     <ClCompile Include="Source\Game\System\AudioSystem\AudioPlayer.cpp" />
     <ClCompile Include="Source\Game\System\CameraSystem.cpp" />
@@ -471,10 +542,27 @@
     <ClCompile Include="Source\Game\TestScene\LifeChecker.cpp" />
     <ClCompile Include="Source\Game\TestScene\SceneTester.cpp" />
     <ClCompile Include="Source\Game\TestScene\TestScene.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\CreatePlayerName.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\GameStart.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\GameStartGuide.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\Lobby.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\LobbyPlayer.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\LobbyPlayerName.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\LobbyPlayerNameOne.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\LobbyPlayerNameTree.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\LobbyPlayerNameTwo.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\LobbyTeamName.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TeamSelect.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TeamSelectStartGuide.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitleBGM.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitleLogo.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitleLogoStartGuide.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleNetworkController.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\TitlePageContlroller.cpp" />
     <ClCompile Include="Source\Game\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordInputPanel.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordJoinButton.cpp" />
+    <ClCompile Include="Source\Game\Tool\DebugCamera.cpp" />
     <ClCompile Include="Source\Game\Utility\Algorithm\TopologicalSort.cpp" />
     <ClCompile Include="Source\Game\Utility\File\JsonLoader.cpp" />
     <ClCompile Include="Source\pch\pch.cpp">
@@ -554,6 +642,7 @@
     <ClInclude Include="Source\Base\Core\ResourceManagerInstance.h" />
     <ClInclude Include="Source\Base\Core\ResourceTraits.h" />
     <ClInclude Include="Source\Base\Core\Resource\Audio.h" />
+    <ClInclude Include="Source\Base\Core\Resource\Font.h" />
     <ClInclude Include="Source\Base\Core\Resource\IResourceRegistry.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material\IMaterialProperty.h" />
@@ -625,16 +714,91 @@
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
     <ClInclude Include="Source\Game\Component\EffectPlayer\EffectPlayer.h" />
+    <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\BreakHarvestable.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemyStates.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedPlayerStates.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEntityRemove.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEntitySpawn.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemyDamage.h" />
+    <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
+    <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Entity.h" />
+    <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\Harvestable.h" />
+    <ClInclude Include="Source\Game\PlayScene\IEntity.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
+    <ClInclude Include="Source\Game\PlayScene\INetworkActor.h" />
     <ClInclude Include="Source\Game\PlayScene\IPlayer.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemId.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemSystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\ITerrain.h" />
+    <ClInclude Include="Source\Game\PlayScene\NetworkActorServer.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemy.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerController.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlayerHand.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlayerBag.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRoleType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\HelthState.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\IPlayerJobController.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerAnimType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerArcher.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerFighter.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerHealer.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobControllerTank.h" />
+    <ClInclude Include="Source\Game\PlayScene\Player\PlayerJobType.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
+    <ClInclude Include="Source\Game\PlayScene\StateValueCode.h" />
+    <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\BossGaugeR.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\BossGauge.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\BossHp.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\BossName.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\DeathUI.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\CraftUI.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Gauge2.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Gauge3.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Gauge4.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\HotBar.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\ListBox.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\MiniMapPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\MyGauge.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\MyName.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Name1.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Name2.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Name3.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\Name4.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\OtherInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon2.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon3.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerIcon4.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\PlayerName.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
     <ClInclude Include="Source\Game\System\EffectSystem.h" />
+    <ClInclude Include="Source\Game\System\AnimationSystem.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />
     <ClInclude Include="Source\Game\Common\UI\Button.h" />
@@ -719,7 +883,6 @@
     <ClInclude Include="Source\Game\System\CursorSystem.h" />
     <ClInclude Include="Source\Game\System\DebugSystems\ImGuiRenderingSystem.h" />
     <ClInclude Include="Source\Game\System\DiscordSystem.h" />
-    <ClInclude Include="Source\Game\System\EntitySystem.h" />
     <ClInclude Include="Source\Game\System\IMESystem.h" />
     <ClInclude Include="Source\Game\System\InputSystem.h" />
     <ClInclude Include="Source\Game\System\InputSystem\KeyCode.h" />
@@ -743,10 +906,27 @@
     <ClInclude Include="Source\Game\TestScene\LifeChecker.h" />
     <ClInclude Include="Source\Game\TestScene\SceneTester.h" />
     <ClInclude Include="Source\Game\TestScene\TestScene.h" />
+    <ClInclude Include="Source\Game\TitleScene\CreatePlayerName.h" />
+    <ClInclude Include="Source\Game\TitleScene\GameStart.h" />
+    <ClInclude Include="Source\Game\TitleScene\GameStartGuide.h" />
+    <ClInclude Include="Source\Game\TitleScene\Lobby.h" />
+    <ClInclude Include="Source\Game\TitleScene\LobbyPlayer.h" />
+    <ClInclude Include="Source\Game\TitleScene\LobbyPlayerName.h" />
+    <ClInclude Include="Source\Game\TitleScene\LobbyPlayerNameOne.h" />
+    <ClInclude Include="Source\Game\TitleScene\LobbyPlayerNameTree.h" />
+    <ClInclude Include="Source\Game\TitleScene\LobbyPlayerNameTwo.h" />
+    <ClInclude Include="Source\Game\TitleScene\LobbyTeamName.h" />
+    <ClInclude Include="Source\Game\TitleScene\TeamSelect.h" />
+    <ClInclude Include="Source\Game\TitleScene\TeamSelectStartGuide.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitleBGM.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitleLogo.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitleLogoStartGuide.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleNetworkController.h" />
+    <ClInclude Include="Source\Game\TitleScene\TitlePageContlroller.h" />
     <ClInclude Include="Source\Game\TitleScene\TitleScene.h" />
     <ClInclude Include="Source\Game\TitleScene\WordInputPanel.h" />
     <ClInclude Include="Source\Game\TitleScene\WordJoinButton.h" />
+    <ClInclude Include="Source\Game\Tool\DebugCamera.h" />
     <ClInclude Include="Source\Game\Utility\Algorithm\TopologicalSort.h" />
     <ClInclude Include="Source\Game\Utility\File\JsonLoader.h" />
     <ClInclude Include="Source\Library\Library.h" />
@@ -804,16 +984,24 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\DebugLine.hlsl" />
+    <FxCompile Include="Resource\Shader\Toon.hlsl" />
     <FxCompile Include="Resource\Shader\ShadowMap.hlsl" />
     <FxCompile Include="Resource\Shader\SkyBox.hlsl" />
     <FxCompile Include="Resource\Shader\Terrain.hlsl" />
+    <FxCompile Include="Resource\Shader\ToonEdge.hlsl" />
     <FxCompile Include="Resource\Shader\UI.hlsl" />
     <FxCompile Include="Resource\Shader\UICircleImage.hlsl" />
     <FxCompile Include="Resource\Shader\Unlit.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="Library\Debug\DirectXTex.lib" />
-    <Library Include="Library\Release\DirectXTex.lib" />
+    <Library Include="Library\Debug\DirectXTex.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="Library\Release\DirectXTex.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Library>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
