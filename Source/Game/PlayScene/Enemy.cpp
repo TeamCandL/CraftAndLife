@@ -105,17 +105,21 @@ void Enemy::Move(
 	Vec3 tPos{ tx, 0.0f, tz };
 	auto& [ex, __, ez] = pos_.v;
 	Vec3 ePos{ ex, 0.0f, ez };
-	Vec3 crossed = Math::GetCrossProduct(Fwd, tPos - ePos);
+	float length = (tPos - ePos).Length();
 
-	torque += crossed.y * Math::GetRad(rotationAnglePerSec);
+	if (length > speed)
+	{
+		Vec3 crossed = Math::GetCrossProduct(Fwd, tPos - ePos);
 
-	Vec3 angles        = transform.rotation.ToEuler();
-	angles.y           = torque;
-	transform.rotation = Quaternion::FromEuler(angles);
+		torque += crossed.y * Math::GetRad(rotationAnglePerSec);
 
-	Vec3 move{ transform.Forward() * speed };
-	transform.position += move * Get<DeltaTime>();
+		Vec3 angles        = transform.rotation.ToEuler();
+		angles.y           = torque;
+		transform.rotation = Quaternion::FromEuler(angles);
 
+		Vec3 move{ transform.Forward() * speed };
+		transform.position += move * Get<DeltaTime>();
+	}
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 }
 
