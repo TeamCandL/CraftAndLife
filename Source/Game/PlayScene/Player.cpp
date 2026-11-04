@@ -94,11 +94,11 @@ void Player::Update()
 	// お試しで出してるエンティティ
 	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 	{
-		SpawnItem(8);
+		SpawnItem(9);
 	}
 	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		SpawnItem(11);
+		SpawnItem(8);
 	}
 
 	// 近くのアイテムを拾う
