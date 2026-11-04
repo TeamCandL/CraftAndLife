@@ -144,7 +144,7 @@ void EntitySystem::SpawnFromNetwork(
 	}
 
 	// エンティティを生成
-	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 3.0f, 60.0f * 5.0f);
+	entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 60.0f * 5.0f, 3.0f);
 
 	EntityInfo& info = entities.back();
 
