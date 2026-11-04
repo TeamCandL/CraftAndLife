@@ -18,6 +18,13 @@ struct AudioManager : IManager
 	void SetBGMStop();
 	/// @brief BGMを再開する
 	void SetBGMStart();
+
+	// 環境音を再生
+	void SetAmbientSound(Resource<ResourceType::Audio>& _resource);
+
+	// 環境音を停止
+	void StopAmbientSound();
+
 	/// @brief 効果音を再生する
 	/// @param _resource 音声リソース
 	void Play(Resource<ResourceType::Audio>& _resource);
@@ -37,6 +44,8 @@ struct AudioManager : IManager
 	ComPtr<IXAudio2> pXAudio2{};
 	IXAudio2MasteringVoice* pMasterVoice{ nullptr };
 	IXAudio2SourceVoice* pBGMSourceVoice{ nullptr };  // BGM用の音声ソース
+
+	IXAudio2SourceVoice* pAmbientSourceVoice{ nullptr };
 
 	IXAudio2SourceVoice* pFootstepSourceVoice{ nullptr };
 

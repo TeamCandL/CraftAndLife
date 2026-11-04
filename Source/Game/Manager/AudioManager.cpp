@@ -1,3 +1,4 @@
+
 #include "AudioManager.h"
 
 void AudioManager::Start()
@@ -18,9 +19,10 @@ void AudioManager::Play(
 
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
 	HRESULT hResult                   = pXAudio2->CreateSourceVoice(&pSourceVoice, &audio.waveFormatEx.Format);
+
 	if (FAILED(hResult) || pSourceVoice == nullptr)
 	{
-		return;  // 失敗
+		return;
 	}
 
 	const XAUDIO2_BUFFER BUFFER{
@@ -49,7 +51,6 @@ void AudioManager::Play(
 		return;
 	}
 
-	// AudioPlayer を作成して管理リストに追加
 	players.emplace_back(pSourceVoice, _resource);
 	players.back().Play(_resource);
 }
@@ -65,10 +66,8 @@ void AudioManager::PlayFootstep(
 		return;
 	}
 
-	// 前回の足音が残っていたら破棄
 	StopFootstep();
 
-	// 音声ソースを作成
 	HRESULT hResult = pXAudio2->CreateSourceVoice(&pFootstepSourceVoice, &audio.waveFormatEx.Format);
 
 	if (FAILED(hResult) || pFootstepSourceVoice == nullptr)
@@ -122,6 +121,7 @@ void AudioManager::LateUpdate(
 	for (size_t i = 0; i < players.size();)
 	{
 		players[i].timeLeftSec -= _deltaTime;
+
 		if (players[i].timeLeftSec <= 0.0f)
 		{
 			if (players[i].pSourceVoice)
@@ -130,11 +130,12 @@ void AudioManager::LateUpdate(
 				players[i].pSourceVoice->DestroyVoice();
 				players[i].pSourceVoice = nullptr;
 			}
-			// erase by swapping with last for O(1) removal
+
 			if (i + 1 < players.size())
 			{
 				players[i] = std::move(players.back());
 			}
+
 			players.pop_back();
 		}
 		else
@@ -146,6 +147,7 @@ void AudioManager::LateUpdate(
 
 void AudioManager::Update() {}
 
+// BGMを再生
 void AudioManager::SetBGM(
     Resource<ResourceType::Audio>& _resource)
 {
@@ -161,10 +163,12 @@ void AudioManager::SetBGM(
 	HRESULT hResult{};
 
 	hResult = pXAudio2->CreateSourceVoice(&pBGMSourceVoice, &audio.waveFormatEx.Format);
+
 	VCU_ASSERT(SUCCEEDED(hResult) && "BGM用SourceVoiceの作成に失敗");
+
 	if (FAILED(hResult))
 	{
-		return;  // 失敗
+		return;
 	}
 
 	const XAUDIO2_BUFFER BUFFER{
@@ -180,20 +184,86 @@ void AudioManager::SetBGM(
 	};
 
 	hResult = pBGMSourceVoice->SubmitSourceBuffer(&BUFFER);
+
 	VCU_ASSERT(SUCCEEDED(hResult) && "BGM用バッファ登録に失敗");
+
 	if (FAILED(hResult))
 	{
-		return;  // 失敗
+		return;
 	}
 
 	hResult = pBGMSourceVoice->Start();
+
 	VCU_ASSERT(SUCCEEDED(hResult) && "BGMの再生に失敗");
+
 	if (FAILED(hResult))
 	{
-		return;  // 失敗
+		return;
 	}
 }
 
+// 環境音をループ再生
+void AudioManager::SetAmbientSound(
+    Resource<ResourceType::Audio>& _resource)
+{
+	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// すでに再生中の環境音があれば停止
+	StopAmbientSound();
+
+	HRESULT hResult = pXAudio2->CreateSourceVoice(&pAmbientSourceVoice, &audio.waveFormatEx.Format);
+
+	if (FAILED(hResult) || pAmbientSourceVoice == nullptr)
+	{
+		return;
+	}
+
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
+		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
+		.pAudioData = audio.buffer.data(),
+		.PlayBegin  = 0,
+		.PlayLength = 0,
+		.LoopBegin  = 0,
+		.LoopLength = 0,
+		.LoopCount  = XAUDIO2_LOOP_INFINITE,
+		.pContext   = 0,
+	};
+
+	hResult = pAmbientSourceVoice->SubmitSourceBuffer(&BUFFER);
+
+	if (FAILED(hResult))
+	{
+		StopAmbientSound();
+		return;
+	}
+
+	hResult = pAmbientSourceVoice->Start();
+
+	if (FAILED(hResult))
+	{
+		StopAmbientSound();
+		return;
+	}
+}
+
+// 環境音を停止
+void AudioManager::StopAmbientSound()
+{
+	if (pAmbientSourceVoice)
+	{
+		pAmbientSourceVoice->Stop();
+		pAmbientSourceVoice->DestroyVoice();
+		pAmbientSourceVoice = nullptr;
+	}
+}
+
+// BGMのループを終了
 void AudioManager::SetBGMExitLoop()
 {
 	if (pBGMSourceVoice)
@@ -202,6 +272,7 @@ void AudioManager::SetBGMExitLoop()
 	}
 }
 
+// BGMを停止
 void AudioManager::SetBGMStop()
 {
 	if (pBGMSourceVoice)
@@ -210,6 +281,7 @@ void AudioManager::SetBGMStop()
 	}
 }
 
+// BGMを再開
 void AudioManager::SetBGMStart()
 {
 	if (pBGMSourceVoice)
@@ -223,6 +295,10 @@ void AudioManager::Release()
 	// 足音を停止
 	StopFootstep();
 
+	// 環境音を停止
+	StopAmbientSound();
+
+	// BGMを停止
 	if (pBGMSourceVoice)
 	{
 		pBGMSourceVoice->Stop();
@@ -246,5 +322,6 @@ void AudioManager::Release()
 			player.pSourceVoice = nullptr;
 		}
 	}
+
 	players.clear();
 }
