@@ -6,14 +6,33 @@
 namespace
 {
 	constexpr size_t WEAPON_SLOT_INDEX{ 0 };
-	constexpr size_t CONSUMABLE_SLOT_INDEX{ 1 };
-	constexpr size_t BAG_SLOT_INDEX{ 2 };
+	constexpr size_t TOOL_SLOT_INDEX{ 1 };
+	constexpr size_t CONSUMABLE_SLOT_INDEX{ 2 };
+	constexpr size_t BAG_SLOT_INDEX{ 3 };
+
+	bool CannotStack(
+	    ItemType _type)
+	{
+		switch (_type)
+		{
+		case ItemType::Shield:
+		case ItemType::Weapons:
+		case ItemType::WeaponBow:
+		case ItemType::Tools:
+			return true;
+		default:
+			return false;
+		}
+		return false;
+	}
 }  // namespace
 
 void HotBar::Start()
 {
 	// 武器
 	slots[WEAPON_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
+	// ツール(斧やハンマー)
+	slots[TOOL_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
 	// 消費アイテム
 	slots[CONSUMABLE_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
 	// バッグ
@@ -95,7 +114,8 @@ void HotBar::Update()
 		// スロットのアイテム数のテキスト
 		std::string itemCountStr = "";
 		ItemType type            = Get<ItemSystem>().GetInfo(itemData.id)._type;
-		if (type != ItemType::Weapons && type != ItemType::WeaponBow && itemData.id != EMPTY_ITEM_ID)
+
+		if (CannotStack(type) == false && itemData.id != EMPTY_ITEM_ID)
 		{
 			itemCountStr = std::to_string(itemData.count);
 		}
@@ -180,11 +200,7 @@ bool HotBar::TrySetItem(
 {
 	ItemInfo info    = Get<ItemSystem>().GetInfo(_id);
 	size_t slotIndex = GetSlotIndexFrom(info._type);
-	bool isWeapon    = false;
-	if (info._type == ItemType::Weapons || info._type == ItemType::WeaponBow)
-	{
-		isWeapon = true;
-	}
+	bool cannotStack = CannotStack(info._type);
 
 	if (slotIndex == -1)
 		return false;
@@ -202,7 +218,7 @@ bool HotBar::TrySetItem(
 	if (slotItemData.id == _id)
 	{
 		// 武器をすでに持っている場合、追加不可能
-		if (isWeapon)
+		if (cannotStack)
 			return false;
 		slotItemData.id = _id;
 		slotItemData.count++;
@@ -217,7 +233,7 @@ bool HotBar::SwapWeaponItem(
     ItemId _newItemId)
 {
 	ItemInfo info = Get<ItemSystem>().GetInfo(_newItemId);
-	if (info._type != ItemType::Weapons && info._type != ItemType::WeaponBow)
+	if (info._type != ItemType::Weapons && info._type != ItemType::WeaponBow && info._type != ItemType::Shield)
 	{
 		_oldItemId = EMPTY_ITEM_ID;
 		return false;
@@ -258,12 +274,6 @@ bool HotBar::CanRemoveItem(
     int _count)
 {
 	size_t slotIndex = GetSlotIndexFrom(_itemType);
-	bool isWeapon    = false;
-	if (_itemType == ItemType::Weapons || _itemType == ItemType::WeaponBow)
-	{
-		isWeapon = true;
-	}
-
 	if (slotIndex == -1)
 		return false;
 
@@ -276,18 +286,13 @@ void HotBar::RemoveItem(
     int _count)
 {
 	size_t slotIndex = GetSlotIndexFrom(_itemType);
-	bool isWeapon    = false;
-	if (_itemType == ItemType::Weapons || _itemType == ItemType::WeaponBow)
-	{
-		isWeapon = true;
-	}
 
 	if (slotIndex == -1)
 		return;
 
 	SlotItemData& itemData = GetSlotItemData(slotIndex);
 
-	if (isWeapon)
+	if (CannotStack(_itemType))
 	{
 		itemData.count = 0;
 	}
@@ -343,18 +348,21 @@ size_t HotBar::GetSlotIndexFrom(
     ItemType _itemType)
 {
 	size_t slotIndex = -1;
-	bool isWeapon    = false;
 	switch (_itemType)
 	{
 	case ItemType::Weapons:
 	case ItemType::WeaponBow:
+	case ItemType::Shield:
 		slotIndex = WEAPON_SLOT_INDEX;
-		isWeapon  = true;
 		break;
 	case ItemType::Consumables:
 	case ItemType::Arrow:
 		slotIndex = CONSUMABLE_SLOT_INDEX;
 		break;
+	case ItemType::Tools:
+		slotIndex = TOOL_SLOT_INDEX;
+		break;
+
 	default:
 		break;
 	}

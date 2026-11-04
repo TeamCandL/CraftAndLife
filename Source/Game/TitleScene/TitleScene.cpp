@@ -7,10 +7,15 @@
 #include "TitleLogo.h"
 #include "TitleLogoStartGuide.h"
 #include "TitlePageContlroller.h"
+#include "TitleBGM.h"
 
 void TitleScene::Start()
 {
 	Instantiate<GameManager>();
+
+	// タイトルBGM
+	Instantiate<TitleBGM>();
+
 	Instantiate<TitleNetworkController>();
 	// Instantiate<TitleLogo>();
 	// Instantiate<TitleLogoStartGuide>();
