@@ -87,8 +87,8 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 5,
 	                        ItemType::Tools,
 	                        "ハンマー",
-	                        "Image/Item/IconHummer.png",
-	                        "Model/HandWeapon/HandHummer.fbx",
+	                        "Image/Item/IconHammer.png",
+	                        "Model/HandWeapon/Hammer.fbx",
 
 	                        true,
 	                        craft,
@@ -194,7 +194,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "爪",
 	                        "Image/Item/IconClaw.png",
-	                        "Model/HandMaterial/.HandClaw",
+	                        "Model/HandMaterial/DragonClaw.fbx",
 
 	                        false,
 	                        craft,
