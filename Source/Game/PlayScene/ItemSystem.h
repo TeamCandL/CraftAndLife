@@ -2,6 +2,7 @@
 #include <Game/Game.h>
 #include "ItemId.h"
 #include "Player/PlayerJobType.h"
+#include "PlayerRoleType.h"
 
 enum ItemType
 {
@@ -31,6 +32,8 @@ struct ItemInfo
 	float _coolTime{};
 	int32_t _damageForEnemy{};
 	int32_t _damageForObject{};
+
+	PlayerJobType canUseJobType{};
 };
 
 struct ItemAllInfo
@@ -47,6 +50,8 @@ struct ItemAllInfo
 	const float _coolTime{};           ///<	クールタイム
 	const int32_t _damageForEnemy{};   ///<	敵への攻撃力
 	const int32_t _damageForObject{};  ///<	オブジェクトへの攻撃力
+
+	PlayerJobType canUseJobType{ PlayerJobType_Max };  ///<	使用可能な職業タイプ
 };
 
 struct ItemStack
