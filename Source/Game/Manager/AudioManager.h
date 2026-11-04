@@ -1,14 +1,14 @@
 #pragma once
 #include <Base/Base.h>
-#include "AudioSystem/AudioPlayer.h"
+#include "AudioManager/AudioPlayer.h"
 #include <vector>
 
-struct AudioSystem : SystemObjectBase<AudioSystem>
+struct AudioManager : IManager
 {
 	/// @brief 開始処理
-	void Start() override;
+	void Start();
 	/// @brief 更新処理
-	void Update() override;
+	void Update();
 	/// @brief BGMを設定する
 	/// @param _resource 音声リソース
 	void SetBGM(Resource<ResourceType::Audio>& _resource);
@@ -23,9 +23,9 @@ struct AudioSystem : SystemObjectBase<AudioSystem>
 	void Play(Resource<ResourceType::Audio>& _resource);
 
 	/// @brief 毎フレーム呼ばれる更新処理
-	void LateUpdate() override;
+	void LateUpdate(const float _deltaTime);
 	/// @brief 廃棄処理
-	void OnDestroy() override;
+	void Release() override;
 
 	// 足音を再生する
 	void PlayFootstep(Resource<ResourceType::Audio>& _resource);

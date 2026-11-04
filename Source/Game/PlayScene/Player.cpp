@@ -18,7 +18,7 @@
 #include "Player/PlayerJobControllerFighter.h"
 #include "Player/PlayerJobControllerArcher.h"
 #include "StateRegistry.h"
-#include <Game/System/AudioSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 void Player::Start()
 {
@@ -341,7 +341,7 @@ void Player::MoveBody()
 
 		if (footstepTimer >= FOOTSTEP_INTERVAL)
 		{
-			Get<AudioSystem>().PlayFootstep(footstepSE);
+			Get<AudioManager>().PlayFootstep(footstepSE);
 
 			footstepTimer = 0.0f;
 		}
@@ -349,7 +349,7 @@ void Player::MoveBody()
 	else
 	{
 		// 足音を停止
-		Get<AudioSystem>().StopFootstep();
+		Get<AudioManager>().StopFootstep();
 
 		// タイマーをリセット
 		footstepTimer = 0.0f;
