@@ -377,10 +377,7 @@ void PlayNetworkController::Update()
 				networkSessionManager.Send(enemyMessage);
 			}
 
-			/// 敵ステート送信処理
-			if (!actorServer.IsHost() || !actorServer.IsInitialized())
-				return;
-
+			// 敵ステート送信処理
 			const bool fullSync = actorServer.IsFullSync();
 			auto& registries    = actorServer.GetEnemyStateRegistries();
 
@@ -389,60 +386,37 @@ void PlayNetworkController::Update()
 
 			std::vector<int32_t> enemyStateIds;
 			std::vector<uint8_t> values;
-			std::vector<int32_t> deadEnemyIds;
 
 			std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
 
 			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
 			{
 				if (!registries[enemyId].has_value())
-				{
 					continue;
-				}
 
-				auto& registry     = *registries[enemyId];
+				auto& registry = *registries[enemyId];
+
+				// 初回は全ステート、それ以降は変更分だけ取得
 				const auto changes = registry.GetStates(fullSync);
 
 				for (const auto& change : changes)
 				{
 					enemyStateIds.push_back(static_cast<int32_t>(enemyId));
 
-					// 型情報を含めてエンコード
+					// 値をエンコード
 					StateValueCode::Encode(change.value, values);
 
 					if (!enemyStateMessage.stateName.empty())
-					{
 						enemyStateMessage.stateName += '\n';
-					}
 
 					enemyStateMessage.stateName += change.name;
-
-					VCU_LOG("敵ステート格納: ID={}, Name={}, Valuesサイズ={}", enemyId, change.name, values.size());
-					// 死亡ステートを確認
-					if (change.name == "alive")
-					{
-						/*const bool* alive = std::get_if<bool>(&change.value);
-
-						if (alive != nullptr && !(*alive))
-						{
-						    deadEnemyIds.push_back(static_cast<int32_t>(enemyId));
-						}*/
-
-						const bool* alive = std::get_if<bool>(&change.value);
-
-						if (alive != nullptr && !(*alive))
-						{
-							deadEnemyIds.push_back(static_cast<int32_t>(enemyId));
-						}
-					}
 				}
 
 				if (!changes.empty())
-				{
 					pendingChanges.emplace_back(enemyId, changes);
-				}
 			}
 
+			// 送信するステートがある場合のみ送信
 			if (!enemyStateIds.empty())
 			{
 				enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
@@ -450,33 +424,20 @@ void PlayNetworkController::Update()
 				enemyStateMessage.values.Resize(values.size());
 
 				for (size_t i = 0; i < values.size(); ++i)
-				{
 					enemyStateMessage.values[i] = values[i];
-				}
 
 				networkSessionManager.Send(enemyStateMessage);
 
-				// 送信登録後に変更を確定
+				// 送信後に変更を確定
 				for (const auto& [enemyId, changes] : pendingChanges)
 				{
 					if (enemyId < registries.size() && registries[enemyId].has_value())
-					{
 						registries[enemyId]->CommitChanges(changes);
-					}
 				}
 
-				// 死亡通知を送信登録した敵を記録
-				for (const int32_t enemyId : deadEnemyIds)
-				{
-					actorServer.MarkDeathQueued(enemyId);
-				}
-
-				VCU_LOG("敵ステート送信 件数={}, 全同期={}", enemyStateIds.size(), fullSync);
-
+				// 初回同期完了
 				if (fullSync)
-				{
 					actorServer.ResetFullSync();
-				}
 			}
 		}
 
