@@ -1,4 +1,3 @@
-
 #include "AudioManager.h"
 
 void AudioManager::Start()
@@ -38,6 +37,7 @@ void AudioManager::Play(
 	};
 
 	hResult = pSourceVoice->SubmitSourceBuffer(&BUFFER);
+
 	if (FAILED(hResult))
 	{
 		pSourceVoice->DestroyVoice();
@@ -45,6 +45,7 @@ void AudioManager::Play(
 	}
 
 	hResult = pSourceVoice->Start();
+
 	if (FAILED(hResult))
 	{
 		pSourceVoice->DestroyVoice();
@@ -112,6 +113,69 @@ void AudioManager::StopFootstep()
 		pFootstepSourceVoice->Stop();
 		pFootstepSourceVoice->DestroyVoice();
 		pFootstepSourceVoice = nullptr;
+	}
+}
+
+// ジャンプ音を再生
+void AudioManager::PlayJump(
+    Resource<ResourceType::Audio>& _resource)
+{
+	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// 初回だけSourceVoiceを作成
+	if (!pJumpSourceVoice)
+	{
+		HRESULT hResult = pXAudio2->CreateSourceVoice(&pJumpSourceVoice, &audio.waveFormatEx.Format);
+
+		if (FAILED(hResult) || pJumpSourceVoice == nullptr)
+		{
+			return;
+		}
+	}
+
+	// 再生中なら停止してバッファをクリア
+	pJumpSourceVoice->Stop();
+	pJumpSourceVoice->FlushSourceBuffers();
+
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
+		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
+		.pAudioData = audio.buffer.data(),
+		.PlayBegin  = 0,
+		.PlayLength = 0,
+		.LoopBegin  = 0,
+		.LoopLength = 0,
+		.LoopCount  = 0,
+		.pContext   = 0,
+	};
+
+	HRESULT hResult = pJumpSourceVoice->SubmitSourceBuffer(&BUFFER);
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+
+	hResult = pJumpSourceVoice->Start();
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+}
+
+// ジャンプ音を停止
+void AudioManager::StopJump()
+{
+	if (pJumpSourceVoice)
+	{
+		pJumpSourceVoice->Stop();
+		pJumpSourceVoice->FlushSourceBuffers();
 	}
 }
 
@@ -294,6 +358,14 @@ void AudioManager::Release()
 {
 	// 足音を停止
 	StopFootstep();
+
+	// ジャンプ音を停止・破棄
+	if (pJumpSourceVoice)
+	{
+		pJumpSourceVoice->Stop();
+		pJumpSourceVoice->DestroyVoice();
+		pJumpSourceVoice = nullptr;
+	}
 
 	// 環境音を停止
 	StopAmbientSound();
