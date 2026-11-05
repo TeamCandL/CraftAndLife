@@ -7,6 +7,7 @@
 #include "ItemAction/ItemActionWeapons.h"
 #include "ItemAction/ItemActionWeaponBow.h"
 #include "ItemAction/ItemActionShield.h"
+#include <Game/Manager/SessionManager.h>
 
 void PlayerHand::Start()
 {
