@@ -40,23 +40,10 @@ void Enemy::Update()
 		SetAlive(false);
 	}
 
-	// 徘徊チェックポイントとの距離(差分)
-	if (!followed)
-	{
-		if (!objWanderingCheckPoint.IsEmpty())
-		{
-			targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
-		}
-		ImGui::Begin("CheckPoint");
-		ImGui::DragFloat3("position", targetPos.v);
-		ImGui::End();
-	}
-
-	Sensor();
-
 	// VCU_LOG("敵の追跡状況：{}", followed);
-
 	Move(targetPos, transform.position, transform.Down(), speed);
+
+	Sensor(transform.Down());
 
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
@@ -71,8 +58,9 @@ void Enemy::Update()
 		if (!objWanderingCheckPoint.IsEmpty())
 		{
 			// チェックポイントに到達したら新しいチェックポイントを生成する
-			if ((Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3() - transform.position).Length() < speed)
+			if ((targetPos - transform.position).Length() < 1.0f)
 			{
+				GetScene().Destroy(objWanderingCheckPoint);
 				SetWanderingCheckPoint(transform.position);
 			}
 		}
@@ -80,6 +68,7 @@ void Enemy::Update()
 		{
 			SetWanderingCheckPoint(transform.position);
 		}
+		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
@@ -110,7 +99,7 @@ void Enemy::Update()
 void Enemy::Move(
     Vec3 target_,
     Vec3 pos_,
-    Vec3 Fwd,
+    Vec3 Fwd_,
     float spd_)
 {
 	// VCU_LOG("TargetPosition : {}, {}", target_.x, target_.z);
@@ -122,7 +111,7 @@ void Enemy::Move(
 
 	if ((length > 1.0f && followed) || !followed)
 	{
-		Vec3 crossed = Math::GetCrossProduct(Fwd, tPos - ePos);
+		Vec3 crossed = Math::GetCrossProduct(Fwd_, tPos - ePos);
 
 		torque += crossed.y * Math::GetRad(rotationAnglePerSec);
 
@@ -132,7 +121,7 @@ void Enemy::Move(
 		angles.z           = 0.0f;
 		transform.rotation = Quaternion::FromEuler(angles);
 
-		Vec3 move{ (Fwd)*speed };
+		Vec3 move{ (Fwd_)*speed };
 		transform.position += move * Get<DeltaTime>();
 
 		ImGui::Begin("moveVec");
@@ -142,7 +131,8 @@ void Enemy::Move(
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 }
 
-void Enemy::Sensor()
+void Enemy::Sensor(
+    Vec3 Fwd_)
 {
 	Vec3 targetPos_{ DEFAULT_TARGET_POS };
 	float targetDist{ -1.0f };
@@ -182,7 +172,7 @@ void Enemy::Sensor()
 					}
 				}
 			}
-			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayer._pos - transform.position));
+			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
 			float visibilityDot = std::cosf(visibilityAngle);
 			if (dot <= visibilityDot)
 			{
