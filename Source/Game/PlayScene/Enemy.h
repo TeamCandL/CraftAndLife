@@ -194,7 +194,8 @@ struct EnemyData
 	//----------------------//
 	//---------/SE/---------//
 	//----------------------//
-	Resource<Audio> attackSE{ "BGM_SE/Striking the enemy.mp3" };  ///< 攻撃SE
+	// あとから修正
+	// Resource<Audio> attackSE{ "BGM_SE/Striking the enemy.mp3" };  ///< 攻撃SE
 	// Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
 
 	std::array<Resource<Model>, EnemyType_Max> models{

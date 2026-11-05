@@ -258,7 +258,8 @@ void Enemy::CloseAttack()
 void Enemy::AttackCollider()
 {
 	attacked = true;
-	Get<AudioManager>().Play(attackSE);
+	// あとから修正
+	// Get<AudioManager>().Play(attackSE);
 
 	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
@@ -268,7 +269,8 @@ void Enemy::AttackCollider(
     const Vec3& forward_)
 {
 	attacked = true;
-	Get<AudioManager>().Play(attackSE);
+	// あとから修正
+	// Get<AudioManager>().Play(attackSE);
 
 	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f, forward_, 10.0f);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
