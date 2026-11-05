@@ -138,7 +138,7 @@
       "slash_label": {
         "name": "slash_label",
         "type": "TEXT",
-        "x": 1115,
+        "x": 1105,
         "y": 454,
         "width": 13,
         "height": 46,
@@ -148,7 +148,7 @@
       "material_element_first_slash": {
         "name": "material_element_first_slash",
         "type": "TEXT",
-        "x": 1114,
+        "x": 1105,
         "y": 529,
         "width": 13,
         "height": 32,
