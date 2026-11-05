@@ -18,12 +18,12 @@ namespace EnemyParam
 	const std::vector<float> Speed{ 5.0f, 3.5f, 6.5f, 7.5f, 4.5f };  ///< 移動速度
 	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };
 	const std::vector<bool> HasLongAttack{ false, false, false, false, true };
-	const std::vector<float> VisibilityDist{ 100.0f, 200.0f, 100.0f, 80.0f, 300.0f };
+	const std::vector<float> VisibilityDist{ 50.0f, 100.0f, 50.0f, 40.0f, 140.0f };
 	const std::vector<float> VisibilityAngle{ 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };
 	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.5f, 1.0f, 3.0f };
 	const std::vector<float> RotationAnglePerSec{ 30.0f, 20.0f, 45.0f, 40.0f, 35.0f };
 	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };
-	const std::vector<int32_t> DropItemId{ 10, 10, 11, 12, 13 };
+	const std::vector<int32_t> DropItemId{ 9, 9, 10, 11, 12 };
 }  // namespace EnemyParam
 
 struct StateRegistry;
