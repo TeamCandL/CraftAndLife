@@ -3,6 +3,7 @@
 
 #include <Game/Game.h>
 #include <cstdint>
+#include "ItemId.h"
 
 /// @brief 採取できるものの種類
 enum class HarvestableType : int32_t
@@ -15,6 +16,9 @@ enum class HarvestableType : int32_t
 /// @brief 採取可能なもののデータ
 struct HarvestableData
 {
+	const ItemId ITEM_ID_ROCK{ 7 };  ///< 石のアイテムId
+	const ItemId ITEM_ID_WOOD{ 8 };  ///< 木のアイテムId
+
 	// モデルの種類
 	HarvestableType type{ HarvestableType::Tree };
 
@@ -77,4 +81,7 @@ struct Harvestable : ObjectBase<HarvestableData>
 
 	/// @brief ハーベスタブルオブジェクトを破壊する
 	void Break();
+
+	/// @brief ハーベスタブルオブジェクトが破壊された時の処理
+	void OnBroken();
 };

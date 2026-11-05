@@ -1,31 +1,44 @@
 #pragma once
 #include <Base/Base.h>
-#include "AudioSystem/AudioPlayer.h"
+#include "AudioManager/AudioPlayer.h"
 #include <vector>
 
-struct AudioSystem : SystemObjectBase<AudioSystem>
+struct AudioManager : IManager
 {
 	/// @brief 開始処理
-	void Start() override;
+	void Start();
+
 	/// @brief 更新処理
-	void Update() override;
+	void Update();
+
 	/// @brief BGMを設定する
 	/// @param _resource 音声リソース
 	void SetBGM(Resource<ResourceType::Audio>& _resource);
+
 	/// @brief 再生終了時にループを離脱する
 	void SetBGMExitLoop();
+
 	/// @brief BGMを止める
 	void SetBGMStop();
+
 	/// @brief BGMを再開する
 	void SetBGMStart();
+
+	// 環境音を再生
+	void SetAmbientSound(Resource<ResourceType::Audio>& _resource);
+
+	// 環境音を停止
+	void StopAmbientSound();
+
 	/// @brief 効果音を再生する
 	/// @param _resource 音声リソース
 	void Play(Resource<ResourceType::Audio>& _resource);
 
 	/// @brief 毎フレーム呼ばれる更新処理
-	void LateUpdate() override;
+	void LateUpdate(const float _deltaTime);
+
 	/// @brief 廃棄処理
-	void OnDestroy() override;
+	void Release() override;
 
 	// 足音を再生する
 	void PlayFootstep(Resource<ResourceType::Audio>& _resource);
@@ -33,12 +46,23 @@ struct AudioSystem : SystemObjectBase<AudioSystem>
 	// 足音を停止する
 	void StopFootstep();
 
+	// ジャンプ音を再生する
+	void PlayJump(Resource<ResourceType::Audio>& _resource);
+
+	// ジャンプ音を停止する
+	void StopJump();
+
   private:
 	ComPtr<IXAudio2> pXAudio2{};
 	IXAudio2MasteringVoice* pMasterVoice{ nullptr };
+
 	IXAudio2SourceVoice* pBGMSourceVoice{ nullptr };  // BGM用の音声ソース
 
-	IXAudio2SourceVoice* pFootstepSourceVoice{ nullptr };
+	IXAudio2SourceVoice* pAmbientSourceVoice{ nullptr };  // 環境音用
+
+	IXAudio2SourceVoice* pFootstepSourceVoice{ nullptr };  // 足音用
+
+	IXAudio2SourceVoice* pJumpSourceVoice{ nullptr };  // ジャンプ音用
 
 	std::vector<AudioPlayer> players{};  // 再生中の音声プレイヤー
 };

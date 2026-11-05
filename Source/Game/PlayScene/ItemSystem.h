@@ -13,6 +13,8 @@ enum ItemType
 	Arrow,        ///<	矢
 	Consumables,  ///<	消費アイテム
 	Materials,    ///<	素材アイテム
+	Medicals,     ///<	蘇生アイテム
+	Backpack,     ///<	バックパック
 	ItemTypeMax,  ///<	その他アイテム
 };
 

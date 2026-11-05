@@ -18,7 +18,7 @@
 #include "Player/PlayerJobControllerFighter.h"
 #include "Player/PlayerJobControllerArcher.h"
 #include "StateRegistry.h"
-#include <Game/System/AudioSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 void Player::Start()
 {
@@ -27,8 +27,9 @@ void Player::Start()
 	transform.scale = Vec3::One() * 200.0f;
 	obb.offset      = OBB_OFFSET;
 	obb.scale       = Vec3::One() * OBB_SCALE;
-	obb.isTrigger   = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
+	obb.isTrigger   = true;
 
+	// プレイヤーコントローラー作成
 	objPlayerController = GetScene().Instantiate<PlayerControllerNormal>();
 	objPlayerHand       = GetScene().Instantiate<PlayerHand>(this->ToGameObject());
 
@@ -44,17 +45,18 @@ void Player::Start()
 
 	// ホットバー作成
 	objHotbar = GetScene().Instantiate<HotBar>();
+
 	// ホットバーが選択するアイテムが切り替わった際に呼ばれるコールバックをセット
 	Get<HotBar>(objHotbar).SetOnChangedSelectedItemCallback(
 	    [this]()
 	    {
-		    // 選択中のアイテムをプレイヤーの手にセット！！！
+		    // 選択中のアイテムをプレイヤーの手にセット
 		    HotBar& hotbar = Get<HotBar>(objHotbar);
 		    Get<PlayerHand>(objPlayerHand).SetItem(hotbar.GetSelectedItemId());
 		    VCU_LOG("change selected item");
 	    });
 
-	SetJob(PlayerJobType_Healer);
+	SetJob(PlayerJobType_Archer);
 }
 
 void Player::Update()
@@ -69,7 +71,62 @@ void Player::Update()
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
+	ImGui::Separator();
+	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+
+	Vec3 angles = transform.rotation.ToEuler();
+	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+	transform.rotation = Quaternion::FromEuler(angles);
+
+	if (ImGui::Button("出力"))
+	{
+		fs::path filePath{ "./animDumpForPlayer.txt" };
+		std::ofstream ofs{ filePath, std::ios::app };
+
+		if (ofs)
+		{
+			ofs << std::format(
+			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:f}f, {:f}f, {:f}f }}, Quaternion::FromEuler(Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }}), Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }} }}",
+			           transform.position.x,
+			           transform.position.y,
+			           transform.position.z,
+			           angles.x,
+			           angles.y,
+			           angles.z,
+			           transform.scale.x,
+			           transform.scale.y,
+			           transform.scale.z)
+			    << std::endl;
+		}
+
+		ofs.close();
+	}
+
+	if (ImGui::Button(isAnimPreviewingDebug ? "アニメーション設定終了" : "アニメーション設定する"))
+	{
+		isAnimPreviewingDebug = !isAnimPreviewingDebug;
+
+		if (isAnimPreviewingDebug)
+		{
+			transformAnimator.playAnimation = "";
+		}
+		else
+		{
+			transformAnimator.playAnimation = "idle";
+		}
+	}
+
 	ImGui::End();
+
+	if (isAnimPreviewingDebug)
+	{
+		transformAnimator.playAnimation = "";
+		return;
+	}
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
 	{
@@ -97,11 +154,12 @@ void Player::Update()
 	// お試しで出してるエンティティ
 	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 	{
-		SpawnItem(8);
+		SpawnItem(9);
 	}
+
 	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		SpawnItem(11);
+		SpawnItem(8);
 	}
 
 	// 近くのアイテムを拾う
@@ -118,6 +176,7 @@ void Player::Update()
 	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && isOpenCraftUI == false)
 	{
 		HotBar& hotbar = Get<HotBar>(objHotbar);
+
 		if (hotbar.CanRemoveSelectedItem())
 		{
 			ItemId selectedItemId = hotbar.GetSelectedItemId();
@@ -140,8 +199,10 @@ void Player::Update()
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
-		hp -= 10;
+		Damaged(10);
 	}
+
+	Get<IPlayerJobController>(objJobController).Update(Data());
 }
 
 void Player::Draw()
@@ -177,6 +238,12 @@ void Player::Damaged(
 {
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
+		if (jobStatus.maxHpBoost > 0.0f)
+		{
+			hp -= damage;
+			return;
+		}
+
 		hp -= damage;
 
 		if (hp < 0)
@@ -189,49 +256,62 @@ void Player::Damaged(
 
 	if (hp <= 0)
 	{
-		SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
+		SetHelthState(HelthState_Dead);
 	}
 }
 
 void Player::SetHelthState(
     const HelthState _state)
 {
+	if (helthState == _state)
+	{
+		return;
+	}
+
 	switch (_state)
 	{
 	case HelthState_Live:
 		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_TPS);
 		break;
+
 	case HelthState_Dead:
 		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_Ghost);
 		break;
+
 	default:
 		VCU_ASSERT("不正な生存ステータスですよ。");
 		return;
 	}
+
 	helthState = _state;
 }
 
 void Player::SetJob(
     const PlayerJobType _jobType)
 {
-	// 今のjobこんを消す
+	// 今のjobコンを消す
 	GetScene().Destroy(objJobController);
 
 	jobType = _jobType;
+
 	switch (jobType)
 	{
 	case PlayerJobType_Healer:
 		objJobController = GetScene().Instantiate<PlayerJobControllerHealer>();
 		break;
+
 	case PlayerJobType_Tank:
 		objJobController = GetScene().Instantiate<PlayerJobControllerTank>();
 		break;
+
 	case PlayerJobType_Fighter:
 		objJobController = GetScene().Instantiate<PlayerJobControllerFighter>();
 		break;
+
 	case PlayerJobType_Archer:
 		objJobController = GetScene().Instantiate<PlayerJobControllerArcher>();
 		break;
+
 	default:
 		VCU_ASSERT(false && "選択不可能な役職です。");
 		return;
@@ -250,8 +330,7 @@ void Player::MoveBody()
 
 	// 入力取得
 	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
-
-	auto pPlayerInput = inputSystem.GetPlayerInput();
+	auto pPlayerInput                = inputSystem.GetPlayerInput();
 
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
 
@@ -271,11 +350,11 @@ void Player::MoveBody()
 
 	// 地形に沿った移動
 	Vec3 nextPosition = transform.position;
-	nextPosition += moveDirection * moveSpeed;
+	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
 
-	animSpeed = (moveDirection * moveSpeed).Length() / 0.1f;
+	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
 
-	if (animSpeed > 0.0f)
+	if (animSpeed > 0.01f)
 	{
 		animIndex = PlayerAnimType_Walk;
 
@@ -300,15 +379,14 @@ void Player::MoveBody()
 
 		if (footstepTimer >= FOOTSTEP_INTERVAL)
 		{
-			Get<AudioSystem>().PlayFootstep(footstepSE);
-
+			Get<AudioManager>().PlayFootstep(footstepSE);
 			footstepTimer = 0.0f;
 		}
 	}
 	else
 	{
 		// 足音を停止
-		Get<AudioSystem>().StopFootstep();
+		Get<AudioManager>().StopFootstep();
 
 		// タイマーをリセット
 		footstepTimer = 0.0f;
@@ -330,12 +408,9 @@ void Player::MoveBody()
 	Vec3 candidateX = transform.position;
 	candidateX.x    = nextPosition.x;
 
-	float currentHeightX = terrain.GetHeight(currentPosition.x, currentPosition.z);
-
-	float nextHeightX = terrain.GetHeight(candidateX.x, candidateX.z);
-
-	float moveDistanceX = fabsf(candidateX.x - currentPosition.x);
-
+	float currentHeightX    = terrain.GetHeight(currentPosition.x, currentPosition.z);
+	float nextHeightX       = terrain.GetHeight(candidateX.x, candidateX.z);
+	float moveDistanceX     = fabsf(candidateX.x - currentPosition.x);
 	float heightDifferenceX = nextHeightX - currentHeightX;
 
 	// 高さの変化が移動距離に対して大きすぎる場合は移動しない
@@ -350,12 +425,9 @@ void Player::MoveBody()
 	Vec3 candidateZ = transform.position;
 	candidateZ.z    = nextPosition.z;
 
-	float currentHeightZ = terrain.GetHeight(transform.position.x, transform.position.z);
-
-	float nextHeightZ = terrain.GetHeight(candidateZ.x, candidateZ.z);
-
-	float moveDistanceZ = fabsf(candidateZ.z - transform.position.z);
-
+	float currentHeightZ    = terrain.GetHeight(transform.position.x, transform.position.z);
+	float nextHeightZ       = terrain.GetHeight(candidateZ.x, candidateZ.z);
+	float moveDistanceZ     = fabsf(candidateZ.z - transform.position.z);
 	float heightDifferenceZ = nextHeightZ - currentHeightZ;
 
 	if (heightDifferenceZ <= 0.0f || (moveDistanceZ > 0.0001f && heightDifferenceZ / moveDistanceZ <= MAX_SLOPE))
@@ -385,12 +457,17 @@ void Player::MoveBody()
 		transform.position.y = groundHeight;
 	}
 
+	// --------------------------------
 	// ジャンプ処理
+	// --------------------------------
 	float deltaTime = Get<DeltaTime>();
 
 	// ジャンプボタンを押した瞬間
 	if (pPlayerInput->IsJumpBegin() && !isJumping)
 	{
+		// ジャンプ音を再生
+		Get<AudioManager>().PlayJump(jumpSE);
+
 		jumpVelocity = JUMP_POWER;
 		isJumping    = true;
 	}
@@ -412,7 +489,6 @@ void Player::MoveBody()
 		transform.position.y += jumpVelocity * deltaTime;
 
 		// 地面に着地したら停止
-
 		if (transform.position.y <= groundHeight)
 		{
 			transform.position.y = groundHeight;
@@ -436,26 +512,8 @@ void Player::MoveBody()
 	}
 
 	// MEMO: PlayerHand側に処理を移動しました。
-	// if (pPlayerInput->IsAction())
-	//{
-	//	// アクション有効にする
-	//	.SetAction(true);
-	//}
 	// 手の更新をする
 	Get<PlayerHand>(objPlayerHand).Update(Data());
-
-	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
-	if (objPick)
-	{
-		// GetScene().Destroy(objPick);
-		VCU_LOG("objPick");
-
-		Get<EntitySystem>().Spawn(
-		    Get<IEntity>(objPick).GetItemId(),
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-		// objPick
-	}
 }
 
 void Player::DeadAnim()
@@ -507,6 +565,7 @@ float Player::GetAngleY() const
 void Player::UpdatePickNearestItem()
 {
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+
 	// エンティティを拾うことができた場合
 	if (objPick)
 	{
@@ -519,13 +578,15 @@ void Player::TryAddItem(
     ItemId _id)
 {
 	/// ----------------------------------------------
-	/// 今のジョブで、引数のアイテムを追加できるか確認
+	/// 今のjobで、引数のアイテムを追加できるか確認
 	/// ----------------------------------------------
 
 	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
 	bool filterAddItemOnJob{ false };
+
 	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
 	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);
+
 	if (playerCanUse == false && filterAddItemOnJob)
 	{
 		SpawnItem(_id);
@@ -537,6 +598,7 @@ void Player::TryAddItem(
 	/// ---------------------------
 	ItemStack itemStack{};
 	HotBar& hotbar = Get<HotBar>(objHotbar);
+
 	if (hotbar.TrySetItem(_id))
 	{
 		return;
@@ -558,6 +620,7 @@ void Player::TryAddItem(
 	/// バッグに追加できるか確認
 	/// ---------------------------
 	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
+
 	if (bag.CanAddItem(_id))
 	{
 		bag.AddItem(_id);
@@ -576,5 +639,6 @@ void Player::SpawnItem(
 	    _id,
 	    transform.position + Vec3::Up() * 2.0f,
 	    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+
 	VCU_LOG("objPawn");
 }

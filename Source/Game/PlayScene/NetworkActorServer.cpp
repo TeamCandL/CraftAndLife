@@ -15,8 +15,6 @@ void NetworkActorServer::Start()
 		player.RegisterStates(Data().playerStateRegistry);
 
 		Data().isPlayerStateRegistered = true;
-
-		VCU_LOG("【Player StateRegistry 登録完了】");
 	}
 
 	// ゲストなら敵を生成しない
@@ -43,8 +41,6 @@ void NetworkActorServer::Update()
 			player.RegisterStates(Data().playerStateRegistry);
 
 			Data().isPlayerStateRegistered = true;
-
-			VCU_LOG("【Player StateRegistry 登録完了】");
 		}
 
 		CreateEnemies();
@@ -97,12 +93,12 @@ void NetworkActorServer::CreateEnemies()
 
 	// 敵を生成（同じ種類も複数生成可能）
 	// CreateEnemy(EnemyType::Skeleton);
-	// CreateEnemy(EnemyType::Skeleton, Vec3{ 1.0f, 7.0f, 2.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ 1.0f, 7.0f, 2.0f });
 	// CreateEnemy(EnemyType::Spider, Vec3{ -1.0f, 7.0f, 2.0f });
-	// CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
 	// CreateEnemy(EnemyType::BossSkeleton, Vec3{ 1.0f, 5.0f, 2.0f });
 	// CreateEnemy(EnemyType::Bat, Vec3{ 1.0f, 7.0f, 5.0f });
-	CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
+	// CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
 
 	//  生成済みにする
 	Data().isInitialized = true;
