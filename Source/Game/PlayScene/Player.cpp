@@ -231,6 +231,12 @@ void Player::Damaged(
 {
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
+		if (jobStatus.maxHpBoost > 0.0f)
+		{
+			hp -= damage;
+			return;
+		}
+
 		hp -= damage;
 
 		if (hp < 0)
