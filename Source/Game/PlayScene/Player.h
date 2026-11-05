@@ -83,6 +83,9 @@ struct PlayerData
 	// 足音SE
 	Resource<Audio> footstepSE{ "BGM_SE/footsteps.mp3" };
 
+	// ジャンプ音
+	Resource<Audio> jumpSE{ "BGM_SE/Jump.mp3" };
+
 	// 足音を鳴らす間隔
 	float footstepTimer{ 0.0f };
 
