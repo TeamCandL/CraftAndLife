@@ -18,11 +18,11 @@ void Enemy::Start()
 {
 	Get<EnemyController>(objEnemyController).AddEnemy(ToGameObject());
 
-	// SetWanderingCheckPoint(transform.position);
+	SetWanderingCheckPoint(transform.position);
 	nowAttackCoolTime  = ATTACK_COOL_TIME;
 	nowDamagedCoolTime = DAMAGED_COOL_TIME;
 
-	obb.offset    = { 0.0f, 0.5f, 0.25f };
+	obb.offset    = { 0.0f, 1.0f, 0.5f };
 	obb.isTrigger = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
 }
 
@@ -41,23 +41,10 @@ void Enemy::Update()
 		SetAlive(false);
 	}
 
-	// 徘徊チェックポイントとの距離(差分)
-	if (!followed)
-	{
-		if (!objWanderingCheckPoint.IsEmpty())
-		{
-			targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
-		}
-		ImGui::Begin("CheckPoint");
-		ImGui::DragFloat3("position", targetPos.v);
-		ImGui::End();
-	}
-
-	Sensor();
-
 	// VCU_LOG("敵の追跡状況：{}", followed);
+	Move(targetPos, transform.position, transform.Down(), speed);
 
-	Move(targetPos, transform.position, transform.Forward(), speed);
+	Sensor(transform.Down());
 
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
@@ -72,8 +59,9 @@ void Enemy::Update()
 		if (!objWanderingCheckPoint.IsEmpty())
 		{
 			// チェックポイントに到達したら新しいチェックポイントを生成する
-			if ((Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3() - transform.position).Length() < speed)
+			if ((targetPos - transform.position).Length() < 1.0f)
 			{
+				GetScene().Destroy(objWanderingCheckPoint);
 				SetWanderingCheckPoint(transform.position);
 			}
 		}
@@ -81,6 +69,7 @@ void Enemy::Update()
 		{
 			SetWanderingCheckPoint(transform.position);
 		}
+		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
@@ -93,12 +82,6 @@ void Enemy::Update()
 
 	if (alive)
 	{
-		// モデルの向きを正面にする
-		Vec3 angles        = transform.rotation.ToEuler();
-		angles.x           = -DirectX::XM_PIDIV2;
-		angles.z           = 0.0f;
-		transform.rotation = Quaternion::FromEuler(angles);
-		angles             = transform.rotation.ToEuler();
 	}
 	else
 	{
@@ -117,7 +100,7 @@ void Enemy::Update()
 void Enemy::Move(
     Vec3 target_,
     Vec3 pos_,
-    Vec3 Fwd,
+    Vec3 Fwd_,
     float spd_)
 {
 	// VCU_LOG("TargetPosition : {}, {}", target_.x, target_.z);
@@ -127,24 +110,30 @@ void Enemy::Move(
 	Vec3 ePos{ ex, 0.0f, ez };
 	float length = (tPos - ePos).Length();
 
-	if ((length > speed && followed) || !followed)
+	if ((length > 1.0f && followed) || !followed)
 	{
-		Vec3 crossed = Math::GetCrossProduct(Fwd, tPos - ePos);
+		Vec3 crossed = Math::GetCrossProduct(Fwd_, tPos - ePos);
 
 		torque += crossed.y * Math::GetRad(rotationAnglePerSec);
 
 		Vec3 angles        = transform.rotation.ToEuler();
+		angles.x           = -DirectX::XM_PIDIV2;
 		angles.y           = torque;
 		angles.z           = 0.0f;
 		transform.rotation = Quaternion::FromEuler(angles);
 
-		Vec3 move{ (transform.Down() + transform.Right() * 0.05f) * speed };
+		Vec3 move{ (Fwd_)*speed };
 		transform.position += move * Get<DeltaTime>();
+
+		ImGui::Begin("moveVec");
+		ImGui::DragFloat3("move", move.v);
+		ImGui::End();
 	}
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 }
 
-void Enemy::Sensor()
+void Enemy::Sensor(
+    Vec3 Fwd_)
 {
 	Vec3 targetPos_{ DEFAULT_TARGET_POS };
 	float targetDist{ -1.0f };
@@ -157,33 +146,36 @@ void Enemy::Sensor()
 	    });
 	for (TargetInfo objPlayer : players)
 	{
-		float playerDist = (transform.position - objPlayer._pos).Length();
+		float playerDist = (objPlayer._pos - transform.position).Length();
 		if (playerDist <= visibilityDist)
 		{
-			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayer._pos - transform.position));
-			float visibilityDot = std::cosf(visibilityAngle);
-			if (dot <= visibilityDot)
+			if (objPlayer._attentionLevel >= targetAttentionLevel)
 			{
-				if (objPlayer._attentionLevel >= targetAttentionLevel)
+				if (objPlayer._attentionLevel > targetAttentionLevel)
 				{
-					if (targetDist < 0.0f)
+					targetPos_           = objPlayer._pos;
+					targetDist           = playerDist;
+					targetAttentionLevel = objPlayer._attentionLevel;
+				}
+				else if (targetDist < 0.0f)
+				{
+					targetPos_           = objPlayer._pos;
+					targetDist           = playerDist;
+					targetAttentionLevel = objPlayer._attentionLevel;
+				}
+				else
+				{
+					if (targetDist > playerDist)
 					{
 						targetPos_           = objPlayer._pos;
 						targetDist           = playerDist;
 						targetAttentionLevel = objPlayer._attentionLevel;
 					}
-					else
-					{
-						if (targetDist > playerDist)
-						{
-							targetPos_           = objPlayer._pos;
-							targetDist           = playerDist;
-							targetAttentionLevel = objPlayer._attentionLevel;
-						}
-					}
 				}
 			}
-			else
+			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
+			float visibilityDot = std::cosf(visibilityAngle);
+			if (dot <= visibilityDot)
 			{
 			}
 		}
@@ -194,8 +186,8 @@ void Enemy::Sensor()
 		{
 			GetScene().Destroy(objWanderingCheckPoint);
 		}
-		// targetPos = targetPos_;
-		// followed  = true;
+		targetPos = targetPos_;
+		followed  = true;
 	}
 	else
 	{
@@ -262,7 +254,8 @@ void Enemy::CloseAttack()
 void Enemy::AttackCollider()
 {
 	attacked = true;
-	Get<AudioManager>().Play(attackSE);
+	// あとから修正
+	// Get<AudioManager>().Play(attackSE);
 
 	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
@@ -272,7 +265,8 @@ void Enemy::AttackCollider(
     const Vec3& forward_)
 {
 	attacked = true;
-	Get<AudioManager>().Play(attackSE);
+	// あとから修正
+	// Get<AudioManager>().Play(attackSE);
 
 	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f, forward_, 10.0f);
 	nowAttackCoolTime = ATTACK_COOL_TIME;

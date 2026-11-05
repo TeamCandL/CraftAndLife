@@ -259,13 +259,13 @@ ItemSystemData::ItemSystemData()
 
 	                        PlayerJobType_Fighter });
 	craft.clear();
-	craft.push_back({ 7, 7 });
-	craft.push_back({ 8, 4 });
+	craft.push_back({ 10, 5 });
+	craft.push_back({ 14, 4 });
 	allItemList.push_back({ 18,
-	                        ItemType::ItemTypeMax,
+	                        ItemType::Medicals,
 	                        "医療キット",
-	                        "Image/InvalidImage.png",
-	                        "Model/HandMaterial/HandRock.fbx",
+	                        "Image/Item/IconMedicalKit.png",
+	                        "Model/HandWeapon/HandMedicalKit.fbx",
 
 	                        true,
 	                        craft,
@@ -275,6 +275,19 @@ ItemSystemData::ItemSystemData()
 	                        0,
 
 	                        PlayerJobType_Healer });
+	craft.clear();
+	allItemList.push_back({ 19,
+	                        ItemType::Backpack,
+	                        "バックパック",
+	                        "Image/Item/IconBackPack.png",
+	                        "Model/HandBackPack/HandBackPack.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
 }
 
 ItemInfo ItemSystem::GetInfo(

@@ -33,7 +33,11 @@ class SessionManager : public IManager
 	/// @param _names プレイヤー名
 	/// @param _positions 座標情報
 	/// @param _rotations 回転情報
-	void UpdatePlayers(const std::string_view _names, SizedBuffer<float>& _positions, SizedBuffer<float>& _rotations);
+	void UpdatePlayers(
+	    const std::string_view _names,
+	    SizedBuffer<float>& _positions,
+	    SizedBuffer<float>& _rotations,
+	    SizedBuffer<int32_t>& _haveItemIds);
 
 	/// @brief プレイヤーステータスを参照する
 	/// @param _playerName プレイヤー名

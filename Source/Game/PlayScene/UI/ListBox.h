@@ -74,5 +74,6 @@ namespace UI
 
 	  private:
 		void MoveFocus(int _dir);
+		void UpdateFocusForMouseCursor();
 	};
 }  // namespace UI

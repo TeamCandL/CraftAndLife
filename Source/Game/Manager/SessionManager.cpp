@@ -224,7 +224,8 @@ void SessionManager::SetLobbyHost(
 void SessionManager::UpdatePlayers(
     const std::string_view _names,
     SizedBuffer<float>& _positions,
-    SizedBuffer<float>& _rotations)
+    SizedBuffer<float>& _rotations,
+    SizedBuffer<int32_t>& _haveItemIds)
 {
 	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
 	auto& playerStatus           = inSessionStatus_.playersStatus;
@@ -260,6 +261,12 @@ void SessionManager::UpdatePlayers(
 			break;
 		}
 
+		if (i >= _haveItemIds.Size())
+		{
+			VCU_LOG("取得した名前分のアイテムIdのサイズが足りない({}個以上必要)", i);
+			break;
+		}
+
 		// CRLF 対策OtherPlayer
 		if (!line.empty() && line.back() == '\r')
 		{
@@ -277,6 +284,7 @@ void SessionManager::UpdatePlayers(
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_X],
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_Y],
 		};
+		playerStatus.haveItemId  = _haveItemIds[i];
 		playerStatus.updatedFlag = !playerStatus.updatedFlag;  // 更新フラグを反転
 
 		// VCU_LOG(

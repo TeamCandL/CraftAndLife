@@ -22,6 +22,7 @@
 #include <Game/PlayScene/EnemyController.h>
 #include <Game/PlayScene/StateValueCode.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/PlayScene/PlayerHand.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
 #include <Game/PlayScene/HarvestableController.h>
@@ -77,12 +78,14 @@ void PlayNetworkController::Update()
 				    converter.ToMessage(_event.data, message);
 
 				    VCU_LOG(
-				        "UpdatedPlayers受信: Names={}, Positions={}, Rotations={}",
+				        "UpdatedPlayers受信: Names={}, Positions={}, Rotations={}, HaveItemIds={}",
 				        message.playerNames,
 				        message.positions.Size(),
-				        message.rotations.Size());
+				        message.rotations.Size(),
+				        message.haveItemIds.Size());
 
-				    Get<SessionManager>().UpdatePlayers(message.playerNames, message.positions, message.rotations);
+				    Get<SessionManager>()
+				        .UpdatePlayers(message.playerNames, message.positions, message.rotations, message.haveItemIds);
 
 				    break;
 			    }
@@ -260,6 +263,8 @@ void PlayNetworkController::Update()
 
 		static int32_t counter{};
 		message.flag = counter++;
+
+		message.haveItemId = Get<PlayerHand>(Get<Player>(objPlayer).Data().objPlayerHand).Data().haveItemId;
 
 		// VCU_LOG("更新処理送信: {}", counter);
 

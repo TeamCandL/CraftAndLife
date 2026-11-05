@@ -452,8 +452,11 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionShield.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherPlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
@@ -730,9 +733,12 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionShield.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
     <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
