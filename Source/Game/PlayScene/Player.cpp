@@ -19,6 +19,7 @@
 #include "Player/PlayerJobControllerArcher.h"
 #include "StateRegistry.h"
 #include <Game/Manager/AudioManager.h>
+#include <Game/Manager/SessionManager/SessionStateReader.h>
 
 void Player::Start()
 {
@@ -115,6 +116,7 @@ void Player::Update()
 	ImGui::End();
 
 	if (isAnimPreviewingDebug)
+
 	{
 		transformAnimator.playAnimation = "";
 		return;  // アニメーションプレビューデバッグ中なら無視

@@ -91,12 +91,17 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedPlayerStates playerStateMessage{};
 				    converter.ToMessage(_event.data, playerStateMessage);
 
-#if 0
+#if 1
+				    VCU_LOG("UpdatedPlayerStates受信");
+				    VCU_LOG("PlayerID: {}", playerStateMessage.playerId);
+				    VCU_LOG("StateName: {}", playerStateMessage.stateName);
+				    VCU_LOG("Values Size: {}", playerStateMessage.values.Size());
+
 				    Get<SessionManager>().UpdatePlayerStates(
 				        playerStateMessage.playerId,
 				        playerStateMessage.stateName,
 				        playerStateMessage.values);
-#elif 1
+#elif 0
 				    VCU_LOG("PlayerID: {}", playerStateMessage.playerId);
 				    VCU_LOG("StateName: {}", playerStateMessage.stateName);
 				    VCU_LOG("Values Size: {}", playerStateMessage.values.Size());
@@ -261,63 +266,67 @@ void PlayNetworkController::Update()
 		networkSessionManager.Send(message);
 
 		// プレイヤーステート送信処理
-
+		static bool isFirstSync       = true;
 		StateRegistry& playerRegistry = actorServer.GetPlayerStateRegistry();
-		const auto playerChanges      = playerRegistry.GetChanges();
+		std::vector<StateChange> playerChanges;
+
+		if (isFirstSync)
+		{
+			// 初回同期時は全ステートを送信する
+			playerChanges = playerRegistry.GetAllStates();
+		}
+		else
+		{
+			// 2回目以降は変更があったステートのみ送信する
+			playerChanges = playerRegistry.GetChanges();
+		}
 
 		if (!playerChanges.empty())
 		{
-			const auto& status = Get<SessionManager>().RefStatus();
+			Protocol::UpdatedPlayerStates stateMessage{};
 
 			// 自分のプレイヤーIDを取得
+			const auto& status = Get<SessionManager>().RefStatus();
+
 			auto nameIt = std::find(status.memberNames.begin(), status.memberNames.end(), status.name);
 
-			VCU_LOG("自分の名前: {}", status.name);
-
-			for (size_t i = 0; i < status.memberNames.size(); ++i)
+			// メンバー一覧がまだ届いていない場合は送信しない
+			if (!status.memberNames.empty())
 			{
-				VCU_LOG(
-				    "Member[{}]: Name={}, ID={}",
-				    i,
-				    status.memberNames[i],
-				    i < status.memberId.size() ? status.memberId[i] : -1);
-			}
 
-			if (nameIt != status.memberNames.end())
-			{
-				const size_t index = std::distance(status.memberNames.begin(), nameIt);
-
-				if (index < status.memberId.size())
+				if (nameIt != status.memberNames.end())
 				{
-					Protocol::UpdatedPlayerStates message{};
-					message.playerId = status.memberId[index];
+					const size_t index = std::distance(status.memberNames.begin(), nameIt);
 
-					std::vector<uint8_t> values;
-
-					for (const auto& change : playerChanges)
+					if (index < status.memberId.size())
 					{
-						if (!message.stateName.empty())
+						stateMessage.playerId = status.memberId[index];
+
+						std::vector<uint8_t> values;
+
+						for (const auto& change : playerChanges)
 						{
-							message.stateName += '\n';
+							if (!stateMessage.stateName.empty())
+								stateMessage.stateName += '\n';
+
+							stateMessage.stateName += change.name;
+
+							StateValueCode::Encode(change.value, values);
 						}
 
-						message.stateName += change.name;
-						StateValueCode::Encode(change.value, values);
+						stateMessage.values.Resize(values.size());
+
+						for (size_t i = 0; i < values.size(); ++i)
+							stateMessage.values[i] = values[i];
+
+						networkSessionManager.Send(stateMessage);
+
+						// 送信後に変更を確定
+						playerRegistry.CommitChanges(playerChanges);
+
+						if (isFirstSync)
+							isFirstSync = false;
 					}
-
-					message.values.Resize(values.size());
-
-					for (size_t i = 0; i < values.size(); ++i)
-					{
-						message.values[i] = values[i];
-					}
-
-					VCU_LOG("Send UpdatedPlayerStates: PlayerID={}, StateName={}", message.playerId, message.stateName);
-
-					networkSessionManager.Send(message);
-
-					// 送信後に変更を確定
-					playerRegistry.CommitChanges(playerChanges);
 				}
 			}
 		}

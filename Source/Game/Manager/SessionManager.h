@@ -45,6 +45,12 @@ class SessionManager : public IManager
 	/// @return 存在している true / false
 	bool IsExistPlayer(const std::string& _playerName) const;
 
+	// プレイヤーIDからプレイヤー名を取得
+	bool TryGetPlayerName(int32_t _playerId, std::string& _outName) const;
+
+	// プレイヤー名からプレイヤーIDを取得
+	bool TryGetPlayerId(std::string_view _playerName, int32_t& _outId) const;
+
 	/// @brief 自分も含め全プレイヤーのステータスが存在するか
 	/// @return 存在する true / false
 	bool HasAllPlayersStatus() const;

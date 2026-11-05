@@ -5,6 +5,7 @@
 #include <shigaLibrary/SgRandom.h>
 #include <shigaLibrary/SgMath.h>
 #include <Game/PlayScene/TerrainSystem.h>
+#include <Game/Manager/SessionManager/SessionStateReader.h>
 
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
