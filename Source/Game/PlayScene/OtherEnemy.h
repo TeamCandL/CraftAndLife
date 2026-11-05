@@ -24,10 +24,16 @@ struct OtherEnemyData
 		Resource<Model>{ "Model/Enemy/Dragon.fbx" },
 	};
 
-	Component<Transform> transform{ Vec3{},
-		                            Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, 0.0f, 0.0f }) };  ///< 座標系
+	Component<Transform> transform{ Vec3{}, Quaternion::FromEuler(Vec3{ 90.0f, 0.0f, 0.0f }) };  ///< 座標系
 
 	int32_t animIndex{};
+
+	Component<RigidBody> rigidBody{};
+	Component<StaticOBB> obb{};
+
+	// 受けたダメージ量
+	int32_t damage{};
+	bool damagedFlag{ false };
 };
 
 struct OtherEnemy : ObjectBase<OtherEnemyData>
@@ -40,4 +46,7 @@ struct OtherEnemy : ObjectBase<OtherEnemyData>
 	void Update() override;
 	/// @brief 描画処理
 	void Draw() override;
+
+	/// @brief ホストへ敵の被ダメージを通知
+	void SendEnemyDamage(int32_t enemyId, int32_t damage);
 };

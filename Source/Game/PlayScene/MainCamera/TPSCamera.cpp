@@ -143,6 +143,7 @@ void TPSCamera::UpdatePositionFromTarget(
 
 	// 最終的なカメラ位置をセット
 	camera.transform.position = finalCameraPosition;
+	_data.position            = finalCameraPosition;
 
 	if (!objDebugPoint.IsEmpty())
 	{
@@ -152,10 +153,17 @@ void TPSCamera::UpdatePositionFromTarget(
 	camera.transform.rotation =
 	    Quaternion::FromLookAtQuaternion(camera.transform.position, finalFocusPoint, Vec3::Up());
 
+	focusPosition = finalFocusPoint;
+
 	ImGui::End();
 }
 
 void TPSCamera::OnDestroy()
 {
 	GetScene().Destroy(objDebugPoint);
+}
+
+Vec3 TPSCamera::GetFocusPosition()
+{
+	return focusPosition;
 }

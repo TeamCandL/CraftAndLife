@@ -4,17 +4,11 @@
 #include <Game/Network/NetworkSessionManager.h>
 #include <Game/Manager/SessionManager.h>
 #include "TitleNetworkController.h"
-#include <Game/System/AudioSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 void WordJoinButton::Start()
 {
-	objButton = GetScene().Instantiate<UI::Button>(
-		imageFileName,
-		imageFileName,
-		imageFileName,
-		"",
-		begin,
-		scale);
+	objButton = GetScene().Instantiate<UI::Button>(imageFileName, imageFileName, imageFileName, "", begin, scale);
 }
 
 void WordJoinButton::Update()
@@ -28,11 +22,10 @@ void WordJoinButton::Update()
 		ImGui::SetNextWindowSize(ImVec2{ 300, 200 }, ImGuiCond_Appearing);
 
 		// 適用するフラグのセット
-		ImGuiWindowFlags flags =
-			ImGuiWindowFlags_NoMove | // 移動不可
-			ImGuiWindowFlags_NoResize | // リサイズ不可
-			ImGuiWindowFlags_NoCollapse | // 折りたたみ不可
-			ImGuiWindowFlags_NoTitleBar;
+		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |      // 移動不可
+		                         ImGuiWindowFlags_NoResize |    // リサイズ不可
+		                         ImGuiWindowFlags_NoCollapse |  // 折りたたみ不可
+		                         ImGuiWindowFlags_NoTitleBar;
 
 		ImGui::Begin("合言葉入力欄", nullptr, flags);
 		ImGui::InputText("##inputWord", &inputWord);
@@ -54,7 +47,7 @@ void WordJoinButton::Update()
 		}
 		isInputtingWord = false;
 
-		Get<AudioSystem>().Play(pushSound);
+		Get<AudioManager>().Play(pushSound);
 		return;
 	}
 
@@ -63,6 +56,6 @@ void WordJoinButton::Update()
 		Get<WordInputPanel>(objWordInputPanel).Show();
 		isInputtingWord = true;
 
-		Get<AudioSystem>().Play(pushSound);
+		Get<AudioManager>().Play(pushSound);
 	}
 }

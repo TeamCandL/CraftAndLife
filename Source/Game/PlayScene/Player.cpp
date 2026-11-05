@@ -8,12 +8,17 @@
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/PlayerBag.h>
+#include <Game/PlayScene/UI/HotBar.h>
 #include <string>
 #include "PlayerHand.h"
+#include "Player/IPlayerJobController.h"
 #include "Player/PlayerJobControllerHealer.h"
 #include "Player/PlayerJobControllerTank.h"
 #include "Player/PlayerJobControllerFighter.h"
 #include "Player/PlayerJobControllerArcher.h"
+#include "StateRegistry.h"
+#include <Game/Manager/AudioManager.h>
 
 void Player::Start()
 {
@@ -34,7 +39,19 @@ void Player::Start()
 	// 初期位置の地面の高さを取得
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 
-	SetJob(PlayerJobType_Healer);
+	// バッグ作成
+	objPlayerBag = GetScene().Instantiate<PlayerBag>();
+
+	objHotbar = GetScene().Instantiate<HotBar>();
+	Get<HotBar>(objHotbar).SetOnChangedSelectedItemCallback(
+	    [this]()
+	    {
+		    HotBar& hotbar = Get<HotBar>(objHotbar);
+		    Get<PlayerHand>(objPlayerHand).SetItem(hotbar.GetSelectedItemId());
+		    VCU_LOG("change selected item");
+	    });
+
+	SetJob(PlayerJobType_Archer);
 }
 
 void Player::Update()
@@ -49,12 +66,63 @@ void Player::Update()
 	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
 	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
+	ImGui::Separator();
+	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+	Vec3 angles = transform.rotation.ToEuler();
+	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+	transform.rotation = Quaternion::FromEuler(angles);
+
+	if (ImGui::Button("出力"))
+	{
+		fs::path filePath{ "./animDumpForPlayer.txt" };
+		std::ofstream ofs{ filePath, std::ios::app };
+		if (ofs)
+		{
+			ofs << std::format(
+			           "TransformAnimationKey{{ 0.0f, Vec3{{ {:f}f, {:f}f, {:f}f }}, Quaternion::FromEuler(Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }}), Vec3{{ "
+			           "{:f}f, {:f}f, "
+			           "{:f}f }} }}",
+			           transform.position.x,
+			           transform.position.y,
+			           transform.position.z,
+			           angles.x,
+			           angles.y,
+			           angles.z,
+			           transform.scale.x,
+			           transform.scale.y,
+			           transform.scale.z)
+			    << std::endl;
+		}
+		ofs.close();
+	}
+
+	if (ImGui::Button(isAnimPreviewingDebug ? "アニメーション設定終了" : "アニメーション設定する"))
+	{
+		isAnimPreviewingDebug = !isAnimPreviewingDebug;
+
+		if (isAnimPreviewingDebug)
+		{
+			transformAnimator.playAnimation = "";
+		}
+		else
+		{
+			transformAnimator.playAnimation = "idle";
+		}
+	}
+
 	ImGui::End();
+
+	if (isAnimPreviewingDebug)
+	{
+		transformAnimator.playAnimation = "";
+		return;  // アニメーションプレビューデバッグ中なら無視
+	}
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
 	{
-		jobType++;
-		jobType %= PlayerJobType_Max;
+		SetJob((jobType + 1) % PlayerJobType_Max);
 	}
 
 	nowAttackCoolTime -= Get<DeltaTime>();
@@ -66,6 +134,156 @@ void Player::Update()
 	// カメラの更新処理
 	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
 
+	if (helthState == HelthState_Live)
+	{
+		MoveBody();
+	}
+	else if (helthState == HelthState_Dead)
+	{
+		DeadAnim();
+	}
+
+	// お試しで出してるエンティティ
+	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
+	{
+		SpawnItem(9);
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
+	{
+		SpawnItem(8);
+	}
+
+	// 近くのアイテムを拾う
+	UpdatePickNearestItem();
+
+	// クラフト画面を開く
+	if (Get<InputSystem>().GetKeyDown(KeyCode::C) ||
+	    Get<AbstructInputSystem>().GetPadInputSystem().IsButtonTriggered(GameInputGamepadY))
+	{
+		isOpenCraftUI = !isOpenCraftUI;
+	}
+	/*
+	//テスト用
+	 // HPゲージ動作確認用：1秒ごとに10ダメージ
+	 hpTestTimer += Get<DeltaTime>();
+
+	 if (hpTestTimer >= 1.0f)
+	 {
+	     Damaged(10);
+	     hpTestTimer = 0.0f;
+	 }
+	*/
+
+	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
+	{
+		Damaged(10);
+	}
+
+	Get<IPlayerJobController>(objJobController).Update(Data());
+}
+
+void Player::Draw()
+{
+	Get<Dx11Manager>().SetShader(shaderFront);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
+
+	const auto& subParts{ models[jobType].Get().subParts };
+
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
+}
+
+void Player::AttackCollider()
+{
+	if (nowAttackCoolTime <= 0.0f)
+	{
+		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+
+		nowAttackCoolTime = ATTACK_COOL_TIME;
+	}
+}
+
+void Player::Damaged(
+    int32_t damage)
+{
+	if (nowDamagedCoolTime <= 0.0f && hp > 0)
+	{
+		hp -= damage;
+
+		if (hp < 0)
+		{
+			hp = 0;
+		}
+
+		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+	}
+
+	if (hp <= 0)
+	{
+		SetHelthState(HelthState_Dead);  // hpが0未満なら死亡
+	}
+}
+
+void Player::SetHelthState(
+    const HelthState _state)
+{
+	if (helthState == _state)
+	{
+		return;
+	}
+	switch (_state)
+	{
+	case HelthState_Live:
+		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_TPS);
+		break;
+	case HelthState_Dead:
+		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_Ghost);
+		break;
+	default:
+		VCU_ASSERT("不正な生存ステータスですよ。");
+		return;
+	}
+	helthState = _state;
+}
+
+void Player::SetJob(
+    const PlayerJobType _jobType)
+{
+	// 今のjobこんを消す
+	GetScene().Destroy(objJobController);
+
+	jobType = _jobType;
+	switch (jobType)
+	{
+	case PlayerJobType_Healer:
+		objJobController = GetScene().Instantiate<PlayerJobControllerHealer>();
+		break;
+	case PlayerJobType_Tank:
+		objJobController = GetScene().Instantiate<PlayerJobControllerTank>();
+		break;
+	case PlayerJobType_Fighter:
+		objJobController = GetScene().Instantiate<PlayerJobControllerFighter>();
+		break;
+	case PlayerJobType_Archer:
+		objJobController = GetScene().Instantiate<PlayerJobControllerArcher>();
+		break;
+	default:
+		VCU_ASSERT(false && "選択不可能な役職です。");
+		return;
+	}
+
+	Get<IPlayerJobController>(objJobController).Start(Data());
+}
+
+void Player::MoveBody()
+{
 	transform.rotation = Quaternion::FromEuler(Vec3{
 	    0.0f,
 	    Get<IMainCamera>(objMainCamera).GetAngleY(),
@@ -79,7 +297,7 @@ void Player::Update()
 
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
 
-	float moveSpeed = 0.1f;
+	float moveSpeed = jobStatus.moveSpeed;
 
 	// カメラの向きを取得
 	float angleY = Get<IMainCamera>(objMainCamera).GetAngleY();
@@ -95,10 +313,10 @@ void Player::Update()
 
 	// 地形に沿った移動
 	Vec3 nextPosition = transform.position;
-	nextPosition += moveDirection * moveSpeed;
+	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
 
-	animSpeed = (moveDirection * moveSpeed).Length() / 0.1f;
-	if (animSpeed > 0.0f)
+	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
+	if (animSpeed > 0.01f)
 	{
 		animIndex = PlayerAnimType_Walk;
 
@@ -112,6 +330,29 @@ void Player::Update()
 	{
 		animIndex = PlayerAnimType_Idle;
 		animSpeed = 1.0f;
+	}
+
+	// --------------------------------
+	// 足音SE
+	// --------------------------------
+	if (animIndex == PlayerAnimType_Walk && !isJumping)
+	{
+		footstepTimer += Get<DeltaTime>();
+
+		if (footstepTimer >= FOOTSTEP_INTERVAL)
+		{
+			Get<AudioManager>().PlayFootstep(footstepSE);
+
+			footstepTimer = 0.0f;
+		}
+	}
+	else
+	{
+		// 足音を停止
+		Get<AudioManager>().StopFootstep();
+
+		// タイマーをリセット
+		footstepTimer = 0.0f;
 	}
 
 	// TerrainSystemを取得
@@ -235,15 +476,14 @@ void Player::Update()
 	{
 	}
 
-	// お試しで出してるエンティティ
-	if (pPlayerInput->IsInteractBegin())
-	{
-		Get<EntitySystem>().Spawn(
-		    1,
-		    transform.position + Vec3::Up() * 2.0f,
-		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
-		VCU_LOG("objPawn");
-	}
+	// MEMO: PlayerHand側に処理を移動しました。
+	// if (pPlayerInput->IsAction())
+	//{
+	//	// アクション有効にする
+	//	.SetAction(true);
+	//}
+	// 手の更新をする
+	Get<PlayerHand>(objPlayerHand).Update(Data());
 
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
 	if (objPick)
@@ -257,86 +497,42 @@ void Player::Update()
 		    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 		// objPick
 	}
-
-	// HPゲージ動作確認用：1秒ごとに10ダメージ
-	hpTestTimer += Get<DeltaTime>();
-
-	if (hpTestTimer >= 1.0f)
-	{
-		Damaged(10);
-		hpTestTimer = 0.0f;
-	}
 }
 
-void Player::Draw()
+void Player::DeadAnim()
 {
-	Get<Dx11Manager>().SetShader(shaderFront);
-	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
-
-	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
-
-	const auto& subParts{ models[jobType].Get().subParts };
-
-	for (const auto& parts : subParts)
+	if (liveStatus.dieAnimTimeSec > 0.0f)
 	{
-		Get<Dx11Manager>().SetSurface(parts.mesh);
-		Get<Dx11Manager>().SetMaterial(parts.material);
-		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
-		Get<Dx11Manager>().Draw();
-	}
-}
+		liveStatus.dieAnimTimeSec -= Get<DeltaTime>();
 
-void Player::AttackCollider()
-{
-	if (nowAttackCoolTime <= 0.0f)
-	{
-		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+		animIndex = PlayerAnimType_Die;
+		animSpeed = 1.0f;
 
-		nowAttackCoolTime = ATTACK_COOL_TIME;
-	}
-}
-
-void Player::Damaged(
-    int32_t damage)
-{
-	if (nowDamagedCoolTime <= 0.0f && hp > 0)
-	{
-		hp -= damage;
-
-		if (hp < 0)
+		if (liveStatus.dieAnimTimeSec <= 0.0f)
 		{
-			hp = 0;
-		}
+			liveStatus.dieAnimTimeSec = 0.0f;
 
-		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+			animIndex = PlayerAnimType_Die;
+			animSpeed = 0.0f;
+
+			Get<PlayerHand>(objPlayerHand).SetItem(0);
+		}
+	}
+	else
+	{
+		animIndex = PlayerAnimType_Die;
+		animSpeed = 0.0f;
 	}
 }
 
-void Player::SetJob(
-    const PlayerJobType _jobType)
+void Player::RegisterStates(
+    StateRegistry& registry) const
 {
-	// 今のjobこんを消す
-	GetScene().Destroy(objJobController);
-
-	jobType = _jobType;
-	switch (jobType)
-	{
-	case PlayerJobType_Healer:
-		objJobController = GetScene().Instantiate<PlayerJobControllerHealer>();
-		break;
-	case PlayerJobType_Tank:
-		objJobController = GetScene().Instantiate<PlayerJobControllerTank>();
-		break;
-	case PlayerJobType_Fighter:
-		objJobController = GetScene().Instantiate<PlayerJobControllerFighter>();
-		break;
-	case PlayerJobType_Archer:
-		objJobController = GetScene().Instantiate<PlayerJobControllerArcher>();
-		break;
-	default:
-		VCU_ASSERT(false && "選択不可能な役職です。");
-		break;
-	}
+	registry.Register({
+	    { "hp", Data().hp },
+	    { "helthState", Data().helthState },
+	    { "animIndex", Data().animIndex },
+	});
 }
 
 Vec3 Player::GetPosition() const
@@ -347,4 +543,79 @@ Vec3 Player::GetPosition() const
 float Player::GetAngleY() const
 {
 	return Vec3{ transform.rotation.ToEuler() }.y;
+}
+
+void Player::UpdatePickNearestItem()
+{
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	// エンティティを拾うことができた場合
+	if (objPick)
+	{
+		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
+		TryAddItem(pickedItemId);
+	}
+}
+
+void Player::TryAddItem(
+    ItemId _id)
+{
+	/// ----------------------------------------------
+	/// 今のジョブで、引数のアイテムを追加できるか確認
+	/// ----------------------------------------------
+
+	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
+	bool filterAddItemOnJob{ false };
+	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
+	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);
+	if (playerCanUse == false && filterAddItemOnJob)
+	{
+		SpawnItem(_id);
+		return;
+	}
+
+	/// ---------------------------
+	/// ホットバーに追加できるか確認
+	/// ---------------------------
+	ItemStack itemStack{};
+	HotBar& hotbar = Get<HotBar>(objHotbar);
+	if (hotbar.TrySetItem(_id))
+	{
+		return;
+	}
+	else if (hotbar.SwapItem(itemStack, _id))
+	{
+		if (itemStack.id != EMPTY_ITEM_ID)
+		{
+			for (int i = 0; i < itemStack.count; i++)
+			{
+				SpawnItem(itemStack.id);
+			}
+		}
+
+		return;
+	}
+
+	/// ---------------------------
+	/// バッグに追加できるか確認
+	/// ---------------------------
+	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
+	if (bag.CanAddItem(_id))
+	{
+		bag.AddItem(_id);
+	}
+	// 追加できないなら、エンティティとして前方に放り出す
+	else
+	{
+		SpawnItem(_id);
+	}
+}
+
+void Player::SpawnItem(
+    ItemId _id)
+{
+	Get<EntitySystem>().Spawn(
+	    _id,
+	    transform.position + Vec3::Up() * 2.0f,
+	    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
+	VCU_LOG("objPawn");
 }

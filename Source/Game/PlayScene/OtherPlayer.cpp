@@ -1,24 +1,38 @@
 #include "OtherPlayer.h"
 #include <Game/Manager/SessionManager.h>
+#include "Player/HelthState.h"
 
 void OtherPlayer::Start()
 {
-	VCU_LOG("atara");
+	VCU_LOG("ああああああああああああああああああああああああああああああ");
 }
 
 void OtherPlayer::Update()
 {
-	ImGui::Begin(std::format("[{}]OtherPlayer", name.content).c_str());
-
-	ImGui::DragFloat3("pos", transform.position.v);
-	ImGui::DragFloat3("scale", transform.scale.v);
-
-	ImGui::End();
-
 	SessionManager& sessionManager = Get<SessionManager>();
+	if (!sessionManager.HasAllPlayersStatus())
+	{
+		return;  // 他プレイヤーがいないならしらん！
+	}
 	if (sessionManager.IsExistPlayer(name.content))  // プレイヤーが存在するなら
 	{
 		const InSessionStatus::PlayerStatus& status = sessionManager.RefPlayerStatus(name.content);
+
+		// =====================================
+		// 死亡状態を取得
+		// =====================================
+
+		isDead = false;
+
+		auto stateIt = status.states.find("helthState");
+
+		if (stateIt != status.states.end())
+		{
+			if (const int32_t* healthState = std::get_if<int32_t>(&stateIt->second))
+			{
+				isDead = (*healthState == HelthState_Dead);
+			}
+		}
 
 		// 座標と角度を更新
 		transform.position = status.position;
@@ -44,17 +58,17 @@ void OtherPlayer::Draw()
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	VCU_LOG(
+	/*VCU_LOG(
 	    "{}の描画前直前！座標:({}, {}, {}) 回転y:{}",
 	    name.content,
 	    transform.position.x,
 	    transform.position.y,
 	    transform.position.z,
-	    transform.rotation.y);
+	    transform.rotation.y);*/
 
-	/*models[role]*/ aModel.Get().Draw(Get<DeltaTime>(), animIndex);
+	models[role].Get().Draw(Get<DeltaTime>(), animIndex);
 
-	const auto& subParts{ /*models[role]*/ aModel.Get().subParts };
+	const auto& subParts{ models[role].Get().subParts };
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);

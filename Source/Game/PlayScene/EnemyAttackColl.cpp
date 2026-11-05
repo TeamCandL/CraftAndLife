@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "EnemyAttackColl.h"
 #include "Player.h"
+#include "TerrainSystem.h"
 
 void EnemyAttackColl::Start()
 {
@@ -14,6 +15,11 @@ void EnemyAttackColl::Update()
 	if (lifeTime <= 0.0)
 	{
 		DestroyMe();
+	}
+
+	if (speed != 0.0f)
+	{
+		Move();
 	}
 	///	obb.hitGameObjects→このオブジェクトの持つコライダーに触れているオブジェクトの情報が入っている。
 	///	※ただ、これ自体はオブジェクトを取得しているわけではないため、情報に対して『.gameObject』をつけることでオブジェクトを取得する。
@@ -30,6 +36,17 @@ void EnemyAttackColl::Update()
 			SendDamage();
 			*/
 		}
+	}
+}
+
+void EnemyAttackColl::Move()
+{
+	Vec3 move{ transform.Forward() * speed };
+	transform.position += move * Get<DeltaTime>();
+
+	if (transform.position.y <= Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z))
+	{
+		lifeTime = 0.0f;
 	}
 }
 

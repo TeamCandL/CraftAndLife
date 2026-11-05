@@ -1,14 +1,18 @@
 #include "OtherEnemy.h"
 #include <Game/Manager/SessionManager.h>
+#include <Game/Network/NetworkSessionManager.h>
+#include <Game/Network/Protocols/UpdateEnemyDamage.h>
 
 void OtherEnemy::Start()
 {
 	VCU_LOG("OtherEnemy Start: ID={}", enemyId);
+	obb.isTrigger = true;
 }
 
 void OtherEnemy::Update()
 {
 	SessionManager& sessionManager = Get<SessionManager>();
+
 	if (sessionManager.IsExistEnemy(enemyId))
 	{
 		const InSessionStatus::EnemyStatus& status = sessionManager.RefEnemyStatus(enemyId);
@@ -16,6 +20,24 @@ void OtherEnemy::Update()
 		// 座標と角度の更新
 		transform.position = status.position;
 		transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
+
+		VCU_LOG("otherenemy ID:{} rotation: {}, {}", enemyId, status.rotation.x, status.rotation.y);
+	}
+
+	// 被弾確認
+	if (damagedFlag)
+	{
+		SendEnemyDamage(enemyId, damage);
+
+		damagedFlag = false;
+		damage      = 0;
+	}
+
+	if (Get<InputSystem>().GetKeyDown(KeyCode::F))
+	{
+		damage      = 10;
+		damagedFlag = true;
+		VCU_LOG("敵ダメージ送信: ID={}, Damage={}", enemyId, damage);
 	}
 }
 
@@ -53,4 +75,17 @@ void OtherEnemy::Draw()
 		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
 		Get<Dx11Manager>().Draw();
 	}
+}
+
+void OtherEnemy::SendEnemyDamage(
+    int32_t enemyId,
+    int32_t damage)
+{
+	NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
+
+	Protocol::UpdateEnemyDamage message{};
+	message.enemyId = enemyId;
+	message.damage  = damage;
+
+	networkSessionManager.Send(message);
 }

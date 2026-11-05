@@ -1,11 +1,6 @@
 #include "pch\pch.h"
 #include "ItemSystem.h"
 
-// ItemInfo ItemSystemData::GetInfo(int32_t id_)
-//{
-//	return {allItemList[id_]._imageId};
-// }
-
 ItemSystemData::ItemSystemData()
 {
 	std::vector<CraftInfo> craft;
@@ -20,12 +15,13 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 
 	allItemList.push_back({ 1,
 	                        ItemType::Weapons,
 	                        "さんぷる１",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/HandMaterial/HandWood.fbx",
 	                        //"Model/Harvestable/Rock.fbx",
 
@@ -33,12 +29,13 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        1.0f,
-	                        10 });
+	                        10,
+	                        0 });
 
 	allItemList.push_back({ 2,
 	                        ItemType::Weapons,
 	                        "さんぷる２",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/Sample/Axe.fbx",
 	                        //"Model/Harvestable/Rock.fbx",
 
@@ -46,12 +43,15 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        2.0f,
-	                        25 });
+	                        0,
+	                        25,
+
+	                        PlayerJobType_Max });
 	craft.clear();
 	craft.push_back({ 8, 3 });
 	craft.push_back({ 10, 2 });
 	allItemList.push_back({ 3,
-	                        ItemType::Weapons,
+	                        ItemType::WeaponBow,
 	                        "弓",
 	                        "Image/Item/IconBow.png",
 	                        "Model/HandWeapon/HandBow.fbx",
@@ -60,7 +60,10 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.5f,
-	                        8 });
+	                        8,
+	                        0,
+
+	                        PlayerJobType_Archer });
 	craft.clear();
 	craft.push_back({ 7, 3 });
 	craft.push_back({ 8, 2 });
@@ -74,26 +77,32 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.6f,
-	                        12 });
+	                        12,
+	                        0,
+
+	                        PlayerJobType_Max });
 	craft.clear();
 	craft.push_back({ 7, 5 });
 	craft.push_back({ 8, 3 });
 	allItemList.push_back({ 5,
-	                        ItemType::Weapons,
+	                        ItemType::Tools,
 	                        "ハンマー",
-	                        "Image/EmptyItem.png",
-	                        "Model/HandWeapon/HandAxe.fbx",
+	                        "Image/Item/IconHammer.png",
+	                        "Model/HandWeapon/HandHammer.fbx",
 
 	                        true,
 	                        craft,
 
 	                        1.0f,
-	                        20 });
+	                        0,
+	                        20,
+
+	                        PlayerJobType_Max });
 	craft.clear();
 	craft.push_back({ 7, 3 });
 	craft.push_back({ 8, 3 });
 	allItemList.push_back({ 6,
-	                        ItemType::Weapons,
+	                        ItemType::Tools,
 	                        "斧",
 	                        "Image/Item/IconAxe.png",
 	                        "Model/HandWeapon/HandAxe.fbx",
@@ -102,83 +111,91 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.8f,
+	                        0,
 	                        10 });
 	allItemList.push_back({ 7,
 	                        ItemType::Materials,
 	                        "石",
-	                        "Image/EmptyItem.png",
+	                        "Image/Item/IconRock.png",
 	                        "Model/HandMaterial/HandRock.fbx",
 
 	                        false,
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 8,
 	                        ItemType::Materials,
 	                        "木材",
-	                        "Image/EmptyItem.png",
+	                        "Image/Item/IconWood.png",
 	                        "Model/HandMaterial/HandWood.fbx",
 
 	                        false,
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 9,
 	                        ItemType::Materials,
 	                        "骨",
-	                        "Image/EmptyItem.png",
-	                        "Model/HandMaterial/HandRock.fbx",
+	                        "Image/Item/IconBone.png",
+	                        "Model/HandMaterial/HandBone.fbx",
 
 	                        false,
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 10,
 	                        ItemType::Materials,
 	                        "蜘蛛の糸",
-	                        "Image/EmptyItem.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "Image/Item/IconString.png",
+	                        "Model/HandMaterial/HandString.fbx",
 
 	                        false,
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 11,
 	                        ItemType::Materials,
 	                        "生肉",
-	                        "Image/EmptyItem.png",
+	                        "Image/Item/IconMeat.png",
 	                        "Model/HandFood/HandMeat.fbx",
 
 	                        false,
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 12,
 	                        ItemType::Materials,
 	                        "爪",
-	                        "Image/EmptyItem.png",
-	                        "Model/Harvestable/Rock.fbx",
+	                        "Image/Item/IconClaw.png",
+	                        "Model/HandMaterial/DragonClaw.fbx",
 
 	                        false,
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 13,
 	                        ItemType::Consumables,
 	                        "焼肉",
-	                        "Image/EmptyItem.png",
+	                        "Image/InvalidImage.png",
 	                        "Model/Harvestable/Rock.fbx",
 
 	                        false,
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 14,
 	                        ItemType::Consumables,
@@ -190,12 +207,13 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0 });
 	craft.clear();
 	craft.push_back({ 7, 1 });
 	craft.push_back({ 8, 2 });
 	allItemList.push_back({ 15,
-	                        ItemType::Consumables,
+	                        ItemType::Arrow,
 	                        "矢",
 	                        "Image/Item/IconArrow.png",
 	                        "Model/HandWeapon/Arrow.fbx",
@@ -204,7 +222,59 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
-	                        0 });
+	                        0,
+	                        0,
+	                        PlayerJobType_Archer });
+	craft.clear();
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 10 });
+	allItemList.push_back({ 16,
+	                        ItemType::Shield,
+	                        "盾",
+	                        "Image/Item/IconShield.png",
+	                        "Model/HandWeapon/HandShield.fbx",
+
+	                        true,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0,
+	                        PlayerJobType_Tank });
+	craft.clear();
+	craft.push_back({ 7, 7 });
+	craft.push_back({ 8, 4 });
+	allItemList.push_back({ 17,
+	                        ItemType::Weapons,
+	                        "大剣",
+	                        "Image/Item/IconSwordBig.png",
+	                        "Model/HandWeapon/HandSwordBig.fbx",
+
+	                        true,
+	                        craft,
+
+	                        2.0f,
+	                        35,
+	                        10,
+
+	                        PlayerJobType_Fighter });
+	craft.clear();
+	craft.push_back({ 7, 7 });
+	craft.push_back({ 8, 4 });
+	allItemList.push_back({ 18,
+	                        ItemType::ItemTypeMax,
+	                        "医療キット",
+	                        "Image/InvalidImage.png",
+	                        "Model/HandMaterial/HandRock.fbx",
+
+	                        true,
+	                        craft,
+
+	                        5.0f,
+	                        0,
+	                        0,
+
+	                        PlayerJobType_Healer });
 }
 
 ItemInfo ItemSystem::GetInfo(
@@ -218,9 +288,12 @@ ItemInfo ItemSystem::GetInfo(
 	info._isCraftable = allItemList[id]._isCraftable;
 	info._craftInfo   = allItemList[id]._craftInfo;
 
-	info._imageId  = allItemList[id]._imageId;
-	info._coolTime = allItemList[id]._coolTime;
-	info._damage   = allItemList[id]._damage;
+	info._imageId         = allItemList[id]._imageId;
+	info._coolTime        = allItemList[id]._coolTime;
+	info._damageForEnemy  = allItemList[id]._damageForEnemy;
+	info._damageForObject = allItemList[id]._damageForObject;
+
+	info.canUseJobType = allItemList[id].canUseJobType;
 	return info;
 }
 
@@ -228,4 +301,15 @@ Resource<Model> ItemSystem::GetModel(
     const ItemId _id)
 {
 	return allItemList[_id]._model;
+}
+
+bool JobCanCraftOrAddItem(
+    const ItemType _type,
+    PlayerJobType _job)
+{
+	if (_type == Arrow || _type == WeaponBow)
+	{
+		return _job == PlayerJobType_Archer;
+	}
+	return true;
 }

@@ -41,8 +41,8 @@ namespace Protocol
 		}
 
 		// 以下通信メンバーたち
-		int enemyId{};
-		int enemyType{};
+		int32_t enemyId{};
+		int32_t enemyType{};
 
 		float positionX{};
 		float positionY{};
@@ -51,6 +51,6 @@ namespace Protocol
 		float rotationX{};
 		float rotationY{};
 
-		int flag{};
+		int32_t flag{};
 	};
 }  // namespace Protocol

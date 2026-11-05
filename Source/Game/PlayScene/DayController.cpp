@@ -2,6 +2,7 @@
 #include "DayController.h"
 #include <Game/Common/Sky.h>
 #include <Game/Manager/SessionManager.h>
+#include <Game/Manager/AudioManager.h>
 
 void DayController::Update()
 {
@@ -39,6 +40,49 @@ void DayController::Update()
 
 	// 時刻を0～180秒の範囲に収める
 	currentTimeSec = std::fmodf(std::fmodf(currentTimeSec, MAX_TIME) + MAX_TIME, MAX_TIME);
+
+	// --------------------------------
+	// 昼・夜の切り替わりSEと環境音
+	// --------------------------------
+
+	// 夜の時間帯は90秒～180秒
+	bool nowNight = currentTimeSec >= 90.0f;
+
+	AudioManager& audioManager = ManagerRegistry::Ref<AudioManager>();
+
+	// 環境音の初回再生
+	if (!isAmbientInitialized)
+	{
+		audioManager.SetAmbientSound(nowNight ? nighttimeAmbientSE : daytimeAmbientSE);
+
+		isNight              = nowNight;
+		isAmbientInitialized = true;
+	}
+	// 昼から夜に切り替わった
+	else if (nowNight && !isNight)
+	{
+		// 夜への切り替わりSE
+		audioManager.Play(nightfallSE);
+
+		// 夜の環境音に変更
+		audioManager.SetAmbientSound(nighttimeAmbientSE);
+
+		isNight = true;
+	}
+	// 夜から昼に切り替わった
+	else if (!nowNight && isNight)
+	{
+		// 朝への切り替わりSE
+		audioManager.Play(morningSE);
+
+		// 昼の環境音に変更
+		audioManager.SetAmbientSound(daytimeAmbientSE);
+
+		isNight = false;
+	}
+
+	// 現在の時間帯を更新
+	isNight = nowNight;
 
 	if (currentTimeSec <= FLT_EPSILON)
 	{
