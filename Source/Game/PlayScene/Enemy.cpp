@@ -137,7 +137,7 @@ void Enemy::Move(
 		angles.z           = 0.0f;
 		transform.rotation = Quaternion::FromEuler(angles);
 
-		Vec3 move{ (transform.Down() + transform.Right() * 0.05f) * speed };
+		Vec3 move{ (transform.Down() + transform.Right() * 0.001f) * speed };
 		transform.position += move * Get<DeltaTime>();
 	}
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
@@ -159,30 +159,27 @@ void Enemy::Sensor()
 		float playerDist = (transform.position - objPlayer._pos).Length();
 		if (playerDist <= visibilityDist)
 		{
-			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayer._pos - transform.position));
-			float visibilityDot = std::cosf(visibilityAngle);
-			if (dot <= visibilityDot)
+			if (objPlayer._attentionLevel >= targetAttentionLevel)
 			{
-				if (objPlayer._attentionLevel >= targetAttentionLevel)
+				if (targetDist < 0.0f)
 				{
-					if (targetDist < 0.0f)
+					targetPos_           = objPlayer._pos;
+					targetDist           = playerDist;
+					targetAttentionLevel = objPlayer._attentionLevel;
+				}
+				else
+				{
+					if (targetDist > playerDist)
 					{
 						targetPos_           = objPlayer._pos;
 						targetDist           = playerDist;
 						targetAttentionLevel = objPlayer._attentionLevel;
 					}
-					else
-					{
-						if (targetDist > playerDist)
-						{
-							targetPos_           = objPlayer._pos;
-							targetDist           = playerDist;
-							targetAttentionLevel = objPlayer._attentionLevel;
-						}
-					}
 				}
 			}
-			else
+			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayer._pos - transform.position));
+			float visibilityDot = std::cosf(visibilityAngle);
+			if (dot <= visibilityDot)
 			{
 			}
 		}
@@ -193,8 +190,8 @@ void Enemy::Sensor()
 		{
 			GetScene().Destroy(objWanderingCheckPoint);
 		}
-		// targetPos = targetPos_;
-		// followed  = true;
+		targetPos = targetPos_;
+		followed  = true;
 	}
 	else
 	{
@@ -261,7 +258,8 @@ void Enemy::CloseAttack()
 void Enemy::AttackCollider()
 {
 	attacked = true;
-	Get<AudioManager>().Play(attackSE);
+	// あとから修正
+	// Get<AudioManager>().Play(attackSE);
 
 	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
@@ -271,7 +269,8 @@ void Enemy::AttackCollider(
     const Vec3& forward_)
 {
 	attacked = true;
-	Get<AudioManager>().Play(attackSE);
+	// あとから修正
+	// Get<AudioManager>().Play(attackSE);
 
 	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f, forward_, 10.0f);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
