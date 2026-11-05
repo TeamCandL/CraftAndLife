@@ -42,10 +42,13 @@ void Player::Start()
 	// バッグ作成
 	objPlayerBag = GetScene().Instantiate<PlayerBag>();
 
+	// ホットバー作成
 	objHotbar = GetScene().Instantiate<HotBar>();
+	// ホットバーが選択するアイテムが切り替わった際に呼ばれるコールバックをセット
 	Get<HotBar>(objHotbar).SetOnChangedSelectedItemCallback(
 	    [this]()
 	    {
+		    // 選択中のアイテムをプレイヤーの手にセット！！！
 		    HotBar& hotbar = Get<HotBar>(objHotbar);
 		    Get<PlayerHand>(objPlayerHand).SetItem(hotbar.GetSelectedItemId());
 		    VCU_LOG("change selected item");
@@ -162,6 +165,19 @@ void Player::Update()
 	{
 		isOpenCraftUI = !isOpenCraftUI;
 	}
+
+	// 選択スロットのアイテムを投げ捨てる
+	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && isOpenCraftUI == false)
+	{
+		HotBar& hotbar = Get<HotBar>(objHotbar);
+		if (hotbar.CanRemoveSelectedItem())
+		{
+			ItemId selectedItemId = hotbar.GetSelectedItemId();
+			hotbar.RemoveSelectedItem();
+			SpawnItem(selectedItemId);
+		}
+	}
+
 	/*
 	//テスト用
 	 // HPゲージ動作確認用：1秒ごとに10ダメージ
