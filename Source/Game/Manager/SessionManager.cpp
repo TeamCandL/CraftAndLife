@@ -178,6 +178,9 @@ void SessionManager::SetPlayerName(
 void SessionManager::SetMemberNames(
     const std::string_view _names)
 {
+	VCU_LOG("SetMemberNames 呼び出し");
+	VCU_LOG("受信した名前一覧: {}", _names);
+
 	inSessionStatus_.memberNames.clear();
 	inSessionStatus_.memberId.clear();
 
@@ -201,6 +204,8 @@ void SessionManager::SetMemberNames(
 
 		inSessionStatus_.memberNames.push_back(std::string{ line });
 		inSessionStatus_.memberId.push_back(id++);
+
+		VCU_LOG("登録されたメンバー数: {}", inSessionStatus_.memberNames.size());
 	}
 }
 
@@ -219,7 +224,8 @@ void SessionManager::SetLobbyHost(
 void SessionManager::UpdatePlayers(
     const std::string_view _names,
     SizedBuffer<float>& _positions,
-    SizedBuffer<float>& _rotations)
+    SizedBuffer<float>& _rotations,
+    SizedBuffer<int32_t>& _haveItemIds)
 {
 	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
 	auto& playerStatus           = inSessionStatus_.playersStatus;
@@ -255,6 +261,12 @@ void SessionManager::UpdatePlayers(
 			break;
 		}
 
+		if (i >= _haveItemIds.Size())
+		{
+			VCU_LOG("取得した名前分のアイテムIdのサイズが足りない({}個以上必要)", i);
+			break;
+		}
+
 		// CRLF 対策OtherPlayer
 		if (!line.empty() && line.back() == '\r')
 		{
@@ -272,6 +284,7 @@ void SessionManager::UpdatePlayers(
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_X],
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_Y],
 		};
+		playerStatus.haveItemId  = _haveItemIds[i];
 		playerStatus.updatedFlag = !playerStatus.updatedFlag;  // 更新フラグを反転
 
 		// VCU_LOG(
@@ -312,6 +325,48 @@ bool SessionManager::IsExistPlayer(
 
 	// TODO: ここで文字化けしているためうまく判定できていない可能性がある。
 	return inSessionStatus_.playersStatus.count(_playerName) != 0;
+}
+
+bool SessionManager::TryGetPlayerName(
+    int32_t _playerId,
+    std::string& _outName) const
+{
+	const auto& ids   = inSessionStatus_.memberId;
+	const auto& names = inSessionStatus_.memberNames;
+
+	if (ids.size() != names.size())
+		return false;
+
+	auto it = std::ranges::find(ids, _playerId);
+
+	if (it == ids.end())
+		return false;
+
+	const size_t index = std::distance(ids.begin(), it);
+
+	_outName = names[index];
+	return true;
+}
+
+bool SessionManager::TryGetPlayerId(
+    std::string_view _playerName,
+    int32_t& _outId) const
+{
+	const auto& ids   = inSessionStatus_.memberId;
+	const auto& names = inSessionStatus_.memberNames;
+
+	if (ids.size() != names.size())
+		return false;
+
+	auto it = std::ranges::find(names, _playerName);
+
+	if (it == names.end())
+		return false;
+
+	const size_t index = std::distance(names.begin(), it);
+
+	_outId = ids[index];
+	return true;
 }
 
 bool SessionManager::HasAllPlayersStatus() const

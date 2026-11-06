@@ -18,7 +18,11 @@ namespace Protocol
 		void LoadMembers(
 		    MessageRegistry& _registry) override
 		{
-			_registry.AddMember(playerNames).AddMember(positions).AddMember(rotations).AddMember(flag);
+			_registry.AddMember(playerNames)
+			    .AddMember(positions)
+			    .AddMember(rotations)
+			    .AddMember(haveItemIds)
+			    .AddMember(flag);
 		}
 
 		uint8_t GetChannel() const override
@@ -35,6 +39,7 @@ namespace Protocol
 		std::string playerNames{};
 		SizedBuffer<float> positions{};
 		SizedBuffer<float> rotations{};
+		SizedBuffer<int32_t> haveItemIds{};
 
 		int32_t flag{};
 	};

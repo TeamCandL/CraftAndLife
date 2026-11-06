@@ -22,6 +22,7 @@
 #include <Game/PlayScene/EnemyController.h>
 #include <Game/PlayScene/StateValueCode.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/PlayScene/PlayerHand.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
 #include <Game/PlayScene/HarvestableController.h>
@@ -77,12 +78,14 @@ void PlayNetworkController::Update()
 				    converter.ToMessage(_event.data, message);
 
 				    VCU_LOG(
-				        "UpdatedPlayers受信: Names={}, Positions={}, Rotations={}",
+				        "UpdatedPlayers受信: Names={}, Positions={}, Rotations={}, HaveItemIds={}",
 				        message.playerNames,
 				        message.positions.Size(),
-				        message.rotations.Size());
+				        message.rotations.Size(),
+				        message.haveItemIds.Size());
 
-				    Get<SessionManager>().UpdatePlayers(message.playerNames, message.positions, message.rotations);
+				    Get<SessionManager>()
+				        .UpdatePlayers(message.playerNames, message.positions, message.rotations, message.haveItemIds);
 
 				    break;
 			    }
@@ -91,12 +94,17 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedPlayerStates playerStateMessage{};
 				    converter.ToMessage(_event.data, playerStateMessage);
 
-#if 0
+#if 1
+				    VCU_LOG("UpdatedPlayerStates受信");
+				    VCU_LOG("PlayerID: {}", playerStateMessage.playerId);
+				    VCU_LOG("StateName: {}", playerStateMessage.stateName);
+				    VCU_LOG("Values Size: {}", playerStateMessage.values.Size());
+
 				    Get<SessionManager>().UpdatePlayerStates(
 				        playerStateMessage.playerId,
 				        playerStateMessage.stateName,
 				        playerStateMessage.values);
-#elif 1
+#elif 0
 				    VCU_LOG("PlayerID: {}", playerStateMessage.playerId);
 				    VCU_LOG("StateName: {}", playerStateMessage.stateName);
 				    VCU_LOG("Values Size: {}", playerStateMessage.values.Size());
@@ -256,68 +264,74 @@ void PlayNetworkController::Update()
 		static int32_t counter{};
 		message.flag = counter++;
 
+		message.haveItemId = Get<PlayerHand>(Get<Player>(objPlayer).Data().objPlayerHand).Data().haveItemId;
+
 		// VCU_LOG("更新処理送信: {}", counter);
 
 		networkSessionManager.Send(message);
 
 		// プレイヤーステート送信処理
-
+		static bool isFirstSync       = true;
 		StateRegistry& playerRegistry = actorServer.GetPlayerStateRegistry();
-		const auto playerChanges      = playerRegistry.GetChanges();
+		std::vector<StateChange> playerChanges;
+
+		if (isFirstSync)
+		{
+			// 初回同期時は全ステートを送信する
+			playerChanges = playerRegistry.GetAllStates();
+		}
+		else
+		{
+			// 2回目以降は変更があったステートのみ送信する
+			playerChanges = playerRegistry.GetChanges();
+		}
 
 		if (!playerChanges.empty())
 		{
-			const auto& status = Get<SessionManager>().RefStatus();
+			Protocol::UpdatedPlayerStates stateMessage{};
 
 			// 自分のプレイヤーIDを取得
+			const auto& status = Get<SessionManager>().RefStatus();
+
 			auto nameIt = std::find(status.memberNames.begin(), status.memberNames.end(), status.name);
 
-			VCU_LOG("自分の名前: {}", status.name);
-
-			for (size_t i = 0; i < status.memberNames.size(); ++i)
+			// メンバー一覧がまだ届いていない場合は送信しない
+			if (!status.memberNames.empty())
 			{
-				VCU_LOG(
-				    "Member[{}]: Name={}, ID={}",
-				    i,
-				    status.memberNames[i],
-				    i < status.memberId.size() ? status.memberId[i] : -1);
-			}
 
-			if (nameIt != status.memberNames.end())
-			{
-				const size_t index = std::distance(status.memberNames.begin(), nameIt);
-
-				if (index < status.memberId.size())
+				if (nameIt != status.memberNames.end())
 				{
-					Protocol::UpdatedPlayerStates message{};
-					message.playerId = status.memberId[index];
+					const size_t index = std::distance(status.memberNames.begin(), nameIt);
 
-					std::vector<uint8_t> values;
-
-					for (const auto& change : playerChanges)
+					if (index < status.memberId.size())
 					{
-						if (!message.stateName.empty())
+						stateMessage.playerId = status.memberId[index];
+
+						std::vector<uint8_t> values;
+
+						for (const auto& change : playerChanges)
 						{
-							message.stateName += '\n';
+							if (!stateMessage.stateName.empty())
+								stateMessage.stateName += '\n';
+
+							stateMessage.stateName += change.name;
+
+							StateValueCode::Encode(change.value, values);
 						}
 
-						message.stateName += change.name;
-						StateValueCode::Encode(change.value, values);
+						stateMessage.values.Resize(values.size());
+
+						for (size_t i = 0; i < values.size(); ++i)
+							stateMessage.values[i] = values[i];
+
+						networkSessionManager.Send(stateMessage);
+
+						// 送信後に変更を確定
+						playerRegistry.CommitChanges(playerChanges);
+
+						if (isFirstSync)
+							isFirstSync = false;
 					}
-
-					message.values.Resize(values.size());
-
-					for (size_t i = 0; i < values.size(); ++i)
-					{
-						message.values[i] = values[i];
-					}
-
-					VCU_LOG("Send UpdatedPlayerStates: PlayerID={}, StateName={}", message.playerId, message.stateName);
-
-					networkSessionManager.Send(message);
-
-					// 送信後に変更を確定
-					playerRegistry.CommitChanges(playerChanges);
 				}
 			}
 		}
@@ -363,10 +377,7 @@ void PlayNetworkController::Update()
 				networkSessionManager.Send(enemyMessage);
 			}
 
-			/// 敵ステート送信処理
-			if (!actorServer.IsHost() || !actorServer.IsInitialized())
-				return;
-
+			// 敵ステート送信処理
 			const bool fullSync = actorServer.IsFullSync();
 			auto& registries    = actorServer.GetEnemyStateRegistries();
 
@@ -375,60 +386,37 @@ void PlayNetworkController::Update()
 
 			std::vector<int32_t> enemyStateIds;
 			std::vector<uint8_t> values;
-			std::vector<int32_t> deadEnemyIds;
 
 			std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
 
 			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
 			{
 				if (!registries[enemyId].has_value())
-				{
 					continue;
-				}
 
-				auto& registry     = *registries[enemyId];
+				auto& registry = *registries[enemyId];
+
+				// 初回は全ステート、それ以降は変更分だけ取得
 				const auto changes = registry.GetStates(fullSync);
 
 				for (const auto& change : changes)
 				{
 					enemyStateIds.push_back(static_cast<int32_t>(enemyId));
 
-					// 型情報を含めてエンコード
+					// 値をエンコード
 					StateValueCode::Encode(change.value, values);
 
 					if (!enemyStateMessage.stateName.empty())
-					{
 						enemyStateMessage.stateName += '\n';
-					}
 
 					enemyStateMessage.stateName += change.name;
-
-					VCU_LOG("敵ステート格納: ID={}, Name={}, Valuesサイズ={}", enemyId, change.name, values.size());
-					// 死亡ステートを確認
-					if (change.name == "alive")
-					{
-						/*const bool* alive = std::get_if<bool>(&change.value);
-
-						if (alive != nullptr && !(*alive))
-						{
-						    deadEnemyIds.push_back(static_cast<int32_t>(enemyId));
-						}*/
-
-						const bool* alive = std::get_if<bool>(&change.value);
-
-						if (alive != nullptr && !(*alive))
-						{
-							deadEnemyIds.push_back(static_cast<int32_t>(enemyId));
-						}
-					}
 				}
 
 				if (!changes.empty())
-				{
 					pendingChanges.emplace_back(enemyId, changes);
-				}
 			}
 
+			// 送信するステートがある場合のみ送信
 			if (!enemyStateIds.empty())
 			{
 				enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
@@ -436,33 +424,20 @@ void PlayNetworkController::Update()
 				enemyStateMessage.values.Resize(values.size());
 
 				for (size_t i = 0; i < values.size(); ++i)
-				{
 					enemyStateMessage.values[i] = values[i];
-				}
 
 				networkSessionManager.Send(enemyStateMessage);
 
-				// 送信登録後に変更を確定
+				// 送信後に変更を確定
 				for (const auto& [enemyId, changes] : pendingChanges)
 				{
 					if (enemyId < registries.size() && registries[enemyId].has_value())
-					{
 						registries[enemyId]->CommitChanges(changes);
-					}
 				}
 
-				// 死亡通知を送信登録した敵を記録
-				for (const int32_t enemyId : deadEnemyIds)
-				{
-					actorServer.MarkDeathQueued(enemyId);
-				}
-
-				VCU_LOG("敵ステート送信 件数={}, 全同期={}", enemyStateIds.size(), fullSync);
-
+				// 初回同期完了
 				if (fullSync)
-				{
 					actorServer.ResetFullSync();
-				}
 			}
 		}
 
