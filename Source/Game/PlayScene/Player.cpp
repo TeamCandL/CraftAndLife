@@ -201,7 +201,7 @@ void Player::Update()
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
-		Damaged(10);
+		Damaged(10, transform.position);
 	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
@@ -236,7 +236,8 @@ void Player::AttackCollider()
 }
 
 void Player::Damaged(
-    int32_t damage)
+    int32_t damage,
+    const Vec3 _worldPosition)
 {
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
