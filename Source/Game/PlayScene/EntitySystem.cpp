@@ -166,7 +166,7 @@ void EntitySystem::SpawnFromNetwork(
 	// entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 60.0f * 5.0f, 3.0f);
 
 	EntitySystemData::EntityInfo info{};
-	info.obj               = GetScene().Instantiate<Entity>(_itemId);
+	info.obj               = GetScene().Instantiate<Entity>(_itemId, 0);
 	info.pickupCooldownSec = 3.0f;
 	info.despawnTimeLeft   = 60.0f * 5.0f;
 	info.entityId          = _entityId;

@@ -9,7 +9,7 @@ namespace
 	constexpr size_t TOOL_SLOT_INDEX{ 1 };
 	constexpr size_t CONSUMABLE_SLOT_INDEX{ 2 };
 	constexpr size_t BAG_SLOT_INDEX{ 3 };
-
+	constexpr ItemId BAG_ITEM_ID{ 19 };
 	bool CannotStack(
 	    ItemType _type)
 	{
@@ -19,6 +19,7 @@ namespace
 		case ItemType::Weapons:
 		case ItemType::WeaponBow:
 		case ItemType::Tools:
+		case ItemType::Backpack:
 			return true;
 		default:
 			return false;
@@ -53,21 +54,15 @@ void HotBar::Start()
 		Get<SlotItemCount>(itemData.objItemCount).Data().transform.scale      = Vec2{ 32 * 2, 32 };
 		Get<SlotItemCount>(itemData.objItemCount).Data().transform.layerOrder = 6;
 	}
+
+	// バッグアイテム作成
+	SlotItem& slotItem    = Get<SlotItem>(Get<Slot>(slots[BAG_SLOT_INDEX]).Data().slotItem);
+	slotItem.Data().id    = BAG_ITEM_ID;
+	slotItem.Data().count = 0;
 }
 
 void HotBar::Update()
 {
-	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
-	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
-	{
-		MoveFocusToLeft();
-		OnChangedSelectedItem();
-	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
-	{
-		MoveFocusToRight();
-		OnChangedSelectedItem();
-	}
 	/// -----------------
 	/// スロットのUI更新
 	/// -----------------
@@ -124,7 +119,20 @@ void HotBar::Update()
 	}
 }
 
-void HotBar::UpdateSlot() {}
+void HotBar::UpdateSlot()
+{
+	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
+	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
+	{
+		MoveFocusToLeft();
+		OnChangedSelectedItem();
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
+	{
+		MoveFocusToRight();
+		OnChangedSelectedItem();
+	}
+}
 
 void HotBar::MoveFocusToRight()
 {
@@ -145,7 +153,7 @@ bool HotBar::CanRemoveSelectedItem(
     int _count)
 {
 	// バッグは除外不可能
-	if (_count == BAG_SLOT_INDEX)
+	if (currentSlotIdx == BAG_SLOT_INDEX)
 		return false;
 
 	SlotItemData& itemData = GetSlotItemData(currentSlotIdx);
@@ -159,7 +167,14 @@ void HotBar::RemoveSelectedItem(
 		return;
 
 	SlotItemData& itemData = GetSlotItemData(currentSlotIdx);
-	itemData.count -= _count;
+	if (CannotStack(Get<ItemSystem>().GetInfo(itemData.id)._type))
+	{
+		itemData.count = 0;
+	}
+	else
+	{
+		itemData.count -= _count;
+	}
 
 	if (itemData.count == 0)
 	{
@@ -285,6 +300,9 @@ void HotBar::RemoveItem(
     ItemType _itemType,
     int _count)
 {
+	if (CanRemoveItem(_itemType, _count) == false)
+		return;
+
 	size_t slotIndex = GetSlotIndexFrom(_itemType);
 
 	if (slotIndex == -1)
@@ -362,7 +380,9 @@ size_t HotBar::GetSlotIndexFrom(
 	case ItemType::Tools:
 		slotIndex = TOOL_SLOT_INDEX;
 		break;
-
+	case ItemType::Backpack:
+		slotIndex = BAG_SLOT_INDEX;
+		break;
 	default:
 		break;
 	}

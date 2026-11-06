@@ -6,8 +6,10 @@
 
 struct TargetInfo
 {
+	std::string _name{};
 	Vec3 _pos{};
 	int32_t _attentionLevel{ 5 };
+	int32_t _alive{};
 };
 
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
