@@ -125,9 +125,9 @@ void Enemy::Move(
 		Vec3 move{ (Fwd_)*speed };
 		transform.position += move * Get<DeltaTime>();
 
-		ImGui::Begin("moveVec");
+		/*ImGui::Begin("moveVec");
 		ImGui::DragFloat3("move", move.v);
-		ImGui::End();
+		ImGui::End();*/
 	}
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 }
@@ -280,6 +280,8 @@ void Enemy::Damaged(
 		hp -= damage;
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
+
+	VCU_ASSERT(hp > 0);
 }
 
 void Enemy::SetWanderingCheckPoint(
