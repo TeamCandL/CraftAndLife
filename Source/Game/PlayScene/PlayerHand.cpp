@@ -213,11 +213,11 @@ void PlayerHand::SetItem(
 		break;
 	case ItemType::Consumables:
 		break;
-	case ItemType::Materials:
 		break;
 	case ItemType::Backpack:
 		objItemAction = GetScene().Instantiate<ItemActionBackpack>();
 		break;
+	case ItemType::Materials:
 	default:
 		break;
 	}
