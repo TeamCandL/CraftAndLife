@@ -28,7 +28,7 @@ struct OtherPlayerData
 
 	int32_t animIndex{};
 
-	// 死亡状態
+	// 生存ステート
 	bool isDead{ false };
 
 	// 現在HP
@@ -36,6 +36,9 @@ struct OtherPlayerData
 
 	// 最大HP
 	int32_t maxHP{ 100 };
+
+	int32_t healthState = 0;
+	int aliveFlag       = 0;
 };
 
 struct OtherPlayer : ObjectBase<OtherPlayerData>, IPlayer

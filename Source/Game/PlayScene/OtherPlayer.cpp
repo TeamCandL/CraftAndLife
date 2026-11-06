@@ -1,5 +1,6 @@
 #include "OtherPlayer.h"
 #include <Game/Manager/SessionManager.h>
+#include <Game/Manager/SessionManager/SessionStateReader.h>
 #include "Player/HelthState.h"
 #include "OtherPlayerHand.h"
 
@@ -21,6 +22,51 @@ void OtherPlayer::Update()
 		// =====================================
 		// HPを取得
 		// =====================================
+
+#if 0
+		SessionStateReader reader(sessionManager);
+		//StateTarget target = StateTarget::Player(name.content);
+
+		// プレイヤー名からIDを取得
+		int32_t playerId = -1;
+
+		if (sessionManager.TryGetPlayerId(name.content, playerId))	// 志賀君が言ってたpStatesが0なのと途中から呼ばれていない
+		{
+			// IDで対象プレイヤーを指定
+			StateTarget target = StateTarget::Player(playerId);
+
+			if (reader.TryGetState(target, "hp", Data().hp))
+			{
+				VCU_LOG("OtherPlayer HP: {}", Data().hp);
+			}
+			else
+			{
+				VCU_LOG("HP取得失敗 ID: {}", playerId);//そのためデータは言ってないからずっとここ
+			}
+
+			bool flag = reader.TryGetState(target, "aliveFlag", Data().aliveFlag);
+			if (flag == 0) // この処理
+			{
+				if (healthState == HelthState_Dead)	// これ自体は呼ばれていた
+				{
+					isDead = true; // ホストが死んだときこれ呼ばれなかった
+				}
+				else
+				{
+					isDead = false;
+				}
+			}
+			else
+			{
+				VCU_LOG("helthState取得失敗 ID: {}", playerId); // ここが呼ばれてる
+			}
+		}
+		else
+		{
+			VCU_LOG("Player ID取得失敗: {}", name.content);
+		}
+
+#elif 1
 
 		auto hpIt = status.states.find("hp");
 
@@ -47,6 +93,7 @@ void OtherPlayer::Update()
 				isDead = (*healthState == HelthState_Dead);
 			}
 		}
+#endif
 
 		// =====================================
 		// 座標と角度を更新

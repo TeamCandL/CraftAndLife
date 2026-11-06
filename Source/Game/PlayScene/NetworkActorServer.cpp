@@ -9,13 +9,13 @@
 void NetworkActorServer::Start()
 {
 	// プレイヤーのステートを登録
-	if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
-	{
-		Player& player = Get<Player>(Data().objPlayer);
-		player.RegisterStates(Data().playerStateRegistry);
+	// if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+	//{
+	//	Player& player = Get<Player>(Data().objPlayer);
+	//	player.RegisterStates(Data().playerStateRegistry);
 
-		Data().isPlayerStateRegistered = true;
-	}
+	//	Data().isPlayerStateRegistered = true;
+	//}
 
 	// ゲストなら敵を生成しない
 	if (!IsHost())
