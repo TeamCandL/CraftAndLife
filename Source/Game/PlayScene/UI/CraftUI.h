@@ -120,6 +120,7 @@ struct RecipeMaterial
 	GameObject objRecipeMaterialElementText{};
 	GameObject objRecipeHeldElement{};
 	GameObject objRecipeRequiredElement{};
+	GameObject objRecipeSlashElement{};
 	ItemId craftItemId{ EMPTY_ITEM_ID };
 };
 
@@ -148,12 +149,14 @@ struct CraftUIData
 	GameObject objRecipeMaterialLabel{};
 	GameObject objRecipeHeldLabel{};
 	GameObject objRecipeRequiredLabel{};
+	GameObject objRecipeSlashLabel{};
 
 	Vec2 materialElementImageBegin{};
 	Vec2 materialElementImageSize{};
 	Vec2 materialElementNameBegin{};
 	Vec2 materialElementHeldBegin{};
 	Vec2 materialElementRequiredBegin{};
+	Vec2 materialElementSlashBegin{};
 
 	std::vector<ItemAllInfo> craftableItems;
 	std::unordered_map<ItemId, std::vector<RecipeMaterial>> recipeUIMap;
