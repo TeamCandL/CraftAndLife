@@ -34,6 +34,9 @@ struct AudioManager : IManager
 	/// @param _resource 音声リソース
 	void Play(Resource<ResourceType::Audio>& _resource);
 
+	// 2つの効果音を順番に再生する
+	void PlaySequence(Resource<ResourceType::Audio>& _first, Resource<ResourceType::Audio>& _next);
+
 	/// @brief 毎フレーム呼ばれる更新処理
 	void LateUpdate(const float _deltaTime);
 
@@ -65,4 +68,8 @@ struct AudioManager : IManager
 	IXAudio2SourceVoice* pJumpSourceVoice{ nullptr };  // ジャンプ音用
 
 	std::vector<AudioPlayer> players{};  // 再生中の音声プレイヤー
+
+	// 連続再生用
+	float sequenceTimeLeft{ 0.0f };
+	Resource<ResourceType::Audio>* pNextSequenceAudio{ nullptr };
 };
