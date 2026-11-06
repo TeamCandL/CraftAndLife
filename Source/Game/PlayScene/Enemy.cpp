@@ -28,6 +28,9 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	if (!alive)
+		return;
+
 	attacked = false;
 
 	ImGui::Begin("Enemy");
@@ -85,6 +88,7 @@ void Enemy::Update()
 	}
 	else
 	{
+		SetActive(false);
 		// 敵IDを使って死亡通知を送信キューに登録
 		// Registryの登録を解除
 		// ※上記2つは今後実装する
@@ -197,6 +201,9 @@ void Enemy::Sensor(
 
 void Enemy::Draw()
 {
+	if (!alive)
+		return;
+
 	// VCU_LOG("hostEnemy Position: ({}, {}, {})", transform.position.x, transform.position.y, transform.position.z);
 
 	Get<Dx11Manager>().SetShader(shader);
