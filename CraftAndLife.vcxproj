@@ -734,6 +734,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionMedicals.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionShield.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
