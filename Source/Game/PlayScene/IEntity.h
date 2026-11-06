@@ -18,6 +18,12 @@ class IEntity
 	/// @return エンティティId
 	virtual int32_t GetEntityId() const = 0;
 
+	/// @brief エンティティが取得されたかを取得する
+	/// @return 取得された
+	virtual bool IsPicked() const = 0;
+	/// @brief エンティティを取得する
+	virtual void Pick() = 0;
+
 	/// @brief エンティティの座標をセットする
 	/// @param _position 座標
 	virtual void SetPosition(const Vec3 _position) = 0;

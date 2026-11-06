@@ -9,6 +9,11 @@ void Entity::Start()
 
 void Entity::Update()
 {
+	if (picked)
+	{
+		return;  // 取得されているなら無視
+	}
+
 	bool isHitCollider{ false };
 
 	const float DELTA_TIME = Get<DeltaTime>();
@@ -44,6 +49,11 @@ void Entity::Update()
 
 void Entity::Draw()
 {
+	if (picked)
+	{
+		return;  // 取得されているなら無視
+	}
+
 	Get<Dx11Manager>().SetShader(mainShader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 

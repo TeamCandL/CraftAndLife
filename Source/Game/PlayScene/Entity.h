@@ -9,6 +9,12 @@ struct EntityData
 	EntityData(
 	    const ItemId _itemId,
 	    const int32_t _entityId) :
+	    itemId{ _itemId },
+	    entityId{ _entityId }
+	{
+	}
+	EntityData(
+	    const ItemId _itemId) :
 	    itemId{ _itemId }
 	{
 	}
@@ -22,9 +28,10 @@ struct EntityData
 	Component<DynamicOBB> obb{};           ///< 当たり判定OBB
 	Component<OBBRenderer> obbRenderer{};  ///< OBB描画
 
-	Vec3 velocity{};     ///< 速度
-	ItemId itemId{};     ///< このエンティティをアイテム化したときのId
-	int32_t entityId{};  ///< エンティティId
+	Vec3 velocity{};       ///< 速度
+	ItemId itemId{};       ///< このエンティティをアイテム化したときのId
+	int32_t entityId{};    ///< エンティティId
+	bool picked{ false };  ///< エンティティが取得されたか true / false
 
 	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
 	float friction{ 0.9f };       ///< 摩擦力

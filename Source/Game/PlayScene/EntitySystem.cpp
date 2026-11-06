@@ -3,6 +3,7 @@
 #include "IEntity.h"
 #include <Game/PlayScene/ItemSystem.h>
 #include <Game/PlayScene/NetworkActorServer.h>
+#include "ItemId.h"
 
 void EntitySystem::Start()
 {
@@ -27,20 +28,19 @@ void EntitySystem::Update()
 	}
 
 	// 自然消滅タイマーはホストだけが管理
-	if (Data().isHost)
+	for (auto& info : entities)
 	{
-		for (auto& info : entities)
+		if (info.isJustSpawned)
 		{
-			if (info.isJustSpawned)
-			{
-				continue;
-			}
-
-			info.despawnTimeLeft -= DELTA_TIME;
+			continue;
 		}
 
-		std::vector<int32_t> removeIds;
+		info.despawnTimeLeft -= DELTA_TIME;
+	}
 
+	if (Data().isHost)
+	{
+		std::vector<int32_t> removeIds;
 		for (const auto& info : entities)
 		{
 			if (!info.isJustSpawned && !info.isRemoveRequested && info.despawnTimeLeft <= 0.0f)
@@ -166,7 +166,10 @@ void EntitySystem::SpawnFromNetwork(
 	// entities.emplace_back(GetScene().Instantiate<Entity>(_itemId), 60.0f * 5.0f, 3.0f);
 
 	EntitySystemData::EntityInfo info{};
-	info.obj               = GetScene().Instantiate<Entity>(_itemId, 0);
+
+	Entity e{ _itemId, _entityId };
+
+	info.obj               = GetScene().Instantiate<Entity>(_itemId, _entityId);
 	info.pickupCooldownSec = 3.0f;
 	info.despawnTimeLeft   = 60.0f * 5.0f;
 	info.entityId          = _entityId;
