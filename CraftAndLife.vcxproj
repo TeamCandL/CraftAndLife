@@ -452,6 +452,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionShield.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
@@ -734,6 +735,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />
+    <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionMedicals.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionShield.h" />

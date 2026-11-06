@@ -167,24 +167,23 @@ void Player::Update()
 	// 近くのアイテムを拾う
 	UpdatePickNearestItem();
 
-	// クラフト画面を開く
-	if (Get<InputSystem>().GetKeyDown(KeyCode::C) ||
-	    Get<AbstructInputSystem>().GetPadInputSystem().IsButtonTriggered(GameInputGamepadY))
-	{
-		isOpenCraftUI = !isOpenCraftUI;
-	}
-
-	// 選択スロットのアイテムを投げ捨てる
-	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && isOpenCraftUI == false)
+	if (isOpenCraftUI == false)
 	{
 		HotBar& hotbar = Get<HotBar>(objHotbar);
-
-		if (hotbar.CanRemoveSelectedItem())
+		// 選択スロットのアイテムを投げ捨てる
+		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 		{
-			ItemId selectedItemId = hotbar.GetSelectedItemId();
-			hotbar.RemoveSelectedItem();
-			SpawnItem(selectedItemId);
+
+			if (hotbar.CanRemoveSelectedItem())
+			{
+				ItemId selectedItemId = hotbar.GetSelectedItemId();
+				hotbar.RemoveSelectedItem();
+				SpawnItem(selectedItemId);
+			}
 		}
+
+		// ホットバーのスロットの動作を更新する
+		hotbar.UpdateSlot();
 	}
 
 	/*
