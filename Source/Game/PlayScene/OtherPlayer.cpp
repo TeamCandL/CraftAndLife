@@ -1,11 +1,9 @@
 #include "OtherPlayer.h"
 #include <Game/Manager/SessionManager.h>
 #include "Player/HelthState.h"
+#include "OtherPlayerHand.h"
 
-void OtherPlayer::Start()
-{
-	VCU_LOG("ああああああああああああああああああああああああああああああ");
-}
+void OtherPlayer::Start() {}
 
 void OtherPlayer::Update()
 {

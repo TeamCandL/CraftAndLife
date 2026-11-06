@@ -8,6 +8,12 @@
 /// @brief サーバー側のネットワークアクターのデータ
 struct NetworkActorServerData
 {
+	NetworkActorServerData(
+	    const GameObject _objPlayer) :
+	    objPlayer{ _objPlayer }
+	{
+	}
+
 	bool isHost{ false };
 
 	bool isInitialized{ false };

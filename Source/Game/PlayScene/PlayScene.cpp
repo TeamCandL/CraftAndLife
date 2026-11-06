@@ -24,9 +24,13 @@
 #include "UI/DeathUI.h"
 #include "UI/CraftUI.h"
 #include "HarvestableController.h"
+#include <Game/Manager/AudioManager.h>
 
 void PlayScene::Start()
 {
+	// タイトルBGMを停止
+	ManagerRegistry::Ref<AudioManager>().SetBGMStop();
+
 	Instantiate<GameManager>();
 	GameObject objSky = Instantiate<Sky>();
 
@@ -44,6 +48,10 @@ void PlayScene::Start()
 	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer);
 
 	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
+
+	// debaug用に敵を生成する
+	// GameObject objEnemyController = Instantiate<EnemyController>();
+	// GameObject objSampleEnemy     = Instantiate<Enemy>(objEnemyController, EnemyType::Dragon);
 
 	Instantiate<Reticle>();
 

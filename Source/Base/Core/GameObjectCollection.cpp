@@ -34,14 +34,26 @@ cha::GameObjectCollection::~GameObjectCollection() {}
 
 void cha::GameObjectCollection::Flush()
 {
+
+	std::set<uint64_t> toFastDestroyIds{};  ///< 速攻消すオブジェクトのId
+
 	// 削除予定のオブジェクトを削除してく
 	for (const uint64_t ID : toDestroyIds_)
 	{
 		const size_t REGISTRY_INDEX = IdToRegistryIndex(ID);
+		if (registry_.size() <= REGISTRY_INDEX)
+		{
+			toFastDestroyIds.insert(ID);
+			continue;
+		}
 		registry_[REGISTRY_INDEX].pObject->OnDestroy();
 	}
 	for (const uint64_t ID : toDestroyIds_)
 	{
+		if (toFastDestroyIds.count(ID))
+		{
+			continue;  // 一度生成してから消すオブジェクトは無視
+		}
 		Remove(ID);
 	}
 	toDestroyIds_.clear();
@@ -76,6 +88,17 @@ void cha::GameObjectCollection::Flush()
 			registry_[i].pObject->Start();
 		}
 	}
+
+	for (const uint64_t ID : toFastDestroyIds)
+	{
+		const size_t REGISTRY_INDEX = IdToRegistryIndex(ID);
+		registry_[REGISTRY_INDEX].pObject->OnDestroy();
+	}
+	for (const uint64_t ID : toFastDestroyIds)
+	{
+		Remove(ID);
+	}
+	toFastDestroyIds.clear();  // 丁寧に消しとく
 }
 
 cha::GameObject cha::GameObjectCollection::MakeGameObject(

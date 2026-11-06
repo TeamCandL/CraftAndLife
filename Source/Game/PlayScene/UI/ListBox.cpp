@@ -11,26 +11,33 @@ void UI::ListBox::Start()
 
 void UI::ListBox::Update()
 {
+	// パッドからフォーカス操作
 	auto& padInput = Get<AbstructInputSystem>().GetPadInputSystem();
-	if (padInput.IsFlickedDown(GamePadInputStick::Left))
+
+	if (padInput.IsFlickedDown(GamePadInputStick::Left) || Get<InputSystem>().GetKeyDown(KeyCode::S))
 	{
 		MoveFocus(1);
 	}
-	if (padInput.IsFlickedUp(GamePadInputStick::Left))
+	if (padInput.IsFlickedUp(GamePadInputStick::Left) || Get<InputSystem>().GetKeyDown(KeyCode::W))
 	{
 		MoveFocus(-1);
 	}
 
+	// マウスカーソルからフォーカス操作
+	UpdateFocusForMouseCursor();
+
+	// リストボックス内の要素を更新
 	for (int i = 0; i < elements.size(); i++)
 	{
 		Get<ListElement>(elements[i]).Update((i == currentIndex));
 	}
-	UITransform& elementTransform = Get<UITransform>(elements[currentIndex]);
-	UIImage& elementImage         = Get<UIImage>(elements[currentIndex]);
 
-	// 選択項目の矢印の位置
-	UITransform& cursorTransform = Get<UITransform>(selectedElementCursor);
-	cursorTransform.position     = elementTransform.position + Vec2{ 0.0f, 1.0f };
+	// 選択項目の矢印の位置を更新
+	UITransform& elementTransform = Get<UITransform>(elements[currentIndex]);
+	UITransform& cursorTransform  = Get<UITransform>(selectedElementCursor);
+	// 選択項目からオフセット分離す
+	Vec2 offset{ 0.0f, 1.0f };
+	cursorTransform.position = elementTransform.position + offset;
 }
 
 std::string UI::ListBox::GetSelectionData()
@@ -40,7 +47,8 @@ std::string UI::ListBox::GetSelectionData()
 
 bool UI::ListBox::IsPushed()
 {
-	return Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin();
+	return Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() ||
+	       Get<UIRaycastTarget>(elements[currentIndex]).currentState == UIRaycastTargetState_Pressed;
 }
 
 void UI::ListBox::PushBackElement(
@@ -65,6 +73,19 @@ void UI::ListBox::MoveFocus(
 {
 	currentIndex += _dir;
 	currentIndex = (currentIndex + elements.size()) % elements.size();
+}
+
+void UI::ListBox::UpdateFocusForMouseCursor()
+{
+	for (int i = 0; i < elements.size(); i++)
+	{
+		Get<ListElement>(elements[i]).Update((i == currentIndex));
+		UIRaycastTarget& raycastTarget = Get<UIRaycastTarget>(elements[i]);
+		if (raycastTarget.currentState == UIRaycastTargetState_Hovered)
+		{
+			currentIndex = i;
+		}
+	}
 }
 
 void UI::ListElement::Update(

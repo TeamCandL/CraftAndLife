@@ -438,6 +438,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\LobbyScene\MemberElement.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\MemberList.cpp" />
     <ClCompile Include="Source\Game\Manager\SessionManager.cpp" />
+    <ClCompile Include="Source\Game\Manager\SessionManager\SessionStateReader.cpp" />
     <ClCompile Include="Source\Game\MapTestScene\MapTestScene.cpp" />
     <ClCompile Include="Source\Game\Network\ENetTransport.cpp" />
     <ClCompile Include="Source\Game\Network\INetworkMessage.cpp" />
@@ -455,6 +456,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionShield.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherPlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
@@ -519,8 +521,8 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalUIInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.cpp" />
     <ClCompile Include="Source\Game\System\AnimationSystem.cpp" />
-    <ClCompile Include="Source\Game\System\AudioSystem.cpp" />
-    <ClCompile Include="Source\Game\System\AudioSystem\AudioPlayer.cpp" />
+    <ClCompile Include="Source\Game\Manager\AudioManager.cpp" />
+    <ClCompile Include="Source\Game\Manager\AudioManager\AudioPlayer.cpp" />
     <ClCompile Include="Source\Game\System\CameraSystem.cpp" />
     <ClCompile Include="Source\Game\System\CursorSystem.cpp" />
     <ClCompile Include="Source\Game\System\DebugSystems\ImGuiRenderingSystem.cpp" />
@@ -713,6 +715,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
+    <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
+    <ClInclude Include="Source\Game\Manager\SessionManager\StateTarget.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
     <ClInclude Include="Source\Game\Network\Protocols\BreakHarvestable.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
@@ -734,6 +738,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
     <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
@@ -875,8 +880,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\System\AbstructInputSystem\IUIInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\NormalPlayerInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\NormalUIInput.h" />
-    <ClInclude Include="Source\Game\System\AudioSystem.h" />
-    <ClInclude Include="Source\Game\System\AudioSystem\AudioPlayer.h" />
+    <ClInclude Include="Source\Game\Manager\AudioManager.h" />
+    <ClInclude Include="Source\Game\Manager\AudioManager\AudioPlayer.h" />
     <ClInclude Include="Source\Game\System\CameraSystem.h" />
     <ClInclude Include="Source\Game\System\CameraSystem\CameraMaterialProperty.h" />
     <ClInclude Include="Source\Game\System\CursorSystem.h" />
@@ -971,6 +976,7 @@ pre-commit install</Command>
     <None Include="Source\Base\Core\SceneBase.inl" />
     <None Include="Source\Base\Manager\SceneManager.inl" />
     <None Include="Source\Game\Common\Stage\StageLoader.inl" />
+    <None Include="Source\Game\Manager\SessionManager\SessionStateReader.inl" />
     <None Include="Source\Game\Network\MessageRegistry.inl" />
     <None Include="Source\Game\Network\NetworkSessionManager.inl" />
     <None Include="Source\Game\System\AbstructInputSystem.inl" />
