@@ -167,13 +167,6 @@ void Player::Update()
 	// 近くのアイテムを拾う
 	UpdatePickNearestItem();
 
-	// クラフト画面を開く
-	if (Get<InputSystem>().GetKeyDown(KeyCode::C) ||
-	    Get<AbstructInputSystem>().GetPadInputSystem().IsButtonTriggered(GameInputGamepadY))
-	{
-		isOpenCraftUI = !isOpenCraftUI;
-	}
-
 	if (isOpenCraftUI == false)
 	{
 		HotBar& hotbar = Get<HotBar>(objHotbar);
