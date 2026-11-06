@@ -174,17 +174,23 @@ void Player::Update()
 		isOpenCraftUI = !isOpenCraftUI;
 	}
 
-	// 選択スロットのアイテムを投げ捨てる
-	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && isOpenCraftUI == false)
+	if (isOpenCraftUI == false)
 	{
 		HotBar& hotbar = Get<HotBar>(objHotbar);
-
-		if (hotbar.CanRemoveSelectedItem())
+		// 選択スロットのアイテムを投げ捨てる
+		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 		{
-			ItemId selectedItemId = hotbar.GetSelectedItemId();
-			hotbar.RemoveSelectedItem();
-			SpawnItem(selectedItemId);
+
+			if (hotbar.CanRemoveSelectedItem())
+			{
+				ItemId selectedItemId = hotbar.GetSelectedItemId();
+				hotbar.RemoveSelectedItem();
+				SpawnItem(selectedItemId);
+			}
 		}
+
+		// ホットバーのスロットの動作を更新する
+		hotbar.UpdateSlot();
 	}
 
 	/*

@@ -63,17 +63,6 @@ void HotBar::Start()
 
 void HotBar::Update()
 {
-	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
-	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
-	{
-		MoveFocusToLeft();
-		OnChangedSelectedItem();
-	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
-	{
-		MoveFocusToRight();
-		OnChangedSelectedItem();
-	}
 	/// -----------------
 	/// スロットのUI更新
 	/// -----------------
@@ -130,7 +119,20 @@ void HotBar::Update()
 	}
 }
 
-void HotBar::UpdateSlot() {}
+void HotBar::UpdateSlot()
+{
+	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
+	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
+	{
+		MoveFocusToLeft();
+		OnChangedSelectedItem();
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
+	{
+		MoveFocusToRight();
+		OnChangedSelectedItem();
+	}
+}
 
 void HotBar::MoveFocusToRight()
 {
