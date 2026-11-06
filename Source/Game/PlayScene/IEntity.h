@@ -14,6 +14,9 @@ class IEntity
 	/// @brief アイテムIdを取得する
 	/// @return アイテムId
 	virtual ItemId GetItemId() const = 0;
+	/// @brief エンティティIdを取得する
+	/// @return エンティティId
+	virtual int32_t GetEntityId() const = 0;
 
 	/// @brief エンティティの座標をセットする
 	/// @param _position 座標

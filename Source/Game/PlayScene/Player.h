@@ -134,7 +134,6 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void AttackCollider();
 
-	void Damaged(int32_t _damage);
 	void Damaged(int32_t _damage, Vec3 _worldPos);
 
 	/// @brief 生存ステータスを設定する
