@@ -201,7 +201,7 @@ void Player::Update()
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
-		Damaged(10);
+		Damaged(10, transform.position);
 	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
