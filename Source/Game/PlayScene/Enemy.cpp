@@ -5,6 +5,7 @@
 #include <shigaLibrary/SgRandom.h>
 #include <shigaLibrary/SgMath.h>
 #include <Game/PlayScene/TerrainSystem.h>
+#include <Game/PlayScene/NetworkActorServer.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 
 #include "OtherPlayerController.h"
@@ -83,16 +84,39 @@ void Enemy::Update()
 
 	ImGui::End();
 
+	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
+		hp = 0;
+
 	if (alive)
 	{
 	}
 	else
 	{
+		const int32_t enemyId = GetID();
+		VCU_LOG("[Enemy] 死亡開始 ID={}", enemyId);
+
 		SetActive(false);
-		// 敵IDを使って死亡通知を送信キューに登録
-		// Registryの登録を解除
-		// ※上記2つは今後実装する
-		// DestroyMe();
+
+		EnemyController& controller = Get<EnemyController>(objEnemyController);
+
+		NetworkActorServer& networkActor = Get<NetworkActorServer>(controller.GetNetworkActorServer());
+
+		// ステート登録解除・死亡通知登録
+		networkActor.OnEnemyDeath(enemyId);
+
+		// 敵の管理スロットを空にする
+		controller.RemoveEnemy(enemyId);
+
+		VCU_LOG("[Enemy] OnEnemyDeath 呼び出し ID={}", enemyId);
+		networkActor.OnEnemyDeath(enemyId);
+
+		VCU_LOG("[Enemy] Controllerから削除 ID={}", enemyId);
+		controller.RemoveEnemy(enemyId);
+
+		DestroyMe();
+
+		VCU_LOG("[Enemy] DestroyMe 呼び出し完了 ID={}", enemyId);
+		return;
 	}
 }
 
