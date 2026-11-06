@@ -1,3 +1,4 @@
+
 #pragma once
 #include "IPlayer.h"
 #include "PlayerRoleType.h"
@@ -16,13 +17,11 @@ struct OtherPlayerData
 	Component<Name> name{};
 	Component<Transform> transform{ Vec3::Zero(), Vec3::One() * 200.0f };
 
-	// Resource<Model> aModel{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-male-c.fbx" };
-
 	std::array<Resource<Model>, PlayerRoleType_Max> models{
-		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
-		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",    // Tank
-		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",    // Fighter
-		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-f.fbx",  // Archer
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-f.fbx",
 	};
 
 	PlayerRoleType role{ PlayerRoleType_Healer };
@@ -31,6 +30,12 @@ struct OtherPlayerData
 
 	// 死亡状態
 	bool isDead{ false };
+
+	// 現在HP
+	int32_t hp{ 100 };
+
+	// 最大HP
+	int32_t maxHP{ 100 };
 };
 
 struct OtherPlayer : ObjectBase<OtherPlayerData>, IPlayer
@@ -48,5 +53,15 @@ struct OtherPlayer : ObjectBase<OtherPlayerData>, IPlayer
 	bool IsDead() const
 	{
 		return isDead;
+	}
+
+	int32_t GetHP() const
+	{
+		return Data().hp;
+	}
+
+	int32_t GetMaxHP() const
+	{
+		return Data().maxHP;
 	}
 };
