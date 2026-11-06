@@ -7,6 +7,7 @@
 #include "ItemAction/ItemActionWeapons.h"
 #include "ItemAction/ItemActionWeaponBow.h"
 #include "ItemAction/ItemActionShield.h"
+#include "ItemAction/ItemActionBackpack.h"
 #include <Game/Manager/SessionManager.h>
 
 void PlayerHand::Start()
@@ -212,8 +213,11 @@ void PlayerHand::SetItem(
 		break;
 	case ItemType::Consumables:
 		break;
-	case ItemType::Materials:
 		break;
+	case ItemType::Backpack:
+		objItemAction = GetScene().Instantiate<ItemActionBackpack>();
+		break;
+	case ItemType::Materials:
 	default:
 		break;
 	}

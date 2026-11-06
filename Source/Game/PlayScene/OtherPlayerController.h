@@ -25,4 +25,6 @@ struct OtherPlayerController : ObjectBase<OtherPlayerControllerData>
 
 	GameObject GetFirstOtherPlayer() const;
 	std::vector<GameObject> GetOtherPlayers() const;
+
+	bool TryGetOtherPlayer(const std::string& playerName, GameObject& outPlayer) const;
 };

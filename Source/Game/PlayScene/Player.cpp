@@ -167,24 +167,23 @@ void Player::Update()
 	// 近くのアイテムを拾う
 	UpdatePickNearestItem();
 
-	// クラフト画面を開く
-	if (Get<InputSystem>().GetKeyDown(KeyCode::C) ||
-	    Get<AbstructInputSystem>().GetPadInputSystem().IsButtonTriggered(GameInputGamepadY))
-	{
-		isOpenCraftUI = !isOpenCraftUI;
-	}
-
-	// 選択スロットのアイテムを投げ捨てる
-	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && isOpenCraftUI == false)
+	if (isOpenCraftUI == false)
 	{
 		HotBar& hotbar = Get<HotBar>(objHotbar);
-
-		if (hotbar.CanRemoveSelectedItem())
+		// 選択スロットのアイテムを投げ捨てる
+		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 		{
-			ItemId selectedItemId = hotbar.GetSelectedItemId();
-			hotbar.RemoveSelectedItem();
-			SpawnItem(selectedItemId);
+
+			if (hotbar.CanRemoveSelectedItem())
+			{
+				ItemId selectedItemId = hotbar.GetSelectedItemId();
+				hotbar.RemoveSelectedItem();
+				SpawnItem(selectedItemId);
+			}
 		}
+
+		// ホットバーのスロットの動作を更新する
+		hotbar.UpdateSlot();
 	}
 
 	/*
@@ -201,7 +200,7 @@ void Player::Update()
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
-		Damaged(10);
+		Damaged(10, transform.position);
 	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
@@ -236,24 +235,51 @@ void Player::AttackCollider()
 }
 
 void Player::Damaged(
-    int32_t damage)
+    int32_t damage,
+    const Vec3 _worldPosition)
 {
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
-		if (jobStatus.maxHpBoost > 0.0f)
+		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+
+		if (isHoldShield)
 		{
-			hp -= damage;
-			return;
+			Vec3 dir  = _worldPosition - transform.position;
+			float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(transform.Forward(), dir));
+
+			// 有効角度のcosf
+			float thresholdDot = std::cosf(shieldGurdAngleRad);
+
+			if (dot > thresholdDot)
+			{
+				VCU_LOG("防いだ！");
+				return;  // 防いだ判定！！！
+			}
+			VCU_LOG("防いでいない！");
 		}
 
-		hp -= damage;
+		if (jobStatus.maxHpBoost > 0.0f)
+		{
+			jobStatus.maxHpBoost -= damage;
+
+			if (jobStatus.maxHpBoost >= 0.0f)
+			{
+				return;
+			}
+			else
+			{
+				hp += jobStatus.maxHpBoost;
+			}
+		}
+		else
+		{
+			hp -= damage;
+		}
 
 		if (hp < 0)
 		{
 			hp = 0;
 		}
-
-		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
 
 	if (hp <= 0)

@@ -156,3 +156,26 @@ std::vector<GameObject> OtherPlayerController::GetOtherPlayers() const
 
 	return players;
 }
+
+bool OtherPlayerController::TryGetOtherPlayer(
+    const std::string& playerName,
+    GameObject& outPlayer) const
+{
+	const auto& players = Data().nameToObjOtherPlayer;
+
+	auto it = players.find(playerName);
+
+	if (it == players.end())
+	{
+		return false;
+	}
+
+	if (it->second.objBody.IsEmpty())
+	{
+		return false;
+	}
+
+	outPlayer = it->second.objBody;
+
+	return true;
+}

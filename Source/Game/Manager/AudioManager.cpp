@@ -56,6 +56,33 @@ void AudioManager::Play(
 	players.back().Play(_resource);
 }
 
+// 2つの効果音を順番に再生
+void AudioManager::PlaySequence(
+    Resource<ResourceType::Audio>& _first,
+    Resource<ResourceType::Audio>& _next)
+{
+	AudioResource& audio = _first.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// 1つ目の音声を再生
+	Play(_first);
+
+	// 1つ目の音声の再生時間を取得
+	if (audio.waveFormatEx.Format.nAvgBytesPerSec == 0)
+	{
+		return;
+	}
+
+	sequenceTimeLeft = static_cast<float>(audio.buffer.size()) / audio.waveFormatEx.Format.nAvgBytesPerSec;
+
+	// 次に再生する音声を登録
+	pNextSequenceAudio = &_next;
+}
+
 // 足音を再生
 void AudioManager::PlayFootstep(
     Resource<ResourceType::Audio>& _resource)
@@ -182,6 +209,25 @@ void AudioManager::StopJump()
 void AudioManager::LateUpdate(
     const float _deltaTime)
 {
+	// 連続再生の管理
+	if (pNextSequenceAudio)
+	{
+		sequenceTimeLeft -= _deltaTime;
+
+		// 1つ目の音声が終了したら2つ目を再生
+		if (sequenceTimeLeft <= 0.0f)
+		{
+			Resource<ResourceType::Audio>* pNext = pNextSequenceAudio;
+
+			// 再生前に解除
+			pNextSequenceAudio = nullptr;
+			sequenceTimeLeft   = 0.0f;
+
+			Play(*pNext);
+		}
+	}
+
+	// ここから下は既存の処理
 	for (size_t i = 0; i < players.size();)
 	{
 		players[i].timeLeftSec -= _deltaTime;
@@ -356,6 +402,10 @@ void AudioManager::SetBGMStart()
 
 void AudioManager::Release()
 {
+	// 連続再生の情報をリセット
+	pNextSequenceAudio = nullptr;
+	sequenceTimeLeft   = 0.0f;
+
 	// 足音を停止
 	StopFootstep();
 

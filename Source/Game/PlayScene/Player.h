@@ -112,6 +112,10 @@ struct PlayerData
 
 	// クラフトUIを開いているか(クラフト機能側がUIを表示するか判定するのに使う)
 	bool isOpenCraftUI{ false };
+
+	bool isHoldShield{ false };  ///< シールドを構えているか true / false
+
+	float shieldGurdAngleRad{ DirectX::XM_PI / 180.0f * 40.0f };  ///< シールドで防げる正面に対する攻撃の角度
 };
 
 /// @brief プレイヤー

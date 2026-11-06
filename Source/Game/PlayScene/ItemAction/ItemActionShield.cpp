@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "ItemActionShield.h"
 #include "../PlayerHand.h"
+#include "../Player.h"
 
 void ItemActionShield::Update(
     const ItemId _itemId,
@@ -18,6 +19,7 @@ void ItemActionShield::Update(
 			_playerHandData.isActing                         = true;
 			_playerHandData.transformAnimator.playingTimeSec = 0.0f;
 			_playerHandData.transformAnimator.playAnimation  = "holding";
+			_playerData.isHoldShield                         = true;
 		}
 
 		_playerHandData.transformAnimator.playToLoop = true;  // 長押し中ならループ追加を要請
@@ -29,6 +31,7 @@ void ItemActionShield::Update(
 			_playerHandData.isActing                        = false;
 			_playerHandData.transformAnimator.playToLoop    = false;
 			_playerHandData.transformAnimator.playAnimation = "idle";
+			_playerData.isHoldShield                        = false;
 		}
 	}
 
@@ -46,6 +49,7 @@ void ItemActionShield::Update(
 			_playerHandData.transformAnimator.playAnimation  = "idle";
 			_playerHandData.transformAnimator.playingTimeSec = 0.0f;
 			_playerHandData.isActing                         = false;
+			_playerData.isHoldShield                         = false;
 		}
 	}
 }

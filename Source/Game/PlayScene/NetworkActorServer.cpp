@@ -68,6 +68,10 @@ void NetworkActorServer::CreateEnemy(
 {
 	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
 
+	// Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+
+	// Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
+
 	// 生成した敵のステートを登録
 	EnemyStateRegistries(objEnemy);
 }
@@ -90,6 +94,9 @@ void NetworkActorServer::CreateEnemies()
 
 	// 敵管理オブジェクトを生成
 	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+
+	// 自分自身のGameObjectをEnemyControllerに渡す
+	Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
 
 	// 敵を生成（同じ種類も複数生成可能）
 	// CreateEnemy(EnemyType::Skeleton);
@@ -172,6 +179,24 @@ bool NetworkActorServer::IsDeathQueued(
 	return index < queued.size() && queued[index];
 }
 
+void NetworkActorServer::OnEnemyDeath(
+    int32_t actorId)
+{
+	// すでに死亡通知を登録済みなら何もしない
+	if (actorId < 0 || IsDeathQueued(actorId))
+	{
+		return;
+	}
+
+	// 死亡通知を送信キューに登録
+	// TODO: 死亡通知プロトコルの送信処理
+
+	// 敵のステート登録を解除
+	ReleaseActor(actorId);
+
+	MarkDeathQueued(actorId);
+}
+
 void NetworkActorServer::ReleaseActor(
     int32_t actorId)
 {
@@ -189,10 +214,10 @@ void NetworkActorServer::ReleaseActor(
 		registries[index].reset();
 	}
 
-	auto& queued = Data().enemyDeathQueued;
+	// auto& queued = Data().enemyDeathQueued;
 
-	if (index < queued.size())
-	{
-		queued[index] = false;
-	}
+	// if (index < queued.size())
+	//{
+	//	queued[index] = false;
+	// }
 }
