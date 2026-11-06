@@ -13,6 +13,7 @@
 #include "StateRegistry.h"
 #include "../Manager/SessionManager.h"
 #include "EntitySystem.h"
+#include "../PlayScene/Player/HelthState.h"
 
 void Enemy::Start()
 {
@@ -139,14 +140,17 @@ void Enemy::Move(
 void Enemy::Sensor(
     Vec3 Fwd_)
 {
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader(sessionManager);
+
 	Vec3 targetPos_{ DEFAULT_TARGET_POS };
 	float targetDist{ -1.0f };
 	int32_t targetAttentionLevel{ 0 };
 	std::vector<TargetInfo> players;
-	Get<SessionManager>().ForeachPlayerStatus(
+	sessionManager.ForeachPlayerStatus(
 	    [&players](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
 	    {
-		    players.push_back({ _status.position, _status.attentionLevel });
+		    players.push_back({ _name, _status.position, _status.attentionLevel });
 	    });
 	for (TargetInfo objPlayer : players)
 	{
@@ -180,6 +184,24 @@ void Enemy::Sensor(
 			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
 			float visibilityDot = std::cosf(visibilityAngle);
 			if (dot <= visibilityDot)
+			{
+			}
+		}
+
+		int32_t playerId{};
+		if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
+		{
+			StateTarget target = StateTarget::Player(playerId);
+
+			int32_t helthState{};
+			bool flag = reader.TryGetState(target, "helthState", helthState);
+			if (flag)
+			{
+				if (helthState == HelthState_::HelthState_Live)
+				{
+				}
+			}
+			else
 			{
 			}
 		}

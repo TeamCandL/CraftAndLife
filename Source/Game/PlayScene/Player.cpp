@@ -262,6 +262,12 @@ void Player::Damaged(
 	}
 }
 
+void Player::Damaged(
+    int32_t _damage,
+    Vec3 _worldPos)
+{
+}
+
 void Player::SetHelthState(
     const HelthState _state)
 {
