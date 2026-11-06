@@ -704,6 +704,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\BootScene\BootScene.h" />
     <ClInclude Include="Source\Game\BootScene\BootSceneBackground.h" />
     <ClInclude Include="Source\Game\BootScene\BootSceneLogo.h" />
+    <ClInclude Include="Source\Game\ClearScene\ClearScene.h" />
     <ClInclude Include="Source\Game\Common\Canvas.h" />
     <ClInclude Include="Source\Game\Common\ChunkLoader\IWorldLoader.h" />
     <ClInclude Include="Source\Game\Common\GameManager.h" />
