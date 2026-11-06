@@ -10,6 +10,7 @@ struct InSessionStatus
 	{
 		Vec3 position{ 0, 10, 0 };    ///< 座標
 		Vec2 rotation{ 0, 0 };        ///< 角度データ
+		int32_t haveItemId{};         ///< 持っているアイテムのId
 		bool updatedFlag{ false };    ///< 更新時のフラグ false / true 切り替え用
 		int32_t attentionLevel{ 5 };  ///< 注目度
 
@@ -26,6 +27,7 @@ struct InSessionStatus
 		std::unordered_map<std::string, StateValue> states{};
 	};
 
+	int32_t haveItemId{};                    ///< 持っているアイテムのId
 	std::string joinRoomName{};              ///< 参加する部屋名
 	std::string name{};                      ///< プレイヤー名
 	std::vector<std::string> memberNames{};  ///< ロビー内メンバー名一覧

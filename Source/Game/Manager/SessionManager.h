@@ -33,7 +33,11 @@ class SessionManager : public IManager
 	/// @param _names プレイヤー名
 	/// @param _positions 座標情報
 	/// @param _rotations 回転情報
-	void UpdatePlayers(const std::string_view _names, SizedBuffer<float>& _positions, SizedBuffer<float>& _rotations);
+	void UpdatePlayers(
+	    const std::string_view _names,
+	    SizedBuffer<float>& _positions,
+	    SizedBuffer<float>& _rotations,
+	    SizedBuffer<int32_t>& _haveItemIds);
 
 	/// @brief プレイヤーステータスを参照する
 	/// @param _playerName プレイヤー名
@@ -44,6 +48,12 @@ class SessionManager : public IManager
 	/// @param _playerName 指定のプレイヤー名
 	/// @return 存在している true / false
 	bool IsExistPlayer(const std::string& _playerName) const;
+
+	// プレイヤーIDからプレイヤー名を取得
+	bool TryGetPlayerName(int32_t _playerId, std::string& _outName) const;
+
+	// プレイヤー名からプレイヤーIDを取得
+	bool TryGetPlayerId(std::string_view _playerName, int32_t& _outId) const;
 
 	/// @brief 自分も含め全プレイヤーのステータスが存在するか
 	/// @return 存在する true / false

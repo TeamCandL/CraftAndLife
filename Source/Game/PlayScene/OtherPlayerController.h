@@ -3,8 +3,13 @@
 
 struct OtherPlayerControllerData
 {
+	struct OtherPlayerSet
+	{
+		GameObject objBody{};
+		GameObject objHand{};
+	};
 	// 他プレイヤーのGameObject
-	std::map<std::string, GameObject> nameToObjOtherPlayer{};
+	std::map<std::string, OtherPlayerSet> nameToObjOtherPlayer{};
 
 	// 他プレイヤーの死亡UI
 	std::map<std::string, GameObject> nameToObjDeathUI{};
@@ -20,4 +25,6 @@ struct OtherPlayerController : ObjectBase<OtherPlayerControllerData>
 
 	GameObject GetFirstOtherPlayer() const;
 	std::vector<GameObject> GetOtherPlayers() const;
+
+	bool TryGetOtherPlayer(const std::string& playerName, GameObject& outPlayer) const;
 };

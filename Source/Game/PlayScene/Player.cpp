@@ -19,6 +19,7 @@
 #include "Player/PlayerJobControllerArcher.h"
 #include "StateRegistry.h"
 #include <Game/Manager/AudioManager.h>
+#include <Game/Manager/SessionManager/SessionStateReader.h>
 
 void Player::Start()
 {
@@ -123,6 +124,7 @@ void Player::Update()
 	ImGui::End();
 
 	if (isAnimPreviewingDebug)
+
 	{
 		transformAnimator.playAnimation = "";
 		return;
@@ -240,11 +242,21 @@ void Player::Damaged(
 	{
 		if (jobStatus.maxHpBoost > 0.0f)
 		{
-			hp -= damage;
-			return;
-		}
+			jobStatus.maxHpBoost -= damage;
 
-		hp -= damage;
+			if (jobStatus.maxHpBoost >= 0.0f)
+			{
+				return;
+			}
+			else
+			{
+				hp += jobStatus.maxHpBoost;
+			}
+		}
+		else
+		{
+			hp -= damage;
+		}
 
 		if (hp < 0)
 		{
