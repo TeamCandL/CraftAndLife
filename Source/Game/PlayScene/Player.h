@@ -130,7 +130,10 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void AttackCollider();
 
-	void Damaged(int32_t damage);
+	/// @brief ダメージを与える関数
+	/// @param damage ダメージ量
+	/// @param _worldPosition ダメージ発生源(ワールド座標)※敵の座標とかダメージコライダーの座標
+	void Damaged(int32_t damage, const Vec3 _worldPosition);
 
 	/// @brief 生存ステータスを設定する
 	/// @param _state 生存ステータス
