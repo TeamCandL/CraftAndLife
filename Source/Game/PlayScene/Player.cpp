@@ -240,6 +240,24 @@ void Player::Damaged(
 {
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
+		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+
+		if (isHoldShield)
+		{
+			Vec3 dir  = _worldPosition - transform.position;
+			float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(transform.Forward(), dir));
+
+			// 有効角度のcosf
+			float thresholdDot = std::cosf(shieldGurdAngleRad);
+
+			if (dot > thresholdDot)
+			{
+				VCU_LOG("防いだ！");
+				return;  // 防いだ判定！！！
+			}
+			VCU_LOG("防いでいない！");
+		}
+
 		if (jobStatus.maxHpBoost > 0.0f)
 		{
 			jobStatus.maxHpBoost -= damage;
@@ -262,8 +280,6 @@ void Player::Damaged(
 		{
 			hp = 0;
 		}
-
-		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
 
 	if (hp <= 0)
