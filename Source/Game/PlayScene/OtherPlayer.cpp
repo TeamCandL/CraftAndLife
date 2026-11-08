@@ -24,6 +24,16 @@ void OtherPlayer::Update()
 
 	const InSessionStatus::PlayerStatus& status = sessionManager.RefPlayerStatus(name.content);
 
+	const InSessionStatus& dstatus = Get<SessionManager>().RefStatus();
+
+	VCU_LOG("日付：{}", dstatus.dayCount);
+	VCU_LOG("時間：{}", dstatus.currentTimeSec);
+	VCU_LOG("受信済み：{}", dstatus.hasReceivedDayTime);
+	if (dstatus.dayCount == 2)
+	{
+		VCU_LOG("2日目ー！");
+	}
+
 	// =====================================
 	// プレイヤーステートを取得
 	// =====================================

@@ -48,11 +48,11 @@ void NetworkActorServer::Update()
 	// ホスト専用処理
 	if (IsHost())
 	{
+#if 1
 		// 日付の取得確認
 		DayController& dayController = Get<DayController>(Data().objDayController);
 		VCU_LOG("現在の日付: {}", dayController.GetCurrentDay());
 
-#if 1
 		if (dayController.IsNight())
 		{
 			CreateEnemies();

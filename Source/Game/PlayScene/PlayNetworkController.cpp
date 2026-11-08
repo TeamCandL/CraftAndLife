@@ -525,6 +525,8 @@ void PlayNetworkController::Update()
 			dayTimeMessage.currentTimeSec = dayController.GetCurrentTimeSec();
 			dayTimeMessage.dayCount       = dayController.GetCurrentDay();
 
+			VCU_LOG("昼夜時刻送信: {} 日数: {}", dayTimeMessage.currentTimeSec, dayTimeMessage.dayCount);
+
 			networkSessionManager.Send(dayTimeMessage);
 
 			// VCU_LOG("昼夜時刻送信: {}", dayTimeMessage.currentTimeSec);
