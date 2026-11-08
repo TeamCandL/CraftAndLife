@@ -230,7 +230,7 @@ void PlayNetworkController::Update()
 			    {
 				    Protocol::UpdatedDayTime dayTimeMessage{};
 				    converter.ToMessage(_event.data, dayTimeMessage);
-				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec);
+				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec, dayTimeMessage.dayCount);
 
 				    break;
 			    }
@@ -523,6 +523,7 @@ void PlayNetworkController::Update()
 			Protocol::UpdateDayTime dayTimeMessage{};
 
 			dayTimeMessage.currentTimeSec = dayController.GetCurrentTimeSec();
+			dayTimeMessage.dayCount       = dayController.GetCurrentDay();
 
 			networkSessionManager.Send(dayTimeMessage);
 

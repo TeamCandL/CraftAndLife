@@ -128,7 +128,7 @@ class SessionManager : public IManager
 
 	/// @brief 昼夜サイクルのためのゲーム内時間の更新
 	/// @param _currentTimeSec ホスト側の昼夜サイクルの現在時刻
-	void UpdateDayTime(float _currentTimeSec);
+	void UpdateDayTime(float _currentTimeSec, int32_t _dayCount);
 
   private:
 	InSessionStatus inSessionStatus_{};  ///< セッション内のステータス

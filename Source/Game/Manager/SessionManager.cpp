@@ -511,8 +511,10 @@ const StateRegistry* SessionManager::GetSelfStateRegistry() const
 }
 
 void SessionManager::UpdateDayTime(
-    float _currentTimeSec)
+    float _currentTimeSec,
+    int32_t _dayCount)
 {
 	inSessionStatus_.currentTimeSec     = _currentTimeSec;
+	inSessionStatus_.dayCount           = _dayCount;
 	inSessionStatus_.hasReceivedDayTime = true;
 }

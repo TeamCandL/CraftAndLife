@@ -46,7 +46,7 @@ void PlayScene::Start()
 	Instantiate<DeathUI>(objPlayer, true);
 
 	// ホスト判定オブジェクトを生成
-	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer);
+	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer, objDayController);
 
 	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 

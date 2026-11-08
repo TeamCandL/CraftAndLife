@@ -46,6 +46,12 @@ struct DayControllerData
 	// 現在の時間帯
 	bool isNight{ false };
 
+	// 現在の日付（1日目から開始）
+	int32_t currentDay{ 1 };
+
+	// 日付が変更されたか
+	bool isDayChanged{ false };
+
 	float currentTimeSec{};
 	GameObject objSky{};
 
@@ -74,5 +80,16 @@ struct DayController : ObjectBase<DayControllerData>
 	    float _timeSec)
 	{
 		Data().currentTimeSec = _timeSec;
+	}
+
+	int32_t GetCurrentDay() const
+	{
+		return Data().currentDay;
+	}
+
+	void SetCurrentDay(
+	    int32_t _day)
+	{
+		Data().currentDay = _day;
 	}
 };

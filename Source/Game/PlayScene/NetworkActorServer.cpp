@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "EnemyController.h"
 #include "OtherEnemyController.h"
+#include "DayController.h"
 
 void NetworkActorServer::Start()
 {
@@ -47,7 +48,14 @@ void NetworkActorServer::Update()
 	// ホスト専用処理
 	if (IsHost())
 	{
-		CreateEnemies();
+		// 日付の取得確認
+		DayController& dayController = Get<DayController>(Data().objDayController);
+		VCU_LOG("現在の日付: {}", dayController.GetCurrentDay());
+
+		if (dayController.GetCurrentDay() == 2)
+		{
+			VCU_LOG("2日目");
+		}
 
 		Data().enemyStateSyncTimer -= Get<DeltaTime>();
 
@@ -56,6 +64,8 @@ void NetworkActorServer::Update()
 			Data().enemyStateSyncTimer += Data().enemyStateSyncTime;
 			Data().isFullSync = true;
 		}
+
+		CreateEnemies();
 	}
 	else
 	{
