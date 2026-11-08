@@ -92,4 +92,11 @@ struct DayController : ObjectBase<DayControllerData>
 	{
 		Data().currentDay = _day;
 	}
+
+	/// @brief 現在が夜かどうかを取得
+	/// @return true：夜 / false：昼
+	bool IsNight() const
+	{
+		return Data().isNight;
+	}
 };

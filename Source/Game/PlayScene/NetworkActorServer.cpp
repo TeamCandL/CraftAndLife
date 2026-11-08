@@ -52,10 +52,16 @@ void NetworkActorServer::Update()
 		DayController& dayController = Get<DayController>(Data().objDayController);
 		VCU_LOG("現在の日付: {}", dayController.GetCurrentDay());
 
-		if (dayController.GetCurrentDay() == 2)
+#if 1
+		if (dayController.IsNight())
 		{
-			VCU_LOG("2日目");
+			CreateEnemies();
 		}
+
+#elif 0
+		CreateEnemies();
+
+#endif
 
 		Data().enemyStateSyncTimer -= Get<DeltaTime>();
 
@@ -64,8 +70,6 @@ void NetworkActorServer::Update()
 			Data().enemyStateSyncTimer += Data().enemyStateSyncTime;
 			Data().isFullSync = true;
 		}
-
-		CreateEnemies();
 	}
 	else
 	{
