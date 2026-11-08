@@ -15,6 +15,10 @@
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
 #include <Game/Network/Protocols/BreakHarvestable.h>
+#include <Game/Network/Protocols/EntitySpawnRequest.h>
+#include <Game/Network/Protocols/EntitySpawned.h>
+#include <Game/Network/Protocols/EntityPickRequest.h>
+#include <Game/Network/Protocols/EntityPicked.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -216,8 +220,8 @@ void PlayNetworkController::Update()
 
 				    break;
 			    }
-			    case ProtocolType::UpdateEntityRemove:
-			    {
+				/*case ProtocolType::UpdateEntityRemove:
+				{
 				    Protocol::UpdateEntityRemove message{};
 				    converter.ToMessage(_event.data, message);
 
@@ -226,7 +230,7 @@ void PlayNetworkController::Update()
 				    VCU_LOG("エンティティ削除情報受信 ID={}", message.entityId);
 
 				    break;
-			    }
+				}*/
 			    case ProtocolType::UpdatedDayTime:
 			    {
 				    Protocol::UpdatedDayTime dayTimeMessage{};
