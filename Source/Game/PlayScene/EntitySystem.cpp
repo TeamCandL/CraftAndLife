@@ -7,7 +7,14 @@ void EntitySystem::Update()
 {
 	for (auto& obj : objEntities)
 	{
-		Get<IEntity>(obj).
+		if (obj.IsEmpty())
+		{
+			continue;  // オブジェクトがないなら無視
+		}
+		if (Get<IEntity>(obj).IsPicked())
+		{
+			GetScene().Destroy(obj);
+		}
 	}
 }
 
@@ -24,7 +31,38 @@ GameObject EntitySystem::PickNearest(
     const Vec3 _pos,
     const float _radius)
 {
-	return GameObject();
+	float minDistance{ _radius };
+	GameObject objMinEntity{ GameObject::Empty() };
+
+	for (auto& obj : objEntities)
+	{
+		IEntity& entity = Get<IEntity>(obj);
+
+		if (entity.CanPickup() == false)
+		{
+			continue;  // 拾えません！無視
+		}
+
+		Transform* pTransform = TryGet<Transform>(obj);
+		if (pTransform)
+		{
+			const float DISTANCE = (pTransform->position - _pos).Length();
+
+			// 距離がより近いなら選ぶ
+			if (DISTANCE <= minDistance)
+			{
+				minDistance  = DISTANCE;
+				objMinEntity = obj;
+			}
+		}
+	}
+
+	if (!objMinEntity.IsEmpty())
+	{
+		Get<IEntity>(objMinEntity).Pick();  // 拾いましたよ！
+	}
+
+	return objMinEntity;
 }
 
 void EntitySystem::SpawnFromNetwork(
@@ -34,6 +72,8 @@ void EntitySystem::SpawnFromNetwork(
     const Vec3 _velocity)
 {
 	objEntities.emplace_back(GetScene().Instantiate<Entity>(_itemId, _entityId));
+	Get<IEntity>(objEntities.back()).SetPosition(_position);
+	Get<IEntity>(objEntities.back()).SetVelocity(_velocity);
 }
 
 void EntitySystem::SetHost(
@@ -44,4 +84,9 @@ void EntitySystem::SetHost(
 void EntitySystem::RemoveFromNetwork(
     const int32_t _entityId)
 {
+	if (objEntities[_entityId].IsEmpty())
+	{
+		return;  // すでに消されているなら無視
+	}
+	GetScene().Destroy(objEntities[_entityId]);
 }

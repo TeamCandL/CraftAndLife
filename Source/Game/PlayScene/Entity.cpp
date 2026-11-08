@@ -35,6 +35,7 @@ void Entity::Update()
 		if (despawnTimeLeftSec < 0.0f)
 		{
 			despawnTimeLeftSec = 0.0f;
+			Pick();  // デスポーンは神が拾った判定にしちゃう
 		}
 	}
 
@@ -125,5 +126,5 @@ void Entity::Pick()
 
 bool Entity::CanPickup() const
 {
-	return pickupCooldownSec <= 0.0f;
+	return pickupCooldownSec <= 0.0f && !picked;
 }
