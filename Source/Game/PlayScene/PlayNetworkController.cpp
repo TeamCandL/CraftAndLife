@@ -447,71 +447,71 @@ void PlayNetworkController::Update()
 
 		IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
 
-		entitySystem
+		// entitySystem
 
-		    /*  // エンティティシステムを変更したため無視
-		    // エンティティ生成情報送信
-		    EntitySystem& entitySystem = Get<EntitySystem>();
+		/*  // エンティティシステムを変更したため無視
+		// エンティティ生成情報送信
+		EntitySystem& entitySystem = Get<EntitySystem>();
 
-		    const auto& spawnDataList = entitySystem.GetPendingSpawnData();
+		const auto& spawnDataList = entitySystem.GetPendingSpawnData();
 
-		    for (const EntitySpawnData& spawnData : spawnDataList)
-		    {
-		        Protocol::UpdateEntitySpawn entityMessage{};
+		for (const EntitySpawnData& spawnData : spawnDataList)
+		{
+		    Protocol::UpdateEntitySpawn entityMessage{};
 
-		        entityMessage.entityId   = spawnData.entityId;
-		        entityMessage.itemId     = spawnData.itemId;
-		        entityMessage.sourceType = static_cast<uint8_t>(spawnData.sourceType);
-		        entityMessage.sourceId   = spawnData.sourceId;
+		    entityMessage.entityId   = spawnData.entityId;
+		    entityMessage.itemId     = spawnData.itemId;
+		    entityMessage.sourceType = static_cast<uint8_t>(spawnData.sourceType);
+		    entityMessage.sourceId   = spawnData.sourceId;
 
-		        entityMessage.positionX = spawnData.position.x;
-		        entityMessage.positionY = spawnData.position.y;
-		        entityMessage.positionZ = spawnData.position.z;
+		    entityMessage.positionX = spawnData.position.x;
+		    entityMessage.positionY = spawnData.position.y;
+		    entityMessage.positionZ = spawnData.position.z;
 
-		        entityMessage.velocityX = spawnData.velocity.x;
-		        entityMessage.velocityY = spawnData.velocity.y;
-		        entityMessage.velocityZ = spawnData.velocity.z;
+		    entityMessage.velocityX = spawnData.velocity.x;
+		    entityMessage.velocityY = spawnData.velocity.y;
+		    entityMessage.velocityZ = spawnData.velocity.z;
 
-		        networkSessionManager.Send(entityMessage);
-		        VCU_LOG(
-		            "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
-		            entityMessage.entityId,
-		            entityMessage.itemId,
-		            entityMessage.sourceType,
-		            entityMessage.positionX,
-		            entityMessage.velocityX);
-		    }
+		    networkSessionManager.Send(entityMessage);
+		    VCU_LOG(
+		        "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
+		        entityMessage.entityId,
+		        entityMessage.itemId,
+		        entityMessage.sourceType,
+		        entityMessage.positionX,
+		        entityMessage.velocityX);
+		}
 
-		    // 送信後に送信待ちデータをクリア
-		    if (!spawnDataList.empty())
-		    {
-		        entitySystem.ClearPendingSpawnData();
-		    }
+		// 送信後に送信待ちデータをクリア
+		if (!spawnDataList.empty())
+		{
+		    entitySystem.ClearPendingSpawnData();
+		}
 
-		    // エンティティ削除情報送信
-		    const auto& removeDataList = entitySystem.GetPendingRemoveData();
+		// エンティティ削除情報送信
+		const auto& removeDataList = entitySystem.GetPendingRemoveData();
 
-		    for (const EntityRemoveData& removeData : removeDataList)
-		    {
-		        Protocol::UpdateEntityRemove removeMessage{};
+		for (const EntityRemoveData& removeData : removeDataList)
+		{
+		    Protocol::UpdateEntityRemove removeMessage{};
 
-		        removeMessage.entityId = removeData.entityId;
+		    removeMessage.entityId = removeData.entityId;
 
-		        networkSessionManager.Send(removeMessage);
+		    networkSessionManager.Send(removeMessage);
 
-		        VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
-		    }
+		    VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
+		}
 
-		    // 送信後に送信待ちデータをクリア
-		    if (!removeDataList.empty())
-		    {
-		        entitySystem.ClearPendingRemoveData();
-		    }
-		    */
+		// 送信後に送信待ちデータをクリア
+		if (!removeDataList.empty())
+		{
+		    entitySystem.ClearPendingRemoveData();
+		}
+		*/
 
-		    // 昼夜サイクルの同期
-		    // DayControllerを取得
-		    DayController& dayController = Get<DayController>(objDayController);
+		// 昼夜サイクルの同期
+		// DayControllerを取得
+		DayController& dayController = Get<DayController>(objDayController);
 
 		// ホストだけ時刻を送信
 		if (actorServer.IsHost())

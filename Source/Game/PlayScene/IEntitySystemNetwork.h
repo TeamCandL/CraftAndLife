@@ -1,6 +1,7 @@
 #pragma once
 #include <Game/Game.h>
 #include "ItemId.h"
+#include "EntityNetworkData.h"
 
 class IEntitySystemNetwork
 {
