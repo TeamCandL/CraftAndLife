@@ -3,6 +3,7 @@
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include "Player/HelthState.h"
 #include "OtherPlayerHand.h"
+#include "Player/PlayerAnimType.h"
 
 void OtherPlayer::Start() {}
 
@@ -15,105 +16,125 @@ void OtherPlayer::Update()
 		return;
 	}
 
-	if (sessionManager.IsExistPlayer(name.content))
+	if (!sessionManager.IsExistPlayer(name.content))
 	{
-		const InSessionStatus::PlayerStatus& status = sessionManager.RefPlayerStatus(name.content);
+		VCU_LOG("{}がない！", name.content);
+		return;
+	}
 
-		// =====================================
-		// HPを取得
-		// =====================================
+	const InSessionStatus::PlayerStatus& status = sessionManager.RefPlayerStatus(name.content);
 
-#if 0
-		SessionStateReader reader(sessionManager);
-		//StateTarget target = StateTarget::Player(name.content);
+	// =====================================
+	// プレイヤーステートを取得
+	// =====================================
 
-		// プレイヤー名からIDを取得
-		int32_t playerId = -1;
+	SessionStateReader reader(sessionManager);
 
-		if (sessionManager.TryGetPlayerId(name.content, playerId))	// 志賀君が言ってたpStatesが0なのと途中から呼ばれていない
-		{
-			// IDで対象プレイヤーを指定
-			StateTarget target = StateTarget::Player(playerId);
+	int32_t hp = 0;
 
-			if (reader.TryGetState(target, "hp", Data().hp))
-			{
-				VCU_LOG("OtherPlayer HP: {}", Data().hp);
-			}
-			else
-			{
-				VCU_LOG("HP取得失敗 ID: {}", playerId);//そのためデータは言ってないからずっとここ
-			}
+	const int32_t enemyId     = 0;
+	const StateTarget etarget = StateTarget::Enemy(enemyId);
 
-			bool flag = reader.TryGetState(target, "aliveFlag", Data().aliveFlag);
-			if (flag == 0) // この処理
-			{
-				if (healthState == HelthState_Dead)	// これ自体は呼ばれていた
-				{
-					isDead = true; // ホストが死んだときこれ呼ばれなかった
-				}
-				else
-				{
-					isDead = false;
-				}
-			}
-			else
-			{
-				VCU_LOG("helthState取得失敗 ID: {}", playerId); // ここが呼ばれてる
-			}
-		}
-		else
-		{
-			VCU_LOG("Player ID取得失敗: {}", name.content);
-		}
-
-#elif 1
-
-		auto hpIt = status.states.find("hp");
-
-		if (hpIt != status.states.end())
-		{
-			if (const int32_t* receivedHP = std::get_if<int32_t>(&hpIt->second))
-			{
-				Data().hp = *receivedHP;
-			}
-		}
-
-		// =====================================
-		// 死亡状態を取得
-		// =====================================
-
-		isDead = false;
-
-		auto stateIt = status.states.find("helthState");
-
-		if (stateIt != status.states.end())
-		{
-			if (const int32_t* healthState = std::get_if<int32_t>(&stateIt->second))
-			{
-				isDead = (*healthState == HelthState_Dead);
-			}
-		}
-#endif
-
-		// =====================================
-		// 座標と角度を更新
-		// =====================================
-
-		transform.position = status.position;
-
-		transform.rotation = Quaternion::FromEuler(Vec3{ 0.0f, status.rotation.y, 0.0f });
-
-		VCU_LOG(
-		    "{}の更新！座標:({}, {}, {}) 回転y:{}",
-		    name.content,
-		    transform.position.x,
-		    transform.position.y,
-		    transform.position.z,
-		    transform.rotation.y);
+	if (reader.TryGetState(etarget, "hp", hp))
+	{
+		VCU_LOG("敵 ID={} のHP: {}", enemyId, hp);
 	}
 	else
 	{
-		VCU_LOG("{}がない！", name.content);
+		VCU_LOG("敵 ID={} のHP取得失敗", enemyId);
+	}
+
+	// プレイヤー名からIDを取得
+	int32_t playerId = -1;
+
+	if (!sessionManager.TryGetPlayerId(name.content, playerId))
+	{
+		VCU_LOG("Player ID取得失敗: {}", name.content);
+		return;
+	}
+
+	// 対象プレイヤーを指定
+	const StateTarget target = StateTarget::Player(playerId);
+
+	// =====================================
+	// HPを取得
+	// =====================================
+
+	if (reader.TryGetState(target, "hp", Data().hp))
+	{
+		VCU_LOG("OtherPlayer HP: {}", Data().hp);
+	}
+	else
+	{
+		VCU_LOG("HP取得失敗 ID: {}", playerId);
+	}
+
+	// =====================================
+	// 生死状態を取得
+	// =====================================
+
+	int32_t healthState = HelthState_Live;
+
+	if (reader.TryGetState(target, "helthState", healthState))
+	{
+		isDead = (healthState == HelthState_Dead);
+
+		VCU_LOG("OtherPlayer 生死状態取得成功: ID={}, State={}, Dead={}", playerId, healthState, isDead);
+	}
+	else
+	{
+		VCU_LOG("helthState取得失敗 ID: {}", playerId);
+	}
+
+	// =====================================
+	// アニメーション番号を取得
+	// =====================================
+
+	if (reader.TryGetState(target, "animIndex", animIndex))
+	{
+		// 取得成功
+	}
+	else
+	{
+		VCU_LOG("animIndex取得失敗 ID: {}", playerId);
+	}
+
+	// =====================================
+	// 座標と角度を更新
+	// =====================================
+	transform.position = status.position;
+	transform.rotation = Quaternion::FromEuler(Vec3{ 0.0f, status.rotation.y, 0.0f });
+	VCU_LOG(
+	    "{}の更新！座標:({}, {}, {}) 回転y:{}",
+	    name.content,
+	    transform.position.x,
+	    transform.position.y,
+	    transform.position.z,
+	    transform.rotation.y);
+
+	if (!isDead)
+	{
+		reader.TryGetState(target, "animIndex", animIndex);
+	}
+
+	// =====================================
+	// 死亡アニメーション
+	// =====================================
+	if (isDead)
+	{
+		// animIndex = PlayerAnimType_Die;
+
+		// if (dieAnimTimeSec > 0.0f)
+		//{
+		//	dieAnimTimeSec = std::max(0.0f, dieAnimTimeSec - Get<DeltaTime>());
+
+		//	animSpeed = 1.0f;
+		//}
+		// else
+		//{
+		//	animSpeed = 0.0f;
+		//}
+		animSpeed = 0.0f;
 	}
 }
 
@@ -124,7 +145,7 @@ void OtherPlayer::Draw()
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	models[role].Get().Draw(Get<DeltaTime>(), animIndex);
+	models[role].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
 
 	const auto& subParts{ models[role].Get().subParts };
 

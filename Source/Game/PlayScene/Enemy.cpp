@@ -30,6 +30,11 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	{
+		hp -= 10;
+	}
+
 	if (!alive)
 		return;
 
@@ -85,8 +90,42 @@ void Enemy::Update()
 
 	ImGui::End();
 
-	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
-		hp = 0;
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader{ sessionManager };
+
+	reader.ForeachPlayer(
+	    [&](const std::string& playerName, const StateTarget& target)
+	    {
+		    int32_t healthState{};
+
+		    VCU_LOG("プレイヤー確認開始: {}", playerName);
+
+		    if (!reader.TryGetState(target, "helthState", healthState))
+		    {
+			    VCU_LOG("プレイヤーの生存状態取得失敗: {}", playerName);
+			    return;
+		    }
+
+		    VCU_LOG("プレイヤーの生存状態取得成功: 名前={}, helthState={}", playerName, healthState);
+
+		    if (healthState == HelthState_Dead)
+		    {
+			    VCU_LOG("死亡プレイヤーのため追跡対象外: {}", playerName);
+			    return;
+		    }
+
+		    VCU_LOG("生存プレイヤー確認: {}", playerName);
+
+		    // int32_t healthState{};
+
+		    // if (!reader.TryGetState(target, "helthState", healthState))
+		    //  return;
+
+		    // if (healthState == HelthState_Dead)
+		    //  return;
+
+		    // 生存プレイヤーとして追跡対象に追加
+	    });
 
 	if (alive)
 	{
@@ -106,12 +145,6 @@ void Enemy::Update()
 		networkActor.OnEnemyDeath(enemyId);
 
 		// 敵の管理スロットを空にする
-		controller.RemoveEnemy(enemyId);
-
-		VCU_LOG("[Enemy] OnEnemyDeath 呼び出し ID={}", enemyId);
-		networkActor.OnEnemyDeath(enemyId);
-
-		VCU_LOG("[Enemy] Controllerから削除 ID={}", enemyId);
 		controller.RemoveEnemy(enemyId);
 
 		DestroyMe();

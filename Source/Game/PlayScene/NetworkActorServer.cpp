@@ -31,18 +31,22 @@ void NetworkActorServer::Update()
 	// ホスト情報を更新
 	Data().isHost = Get<SessionManager>().RefStatus().imLobbyHost;
 
-	// ホストになったときの処理
+	// ホスト・ゲスト共通：自分のプレイヤーステートを登録
+	if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+	{
+		Player& player = Get<Player>(Data().objPlayer);
+		player.RegisterStates(Data().playerStateRegistry);
+
+		Get<SessionManager>().SetSelfStateRegistry(&Data().playerStateRegistry);
+
+		VCU_LOG("プレイヤーステート登録完了: {}", Data().playerStateRegistry.GetAllStates().size());
+
+		Data().isPlayerStateRegistered = true;
+	}
+
+	// ホスト専用処理
 	if (IsHost())
 	{
-		// プレイヤーステート登録
-		if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
-		{
-			Player& player = Get<Player>(Data().objPlayer);
-			player.RegisterStates(Data().playerStateRegistry);
-
-			Data().isPlayerStateRegistered = true;
-		}
-
 		CreateEnemies();
 
 		Data().enemyStateSyncTimer -= Get<DeltaTime>();

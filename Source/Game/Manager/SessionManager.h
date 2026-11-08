@@ -3,6 +3,8 @@
 #include <Base/Base.h>
 #include <Game/Common/Utility/SizedBuffer.h>
 
+struct StateRegistry;
+
 /// @brief 部屋に入ってからのプレイヤーとしてのセッションを管理する
 class SessionManager : public IManager
 {
@@ -109,6 +111,12 @@ class SessionManager : public IManager
 	/// @param _func コールバック [](int, const InSessionStatus::EnemyStatus&){}
 	template <typename Func> void ForeachEnemyStatus(Func&& _func);
 
+	// ローカルプレイヤーのステートレジストリを登録
+	void SetSelfStateRegistry(const StateRegistry* _registry);
+
+	// ローカルプレイヤーのステートレジストリを取得
+	const StateRegistry* GetSelfStateRegistry() const;
+
 	/// @brief 敵IDを参照する
 	/// @param _enemyId ステージに存在してる敵のID
 	/// @return 敵のステータスの参照
@@ -124,6 +132,7 @@ class SessionManager : public IManager
 
   private:
 	InSessionStatus inSessionStatus_{};  ///< セッション内のステータス
+	const StateRegistry* selfStateRegistry_{};
 };
 
 template <typename Func>
