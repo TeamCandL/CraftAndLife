@@ -8,6 +8,7 @@ struct EntitySystemData
 {
 	std::vector<GameObject> objEntities{};      ///< エンティティのデータ
 	std::vector<EntitySpawnData> spawnsData{};  ///< スポーンデータ
+	std::vector<EntityPickData> picksData{};    ///< 拾ったデータ
 };
 
 struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntitySystemNetwork
@@ -28,6 +29,11 @@ struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntityS
 	std::vector<EntitySpawnData> TakeSpawnsData() override
 	{
 		return std::exchange(spawnsData, std::vector<EntitySpawnData>{});
+	}
+
+	std::vector<EntityPickData> TakePicksData() override
+	{
+		return std::exchange(picksData, std::vector<EntityPickData>{});
 	}
 
 	/// @brief 通信で受信したエンティティを生成する

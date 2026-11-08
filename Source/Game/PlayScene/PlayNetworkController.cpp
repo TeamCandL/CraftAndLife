@@ -250,7 +250,6 @@ void PlayNetworkController::Update()
 			    }
 			    case ProtocolType::EntitySpawned:
 			    {
-
 				    Protocol::EntitySpawned message{};
 				    converter.ToMessage(_event.data, message);
 
@@ -267,6 +266,20 @@ void PlayNetworkController::Update()
 				    break;
 			    }
 			    case ProtocolType::EntityPicked:
+			    {
+				    Protocol::EntityPicked message{};
+				    converter.ToMessage(_event.data, message);
+
+				    if (Get<SessionManager>().RefStatus().name == message.pickerName)
+				    {
+					    VCU_LOG("自分が拾った！！");
+					    Get<Player>(objPlayer).TryAddItem(message.itemId);
+				    }
+
+				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
+				    entitySystem.RemoveFromNetwork(message.entityId);
+				    break;
+			    }
 			    default:
 				    VCU_LOG("想定外の謎プロトコルを取得:{}", static_cast<int>(protocolType));
 				    break;
@@ -477,6 +490,13 @@ void PlayNetworkController::Update()
 			message.velocityX = data.velocity.x;
 			message.velocityY = data.velocity.y;
 			message.velocityZ = data.velocity.z;
+		}
+
+		std::vector<EntityPickData> entityPicksData = entitySystem.TakePicksData();
+		for (const auto& data : entityPicksData)
+		{
+			Protocol::EntityPickRequest message{};
+			message.entityId = data.entityId;
 		}
 
 		/*  // エンティティシステムを変更したため無視

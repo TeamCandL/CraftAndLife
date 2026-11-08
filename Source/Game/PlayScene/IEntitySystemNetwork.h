@@ -31,4 +31,7 @@ class IEntitySystemNetwork
 	/// @brief スポーンデータを一括取得する
 	/// @return スポーンデータ
 	virtual std::vector<EntitySpawnData> TakeSpawnsData() = 0;
+	/// @brief 拾ったデータを一括取得する
+	/// @return 拾ったデータ
+	virtual std::vector<EntityPickData> TakePicksData() = 0;
 };

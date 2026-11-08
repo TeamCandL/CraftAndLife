@@ -16,3 +16,9 @@ struct EntitySpawnData
 	Vec3 position{};
 	Vec3 velocity{};
 };
+
+/// @brief エンティティを拾った時の通信データ
+struct EntityPickData
+{
+	int32_t entityId{};
+};
