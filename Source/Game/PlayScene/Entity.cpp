@@ -18,6 +18,26 @@ void Entity::Update()
 
 	const float DELTA_TIME = Get<DeltaTime>();
 
+	// ピックアップクールタイム更新！
+	if (pickupCooldownSec > 0.0f)
+	{
+		pickupCooldownSec -= DELTA_TIME;
+		if (pickupCooldownSec < 0.0f)
+		{
+			pickupCooldownSec = 0.0f;
+		}
+	}
+
+	// デスポーンまでの時間更新！
+	if (despawnTimeLeftSec > 0.0f)
+	{
+		despawnTimeLeftSec -= DELTA_TIME;
+		if (despawnTimeLeftSec < 0.0f)
+		{
+			despawnTimeLeftSec = 0.0f;
+		}
+	}
+
 	// 移動量y
 	float deltaY = velocity.y * DELTA_TIME;
 
@@ -91,4 +111,19 @@ void Entity::SetVelocity(
 	{
 		transform.rotation = Quaternion::FromLookAtQuaternion(Vec3::Zero(), _velocity, Vec3::Up());
 	}
+}
+
+bool Entity::IsPicked() const
+{
+	return picked;
+}
+
+void Entity::Pick()
+{
+	picked = true;
+}
+
+bool Entity::CanPickup() const
+{
+	return pickupCooldownSec <= 0.0f;
 }

@@ -13,11 +13,6 @@ struct EntityData
 	    entityId{ _entityId }
 	{
 	}
-	EntityData(
-	    const ItemId _itemId) :
-	    itemId{ _itemId }
-	{
-	}
 
 	Resource<Shader> mainShader{ "Shader/Unlit.hlsl" };  ///< メインのモデル描画用シェーダ
 	Resource<Shader> edgeShader{ "Shader/Unlit.hlsl" };  ///< エッジ(輪郭)描画用シェーダ
@@ -31,10 +26,13 @@ struct EntityData
 	Vec3 velocity{};       ///< 速度
 	ItemId itemId{};       ///< このエンティティをアイテム化したときのId
 	int32_t entityId{};    ///< エンティティId
-	bool picked{ false };  ///< エンティティが取得されたか true / false
+	bool picked{ false };  ///< エンティティが神含め誰かに取得されたか true / false
 
 	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
 	float friction{ 0.9f };       ///< 摩擦力
+
+	float despawnTimeLeftSec{ 60.0f * 2.0f };  ///< 死ぬまでの時間(秒)
+	float pickupCooldownSec{ 3.0f };           ///< 拾えない時間(秒)
 };
 
 /// @brief エンティティ
@@ -64,4 +62,9 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	{
 		return entityId;
 	}
+
+	// IEntity を介して継承されました
+	bool IsPicked() const override;
+	void Pick() override;
+	bool CanPickup() const override;
 };

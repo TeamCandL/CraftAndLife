@@ -22,6 +22,7 @@
 #include <Game/PlayScene/EnemyController.h>
 #include <Game/PlayScene/StateValueCode.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/PlayScene/IEntitySystemNetwork.h>
 #include <Game/PlayScene/PlayerHand.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
@@ -47,7 +48,7 @@ void PlayNetworkController::Update()
 
 	NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
 
-	EntitySystem& entitySystem = Get<EntitySystem>();
+	IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
 
 	// ホスト情報を更新
 	entitySystem.SetHost(actorServer.IsHost());
@@ -337,7 +338,6 @@ void PlayNetworkController::Update()
 		}
 
 		// 敵情報更新
-
 		if (actorServer.IsHost() && actorServer.IsInitialized())
 		{
 			GameObject objEnemyController = actorServer.GetEnemyController();
@@ -441,67 +441,73 @@ void PlayNetworkController::Update()
 			}
 		}
 
-		// エンティティ生成情報送信
-		EntitySystem& entitySystem = Get<EntitySystem>();
+		IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
 
-		const auto& spawnDataList = entitySystem.GetPendingSpawnData();
+		entitySystem
 
-		for (const EntitySpawnData& spawnData : spawnDataList)
-		{
-			Protocol::UpdateEntitySpawn entityMessage{};
+		    /*  // エンティティシステムを変更したため無視
+		    // エンティティ生成情報送信
+		    EntitySystem& entitySystem = Get<EntitySystem>();
 
-			entityMessage.entityId   = spawnData.entityId;
-			entityMessage.itemId     = spawnData.itemId;
-			entityMessage.sourceType = static_cast<uint8_t>(spawnData.sourceType);
-			entityMessage.sourceId   = spawnData.sourceId;
+		    const auto& spawnDataList = entitySystem.GetPendingSpawnData();
 
-			entityMessage.positionX = spawnData.position.x;
-			entityMessage.positionY = spawnData.position.y;
-			entityMessage.positionZ = spawnData.position.z;
+		    for (const EntitySpawnData& spawnData : spawnDataList)
+		    {
+		        Protocol::UpdateEntitySpawn entityMessage{};
 
-			entityMessage.velocityX = spawnData.velocity.x;
-			entityMessage.velocityY = spawnData.velocity.y;
-			entityMessage.velocityZ = spawnData.velocity.z;
+		        entityMessage.entityId   = spawnData.entityId;
+		        entityMessage.itemId     = spawnData.itemId;
+		        entityMessage.sourceType = static_cast<uint8_t>(spawnData.sourceType);
+		        entityMessage.sourceId   = spawnData.sourceId;
 
-			networkSessionManager.Send(entityMessage);
-			VCU_LOG(
-			    "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
-			    entityMessage.entityId,
-			    entityMessage.itemId,
-			    entityMessage.sourceType,
-			    entityMessage.positionX,
-			    entityMessage.velocityX);
-		}
+		        entityMessage.positionX = spawnData.position.x;
+		        entityMessage.positionY = spawnData.position.y;
+		        entityMessage.positionZ = spawnData.position.z;
 
-		// 送信後に送信待ちデータをクリア
-		if (!spawnDataList.empty())
-		{
-			entitySystem.ClearPendingSpawnData();
-		}
+		        entityMessage.velocityX = spawnData.velocity.x;
+		        entityMessage.velocityY = spawnData.velocity.y;
+		        entityMessage.velocityZ = spawnData.velocity.z;
 
-		// エンティティ削除情報送信
-		const auto& removeDataList = entitySystem.GetPendingRemoveData();
+		        networkSessionManager.Send(entityMessage);
+		        VCU_LOG(
+		            "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
+		            entityMessage.entityId,
+		            entityMessage.itemId,
+		            entityMessage.sourceType,
+		            entityMessage.positionX,
+		            entityMessage.velocityX);
+		    }
 
-		for (const EntityRemoveData& removeData : removeDataList)
-		{
-			Protocol::UpdateEntityRemove removeMessage{};
+		    // 送信後に送信待ちデータをクリア
+		    if (!spawnDataList.empty())
+		    {
+		        entitySystem.ClearPendingSpawnData();
+		    }
 
-			removeMessage.entityId = removeData.entityId;
+		    // エンティティ削除情報送信
+		    const auto& removeDataList = entitySystem.GetPendingRemoveData();
 
-			networkSessionManager.Send(removeMessage);
+		    for (const EntityRemoveData& removeData : removeDataList)
+		    {
+		        Protocol::UpdateEntityRemove removeMessage{};
 
-			VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
-		}
+		        removeMessage.entityId = removeData.entityId;
 
-		// 送信後に送信待ちデータをクリア
-		if (!removeDataList.empty())
-		{
-			entitySystem.ClearPendingRemoveData();
-		}
+		        networkSessionManager.Send(removeMessage);
 
-		// 昼夜サイクルの同期
-		// DayControllerを取得
-		DayController& dayController = Get<DayController>(objDayController);
+		        VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
+		    }
+
+		    // 送信後に送信待ちデータをクリア
+		    if (!removeDataList.empty())
+		    {
+		        entitySystem.ClearPendingRemoveData();
+		    }
+		    */
+
+		    // 昼夜サイクルの同期
+		    // DayControllerを取得
+		    DayController& dayController = Get<DayController>(objDayController);
 
 		// ホストだけ時刻を送信
 		if (actorServer.IsHost())

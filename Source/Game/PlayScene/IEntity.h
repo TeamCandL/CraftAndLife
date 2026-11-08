@@ -30,4 +30,8 @@ class IEntity
 	/// @brief エンティティの速度をセットする
 	/// @param _velocity 速度
 	virtual void SetVelocity(const Vec3 _velocity) = 0;
+
+	/// @brief 拾えますか？
+	/// @return 拾えます！true / false
+	virtual bool CanPickup() const = 0;
 };
