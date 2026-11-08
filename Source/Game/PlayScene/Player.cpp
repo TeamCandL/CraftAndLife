@@ -244,7 +244,8 @@ void Player::Damaged(
 
 		if (isHoldShield)
 		{
-			Vec3 dir  = _worldPosition - transform.position;
+			Vec3 dir = _worldPosition - transform.position;
+
 			float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(transform.Forward(), dir));
 
 			// 有効角度のcosf
@@ -252,10 +253,15 @@ void Player::Damaged(
 
 			if (dot > thresholdDot)
 			{
-				VCU_LOG("防いだ！");
-				return;  // 防いだ判定！！！
+				VCU_LOG("防いだ!");
+
+				// 盾で防いだ音を再生
+				Get<AudioManager>().Play(shieldGuardSE);
+
+				return;  // 防いだ判定
 			}
-			VCU_LOG("防いでいない！");
+
+			VCU_LOG("防いでいない!");
 		}
 
 		if (jobStatus.maxHpBoost > 0.0f)
