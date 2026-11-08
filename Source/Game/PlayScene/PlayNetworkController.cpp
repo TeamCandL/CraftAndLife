@@ -248,6 +248,25 @@ void PlayNetworkController::Update()
 
 				    break;
 			    }
+			    case ProtocolType::EntitySpawned:
+			    {
+
+				    Protocol::EntitySpawned message{};
+				    converter.ToMessage(_event.data, message);
+
+				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
+				    entitySystem.SpawnFromNetwork(
+				        message.entityId,
+				        message.itemId,
+				        Vec3{ message.positionX, message.positionY, message.positionZ },
+				        Vec3{
+				            message.velocityX,
+				            message.velocityY,
+				            message.velocityZ,
+				        });
+				    break;
+			    }
+			    case ProtocolType::EntityPicked:
 			    default:
 				    VCU_LOG("想定外の謎プロトコルを取得:{}", static_cast<int>(protocolType));
 				    break;
@@ -447,7 +466,18 @@ void PlayNetworkController::Update()
 
 		IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
 
-		// entitySystem
+		std::vector<EntitySpawnData> entitySpawnsData = entitySystem.TakeSpawnsData();
+		for (const auto& data : entitySpawnsData)
+		{
+			Protocol::EntitySpawnRequest message{};
+			message.itemId    = data.itemId;
+			message.positionX = data.position.x;
+			message.positionY = data.position.y;
+			message.positionZ = data.position.z;
+			message.velocityX = data.velocity.x;
+			message.velocityY = data.velocity.y;
+			message.velocityZ = data.velocity.z;
+		}
 
 		/*  // エンティティシステムを変更したため無視
 		// エンティティ生成情報送信
