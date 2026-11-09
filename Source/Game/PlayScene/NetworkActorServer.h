@@ -8,6 +8,14 @@
 /// @brief サーバー側のネットワークアクターのデータ
 struct NetworkActorServerData
 {
+	NetworkActorServerData(
+	    const GameObject _objPlayer,
+	    GameObject _objDayController) :
+	    objPlayer{ _objPlayer },
+	    objDayController{ _objDayController }
+	{
+	}
+
 	bool isHost{ false };
 
 	bool isInitialized{ false };
@@ -15,6 +23,8 @@ struct NetworkActorServerData
 	GameObject objPlayer{};
 	GameObject objEnemyController{};
 	GameObject objOtherEnemyController{};
+	GameObject objNetworkActorServer{};
+	GameObject objDayController{};
 
 	/// @brief 自プレイヤーのステート登録情報
 	StateRegistry playerStateRegistry;
@@ -46,6 +56,12 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	void CreateEnemies();
 	void EnemyStateRegistries(GameObject objEnemy);
 
+	void SetNetworkActorServer(
+	    GameObject obj)
+	{
+		Data().objNetworkActorServer = obj;
+	}
+
 	GameObject GetPlayer() const
 	{
 		return Data().objPlayer;
@@ -73,6 +89,10 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 
 	/// @brief 死亡通知が送信キューに登録済みか確認
 	bool IsDeathQueued(int32_t actorId) const;
+
+	/// @brief 敵の死亡処理
+	/// @param actorId 死亡した敵のID
+	void OnEnemyDeath(int32_t actorId);
 
 	/// @brief 指定した敵のステート登録情報を解除
 	void ReleaseActor(int32_t actorId);

@@ -8,6 +8,7 @@
 #include <Game/Terrain/TerrainMaterial.h>
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/Harvestable.h>
+#include <Game/PlayScene/HarvestableController.h>
 
 #include <algorithm>
 #include <cmath>
@@ -309,7 +310,9 @@ namespace
 // MapData：初期化
 // ============================================================
 
-MapData::MapData()
+MapData::MapData(
+    const GameObject _objHarvestableController) :
+    objHarvestableController{ _objHarvestableController }
 {
 	Generate();
 }
@@ -803,7 +806,7 @@ void MAP::Start()
 
 		const Vec3 POSITION{ placement.x, GROUND_Y, placement.z };
 
-		GetScene().Instantiate<Harvestable>(placement.type, POSITION, placement.scale);
+		Get<HarvestableController>(objHarvestableController).AddHarvestable(placement.type, POSITION, placement.scale);
 	}
 }
 

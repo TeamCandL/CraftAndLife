@@ -6,6 +6,9 @@
 #include "ItemAction/IItemAction.h"
 #include "ItemAction/ItemActionWeapons.h"
 #include "ItemAction/ItemActionWeaponBow.h"
+#include "ItemAction/ItemActionShield.h"
+#include "ItemAction/ItemActionBackpack.h"
+#include <Game/Manager/SessionManager.h>
 
 void PlayerHand::Start()
 {
@@ -56,6 +59,29 @@ void PlayerHand::Start()
 		TransformAnimationKey{ 0.4f,
 		                       Vec3{ 0.002000f, 0.005000f, 0.001000f },
 		                       Quaternion::FromEuler(Vec3{ -0.593001f, -0.192000f, 0.348000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+	};
+
+	transformAnimator.animations["holding"] = {
+		TransformAnimationKey{ 0.0f,
+		                       Vec3{ 0.001000f, 0.002000f, 0.000000f },
+		                       Quaternion::FromEuler(Vec3{ 0.175000f, 0.070000f, 0.000000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.1f,
+		                       Vec3{ 0.000000f, 0.002000f, 0.000000f },
+		                       Quaternion::FromEuler(Vec3{ 0.384000f, 0.070001f, 0.000000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.2f,
+		                       Vec3{ 0.001000f, 0.002000f, 0.000000f },
+		                       Quaternion::FromEuler(Vec3{ 0.140000f, 0.140000f, 0.000000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.3f,
+		                       Vec3{ 0.000000f, 0.002000f, 0.000000f },
+		                       Quaternion::FromEuler(Vec3{ -0.052000f, -0.192001f, 0.000000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.4f,
+		                       Vec3{ 0.001000f, 0.002000f, 0.000000f },
+		                       Quaternion::FromEuler(Vec3{ 0.175000f, 0.070000f, 0.000000f }),
 		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
 	};
 
@@ -176,15 +202,22 @@ void PlayerHand::SetItem(
 	switch (ITEM_INFO._type)
 	{
 	case ItemType::Weapons:
+	case ItemType::Tools:
 		objItemAction = GetScene().Instantiate<ItemActionWeapons>();
+		break;
+	case ItemType::Shield:
+		objItemAction = GetScene().Instantiate<ItemActionShield>();
 		break;
 	case ItemType::WeaponBow:
 		objItemAction = GetScene().Instantiate<ItemActionWeaponBow>();
 		break;
 	case ItemType::Consumables:
 		break;
-	case ItemType::Materials:
 		break;
+	case ItemType::Backpack:
+		objItemAction = GetScene().Instantiate<ItemActionBackpack>();
+		break;
+	case ItemType::Materials:
 	default:
 		break;
 	}

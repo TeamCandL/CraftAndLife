@@ -3,6 +3,8 @@
 #include <Base/Base.h>
 #include <Game/Common/Utility/SizedBuffer.h>
 
+struct StateRegistry;
+
 /// @brief 部屋に入ってからのプレイヤーとしてのセッションを管理する
 class SessionManager : public IManager
 {
@@ -33,7 +35,12 @@ class SessionManager : public IManager
 	/// @param _names プレイヤー名
 	/// @param _positions 座標情報
 	/// @param _rotations 回転情報
-	void UpdatePlayers(const std::string_view _names, SizedBuffer<float>& _positions, SizedBuffer<float>& _rotations);
+	void UpdatePlayers(
+	    const std::string_view _names,
+	    SizedBuffer<float>& _positions,
+	    SizedBuffer<float>& _rotations,
+	    SizedBuffer<int32_t>& _haveItemIds,
+	    SizedBuffer<int32_t>& _attentionLevel);
 
 	/// @brief プレイヤーステータスを参照する
 	/// @param _playerName プレイヤー名
@@ -44,6 +51,12 @@ class SessionManager : public IManager
 	/// @param _playerName 指定のプレイヤー名
 	/// @return 存在している true / false
 	bool IsExistPlayer(const std::string& _playerName) const;
+
+	// プレイヤーIDからプレイヤー名を取得
+	bool TryGetPlayerName(int32_t _playerId, std::string& _outName) const;
+
+	// プレイヤー名からプレイヤーIDを取得
+	bool TryGetPlayerId(std::string_view _playerName, int32_t& _outId) const;
 
 	/// @brief 自分も含め全プレイヤーのステータスが存在するか
 	/// @return 存在する true / false
@@ -99,6 +112,12 @@ class SessionManager : public IManager
 	/// @param _func コールバック [](int, const InSessionStatus::EnemyStatus&){}
 	template <typename Func> void ForeachEnemyStatus(Func&& _func);
 
+	// ローカルプレイヤーのステートレジストリを登録
+	void SetSelfStateRegistry(const StateRegistry* _registry);
+
+	// ローカルプレイヤーのステートレジストリを取得
+	const StateRegistry* GetSelfStateRegistry() const;
+
 	/// @brief 敵IDを参照する
 	/// @param _enemyId ステージに存在してる敵のID
 	/// @return 敵のステータスの参照
@@ -110,10 +129,11 @@ class SessionManager : public IManager
 
 	/// @brief 昼夜サイクルのためのゲーム内時間の更新
 	/// @param _currentTimeSec ホスト側の昼夜サイクルの現在時刻
-	void UpdateDayTime(float _currentTimeSec);
+	void UpdateDayTime(float _currentTimeSec, int32_t _dayCount);
 
   private:
 	InSessionStatus inSessionStatus_{};  ///< セッション内のステータス
+	const StateRegistry* selfStateRegistry_{};
 };
 
 template <typename Func>

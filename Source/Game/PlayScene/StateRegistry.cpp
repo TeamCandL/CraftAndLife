@@ -38,11 +38,54 @@ std::vector<StateChange> StateRegistry::GetChanges() const
 
 		if (currentValue == state.previousValue)
 		{
+			VCU_LOG("変更なし: {}", state.name);
 			continue;
 		}
 
+		VCU_LOG("変更検出: {}", state.name);
+
 		changes.push_back({ state.name, currentValue });
+
+		if (state.name == "hp")
+		{
+			VCU_LOG("HP変更検出！");
+
+			std::visit(
+			    [](const auto& value)
+			    {
+				    VCU_LOG("現在のHP: {}", value);
+			    },
+			    currentValue);
+		}
 	}
+
+	// 変更検出結果をログ出力
+	for (const auto& change : changes)
+	{
+		VCU_LOG("ステート変更検出: Name={}", change.name);
+
+		std::visit(
+		    [](const auto& value)
+		    {
+			    using T = std::decay_t<decltype(value)>;
+
+			    if constexpr (std::is_same_v<T, bool>)
+			    {
+				    VCU_LOG("Value={}", value ? "true" : "false");
+			    }
+			    else if constexpr (std::is_arithmetic_v<T>)
+			    {
+				    VCU_LOG("Value={}", value);
+			    }
+			    else
+			    {
+				    VCU_LOG("Value=<unsupported>");
+			    }
+		    },
+		    change.value);
+	}
+
+	VCU_LOG("StateRegistry::GetChanges 終了: 変更数={}", changes.size());
 
 	return changes;
 }

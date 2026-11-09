@@ -3,6 +3,17 @@
 #include <Game/Game.h>
 namespace UI
 {
+	struct SelectedElementCursorData
+	{
+		Resource<ResourceType::Texture> texture{ "Image/UI/selected_recipe_cursor.png" };
+		Component<UITransform> transform{};
+		Component<UIImage> image{ texture };
+	};
+	/// @brief 選択項目を指す矢印
+	struct SelectedElementCursor : ObjectBase<SelectedElementCursorData>
+	{
+		using ObjectBase<SelectedElementCursorData>::ObjectBase;
+	};
 	struct ListElementData
 	{
 		ListElementData(
@@ -49,7 +60,8 @@ namespace UI
 		Component<UIImage> sprite{};         // UI画像
 	  protected:
 		std::vector<GameObject> elements;
-		int currentIndex;
+		int currentIndex{};
+		GameObject selectedElementCursor{};
 	};
 	struct ListBox : ObjectBase<ListBoxData>
 	{
@@ -62,5 +74,6 @@ namespace UI
 
 	  private:
 		void MoveFocus(int _dir);
+		void UpdateFocusForMouseCursor();
 	};
 }  // namespace UI

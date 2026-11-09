@@ -19,6 +19,7 @@ namespace Protocol
 		    MessageRegistry& _registry) override
 		{
 			_registry.AddMember(currentTimeSec);
+			_registry.AddMember(dayCount);
 		}
 
 		uint8_t GetChannel() const override
@@ -32,5 +33,6 @@ namespace Protocol
 
 		// 以下通信メンバー
 		float currentTimeSec{};
+		int32_t dayCount{};
 	};
 }  // namespace Protocol

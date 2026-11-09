@@ -33,13 +33,11 @@ void CraftUI::Start()
 	                                                 [this, filterCraftableItemOnJob](const ItemAllInfo& _info)
 	                                                 {
 		                                                 // 制作可能アイテム かつ そのジョブがクラフト可能
-		                                                 bool jobCanCraft =
-		                                                     JobCanCraftOrAddItem(_info._type, playerJobType);
-		                                                 if (filterCraftableItemOnJob == false)
-		                                                 {
-			                                                 jobCanCraft = true;
-		                                                 }
-		                                                 return _info._isCraftable && jobCanCraft;
+		                                                 bool playerCanCraft =
+		                                                     _info.canUseJobType == PlayerJobType_Max ||
+		                                                     _info.canUseJobType == playerJobType ||
+		                                                     filterCraftableItemOnJob == false;
+		                                                 return _info._isCraftable && playerCanCraft;
 	                                                 }))
 	{
 		craftableItems.push_back(info);
@@ -120,6 +118,9 @@ void CraftUI::Start()
 	objRecipeRequiredLabel = scene.Instantiate<TextObject>(Vec2{ 1139, 452 }, Vec2{ 64, 64 }, 3);
 	SetTextObjectFromJson(recipeGroupJson["required_label"], objRecipeRequiredLabel);
 
+	objRecipeSlashLabel = scene.Instantiate<TextObject>(Vec2{ 1115, 454 }, Vec2{ 32, 32 }, 3);
+	SetTextObjectFromJson(recipeGroupJson["slash_label"], objRecipeSlashLabel);
+
 	// 個々の素材のUI
 	{
 		nlohmann::json j            = recipeGroupJson["material_element_first_icon"];
@@ -142,6 +143,11 @@ void CraftUI::Start()
 		nlohmann::json j               = recipeGroupJson["material_element_first_required"];
 		materialElementRequiredBegin.x = j.at("x").get<int>();
 		materialElementRequiredBegin.y = j.at("y").get<int>();
+	}
+	{
+		nlohmann::json j            = recipeGroupJson["material_element_first_slash"];
+		materialElementSlashBegin.x = j.at("x").get<int>();
+		materialElementSlashBegin.y = j.at("y").get<int>();
 	}
 
 	objCraftBackgroundImage = GetScene().Instantiate<ImageObject>(craftPreviewbackgroundTexture, Vec2{}, Vec2{}, 0);
@@ -176,6 +182,11 @@ void CraftUI::Start()
 				                     // 必要数テキスト
 				                     scene.Instantiate<TextObject>(
 				                         materialElementRequiredBegin + Vec2{ 0, (textOffset + 32) * iCraftInfo },
+				                         Vec2{ 32, 32 },
+				                         3),
+				                     // スラッシュのテキスト
+				                     scene.Instantiate<TextObject>(
+				                         materialElementSlashBegin + Vec2{ 0, (textOffset + 32) * iCraftInfo },
 				                         Vec2{ 32, 32 },
 				                         3),
 				                     // 素材のアイテムID
@@ -278,6 +289,7 @@ void CraftUI::SetActiveAll(
 	collection.At<IObject>(objRecipeMaterialLabel).SetActive(_isActive);
 	collection.At<IObject>(objRecipeHeldLabel).SetActive(_isActive);
 	collection.At<IObject>(objRecipeRequiredLabel).SetActive(_isActive);
+	collection.At<IObject>(objRecipeSlashLabel).SetActive(_isActive);
 
 	// すべてのレシピを非アクティブにする
 	for (auto& [id, recipe] : recipeUIMap)
@@ -332,6 +344,11 @@ void CraftUI::UpdateRequirementUI(
 			textObjectData.text.content      = std::to_string(requirement.requiredCount);
 			textObjectData.transform.scale.x = textObjectData.text.content.size() * 32;
 		}
+		{
+			TextObjectData& textObjectData   = Get<TextObject>(_recipe.objRecipeSlashElement).Data();
+			textObjectData.text.content      = "/";
+			textObjectData.transform.scale.x = 32;
+		}
 	}
 }
 
@@ -345,6 +362,7 @@ void CraftUI::SetRecipeUIActive(
 		Get<TextObject>(recipe.objRecipeMaterialElementText).SetActive(_isActive);
 		Get<TextObject>(recipe.objRecipeHeldElement).SetActive(_isActive);
 		Get<TextObject>(recipe.objRecipeRequiredElement).SetActive(_isActive);
+		Get<TextObject>(recipe.objRecipeSlashElement).SetActive(_isActive);
 	}
 }
 

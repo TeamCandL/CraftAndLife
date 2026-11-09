@@ -4,6 +4,8 @@
 #include "../Player.h"
 #include "../MainCamera.h"
 #include <Game/System/RaycastSystem.h>
+#include "../Harvestable.h"
+#include "../Enemy.h"
 
 void ItemActionWeapons::Update(
     const ItemId _itemId,
@@ -68,17 +70,53 @@ void ItemActionWeapons::Action(
 	Vec3 positionFrom = _playerData.transform.position + Vec3::Up() * 1.0f;
 	Vec3 positionTo   = Get<MainCamera>(_playerData.objMainCamera).GetFocusPosition();
 
+	const float ACTION_RANGE  // アイテムアクションの届く範囲
+	    { _itemId == ITEM_ID_SWORD_BIG ? swordBigItemRange : standardItemRange };
 	std::vector<RaycastHitInfo> hitsInfo =
-	    Get<RaycastSystem>().RaycastAll(positionFrom, (positionTo - positionFrom).Normalize(), 5.0f);
+	    Get<RaycastSystem>().RaycastAll(positionFrom, (positionTo - positionFrom).Normalize(), ACTION_RANGE);
 
 	for (auto& hitInfo : hitsInfo)
 	{
 		if (hitInfo.pObject)
 		{
-			Name* pName = TryGet<Name>(hitInfo.pObject->ToGameObject());
+			GameObject objHit = hitInfo.pObject->ToGameObject();
+			Name* pName       = TryGet<Name>(objHit);
 			if (pName)
 			{
 				VCU_LOG("{}に当たった！", pName->content);
+
+				const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(_itemId);
+
+				// ハーベスタブルオブジェクトならダメージを与える
+				if (pName->content == "ハーベスタブル")
+				{
+					Harvestable& harvestable = Get<Harvestable>(objHit);
+
+					switch (harvestable.Data().type)
+					{
+					case HarvestableType::Tree:
+					case HarvestableType::TreeHigh:
+						if (_itemId == ITEM_ID_AXE)
+						{
+							harvestable.TakeDamage(ITEM_INFO._damageForObject);
+						}
+						break;
+					case HarvestableType::Rock:
+						if (_itemId == ITEM_ID_HAMMER)
+						{
+							harvestable.TakeDamage(ITEM_INFO._damageForObject);
+						}
+						break;
+					default:
+						break;
+					}
+				}
+				else if (pName->content == "Enemy")
+				{
+					// 当たっているのが敵なら敵へダメージを与える
+					Enemy& enemy = Get<Enemy>(objHit);
+					enemy.Damaged(ITEM_INFO._damageForEnemy);
+				}
 			}
 		}
 	}

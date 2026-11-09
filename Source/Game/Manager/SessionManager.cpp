@@ -127,6 +127,24 @@ namespace
 
 			const std::string& name = stateNames[i];
 
+			std::visit(
+			    [id, &name](const auto& stateValue)
+			    {
+				    using T = std::decay_t<decltype(stateValue)>;
+
+				    std::string valueText;
+
+				    if constexpr (std::is_same_v<T, bool>)
+					    valueText = stateValue ? "true" : "false";
+				    else if constexpr (std::is_same_v<T, std::string>)
+					    valueText = stateValue;
+				    else
+					    valueText = std::to_string(stateValue);
+
+				    VCU_LOG("ステート受信: ID={}, Name={}, Value={}", id, name, valueText);
+			    },
+			    value);
+
 			auto& states = status->states;
 			auto stateIt = states.find(name);
 
@@ -160,6 +178,9 @@ void SessionManager::SetPlayerName(
 void SessionManager::SetMemberNames(
     const std::string_view _names)
 {
+	VCU_LOG("SetMemberNames 呼び出し");
+	VCU_LOG("受信した名前一覧: {}", _names);
+
 	inSessionStatus_.memberNames.clear();
 	inSessionStatus_.memberId.clear();
 
@@ -183,6 +204,8 @@ void SessionManager::SetMemberNames(
 
 		inSessionStatus_.memberNames.push_back(std::string{ line });
 		inSessionStatus_.memberId.push_back(id++);
+
+		VCU_LOG("登録されたメンバー数: {}", inSessionStatus_.memberNames.size());
 	}
 }
 
@@ -201,7 +224,9 @@ void SessionManager::SetLobbyHost(
 void SessionManager::UpdatePlayers(
     const std::string_view _names,
     SizedBuffer<float>& _positions,
-    SizedBuffer<float>& _rotations)
+    SizedBuffer<float>& _rotations,
+    SizedBuffer<int32_t>& _haveItemIds,
+    SizedBuffer<int32_t>& _attentionLevel)
 {
 	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
 	auto& playerStatus           = inSessionStatus_.playersStatus;
@@ -237,6 +262,18 @@ void SessionManager::UpdatePlayers(
 			break;
 		}
 
+		if (i >= _haveItemIds.Size())
+		{
+			VCU_LOG("取得した名前分のアイテムIdのサイズが足りない({}個以上必要)", i);
+			break;
+		}
+
+		if (i >= _attentionLevel.Size())
+		{
+			VCU_LOG("取得した名前分の注目度データのサイズが足りない({}個以上必要)", i);
+			break;
+		}
+
 		// CRLF 対策OtherPlayer
 		if (!line.empty() && line.back() == '\r')
 		{
@@ -254,7 +291,9 @@ void SessionManager::UpdatePlayers(
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_X],
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_Y],
 		};
-		playerStatus.updatedFlag = !playerStatus.updatedFlag;  // 更新フラグを反転
+		playerStatus.haveItemId     = _haveItemIds[i];
+		playerStatus.attentionLevel = _attentionLevel[i];
+		playerStatus.updatedFlag    = !playerStatus.updatedFlag;  // 更新フラグを反転
 
 		// VCU_LOG(
 		//     "Update position[{}] = ({}, {}, {})",
@@ -294,6 +333,48 @@ bool SessionManager::IsExistPlayer(
 
 	// TODO: ここで文字化けしているためうまく判定できていない可能性がある。
 	return inSessionStatus_.playersStatus.count(_playerName) != 0;
+}
+
+bool SessionManager::TryGetPlayerName(
+    int32_t _playerId,
+    std::string& _outName) const
+{
+	const auto& ids   = inSessionStatus_.memberId;
+	const auto& names = inSessionStatus_.memberNames;
+
+	if (ids.size() != names.size())
+		return false;
+
+	auto it = std::ranges::find(ids, _playerId);
+
+	if (it == ids.end())
+		return false;
+
+	const size_t index = std::distance(ids.begin(), it);
+
+	_outName = names[index];
+	return true;
+}
+
+bool SessionManager::TryGetPlayerId(
+    std::string_view _playerName,
+    int32_t& _outId) const
+{
+	const auto& ids   = inSessionStatus_.memberId;
+	const auto& names = inSessionStatus_.memberNames;
+
+	if (ids.size() != names.size())
+		return false;
+
+	auto it = std::ranges::find(names, _playerName);
+
+	if (it == names.end())
+		return false;
+
+	const size_t index = std::distance(names.begin(), it);
+
+	_outId = ids[index];
+	return true;
 }
 
 bool SessionManager::HasAllPlayersStatus() const
@@ -418,7 +499,7 @@ bool SessionManager::UpdateEnemyStates(
 
 		    if (it == inSessionStatus_.enemiesStatus.end())
 		    {
-			    VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", enemyId);
+			    VCU_LOG("ステート更新失敗：敵ID={} が存在しません", enemyId);
 			    return nullptr;
 		    }
 
@@ -426,9 +507,22 @@ bool SessionManager::UpdateEnemyStates(
 	    });
 }
 
+void SessionManager::SetSelfStateRegistry(
+    const StateRegistry* _registry)
+{
+	selfStateRegistry_ = _registry;
+}
+
+const StateRegistry* SessionManager::GetSelfStateRegistry() const
+{
+	return selfStateRegistry_;
+}
+
 void SessionManager::UpdateDayTime(
-    float _currentTimeSec)
+    float _currentTimeSec,
+    int32_t _dayCount)
 {
 	inSessionStatus_.currentTimeSec     = _currentTimeSec;
+	inSessionStatus_.dayCount           = _dayCount;
 	inSessionStatus_.hasReceivedDayTime = true;
 }

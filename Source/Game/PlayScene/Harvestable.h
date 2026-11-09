@@ -3,6 +3,7 @@
 
 #include <Game/Game.h>
 #include <cstdint>
+#include "ItemId.h"
 
 /// @brief 採取できるものの種類
 enum class HarvestableType : int32_t
@@ -15,6 +16,9 @@ enum class HarvestableType : int32_t
 /// @brief 採取可能なもののデータ
 struct HarvestableData
 {
+	const ItemId ITEM_ID_ROCK{ 7 };  ///< 石のアイテムId
+	const ItemId ITEM_ID_WOOD{ 8 };  ///< 木のアイテムId
+
 	// モデルの種類
 	HarvestableType type{ HarvestableType::Tree };
 
@@ -40,15 +44,20 @@ struct HarvestableData
 	int32_t maxDurability{ 3 };
 	int32_t durability{ 3 };
 
+	uint32_t id{};  ///< このハーベスタブルオブジェクトのId
+
 	// 採取済みかどうか
 	bool isHarvested{ false };
+	bool hasReportedBroken{};  ///< サーバーに報告済みか true / false
 
 	/// @brief 配置位置と種類を指定して初期化
 	HarvestableData(
+	    uint32_t _id,
 	    HarvestableType _type,
 	    Vec3 _position,
 	    float _scale = 5.0f) :
-	    type{ _type }
+	    type{ _type },
+	    id{ _id }
 	{
 		transform.position = _position;
 		transform.scale    = Vec3::One() * _scale;
@@ -69,4 +78,10 @@ struct Harvestable : ObjectBase<HarvestableData>
 
 	/// @brief 採取済みかどうかを取得する
 	bool IsHarvested() const;
+
+	/// @brief ハーベスタブルオブジェクトを破壊する
+	void Break();
+
+	/// @brief ハーベスタブルオブジェクトが破壊された時の処理
+	void OnBroken();
 };

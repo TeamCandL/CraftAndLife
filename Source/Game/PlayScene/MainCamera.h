@@ -39,6 +39,10 @@ struct MainCamera : ObjectBase<MainCameraData>, IMainCamera
 	/// @return 注視している座標 xyz
 	Vec3 GetFocusPosition();
 
+	/// @brief カメラの座標を取得する
+	/// @return カメラの座標 xyz
+	Vec3 GetPosition();
+
 	// IMainCamera を介して継承されました
 	void UpdatePositionFromTarget(const GameObject _objTarget) override;
 	float GetAngleX() const override;

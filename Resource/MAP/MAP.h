@@ -94,7 +94,7 @@ namespace MapConfig
 // ============================================================
 struct MapData
 {
-	MapData();
+	MapData(const GameObject _objHarvestableController);
 
 	// --------------------------------------------------------
 	// 描画に使用するリソース
@@ -112,6 +112,8 @@ struct MapData
 
 	// マップのTransform
 	Component<Transform> transform{};
+
+	GameObject objHarvestableController{};  ///< ハーベスタブルオブジェクトの操作オブジェクト
 
 	// --------------------------------------------------------
 	// 地形データ

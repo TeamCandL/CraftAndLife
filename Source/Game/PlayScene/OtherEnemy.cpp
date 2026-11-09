@@ -20,6 +20,8 @@ void OtherEnemy::Update()
 		// 座標と角度の更新
 		transform.position = status.position;
 		transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
+
+		VCU_LOG("otherenemy ID:{} rotation: {}, {}", enemyId, status.rotation.x, status.rotation.y);
 	}
 
 	// 被弾確認

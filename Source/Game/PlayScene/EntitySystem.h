@@ -11,14 +11,17 @@ struct EntitySystemData
 	{
 		GameObject obj{};  /// ゲームオブジェクト
 		int32_t entityId{};
-		float pickupCooldownSec{};  ///< 拾えない時間(秒)
-		float despawnTimeLeft{};    ///< 自然消滅までの時間(秒)
+		float pickupCooldownSec{};       ///< 拾えない時間(秒)
+		float despawnTimeLeft{};         ///< 自然消滅までの時間(秒)
+		bool isRemoveRequested = false;  ///< 削除要求が済んでるかの判定
+		bool isJustSpawned     = true;   ///< 生成直後かどうかの判定
 	};
 
 	std::vector<EntityInfo> entities{};                 ///< エンティティ管理用
 	std::vector<EntitySpawnData> pendingSpawnData{};    ///< ネットワーク送信待ちのスポーンデータ
 	std::vector<EntityRemoveData> pendingRemoveData{};  ///< 削除待ちキュー
 	int32_t nextEntityId{ 0 };                          ///< 次に割り当てるエンティティID
+	bool isHost{ false };
 };
 
 /// @brief エンティティ操作
@@ -59,4 +62,6 @@ struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>
 	void RemoveFromNetwork(int32_t _entityId);
 
 	void UpdateEntityId(int32_t _oldId, int32_t _newId);
+
+	void SetHost(bool _isHost);
 };

@@ -8,7 +8,7 @@ bool VirtualInputManager::Initialize()
 	connectionConfig_.Reload();
 	const json& json = connectionConfig_.JsonData();
 
-	serverIp_ = json.value("ip", "127.0.0.1");
+	serverIp_   = json.value("ip", "192.168.42.8");
 	serverPort_ = json.value("port", 3333);
 
 	WSADATA wsaData{};
@@ -18,9 +18,9 @@ bool VirtualInputManager::Initialize()
 		return false;
 	}
 
-	connectSocket_ = INVALID_SOCKET;
-	isConnecting_ = false;
-	currentButton_ = false;
+	connectSocket_  = INVALID_SOCKET;
+	isConnecting_   = false;
+	currentButton_  = false;
 	previousButton_ = false;
 
 	return true;
@@ -96,7 +96,7 @@ void VirtualInputManager::TryConnect()
 
 	sockaddr_in serverAddr{};
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(serverPort_);
+	serverAddr.sin_port   = htons(serverPort_);
 	inet_pton(AF_INET, serverIp_.c_str(), &serverAddr.sin_addr);
 
 	int result = connect(connectSocket_, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr));
@@ -129,7 +129,7 @@ void VirtualInputManager::CheckConnecting()
 	FD_SET(connectSocket_, &writeSet);
 	FD_SET(connectSocket_, &errSet);
 
-	timeval timeout{ 0, 0 }; // 即時リターン
+	timeval timeout{ 0, 0 };  // 即時リターン
 	int selectResult = select(0, nullptr, &writeSet, &errSet, &timeout);
 
 	if (selectResult > 0)
@@ -154,7 +154,7 @@ void VirtualInputManager::CloseSocket()
 		closesocket(connectSocket_);
 		connectSocket_ = INVALID_SOCKET;
 	}
-	isConnecting_ = false;
+	isConnecting_  = false;
 	currentButton_ = false;
 }
 

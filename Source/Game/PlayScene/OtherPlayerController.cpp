@@ -1,5 +1,6 @@
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
+#include "OtherPlayerHand.h"
 #include "UI/PlayerName.h"
 #include "UI/DeathUI.h"
 
@@ -36,11 +37,12 @@ void OtherPlayerController::Update()
 	// 退出したプレイヤーを削除
 	// =====================================
 
-	for (auto& [name, obj] : nameToObjOtherPlayer)
+	for (auto& [name, otherPlayerSet] : nameToObjOtherPlayer)
 	{
 		if (!sessionManager.IsExistPlayer(name))
 		{
-			GetScene().Destroy(obj);
+			GetScene().Destroy(otherPlayerSet.objBody);
+			GetScene().Destroy(otherPlayerSet.objHand);
 
 			// DeathUIを削除
 			auto deathIt = nameToObjDeathUI.find(name);
@@ -66,7 +68,7 @@ void OtherPlayerController::Update()
 	    nameToObjOtherPlayer,
 	    [](const auto& p)
 	    {
-		    return p.second.IsEmpty();
+		    return p.second.objBody.IsEmpty();
 	    });
 
 	std::erase_if(
@@ -103,10 +105,12 @@ void OtherPlayerController::Update()
 		    if (nameToObjOtherPlayer.count(_name) == 0)
 		    {
 			    VCU_LOG("【OtherPlayer生成】名前={}", _name);
-			    nameToObjOtherPlayer[_name] = GetScene().Instantiate<OtherPlayer>(_name);
+			    nameToObjOtherPlayer[_name].objBody = GetScene().Instantiate<OtherPlayer>(_name);
+			    nameToObjOtherPlayer[_name].objHand =
+			        GetScene().Instantiate<OtherPlayerHand>(nameToObjOtherPlayer[_name].objBody);
 		    }
 
-		    GameObject targetPlayer = nameToObjOtherPlayer[_name];
+		    GameObject targetPlayer = nameToObjOtherPlayer[_name].objBody;
 
 		    // =====================================
 		    // PlayerNameを生成
@@ -135,20 +139,43 @@ GameObject OtherPlayerController::GetFirstOtherPlayer() const
 		return {};
 	}
 
-	return nameToObjOtherPlayer.begin()->second;
+	return nameToObjOtherPlayer.begin()->second.objBody;
 }
 
 std::vector<GameObject> OtherPlayerController::GetOtherPlayers() const
 {
 	std::vector<GameObject> players{};
 
-	for (const auto& [name, obj] : nameToObjOtherPlayer)
+	for (const auto& [name, otherPlayerSet] : nameToObjOtherPlayer)
 	{
-		if (!obj.IsEmpty())
+		if (!otherPlayerSet.objBody.IsEmpty())
 		{
-			players.push_back(obj);
+			players.push_back(otherPlayerSet.objBody);
 		}
 	}
 
 	return players;
+}
+
+bool OtherPlayerController::TryGetOtherPlayer(
+    const std::string& playerName,
+    GameObject& outPlayer) const
+{
+	const auto& players = Data().nameToObjOtherPlayer;
+
+	auto it = players.find(playerName);
+
+	if (it == players.end())
+	{
+		return false;
+	}
+
+	if (it->second.objBody.IsEmpty())
+	{
+		return false;
+	}
+
+	outPlayer = it->second.objBody;
+
+	return true;
 }

@@ -5,19 +5,18 @@
 #include "Enemy.h"
 #include "EnemyController.h"
 #include "OtherEnemyController.h"
+#include "DayController.h"
 
 void NetworkActorServer::Start()
 {
 	// プレイヤーのステートを登録
-	if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
-	{
-		Player& player = Get<Player>(Data().objPlayer);
-		player.RegisterStates(Data().playerStateRegistry);
+	// if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+	//{
+	//	Player& player = Get<Player>(Data().objPlayer);
+	//	player.RegisterStates(Data().playerStateRegistry);
 
-		Data().isPlayerStateRegistered = true;
-
-		VCU_LOG("【Player StateRegistry 登録完了】");
-	}
+	//	Data().isPlayerStateRegistered = true;
+	//}
 
 	// ゲストなら敵を生成しない
 	if (!IsHost())
@@ -33,21 +32,36 @@ void NetworkActorServer::Update()
 	// ホスト情報を更新
 	Data().isHost = Get<SessionManager>().RefStatus().imLobbyHost;
 
-	// ホストになったときの処理
+	// ホスト・ゲスト共通：自分のプレイヤーステートを登録
+	if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+	{
+		Player& player = Get<Player>(Data().objPlayer);
+		player.RegisterStates(Data().playerStateRegistry);
+
+		Get<SessionManager>().SetSelfStateRegistry(&Data().playerStateRegistry);
+
+		VCU_LOG("プレイヤーステート登録完了: {}", Data().playerStateRegistry.GetAllStates().size());
+
+		Data().isPlayerStateRegistered = true;
+	}
+
+	// ホスト専用処理
 	if (IsHost())
 	{
-		// プレイヤーステート登録
-		if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+#if 0
+		// 日付の取得確認
+		DayController& dayController = Get<DayController>(Data().objDayController);
+		VCU_LOG("現在の日付: {}", dayController.GetCurrentDay());
+
+		if (dayController.IsNight())
 		{
-			Player& player = Get<Player>(Data().objPlayer);
-			player.RegisterStates(Data().playerStateRegistry);
-
-			Data().isPlayerStateRegistered = true;
-
-			VCU_LOG("【Player StateRegistry 登録完了】");
+			CreateEnemies();
 		}
 
+#elif 1
 		CreateEnemies();
+
+#endif
 
 		Data().enemyStateSyncTimer -= Get<DeltaTime>();
 
@@ -72,6 +86,10 @@ void NetworkActorServer::CreateEnemy(
 {
 	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
 
+	// Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+
+	// Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
+
 	// 生成した敵のステートを登録
 	EnemyStateRegistries(objEnemy);
 }
@@ -95,14 +113,17 @@ void NetworkActorServer::CreateEnemies()
 	// 敵管理オブジェクトを生成
 	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
 
+	// 自分自身のGameObjectをEnemyControllerに渡す
+	Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
+
 	// 敵を生成（同じ種類も複数生成可能）
 	// CreateEnemy(EnemyType::Skeleton);
-	// CreateEnemy(EnemyType::Skeleton, Vec3{ 1.0f, 7.0f, 2.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ 1.0f, 7.0f, 2.0f });
 	// CreateEnemy(EnemyType::Spider, Vec3{ -1.0f, 7.0f, 2.0f });
-	// CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
 	// CreateEnemy(EnemyType::BossSkeleton, Vec3{ 1.0f, 5.0f, 2.0f });
 	// CreateEnemy(EnemyType::Bat, Vec3{ 1.0f, 7.0f, 5.0f });
-	CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
+	// CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
 
 	//  生成済みにする
 	Data().isInitialized = true;
@@ -176,6 +197,24 @@ bool NetworkActorServer::IsDeathQueued(
 	return index < queued.size() && queued[index];
 }
 
+void NetworkActorServer::OnEnemyDeath(
+    int32_t actorId)
+{
+	// すでに死亡通知を登録済みなら何もしない
+	if (actorId < 0 || IsDeathQueued(actorId))
+	{
+		return;
+	}
+
+	// 死亡通知を送信キューに登録
+	// TODO: 死亡通知プロトコルの送信処理
+
+	// 敵のステート登録を解除
+	ReleaseActor(actorId);
+
+	MarkDeathQueued(actorId);
+}
+
 void NetworkActorServer::ReleaseActor(
     int32_t actorId)
 {
@@ -193,10 +232,10 @@ void NetworkActorServer::ReleaseActor(
 		registries[index].reset();
 	}
 
-	auto& queued = Data().enemyDeathQueued;
+	// auto& queued = Data().enemyDeathQueued;
 
-	if (index < queued.size())
-	{
-		queued[index] = false;
-	}
+	// if (index < queued.size())
+	//{
+	//	queued[index] = false;
+	// }
 }

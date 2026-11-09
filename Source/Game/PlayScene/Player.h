@@ -32,7 +32,8 @@ struct PlayerData
 	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
 	Component<Transform> transform{};
-	Component<TransformAnimator> animator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
+	Component<TransformAnimator> transformAnimator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
+	bool isAnimPreviewingDebug{};                      ///< アニメーションテスト用ふらぐ
 	Component<RigidBody> rigidBody{};
 	Component<StaticOBB> obb{};
 	Component<OBBRenderer> obbRenderer{};
@@ -56,10 +57,10 @@ struct PlayerData
 	float animSpeed{ 1.0f };     ///< アニメーションの再生速度 通常が1.0f
 
 	// パラメータ
-	int32_t maxHP{ 100 };         // 最大HP
-	int32_t hp{ 100 };            // 現在HP
-	int32_t damage{ 10 };         // 攻撃力
-	int32_t attentionLevel{ 5 };  // 注視度
+	int32_t maxHP{ 100 };         ///< 最大HP
+	int32_t hp{ 100 };            ///< 現在HP
+	int32_t damage{ 10 };         ///< 攻撃力
+	int32_t attentionLevel{ 5 };  ///< 敵からの注目度 基本値：5 数値が高いほど狙われやすい
 
 	const float ATTACK_COOL_TIME{ 5.0f };
 	float nowAttackCoolTime{ 0.0f };
@@ -79,12 +80,29 @@ struct PlayerData
 	const float JUMP_CUT_RATE{ 0.5f };  ///< ボタンを離したときの速度倍率
 	bool isJumping{ false };            ///< ジャンプ中かどうか
 
+	// 足音SE
+	Resource<Audio> footstepSE{ "BGM_SE/footsteps.mp3" };
+
+	// ジャンプ音
+	Resource<Audio> jumpSE{ "BGM_SE/Jump.mp3" };
+
+	// 盾で攻撃を防いだときのSE
+	Resource<ResourceType::Audio> shieldGuardSE{ "BGM_SE/ShieldGuard.mp3" };
+
+	// 足音を鳴らす間隔
+	float footstepTimer{ 0.0f };
+
+	// 足音の間隔（秒）
+	const float FOOTSTEP_INTERVAL{ 0.4f };
+
 	// HP減少テスト用
 	float hpTestTimer{ 0.0f };
 
 	struct JobStatus
 	{
 		float moveSpeed{ 0.1f };
+		Vec3 moveVelocity{};
+		float maxHpBoost{ 0.0f };
 	} jobStatus;  ///< プレイヤーの役職固有のステータス
 
 	// inline static const float DIE_ANIM_TIME_SEC_MAX{ 21.0f / 60.0f };  ///< 死亡アニメーションの時間
@@ -97,6 +115,10 @@ struct PlayerData
 
 	// クラフトUIを開いているか(クラフト機能側がUIを表示するか判定するのに使う)
 	bool isOpenCraftUI{ false };
+
+	bool isHoldShield{ false };  ///< シールドを構えているか true / false
+
+	float shieldGurdAngleRad{ DirectX::XM_PI / 180.0f * 40.0f };  ///< シールドで防げる正面に対する攻撃の角度
 };
 
 /// @brief プレイヤー
@@ -115,7 +137,7 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void AttackCollider();
 
-	void Damaged(int32_t damage);
+	void Damaged(int32_t _damage, Vec3 _worldPos);
 
 	/// @brief 生存ステータスを設定する
 	/// @param _state 生存ステータス

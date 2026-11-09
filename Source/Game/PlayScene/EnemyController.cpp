@@ -1,7 +1,7 @@
 #include "pch\pch.h"
 #include "EnemyController.h"
 #include "Enemy.h"
-#include "UI/BossHp.h"
+#include "UI/BossInfo.h"
 
 void EnemyController::Start() {}
 
@@ -16,7 +16,7 @@ void EnemyController::AddEnemy(
 
 	if (Get<Enemy>(_enemy).Data().isBoss)
 	{
-		Get<BossHp>(objBossHp).SetBoss(_enemy);
+		Get<BossInfo>(objBossInfo).SetBoss(_enemy);
 	}
 }
 
@@ -26,6 +26,11 @@ std::vector<Vec3> EnemyController::GetAllEnemyPosition()
 
 	for (const GameObject obj : allEnemys)
 	{
+		if (obj.IsEmpty())
+		{
+			continue;
+		}
+
 		enemyPositions.push_back(Get<Enemy>(obj).GetPosition());
 	}
 
@@ -38,6 +43,9 @@ std::vector<float> EnemyController::GetAllEnemyAngleY()
 
 	for (const GameObject obj : allEnemys)
 	{
+		if (obj.IsEmpty())
+			continue;
+
 		enemyAngles.push_back(Get<Enemy>(obj).GetAngleY());
 	}
 
@@ -50,6 +58,8 @@ std::vector<int32_t> EnemyController::GetAllEnemyId()
 
 	for (const GameObject obj : allEnemys)
 	{
+		if (obj.IsEmpty())
+			continue;
 		enemyIds.push_back(Get<Enemy>(obj).GetID());
 	}
 
@@ -62,6 +72,9 @@ std::vector<EnemyStatus> EnemyController::GetAllEnemyStatus()
 
 	for (const GameObject obj : allEnemys)
 	{
+		if (obj.IsEmpty())
+			continue;
+
 		allStatus.push_back(Get<Enemy>(obj).GetStatus());
 	}
 
@@ -86,4 +99,58 @@ void EnemyController::DamagedEnemy(
 	}
 
 	VCU_LOG("ダメージ対象の敵が見つかりません: ID={}", enemyId);
+}
+
+void EnemyController::RemoveEnemy(
+    int32_t enemyId)
+{
+	for (GameObject& enemyObj : allEnemys)
+	{
+		if (enemyObj.IsEmpty())
+		{
+			continue;
+		}
+
+		Enemy& enemy = Get<Enemy>(enemyObj);
+
+		if (enemy.GetID() != enemyId)
+		{
+			continue;
+		}
+
+		// 管理スロットだけを空にする
+		enemyObj = {};
+
+		return;
+	}
+}
+
+bool EnemyController::IsExistEnemy(
+    int32_t enemyId)
+{
+	for (GameObject& enemyObj : allEnemys)
+	{
+		if (enemyObj.IsEmpty())
+		{
+			continue;
+		}
+
+		if (Get<Enemy>(enemyObj).GetID() == enemyId)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void EnemyController::SetNetworkActorServer(
+    GameObject obj)
+{
+	Data().objNetworkActorServer = obj;
+}
+
+GameObject EnemyController::GetNetworkActorServer() const
+{
+	return Data().objNetworkActorServer;
 }

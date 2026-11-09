@@ -16,6 +16,11 @@ void EnemyAttackColl::Update()
 	{
 		DestroyMe();
 	}
+
+	if (speed != 0.0f)
+	{
+		Move();
+	}
 	///	obb.hitGameObjects→このオブジェクトの持つコライダーに触れているオブジェクトの情報が入っている。
 	///	※ただ、これ自体はオブジェクトを取得しているわけではないため、情報に対して『.gameObject』をつけることでオブジェクトを取得する。
 	for (auto& info : obb.hitGameObjects)
@@ -37,7 +42,7 @@ void EnemyAttackColl::Update()
 void EnemyAttackColl::Move()
 {
 	Vec3 move{ transform.Forward() * speed };
-	transform.position += move;
+	transform.position += move * Get<DeltaTime>();
 
 	if (transform.position.y <= Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z))
 	{
@@ -49,5 +54,5 @@ void EnemyAttackColl::SendDamage(
     Player& player,
     int32_t damage)
 {
-	player.Damaged(damage);
+	player.Damaged(damage, transform.position);
 }
