@@ -582,6 +582,13 @@ void Player::GiveItem(
     const ItemId _itemId,
     const Vec3 _fromPosition)
 {
+	// 本当に取得可能な距離かを計測する
+	if ((_fromPosition - transform.position).Length() > entityPickupRadiusOnNetwork)
+	{
+		// 取得できない距離なら無視する
+		return;
+	}
+
 	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(_itemId);
 	if (ITEM_INFO._type == ItemType::EnemyAttack)  // 敵の攻撃ならダメージを
 	{
@@ -616,7 +623,7 @@ float Player::GetAngleY() const
 
 void Player::UpdatePickNearestItem()
 {
-	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, entityPickupRadius);
 }
 
 void Player::TryAddItem(

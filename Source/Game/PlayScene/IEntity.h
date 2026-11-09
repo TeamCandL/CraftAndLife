@@ -44,6 +44,9 @@ class IEntity
 	/// @brief プレイヤーへ当たりますか？
 	/// @return 当たります true / false
 	virtual bool CanHitToPlayer() const = 0;
+	/// @brief 敵へ当たりますか？
+	/// @return 当たります true / false
+	virtual bool CanHitToEnemy() const = 0;
 	/// @brief 座標を取得する
 	/// @return ワールド座標 (x,y,z)
 	virtual Vec3 GetPosition() const = 0;

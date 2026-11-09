@@ -235,7 +235,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
-	                        0,
+	                        10,  // TODO: 仮
 	                        0,
 	                        0,
 

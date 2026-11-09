@@ -113,6 +113,9 @@ struct PlayerData
 		float dieAnimTimeSec{ DIE_ANIM_TIME_SEC_MAX };
 	} liveStatus;  ///< 生存中のステータス
 
+	float entityPickupRadius{ 3.0f };                                ///< アイテム取得リクエスト可能な距離
+	float entityPickupRadiusOnNetwork{ entityPickupRadius + 3.0f };  ///< 通信でアイテム取得判定をする際に取得可能な距離
+
 	// クラフトUIを開いているか(クラフト機能側がUIを表示するか判定するのに使う)
 	bool isOpenCraftUI{ false };
 

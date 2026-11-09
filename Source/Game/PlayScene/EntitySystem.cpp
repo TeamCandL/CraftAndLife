@@ -2,6 +2,8 @@
 #include "EntitySystem.h"
 #include "IEntity.h"
 #include "Entity.h"
+#include "Enemy.h"
+#include "ItemSystem.h"
 
 void EntitySystem::Update()
 {
@@ -35,6 +37,32 @@ void EntitySystem::Update()
 						    .entityId = entity.GetEntityId(),
 						    .position = entity.GetPosition(),
 						});
+					}
+				}
+			}
+		}
+		if (entity.CanHitToEnemy())
+		{
+			DynamicOBB* pDynamicOBB = TryGet<DynamicOBB>(obj);
+			if (pDynamicOBB)
+			{
+				for (auto& info : pDynamicOBB->hitGameObjects)
+				{
+					///	取得したオブジェクトの名前を『.content』で取得。
+					///	※ここでは、それが敵であるかを判定している。
+					Name* pName = TryGet<Name>(info.gameObject);
+					if (pName &&
+					    pName->content ==
+					        "Enemy")  // OtherEnemyにはEnemyという名前が付いていないため実質ホストのみの処理となるのであーる😎
+					{
+						entity.Pick();  // 拾いましたよ！(敵に当たって消えましたよ)
+						picksData.push_back(EntityPickData{
+						    .entityId = entity.GetEntityId(),
+						    .position = Vec3::Up() * 10000,  // 有り得ない位置にすることで取得不可能に
+						});
+
+						Get<Enemy>(info.gameObject)
+						    .Damaged(Get<ItemSystem>().GetInfo(entity.GetItemId())._damageForEnemy);
 					}
 				}
 			}

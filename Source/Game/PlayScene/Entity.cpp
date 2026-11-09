@@ -20,6 +20,10 @@ void Entity::Start()
 			despawnTimeLeftSec = ITEM_INFO._coolTime;
 		}
 	}
+	else if (ITEM_INFO._type == ItemType::Arrow)
+	{
+		canHitToEnemy = true;
+	}
 }
 
 void Entity::Update()
@@ -171,6 +175,11 @@ bool Entity::CanPickup() const
 bool Entity::CanHitToPlayer() const
 {
 	return canHitToPlayer;
+}
+
+bool Entity::CanHitToEnemy() const
+{
+	return canHitToEnemy;
 }
 
 Vec3 Entity::GetPosition() const

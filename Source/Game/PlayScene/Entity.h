@@ -30,6 +30,7 @@ struct EntityData
 	bool despawned{ false };               ///< エンティティがデスポーンしたか true /false
 	bool isDestroyedOnCollision{ false };  ///< 何かに触れると消されるか？ true / false
 	bool canHitToPlayer{ false };          ///< プレイヤーへ当たり判定があるか true / false
+	bool canHitToEnemy{ false };           ///< 敵への当たり判定はあるか true / false
 
 	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
 	float friction{ 0.9f };       ///< 摩擦力
@@ -73,5 +74,6 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	void Pick() override;
 	bool CanPickup() const override;
 	bool CanHitToPlayer() const override;
+	bool CanHitToEnemy() const override;
 	Vec3 GetPosition() const override;
 };

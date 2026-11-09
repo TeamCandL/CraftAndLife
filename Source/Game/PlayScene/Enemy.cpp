@@ -378,8 +378,6 @@ void Enemy::Damaged(
 		hp -= damage;
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
-
-	VCU_ASSERT(hp > 0);
 }
 
 void Enemy::SetWanderingCheckPoint(
