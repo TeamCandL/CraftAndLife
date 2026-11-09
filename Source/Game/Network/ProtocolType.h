@@ -29,5 +29,10 @@ enum struct ProtocolType : uint8_t
 
 	BreakHarvestable,  ///< ハーベスタブルオブジェクトを破壊
 
+	EntitySpawnRequest,  ///< 指定のアイテムエンティティを出現させたい！と伝える
+	EntitySpawned,       ///< アイテムエンティティを出現させる
+	EntityPickRequest,   ///< 指定のアイテムエンティティを拾いたい！と伝える
+	EntityPicked,        ///< 指定したエンティティは拾われた
+
 	Idk,
 };

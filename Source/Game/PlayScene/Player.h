@@ -152,6 +152,11 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	/// @brief 死亡アニメーション
 	void DeadAnim();
+	/// @brief 死亡処理
+	void Dead()
+	{
+		attentionLevel = 0;
+	}
 
 	void RegisterStates(StateRegistry& registry) const;
 
