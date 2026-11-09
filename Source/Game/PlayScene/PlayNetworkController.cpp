@@ -479,6 +479,7 @@ void PlayNetworkController::Update()
 
 		IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
 
+		// エンティティスポーンしたリクエストを処理
 		std::vector<EntitySpawnData> entitySpawnsData = entitySystem.TakeSpawnsData();
 		for (const auto& data : entitySpawnsData)
 		{
@@ -490,13 +491,18 @@ void PlayNetworkController::Update()
 			message.velocityX = data.velocity.x;
 			message.velocityY = data.velocity.y;
 			message.velocityZ = data.velocity.z;
+
+			networkSessionManager.Send(message);
 		}
 
+		// エンティティを拾ったリクエストを処理
 		std::vector<EntityPickData> entityPicksData = entitySystem.TakePicksData();
 		for (const auto& data : entityPicksData)
 		{
 			Protocol::EntityPickRequest message{};
 			message.entityId = data.entityId;
+
+			networkSessionManager.Send(message);
 		}
 
 		/*  // エンティティシステムを変更したため無視
