@@ -122,9 +122,9 @@ void Harvestable::OnBroken()
 	switch (type)
 	{
 	case HarvestableType::Tree:
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 0.0f);
 		break;
 
 	case HarvestableType::TreeHigh:
@@ -137,9 +137,9 @@ void Harvestable::OnBroken()
 		break;
 
 	case HarvestableType::Rock:
-		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 20.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 0.0f);
 		break;
 
 	default:

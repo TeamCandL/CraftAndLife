@@ -36,6 +36,11 @@ GameObject EntitySystem::PickNearest(
 
 	for (auto& obj : objEntities)
 	{
+		if (obj.IsEmpty())
+		{
+			continue;  // objが空っぽなら無視
+		}
+
 		IEntity& entity = Get<IEntity>(obj);
 
 		if (entity.CanPickup() == false)
