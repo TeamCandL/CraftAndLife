@@ -56,9 +56,10 @@ struct PlayerData
 	float animSpeed{ 1.0f };     ///< アニメーションの再生速度 通常が1.0f
 
 	// パラメータ
-	int32_t maxHP{ 100 };  // 最大HP
-	int32_t hp{ 100 };     // 現在HP
-	int32_t damage{ 10 };  // 攻撃力
+	int32_t maxHP{ 100 };         // 最大HP
+	int32_t hp{ 100 };            // 現在HP
+	int32_t damage{ 10 };         // 攻撃力
+	int32_t attentionLevel{ 5 };  // 注視度
 
 	const float ATTACK_COOL_TIME{ 5.0f };
 	float nowAttackCoolTime{ 0.0f };
@@ -129,6 +130,11 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	/// @brief 死亡アニメーション
 	void DeadAnim();
+	/// @brief 死亡処理
+	void Dead()
+	{
+		attentionLevel = 0;
+	}
 
 	void RegisterStates(StateRegistry& registry) const;
 
