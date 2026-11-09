@@ -424,6 +424,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\ClearScene\ClearBGM.cpp" />
     <ClCompile Include="Source\Game\ClearScene\ClearImage.cpp" />
     <ClCompile Include="Source\Game\ClearScene\ClearScene.cpp" />
+    <ClCompile Include="Source\Game\ClearScene\ClearSceneInput.cpp" />
     <ClCompile Include="Source\Game\Common\Canvas.cpp" />
     <ClCompile Include="Source\Game\Common\GameManager.cpp" />
     <ClCompile Include="Source\Game\Common\ScoreManager.cpp" />
@@ -716,6 +717,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\ClearScene\ClearBGM.h" />
     <ClInclude Include="Source\Game\ClearScene\ClearImage.h" />
     <ClInclude Include="Source\Game\ClearScene\ClearScene.h" />
+    <ClInclude Include="Source\Game\ClearScene\ClearSceneInput.h" />
+    <ClInclude Include="Source\Game\ClearScene\ResultType.h" />
     <ClInclude Include="Source\Game\Common\Canvas.h" />
     <ClInclude Include="Source\Game\Common\ChunkLoader\IWorldLoader.h" />
     <ClInclude Include="Source\Game\Common\GameManager.h" />

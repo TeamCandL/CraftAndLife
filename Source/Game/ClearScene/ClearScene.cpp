@@ -1,6 +1,8 @@
 #include "ClearScene.h"
 #include "ClearImage.h"
 #include "ClearBGM.h"
+#include "ClearSceneInput.h"
+
 #include <Game/Common/GameManager.h>
 #include <Game/Manager/AudioManager.h>
 
@@ -15,6 +17,11 @@ void ClearScene::Start()
 	audioManager.StopFootstep();
 
 	Instantiate<GameManager>();
-	Instantiate<ClearImage>();
-	Instantiate<ClearBGM>();
+
+	// 結果に応じた画像とBGMを生成
+	Instantiate<ClearImage>(resultType);
+	Instantiate<ClearBGM>(resultType);
+
+	// タイトルに戻るための入力処理
+	Instantiate<ClearSceneInput>();
 }
