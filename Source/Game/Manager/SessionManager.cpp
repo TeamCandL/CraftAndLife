@@ -499,9 +499,22 @@ bool SessionManager::UpdateEnemyStates(
 	    });
 }
 
+void SessionManager::SetSelfStateRegistry(
+    const StateRegistry* _registry)
+{
+	selfStateRegistry_ = _registry;
+}
+
+const StateRegistry* SessionManager::GetSelfStateRegistry() const
+{
+	return selfStateRegistry_;
+}
+
 void SessionManager::UpdateDayTime(
-    float _currentTimeSec)
+    float _currentTimeSec,
+    int32_t _dayCount)
 {
 	inSessionStatus_.currentTimeSec     = _currentTimeSec;
+	inSessionStatus_.dayCount           = _dayCount;
 	inSessionStatus_.hasReceivedDayTime = true;
 }

@@ -25,6 +25,7 @@
 #include "UI/CraftUI.h"
 #include "HarvestableController.h"
 #include <Game/Manager/AudioManager.h>
+#include "ClearSceneTrigger.h"
 
 void PlayScene::Start()
 {
@@ -45,7 +46,7 @@ void PlayScene::Start()
 	Instantiate<DeathUI>(objPlayer, true);
 
 	// ホスト判定オブジェクトを生成
-	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer);
+	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer, objDayController);
 
 	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 
@@ -65,4 +66,7 @@ void PlayScene::Start()
 
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController);
 	// Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f);
+
+	// クリアシーン切り替え用
+	Instantiate<ClearSceneTrigger>();
 }

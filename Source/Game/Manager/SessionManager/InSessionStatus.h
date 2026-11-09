@@ -39,5 +39,6 @@ struct InSessionStatus
 	std::unordered_map<int, EnemyStatus> enemiesStatus{};           ///< 敵の座標情報
 
 	float currentTimeSec;              ///< 昼夜サイクルの現在時刻
+	int32_t dayCount;                  ///< 昼夜サイクルの現在日数
 	bool hasReceivedDayTime{ false };  ///< 昼夜時刻を受信済みか
 };

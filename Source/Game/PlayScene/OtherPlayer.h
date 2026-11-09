@@ -1,8 +1,8 @@
-
 #pragma once
 #include "IPlayer.h"
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
+#include "Player/HelthState.h"
 
 struct OtherPlayerData
 {
@@ -27,15 +27,18 @@ struct OtherPlayerData
 	PlayerRoleType role{ PlayerRoleType_Healer };
 
 	int32_t animIndex{};
+	float animSpeed{ 1.0f };
 
-	// 死亡状態
+	// 生存ステート
 	bool isDead{ false };
 
-	// 現在HP
+	// HP
 	int32_t hp{ 100 };
-
-	// 最大HP
 	int32_t maxHP{ 100 };
+
+	// 死亡アニメーション再生時間
+	inline static constexpr float DIE_ANIM_TIME_SEC_MAX{ 20.0f / 60.0f };
+	float dieAnimTimeSec{ DIE_ANIM_TIME_SEC_MAX };
 };
 
 struct OtherPlayer : ObjectBase<OtherPlayerData>, IPlayer

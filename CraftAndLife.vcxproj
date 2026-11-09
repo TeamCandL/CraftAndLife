@@ -421,6 +421,9 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\BootScene\BootScene.cpp" />
     <ClCompile Include="Source\Game\BootScene\BootSceneBackground.cpp" />
     <ClCompile Include="Source\Game\BootScene\BootSceneLogo.cpp" />
+    <ClCompile Include="Source\Game\ClearScene\ClearBGM.cpp" />
+    <ClCompile Include="Source\Game\ClearScene\ClearImage.cpp" />
+    <ClCompile Include="Source\Game\ClearScene\ClearScene.cpp" />
     <ClCompile Include="Source\Game\Common\Canvas.cpp" />
     <ClCompile Include="Source\Game\Common\GameManager.cpp" />
     <ClCompile Include="Source\Game\Common\ScoreManager.cpp" />
@@ -445,6 +448,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ClearSceneTrigger.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DayController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Enemy.cpp" />
@@ -705,6 +709,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\BootScene\BootScene.h" />
     <ClInclude Include="Source\Game\BootScene\BootSceneBackground.h" />
     <ClInclude Include="Source\Game\BootScene\BootSceneLogo.h" />
+    <ClInclude Include="Source\Game\ClearScene\ClearBGM.h" />
+    <ClInclude Include="Source\Game\ClearScene\ClearImage.h" />
     <ClInclude Include="Source\Game\ClearScene\ClearScene.h" />
     <ClInclude Include="Source\Game\Common\Canvas.h" />
     <ClInclude Include="Source\Game\Common\ChunkLoader\IWorldLoader.h" />
@@ -734,6 +740,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEntityRemove.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEntitySpawn.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemyDamage.h" />
+    <ClInclude Include="Source\Game\PlayScene\ClearSceneTrigger.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />

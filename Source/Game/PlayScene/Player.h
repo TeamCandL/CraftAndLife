@@ -86,6 +86,9 @@ struct PlayerData
 	// ジャンプ音
 	Resource<Audio> jumpSE{ "BGM_SE/Jump.mp3" };
 
+	// 盾で攻撃を防いだときのSE
+	Resource<ResourceType::Audio> shieldGuardSE{ "BGM_SE/ShieldGuard.mp3" };
+
 	// 足音を鳴らす間隔
 	float footstepTimer{ 0.0f };
 

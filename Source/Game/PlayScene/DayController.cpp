@@ -19,6 +19,11 @@ void DayController::Update()
 	// ゲストだけホストの時刻に近づける
 	const InSessionStatus& status = Get<SessionManager>().RefStatus();
 
+	if (status.imLobbyHost && currentTimeSec >= MAX_TIME)
+	{
+		currentDay++;
+	}
+
 	if (!status.imLobbyHost && status.hasReceivedDayTime)
 	{
 		float diff = status.currentTimeSec - currentTimeSec;

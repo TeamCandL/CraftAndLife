@@ -95,7 +95,7 @@ ItemSystemData::ItemSystemData()
 
 	                        1.0f,
 	                        0,
-	                        20,
+	                        5,
 
 	                        PlayerJobType_Max });
 	craft.clear();
@@ -112,7 +112,7 @@ ItemSystemData::ItemSystemData()
 
 	                        0.8f,
 	                        0,
-	                        10 });
+	                        5 });
 	allItemList.push_back({ 7,
 	                        ItemType::Materials,
 	                        "石",

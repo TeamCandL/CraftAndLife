@@ -235,7 +235,7 @@ void PlayNetworkController::Update()
 			    {
 				    Protocol::UpdatedDayTime dayTimeMessage{};
 				    converter.ToMessage(_event.data, dayTimeMessage);
-				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec);
+				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec, dayTimeMessage.dayCount);
 
 				    break;
 			    }
@@ -323,54 +323,64 @@ void PlayNetworkController::Update()
 			playerChanges = playerRegistry.GetChanges();
 		}
 
+		const auto& status = Get<SessionManager>().RefStatus();
+
 		if (!playerChanges.empty())
 		{
 			Protocol::UpdatedPlayerStates stateMessage{};
 
-			// 自分のプレイヤーIDを取得
-			const auto& status = Get<SessionManager>().RefStatus();
-
 			auto nameIt = std::find(status.memberNames.begin(), status.memberNames.end(), status.name);
 
-			// メンバー一覧がまだ届いていない場合は送信しない
-			if (!status.memberNames.empty())
+			if (nameIt != status.memberNames.end())
 			{
+				const size_t index = std::distance(status.memberNames.begin(), nameIt);
 
-				if (nameIt != status.memberNames.end())
+				if (index < status.memberId.size())
 				{
-					const size_t index = std::distance(status.memberNames.begin(), nameIt);
+					stateMessage.playerId = status.memberId[index];
 
-					if (index < status.memberId.size())
+					VCU_LOG("送信するプレイヤーID: {}", stateMessage.playerId);
+
+					std::vector<uint8_t> values;
+
+					for (const auto& change : playerChanges)
 					{
-						stateMessage.playerId = status.memberId[index];
+						if (!stateMessage.stateName.empty())
+							stateMessage.stateName += '\n';
 
-						std::vector<uint8_t> values;
-
-						for (const auto& change : playerChanges)
-						{
-							if (!stateMessage.stateName.empty())
-								stateMessage.stateName += '\n';
-
-							stateMessage.stateName += change.name;
-
-							StateValueCode::Encode(change.value, values);
-						}
-
-						stateMessage.values.Resize(values.size());
-
-						for (size_t i = 0; i < values.size(); ++i)
-							stateMessage.values[i] = values[i];
-
-						networkSessionManager.Send(stateMessage);
-
-						// 送信後に変更を確定
-						playerRegistry.CommitChanges(playerChanges);
-
-						if (isFirstSync)
-							isFirstSync = false;
+						stateMessage.stateName += change.name;
+						StateValueCode::Encode(change.value, values);
 					}
+
+					stateMessage.values.Resize(values.size());
+
+					for (size_t i = 0; i < values.size(); ++i)
+						stateMessage.values[i] = values[i];
+
+					VCU_LOG("送信ステート名: {}", stateMessage.stateName);
+
+					networkSessionManager.Send(stateMessage);
+
+					VCU_LOG("プレイヤーステート送信処理実行");
+
+					playerRegistry.CommitChanges(playerChanges);
+
+					if (isFirstSync)
+						isFirstSync = false;
+				}
+				else
+				{
+					VCU_LOG("プレイヤーIDのインデックスが範囲外");
 				}
 			}
+			else
+			{
+				VCU_LOG("自分の名前がメンバー一覧に存在しない");
+			}
+		}
+		else
+		{
+			VCU_LOG("送信するプレイヤーステートがありません");
 		}
 
 		// 敵情報更新
@@ -425,6 +435,9 @@ void PlayNetworkController::Update()
 
 			std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
 
+			VCU_LOG("敵ステート送信 FullSync={}", fullSync);
+			VCU_LOG("敵ステート登録数={}", registries.size());
+
 			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
 			{
 				if (!registries[enemyId].has_value())
@@ -434,9 +447,10 @@ void PlayNetworkController::Update()
 
 				// 初回は全ステート、それ以降は変更分だけ取得
 				const auto changes = registry.GetStates(fullSync);
-
+				VCU_LOG("敵 ID={} 取得ステート数={}", enemyId, changes.size());
 				for (const auto& change : changes)
 				{
+					VCU_LOG("送信対象 ID={} Name={}", enemyId, change.name);
 					enemyStateIds.push_back(static_cast<int32_t>(enemyId));
 
 					// 値をエンコード
@@ -575,6 +589,9 @@ void PlayNetworkController::Update()
 			Protocol::UpdateDayTime dayTimeMessage{};
 
 			dayTimeMessage.currentTimeSec = dayController.GetCurrentTimeSec();
+			dayTimeMessage.dayCount       = dayController.GetCurrentDay();
+
+			VCU_LOG("昼夜時刻送信: {} 日数: {}", dayTimeMessage.currentTimeSec, dayTimeMessage.dayCount);
 
 			networkSessionManager.Send(dayTimeMessage);
 
