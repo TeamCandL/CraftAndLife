@@ -600,13 +600,6 @@ float Player::GetAngleY() const
 void Player::UpdatePickNearestItem()
 {
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
-
-	// エンティティを拾うことができた場合
-	if (objPick)
-	{
-		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
-		TryAddItem(pickedItemId);
-	}
 }
 
 void Player::TryAddItem(

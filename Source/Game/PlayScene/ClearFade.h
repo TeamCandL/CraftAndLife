@@ -1,5 +1,6 @@
 #pragma once
 #include <Game/Game.h>
+#include "Game/ClearScene/ResultType.h"
 
 struct ClearFadeData
 {
@@ -12,7 +13,10 @@ struct ClearFadeData
 	// フェード中か
 	bool isFading{ false };
 
-	// 白い画面
+	// 結果の種類
+	ResultType resultType{ ResultType::Clear };
+
+	// フェード画面
 	Component<UITransform> transform{};
 	Component<UIImage> image{};
 };
@@ -22,5 +26,6 @@ struct ClearFade : ObjectBase<ClearFadeData>
 	void Start() override;
 	void Update() override;
 
-	void StartFade();
+	// 結果の種類を指定してフェード開始
+	void StartFade(ResultType _resultType = ResultType::Clear);
 };

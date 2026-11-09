@@ -424,6 +424,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\ClearScene\ClearBGM.cpp" />
     <ClCompile Include="Source\Game\ClearScene\ClearImage.cpp" />
     <ClCompile Include="Source\Game\ClearScene\ClearScene.cpp" />
+    <ClCompile Include="Source\Game\ClearScene\ClearSceneInput.cpp" />
     <ClCompile Include="Source\Game\Common\Canvas.cpp" />
     <ClCompile Include="Source\Game\Common\GameManager.cpp" />
     <ClCompile Include="Source\Game\Common\ScoreManager.cpp" />
@@ -438,6 +439,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\LobbyScene\LobbyNetworkController.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyReadyButton.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyScene.cpp" />
+    <ClCompile Include="Source\Game\LobbyScene\LobbyUI.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\MemberElement.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\MemberList.cpp" />
     <ClCompile Include="Source\Game\Manager\SessionManager.cpp" />
@@ -571,6 +573,8 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\TitleScene\WordInputPanel.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordJoinButton.cpp" />
     <ClCompile Include="Source\Game\Tool\DebugCamera.cpp" />
+    <ClCompile Include="Source\Game\UI\ImageObject.cpp" />
+    <ClCompile Include="Source\Game\UI\TextObject.cpp" />
     <ClCompile Include="Source\Game\Utility\Algorithm\TopologicalSort.cpp" />
     <ClCompile Include="Source\Game\Utility\File\JsonLoader.cpp" />
     <ClCompile Include="Source\pch\pch.cpp">
@@ -713,6 +717,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\ClearScene\ClearBGM.h" />
     <ClInclude Include="Source\Game\ClearScene\ClearImage.h" />
     <ClInclude Include="Source\Game\ClearScene\ClearScene.h" />
+    <ClInclude Include="Source\Game\ClearScene\ClearSceneInput.h" />
+    <ClInclude Include="Source\Game\ClearScene\ResultType.h" />
     <ClInclude Include="Source\Game\Common\Canvas.h" />
     <ClInclude Include="Source\Game\Common\ChunkLoader\IWorldLoader.h" />
     <ClInclude Include="Source\Game\Common\GameManager.h" />
@@ -724,6 +730,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
+    <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\StateTarget.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
@@ -950,6 +957,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TitleScene\WordInputPanel.h" />
     <ClInclude Include="Source\Game\TitleScene\WordJoinButton.h" />
     <ClInclude Include="Source\Game\Tool\DebugCamera.h" />
+    <ClInclude Include="Source\Game\UI\ImageObject.h" />
+    <ClInclude Include="Source\Game\UI\TextObject.h" />
     <ClInclude Include="Source\Game\Utility\Algorithm\TopologicalSort.h" />
     <ClInclude Include="Source\Game\Utility\File\JsonLoader.h" />
     <ClInclude Include="Source\Library\Library.h" />
