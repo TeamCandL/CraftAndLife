@@ -15,6 +15,10 @@
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
 #include <Game/Network/Protocols/BreakHarvestable.h>
+#include <Game/Network/Protocols/EntitySpawnRequest.h>
+#include <Game/Network/Protocols/EntitySpawned.h>
+#include <Game/Network/Protocols/EntityPickRequest.h>
+#include <Game/Network/Protocols/EntityPicked.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -22,6 +26,7 @@
 #include <Game/PlayScene/EnemyController.h>
 #include <Game/PlayScene/StateValueCode.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/PlayScene/IEntitySystemNetwork.h>
 #include <Game/PlayScene/PlayerHand.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
@@ -38,7 +43,7 @@ void PlayNetworkController::Update()
 {
 	static int testing{};
 	testing++;
-	if (testing % 20 != 0)
+	if (testing % 5 != 0)
 	{
 		return;
 	}
@@ -47,7 +52,7 @@ void PlayNetworkController::Update()
 
 	NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
 
-	EntitySystem& entitySystem = Get<EntitySystem>();
+	IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
 
 	// ホスト情報を更新
 	entitySystem.SetHost(actorServer.IsHost());
@@ -219,8 +224,8 @@ void PlayNetworkController::Update()
 
 				    break;
 			    }
-			    case ProtocolType::UpdateEntityRemove:
-			    {
+				/*case ProtocolType::UpdateEntityRemove:
+				{
 				    Protocol::UpdateEntityRemove message{};
 				    converter.ToMessage(_event.data, message);
 
@@ -229,7 +234,7 @@ void PlayNetworkController::Update()
 				    VCU_LOG("エンティティ削除情報受信 ID={}", message.entityId);
 
 				    break;
-			    }
+				}*/
 			    case ProtocolType::UpdatedDayTime:
 			    {
 				    Protocol::UpdatedDayTime dayTimeMessage{};
@@ -245,6 +250,38 @@ void PlayNetworkController::Update()
 				    Get<HarvestableController>(objHarvestableController)
 				        .BreakAt(breakHarvestableMessage.breakHarvestableId);
 
+				    break;
+			    }
+			    case ProtocolType::EntitySpawned:
+			    {
+				    Protocol::EntitySpawned message{};
+				    converter.ToMessage(_event.data, message);
+
+				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
+				    entitySystem.SpawnFromNetwork(
+				        message.entityId,
+				        message.itemId,
+				        Vec3{ message.positionX, message.positionY, message.positionZ },
+				        Vec3{
+				            message.velocityX,
+				            message.velocityY,
+				            message.velocityZ,
+				        });
+				    break;
+			    }
+			    case ProtocolType::EntityPicked:
+			    {
+				    Protocol::EntityPicked message{};
+				    converter.ToMessage(_event.data, message);
+
+				    if (Get<SessionManager>().RefStatus().name == message.pickerName)
+				    {
+					    VCU_LOG("自分が拾った！！");
+					    Get<Player>(objPlayer).TryAddItem(message.itemId);
+				    }
+
+				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
+				    entitySystem.RemoveFromNetwork(message.entityId);
 				    break;
 			    }
 			    default:
@@ -353,7 +390,6 @@ void PlayNetworkController::Update()
 		}
 
 		// 敵情報更新
-
 		if (actorServer.IsHost() && actorServer.IsInitialized())
 		{
 			GameObject objEnemyController = actorServer.GetEnemyController();
@@ -461,6 +497,35 @@ void PlayNetworkController::Update()
 			}
 		}
 
+		IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
+
+		// エンティティスポーンしたリクエストを処理
+		std::vector<EntitySpawnData> entitySpawnsData = entitySystem.TakeSpawnsData();
+		for (const auto& data : entitySpawnsData)
+		{
+			Protocol::EntitySpawnRequest message{};
+			message.itemId    = data.itemId;
+			message.positionX = data.position.x;
+			message.positionY = data.position.y;
+			message.positionZ = data.position.z;
+			message.velocityX = data.velocity.x;
+			message.velocityY = data.velocity.y;
+			message.velocityZ = data.velocity.z;
+
+			networkSessionManager.Send(message);
+		}
+
+		// エンティティを拾ったリクエストを処理
+		std::vector<EntityPickData> entityPicksData = entitySystem.TakePicksData();
+		for (const auto& data : entityPicksData)
+		{
+			Protocol::EntityPickRequest message{};
+			message.entityId = data.entityId;
+
+			networkSessionManager.Send(message);
+		}
+
+		/*  // エンティティシステムを変更したため無視
 		// エンティティ生成情報送信
 		EntitySystem& entitySystem = Get<EntitySystem>();
 
@@ -468,35 +533,35 @@ void PlayNetworkController::Update()
 
 		for (const EntitySpawnData& spawnData : spawnDataList)
 		{
-			Protocol::UpdateEntitySpawn entityMessage{};
+		    Protocol::UpdateEntitySpawn entityMessage{};
 
-			entityMessage.entityId   = spawnData.entityId;
-			entityMessage.itemId     = spawnData.itemId;
-			entityMessage.sourceType = static_cast<uint8_t>(spawnData.sourceType);
-			entityMessage.sourceId   = spawnData.sourceId;
+		    entityMessage.entityId   = spawnData.entityId;
+		    entityMessage.itemId     = spawnData.itemId;
+		    entityMessage.sourceType = static_cast<uint8_t>(spawnData.sourceType);
+		    entityMessage.sourceId   = spawnData.sourceId;
 
-			entityMessage.positionX = spawnData.position.x;
-			entityMessage.positionY = spawnData.position.y;
-			entityMessage.positionZ = spawnData.position.z;
+		    entityMessage.positionX = spawnData.position.x;
+		    entityMessage.positionY = spawnData.position.y;
+		    entityMessage.positionZ = spawnData.position.z;
 
-			entityMessage.velocityX = spawnData.velocity.x;
-			entityMessage.velocityY = spawnData.velocity.y;
-			entityMessage.velocityZ = spawnData.velocity.z;
+		    entityMessage.velocityX = spawnData.velocity.x;
+		    entityMessage.velocityY = spawnData.velocity.y;
+		    entityMessage.velocityZ = spawnData.velocity.z;
 
-			networkSessionManager.Send(entityMessage);
-			VCU_LOG(
-			    "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
-			    entityMessage.entityId,
-			    entityMessage.itemId,
-			    entityMessage.sourceType,
-			    entityMessage.positionX,
-			    entityMessage.velocityX);
+		    networkSessionManager.Send(entityMessage);
+		    VCU_LOG(
+		        "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
+		        entityMessage.entityId,
+		        entityMessage.itemId,
+		        entityMessage.sourceType,
+		        entityMessage.positionX,
+		        entityMessage.velocityX);
 		}
 
 		// 送信後に送信待ちデータをクリア
 		if (!spawnDataList.empty())
 		{
-			entitySystem.ClearPendingSpawnData();
+		    entitySystem.ClearPendingSpawnData();
 		}
 
 		// エンティティ削除情報送信
@@ -504,20 +569,21 @@ void PlayNetworkController::Update()
 
 		for (const EntityRemoveData& removeData : removeDataList)
 		{
-			Protocol::UpdateEntityRemove removeMessage{};
+		    Protocol::UpdateEntityRemove removeMessage{};
 
-			removeMessage.entityId = removeData.entityId;
+		    removeMessage.entityId = removeData.entityId;
 
-			networkSessionManager.Send(removeMessage);
+		    networkSessionManager.Send(removeMessage);
 
-			VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
+		    VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
 		}
 
 		// 送信後に送信待ちデータをクリア
 		if (!removeDataList.empty())
 		{
-			entitySystem.ClearPendingRemoveData();
+		    entitySystem.ClearPendingRemoveData();
 		}
+		*/
 
 		// 昼夜サイクルの同期
 		// DayControllerを取得
