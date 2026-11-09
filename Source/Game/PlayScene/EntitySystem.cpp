@@ -65,6 +65,7 @@ GameObject EntitySystem::PickNearest(
 	if (!objMinEntity.IsEmpty())
 	{
 		Get<IEntity>(objMinEntity).Pick();  // 拾いましたよ！
+		picksData.push_back(EntityPickData{ .entityId = Get<IEntity>(objMinEntity).GetEntityId() });
 	}
 
 	return objMinEntity;
@@ -93,5 +94,6 @@ void EntitySystem::RemoveFromNetwork(
 	{
 		return;  // すでに消されているなら無視
 	}
+	Get<IEntity>(objEntities[_entityId]).Pick();
 	GetScene().Destroy(objEntities[_entityId]);
 }
