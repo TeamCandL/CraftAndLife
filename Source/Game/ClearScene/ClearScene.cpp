@@ -6,15 +6,15 @@
 
 void ClearScene::Start()
 {
+	AudioManager& audioManager = ManagerRegistry::Ref<AudioManager>();
+
 	// 環境音を停止
-	ManagerRegistry::Ref<AudioManager>().StopAmbientSound();
+	audioManager.StopAmbientSound();
 
-	// ゲームマネージャーを生成
+	// 足音を停止
+	audioManager.StopFootstep();
+
 	Instantiate<GameManager>();
-
-	// クリア画像を生成
 	Instantiate<ClearImage>();
-
-	// クリアBGMを再生
 	Instantiate<ClearBGM>();
 }
