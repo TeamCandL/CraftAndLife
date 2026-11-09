@@ -21,4 +21,5 @@ struct EntitySpawnData
 struct EntityPickData
 {
 	int32_t entityId{};
+	Vec3 position{};
 };

@@ -13,7 +13,12 @@ namespace Protocol
 		void LoadMembers(
 		    MessageRegistry& _registry) override
 		{
-			_registry.AddMember(entityId).AddMember(itemId).AddMember(pickerName);
+			_registry.AddMember(entityId)
+			    .AddMember(itemId)
+			    .AddMember(positionX)
+			    .AddMember(positionY)
+			    .AddMember(positionZ)
+			    .AddMember(pickerName);
 		}
 
 		uint8_t GetChannel() const override
@@ -27,6 +32,9 @@ namespace Protocol
 
 		int32_t entityId{};
 		int32_t itemId{};
+		float positionX{};
+		float positionY{};
+		float positionZ{};
 		std::string pickerName{};
 	};
 }  // namespace Protocol

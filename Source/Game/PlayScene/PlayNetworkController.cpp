@@ -277,7 +277,9 @@ void PlayNetworkController::Update()
 				    if (Get<SessionManager>().RefStatus().name == message.pickerName)
 				    {
 					    VCU_LOG("自分が拾った！！");
-					    Get<Player>(objPlayer).TryAddItem(message.itemId);
+					    Get<Player>(objPlayer).GiveItem(
+					        message.itemId,
+					        Vec3{ message.positionX, message.positionY, message.positionZ });
 				    }
 
 				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();

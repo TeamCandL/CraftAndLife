@@ -23,10 +23,13 @@ struct EntityData
 	Component<DynamicOBB> obb{};           ///< 当たり判定OBB
 	Component<OBBRenderer> obbRenderer{};  ///< OBB描画
 
-	Vec3 velocity{};       ///< 速度
-	ItemId itemId{};       ///< このエンティティをアイテム化したときのId
-	int32_t entityId{};    ///< エンティティId
-	bool picked{ false };  ///< エンティティが神含め誰かに取得されたか true / false
+	Vec3 velocity{};                       ///< 速度
+	ItemId itemId{};                       ///< このエンティティをアイテム化したときのId
+	int32_t entityId{};                    ///< エンティティId
+	bool picked{ false };                  ///< エンティティが誰かに取得されたか true / false
+	bool despawned{ false };               ///< エンティティがデスポーンしたか true /false
+	bool isDestroyedOnCollision{ false };  ///< 何かに触れると消されるか？ true / false
+	bool canHitToPlayer{ false };          ///< プレイヤーへ当たり判定があるか true / false
 
 	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
 	float friction{ 0.9f };       ///< 摩擦力
@@ -65,6 +68,9 @@ struct Entity : ObjectBase<EntityData>, IEntity
 
 	// IEntity を介して継承されました
 	bool IsPicked() const override;
+	void Despawn() override;
 	void Pick() override;
 	bool CanPickup() const override;
+	bool CanHitToPlayer() const override;
+	Vec3 GetPosition() const override;
 };

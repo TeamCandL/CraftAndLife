@@ -9,6 +9,8 @@ struct EntitySystemData
 	std::vector<GameObject> objEntities{};      ///< エンティティのデータ
 	std::vector<EntitySpawnData> spawnsData{};  ///< スポーンデータ
 	std::vector<EntityPickData> picksData{};    ///< 拾ったデータ
+
+	const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };
 };
 
 struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntitySystemNetwork
@@ -16,15 +18,9 @@ struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntityS
 	/// @brief 更新処理
 	void Update() override;
 
-	/// @brief アイテムエンティティをスポーンさせる
+	/// @brief エンティティをスポーンさせる
 	/// @param _itemId アイテムId
 	void Spawn(const ItemId _itemId, const Vec3 _position, const Vec3 _velocity);
-
-	/// @brief 敵の攻撃エンティティ
-	/// @param _itemId 攻撃のアイテムId
-	/// @param _position 攻撃座標
-	/// @param _velocity 速度
-	void FireByEnemy(const ItemId _itemId, const Vec3 _position, const Vec3 _velocity);
 
 	/// @brief エンティティを拾う
 	/// @param pos 回収する座標

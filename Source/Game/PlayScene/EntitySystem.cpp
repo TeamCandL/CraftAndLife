@@ -11,9 +11,33 @@ void EntitySystem::Update()
 		{
 			continue;  // オブジェクトがないなら無視
 		}
-		if (Get<IEntity>(obj).IsPicked())
+		IEntity& entity = Get<IEntity>(obj);
+		if (entity.IsPicked())
 		{
 			GetScene().Destroy(obj);
+			continue;
+		}
+
+		if (entity.CanHitToPlayer())
+		{
+			DynamicOBB* pDynamicOBB = TryGet<DynamicOBB>(obj);
+			if (pDynamicOBB)
+			{
+				for (auto& info : pDynamicOBB->hitGameObjects)
+				{
+					///	取得したオブジェクトの名前を『.content』で取得。
+					///	※ここでは、それがプレイヤーであるかを判定している。
+					Name* pName = TryGet<Name>(info.gameObject);
+					if (pName && pName->content == "Player")
+					{
+						entity.Pick();  // 拾いましたよ！(ダメージを)
+						picksData.push_back(EntityPickData{
+						    .entityId = entity.GetEntityId(),
+						    .position = entity.GetPosition(),
+						});
+					}
+				}
+			}
 		}
 	}
 }
@@ -64,8 +88,12 @@ GameObject EntitySystem::PickNearest(
 
 	if (!objMinEntity.IsEmpty())
 	{
-		Get<IEntity>(objMinEntity).Pick();  // 拾いましたよ！
-		picksData.push_back(EntityPickData{ .entityId = Get<IEntity>(objMinEntity).GetEntityId() });
+		IEntity& entity = Get<IEntity>(objMinEntity);
+		entity.Pick();  // 拾いましたよ！
+		picksData.push_back(EntityPickData{
+		    .entityId = entity.GetEntityId(),
+		    .position = entity.GetPosition(),
+		});
 	}
 
 	return objMinEntity;

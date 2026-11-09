@@ -297,8 +297,8 @@ ItemSystemData::ItemSystemData()
 	                        false,
 	                        craft,
 
-	                        0.0f,
-	                        0,
+	                        10.0f,
+	                        8,
 	                        0 });
 }
 

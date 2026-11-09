@@ -353,8 +353,14 @@ void Enemy::AttackCollider(
 	attacked = true;
 	// あとから修正
 	// Get<AudioManager>().Play(attackSE);
+	const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 
-	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f, forward_, 10.0f);
+	// 蜘蛛の糸攻撃！
+	Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, forward_ * 10.0f);
+
+	// NOTE: エンティティへ移行しますた
+	// GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f,
+	// forward_, 10.0f);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 

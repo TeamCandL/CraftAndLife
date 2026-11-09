@@ -577,6 +577,21 @@ void Player::DeadAnim()
 	}
 }
 
+void Player::GiveItem(
+    const ItemId _itemId,
+    const Vec3 _fromPosition)
+{
+	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(_itemId);
+	if (ITEM_INFO._type == ItemType::EnemyAttack)  // 敵の攻撃ならダメージを
+	{
+		Damaged(ITEM_INFO._damageForEnemy, _fromPosition);
+	}
+	else  // それ以外なら基本的にホットバーかバックパックへ
+	{
+		TryAddItem(_itemId);
+	}
+}
+
 void Player::RegisterStates(
     StateRegistry& registry) const
 {

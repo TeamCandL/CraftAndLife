@@ -158,6 +158,11 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 		attentionLevel = 0;
 	}
 
+	/// @brief アイテムを与える(ホットバーで回収できるアイテムとは限らない)
+	/// @param _itemId アイテムId
+	/// @param _fromPosition どこからアイテムを取得したかの座標
+	void GiveItem(const ItemId _itemId, const Vec3 _fromPosition);
+
 	void RegisterStates(StateRegistry& registry) const;
 
 	Vec3 GetPosition() const override;

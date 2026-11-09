@@ -6,16 +6,25 @@ void Entity::Start()
 {
 	model = Get<ItemSystem>().GetModel(itemId);
 
-	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo();
-	if (ITEM_INFO._type == ItemType::)
+	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(itemId);
+	if (ITEM_INFO._type == ItemType::EnemyAttack)
 	{
-
+		// 敵の攻撃なら落下しないし減速もしない！
+		gravityPerSec          = 0.0f;
+		friction               = 0.0f;
+		isDestroyedOnCollision = true;          // 何かに触れたら消滅します
+		canHitToPlayer         = true;          // プレイヤーへ触れたら取れます
+		pickupCooldownSec      = 99999999.0f;   // 絶対に取得できない
+		if (ITEM_INFO._coolTime > FLT_EPSILON)  // クールタイムが0より大きいなら
+		{
+			despawnTimeLeftSec = ITEM_INFO._coolTime;
+		}
 	}
 }
 
 void Entity::Update()
 {
-	if (picked)
+	if (picked || despawned)
 	{
 		return;  // 取得されているなら無視
 	}
@@ -41,7 +50,7 @@ void Entity::Update()
 		if (despawnTimeLeftSec < 0.0f)
 		{
 			despawnTimeLeftSec = 0.0f;
-			Pick();  // デスポーンは神が拾った判定にしちゃう
+			Despawn();  // デスポーンさせる サーバーへの送信はしない
 		}
 	}
 
@@ -64,6 +73,12 @@ void Entity::Update()
 
 	transform.position = transform.position + velocity * DELTA_TIME;
 
+	if (isDestroyedOnCollision && isHitCollider)
+	{
+		Despawn();  // 地面に触れて自然消滅
+		return;
+	}
+
 	if (isHitCollider)
 	{
 		velocity *= std::pow(friction * 0.01f, DELTA_TIME);
@@ -76,7 +91,7 @@ void Entity::Update()
 
 void Entity::Draw()
 {
-	if (picked)
+	if (picked || despawned)
 	{
 		return;  // 取得されているなら無視
 	}
@@ -125,6 +140,11 @@ bool Entity::IsPicked() const
 	return picked;
 }
 
+void Entity::Despawn()
+{
+	despawned = true;
+}
+
 void Entity::Pick()
 {
 	picked = true;
@@ -132,5 +152,15 @@ void Entity::Pick()
 
 bool Entity::CanPickup() const
 {
-	return pickupCooldownSec <= 0.0f && !picked && Get<ItemSystem>();
+	return pickupCooldownSec <= 0.0f && !picked && !despawned;
+}
+
+bool Entity::CanHitToPlayer() const
+{
+	return canHitToPlayer;
+}
+
+Vec3 Entity::GetPosition() const
+{
+	return transform.position;
 }
