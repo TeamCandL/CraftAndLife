@@ -225,7 +225,8 @@ void SessionManager::UpdatePlayers(
     const std::string_view _names,
     SizedBuffer<float>& _positions,
     SizedBuffer<float>& _rotations,
-    SizedBuffer<int32_t>& _haveItemIds)
+    SizedBuffer<int32_t>& _haveItemIds,
+    SizedBuffer<int32_t>& _attentionLevel)
 {
 	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
 	auto& playerStatus           = inSessionStatus_.playersStatus;
@@ -267,6 +268,12 @@ void SessionManager::UpdatePlayers(
 			break;
 		}
 
+		if (i >= _attentionLevel.Size())
+		{
+			VCU_LOG("取得した名前分の注目度データのサイズが足りない({}個以上必要)", i);
+			break;
+		}
+
 		// CRLF 対策OtherPlayer
 		if (!line.empty() && line.back() == '\r')
 		{
@@ -284,8 +291,9 @@ void SessionManager::UpdatePlayers(
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_X],
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_Y],
 		};
-		playerStatus.haveItemId  = _haveItemIds[i];
-		playerStatus.updatedFlag = !playerStatus.updatedFlag;  // 更新フラグを反転
+		playerStatus.haveItemId     = _haveItemIds[i];
+		playerStatus.attentionLevel = _attentionLevel[i];
+		playerStatus.updatedFlag    = !playerStatus.updatedFlag;  // 更新フラグを反転
 
 		// VCU_LOG(
 		//     "Update position[{}] = ({}, {}, {})",
