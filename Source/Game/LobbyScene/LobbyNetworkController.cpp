@@ -44,9 +44,6 @@ void LobbyNetworkController::Update()
 				    converter.ToMessage(_event.data, protocol);
 
 				    Get<SessionManager>().SetMemberNames(protocol.names);
-
-				    // メンバーリスト更新されたよ！！
-				    Get<MemberList>(objMemberList).UpdateMemberList();
 				    break;
 			    }
 			    case ProtocolType::StartedGame:
