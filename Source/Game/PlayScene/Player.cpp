@@ -151,6 +151,7 @@ void Player::Update()
 	else if (helthState == HelthState_Dead)
 	{
 		DeadAnim();
+		Dead();
 	}
 
 	// お試しで出してるエンティティ
