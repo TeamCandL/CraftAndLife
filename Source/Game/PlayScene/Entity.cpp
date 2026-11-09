@@ -73,19 +73,27 @@ void Entity::Update()
 
 	transform.position = transform.position + velocity * DELTA_TIME;
 
-	if (isDestroyedOnCollision && isHitCollider)
+	if (isDestroyedOnCollision)
 	{
-		Despawn();  // 地面に触れて自然消滅
-		return;
+		transform.position.y = HEIGHT;
 	}
 
-	if (isHitCollider)
+	// TODO: isDestroyedOnCollisionこれうそ
+	if (isDestroyedOnCollision)
 	{
-		velocity *= std::pow(friction * 0.01f, DELTA_TIME);
+		// Despawn();  // 地面に触れて自然消滅
+		return;
 	}
 	else
 	{
-		velocity *= std::pow(friction, DELTA_TIME);
+		if (isHitCollider)
+		{
+			velocity *= std::pow(friction * 0.01f, DELTA_TIME);
+		}
+		else
+		{
+			velocity *= std::pow(friction, DELTA_TIME);
+		}
 	}
 }
 
@@ -138,6 +146,11 @@ void Entity::SetVelocity(
 bool Entity::IsPicked() const
 {
 	return picked;
+}
+
+bool Entity::IsDespawned() const
+{
+	return despawned;
 }
 
 void Entity::Despawn()

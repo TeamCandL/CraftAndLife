@@ -20,6 +20,7 @@
 #include "StateRegistry.h"
 #include <Game/Manager/AudioManager.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
+#include <Game/PlayScene/DebugPoint.h>
 
 void Player::Start()
 {
@@ -584,6 +585,7 @@ void Player::GiveItem(
 	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(_itemId);
 	if (ITEM_INFO._type == ItemType::EnemyAttack)  // 敵の攻撃ならダメージを
 	{
+		GetScene().Instantiate<DebugPoint>(_fromPosition);
 		Damaged(ITEM_INFO._damageForEnemy, _fromPosition);
 	}
 	else  // それ以外なら基本的にホットバーかバックパックへ

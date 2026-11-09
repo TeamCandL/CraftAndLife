@@ -118,7 +118,7 @@ struct PlayerData
 
 	bool isHoldShield{ false };  ///< シールドを構えているか true / false
 
-	float shieldGurdAngleRad{ DirectX::XM_PI / 180.0f * 40.0f };  ///< シールドで防げる正面に対する攻撃の角度
+	float shieldGurdAngleRad{ DirectX::XM_PI / 180.0f * 90.0f };  ///< シールドで防げる正面に対する攻撃の角度
 };
 
 /// @brief プレイヤー

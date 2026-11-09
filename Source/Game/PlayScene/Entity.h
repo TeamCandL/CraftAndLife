@@ -68,6 +68,7 @@ struct Entity : ObjectBase<EntityData>, IEntity
 
 	// IEntity を介して継承されました
 	bool IsPicked() const override;
+	bool IsDespawned() const override;
 	void Despawn() override;
 	void Pick() override;
 	bool CanPickup() const override;

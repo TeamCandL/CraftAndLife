@@ -37,6 +37,9 @@ class IEntity
 	/// @brief 拾えますか？
 	/// @return 拾えます！true / false
 	virtual bool CanPickup() const = 0;
+	/// @brief デスポーンしていますか？
+	/// @return デスポーンしています true / false
+	virtual bool IsDespawned() const = 0;
 
 	/// @brief プレイヤーへ当たりますか？
 	/// @return 当たります true / false

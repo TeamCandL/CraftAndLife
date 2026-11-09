@@ -12,7 +12,7 @@ void EntitySystem::Update()
 			continue;  // オブジェクトがないなら無視
 		}
 		IEntity& entity = Get<IEntity>(obj);
-		if (entity.IsPicked())
+		if (entity.IsPicked() || entity.IsDespawned())
 		{
 			GetScene().Destroy(obj);
 			continue;

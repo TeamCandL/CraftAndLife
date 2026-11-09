@@ -43,7 +43,7 @@ void PlayNetworkController::Update()
 {
 	static int testing{};
 	testing++;
-	if (testing % 5 != 0)
+	if (testing % 6 != 0)
 	{
 		return;
 	}
@@ -522,7 +522,10 @@ void PlayNetworkController::Update()
 		for (const auto& data : entityPicksData)
 		{
 			Protocol::EntityPickRequest message{};
-			message.entityId = data.entityId;
+			message.entityId  = data.entityId;
+			message.positionX = data.position.x;
+			message.positionY = data.position.y;
+			message.positionZ = data.position.z;
 
 			networkSessionManager.Send(message);
 		}
