@@ -15,6 +15,7 @@ enum ItemType
 	Materials,    ///<	素材アイテム
 	Medicals,     ///<	蘇生アイテム
 	Backpack,     ///<	バックパック
+	EnemyAttack,  ///<	敵の攻撃アイテム
 	ItemTypeMax,  ///<	その他アイテム
 };
 

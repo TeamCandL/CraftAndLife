@@ -288,6 +288,18 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
+	allItemList.push_back({ 20,
+	                        ItemType::EnemyAttack,
+	                        "糸攻撃",
+	                        "Image/EmptyItem.png",
+	                        "Model/HandBackPack/HandString.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0 });
 }
 
 ItemInfo ItemSystem::GetInfo(
