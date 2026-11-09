@@ -5,6 +5,12 @@
 void Entity::Start()
 {
 	model = Get<ItemSystem>().GetModel(itemId);
+
+	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo();
+	if (ITEM_INFO._type == ItemType::)
+	{
+
+	}
 }
 
 void Entity::Update()
@@ -126,5 +132,5 @@ void Entity::Pick()
 
 bool Entity::CanPickup() const
 {
-	return pickupCooldownSec <= 0.0f && !picked;
+	return pickupCooldownSec <= 0.0f && !picked && Get<ItemSystem>();
 }

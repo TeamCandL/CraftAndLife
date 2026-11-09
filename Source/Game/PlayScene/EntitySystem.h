@@ -16,9 +16,15 @@ struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntityS
 	/// @brief 更新処理
 	void Update() override;
 
-	/// @brief エンティティをスポーンさせる
+	/// @brief アイテムエンティティをスポーンさせる
 	/// @param _itemId アイテムId
 	void Spawn(const ItemId _itemId, const Vec3 _position, const Vec3 _velocity);
+
+	/// @brief 敵の攻撃エンティティ
+	/// @param _itemId 攻撃のアイテムId
+	/// @param _position 攻撃座標
+	/// @param _velocity 速度
+	void FireByEnemy(const ItemId _itemId, const Vec3 _position, const Vec3 _velocity);
 
 	/// @brief エンティティを拾う
 	/// @param pos 回収する座標
