@@ -43,7 +43,7 @@ void PlayNetworkController::Update()
 {
 	static int testing{};
 	testing++;
-	if (testing % 20 != 0)
+	if (testing % 5 != 0)
 	{
 		return;
 	}
