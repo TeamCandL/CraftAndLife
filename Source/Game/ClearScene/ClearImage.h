@@ -1,17 +1,31 @@
 #pragma once
 #include <Game/Game.h>
+#include "ResultType.h"
 
-/// @brief クリア画像のデータ
 struct ClearImageData
 {
-	Resource<Texture> texture{ "Image/Clear/Clear.png" };
+	Resource<Texture> texture;
 
 	Component<UITransform> transform{};
 	Component<UIImage> image{};
+
+	ClearImageData(
+	    ResultType _resultType)
+	{
+		if (_resultType == ResultType::Clear)
+		{
+			texture = Resource<Texture>{ "Image/Clear/Clear.png" };
+		}
+		else
+		{
+			texture = Resource<Texture>{ "Image/GAMEOVER/GAMEOVER.png" };
+		}
+	}
 };
 
-/// @brief クリア画像
 struct ClearImage : ObjectBase<ClearImageData>
 {
+	using ObjectBase<ClearImageData>::ObjectBase;
+
 	void Start() override;
 };

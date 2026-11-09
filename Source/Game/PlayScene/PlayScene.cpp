@@ -34,16 +34,19 @@ void PlayScene::Start()
 	ManagerRegistry::Ref<AudioManager>().SetBGMStop();
 
 	Instantiate<GameManager>();
+
 	GameObject objSky = Instantiate<Sky>();
 
 	GameObject objHarvestableController = Instantiate<HarvestableController>();
 	GameObject objTerrain               = Instantiate<MAP>(objHarvestableController);
+
 	// GameObject objTerrain = Instantiate<Terrain>();
 
 	GameObject objDayController = Instantiate<DayController>(objSky);
 
 	GameObject objMainCamera = Instantiate<MainCamera>();
 	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
+
 	Instantiate<DeathUI>(objPlayer, true);
 
 	// ホスト判定オブジェクトを生成
@@ -51,13 +54,14 @@ void PlayScene::Start()
 
 	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 
-	// debaug用に敵を生成する
+	// デバッグ用に敵を生成する
 	// GameObject objEnemyController = Instantiate<EnemyController>();
-	// GameObject objSampleEnemy     = Instantiate<Enemy>(objEnemyController, EnemyType::Dragon);
+	// GameObject objSampleEnemy =
+	//     Instantiate<Enemy>(objEnemyController, EnemyType::Dragon);
 
 	Instantiate<Reticle>();
 
-	// ミニマップを生成してプレイヤーを渡す
+	// ネットワークコントローラーを生成
 	Instantiate<PlayNetworkController>(
 	    objPlayer,
 	    objMainCamera,
@@ -65,12 +69,12 @@ void PlayScene::Start()
 	    objDayController,
 	    objHarvestableController);
 
+	// プレイ画面UIを生成
 	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController);
-	// Instantiate<Harvestable>(HarvestableType::Tree, Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f);
 
-	// クリア演出
+	// クリア・ゲームオーバー共通フェード
 	GameObject objClearFade = Instantiate<ClearFade>();
 
-	// クリアシーン切り替え用
+	// クリア・ゲームオーバー切り替え判定
 	Instantiate<ClearSceneTrigger>(objDayController, objClearFade);
 }
