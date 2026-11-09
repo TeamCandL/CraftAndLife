@@ -28,7 +28,7 @@ inline void from_json(
 	_data.text.content = _j.at("content").get<std::string>();
 
 	FontLoadConfig config;
-	config.fontSize = 64;
+	config.fontSize = _j.at("fontSize").get<float>();
 
 	Resource<ResourceType::Font> font{ config };
 	_data.text.font = font;
