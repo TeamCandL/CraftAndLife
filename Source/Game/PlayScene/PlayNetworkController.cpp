@@ -84,8 +84,12 @@ void PlayNetworkController::Update()
 				        message.rotations.Size(),
 				        message.haveItemIds.Size());
 
-				    Get<SessionManager>()
-				        .UpdatePlayers(message.playerNames, message.positions, message.rotations, message.haveItemIds);
+				    Get<SessionManager>().UpdatePlayers(
+				        message.playerNames,
+				        message.positions,
+				        message.rotations,
+				        message.haveItemIds,
+				        message.attentionLevels);
 
 				    break;
 			    }
@@ -264,7 +268,9 @@ void PlayNetworkController::Update()
 		static int32_t counter{};
 		message.flag = counter++;
 
-		message.haveItemId = Get<PlayerHand>(Get<Player>(objPlayer).Data().objPlayerHand).Data().haveItemId;
+		message.haveItemId     = Get<PlayerHand>(Get<Player>(objPlayer).Data().objPlayerHand).Data().haveItemId;
+		message.attentionLevel = Get<Player>(objPlayer).Data().attentionLevel;
+		VCU_LOG("送信する注目度: {}", message.attentionLevel);
 
 		// VCU_LOG("更新処理送信: {}", counter);
 

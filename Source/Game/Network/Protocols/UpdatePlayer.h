@@ -26,6 +26,7 @@ namespace Protocol
 			    .AddMember(rotationY)
 
 			    .AddMember(haveItemId)
+			    .AddMember(attentionLevel)
 			    .AddMember(flag);
 		}
 
@@ -47,6 +48,8 @@ namespace Protocol
 		float rotationY{};  ///< ボディの回転(y)
 
 		int32_t haveItemId{};  ///< 持っているアイテムのId
+
+		int32_t attentionLevel{};  ///< 注目度
 
 		int32_t flag{};  ///< フラグ
 	};

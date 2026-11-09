@@ -39,7 +39,8 @@ class SessionManager : public IManager
 	    const std::string_view _names,
 	    SizedBuffer<float>& _positions,
 	    SizedBuffer<float>& _rotations,
-	    SizedBuffer<int32_t>& _haveItemIds);
+	    SizedBuffer<int32_t>& _haveItemIds,
+	    SizedBuffer<int32_t>& _attentionLevel);
 
 	/// @brief プレイヤーステータスを参照する
 	/// @param _playerName プレイヤー名
