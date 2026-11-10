@@ -6,16 +6,23 @@
 
 struct OtherPlayerData
 {
+	const Vec3 OBB_OFFSET{ 0.0f, 0.003f, 0.0f };  ///< OBBのオフセット(位置)
+	const float OBB_SCALE{ 0.005f };              ///< OBBのスケール
+
 	OtherPlayerData(
 	    const std::string& _name) :
 	    name{ _name }
 	{
+		tag.Add("OtherPlayer");
 	}
 
 	Resource<Shader> shader{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
 
 	Component<Name> name{};
+	Component<Tag> tag{};
 	Component<Transform> transform{ Vec3::Zero(), Vec3::One() * 200.0f };
+	Component<StaticOBB> obb{};
+	Component<OBBRenderer> obbRenderer{};
 
 	std::array<Resource<Model>, PlayerRoleType_Max> models{
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",

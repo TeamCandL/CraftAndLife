@@ -4,38 +4,62 @@
 #include "../Player.h"
 #include "../MainCamera.h"
 #include <Game/System/RaycastSystem.h>
+#include "../OtherPlayer.h"
+#include "../UI/HotBar.h"
 
 void ItemActionMedicals::Action(
     const ItemId _itemId,
     PlayerData& _playerData,
     PlayerHandData& _playerHandData)
 {
+	HotBar& hotBar = Get<HotBar>(_playerData.objHotbar);
+	if (!hotBar.CanRemoveConsumableItem())
+	{
+		return;
+	}
+
 	Vec3 positionFrom = _playerData.transform.position + Vec3::Up() * 1.0f;
 	Vec3 positionTo   = Get<MainCamera>(_playerData.objMainCamera).GetFocusPosition();
 
-	/*std::vector<RaycastHitInfo> hitsInfo =
-	    Get<RaycastSystem>().RaycastAll(positionFrom, (positionTo - positionFrom).Normalize(), ACTION_RANGE);*/
+	std::vector<RaycastHitInfo> hitsInfo =
+	    Get<RaycastSystem>().RaycastAll(positionFrom, (positionTo - positionFrom).Normalize(), ACTION_RANGE);
 
-	// for (auto& hitInfo : hitsInfo)
-	//{
-	//	if (hitInfo.pObject)
-	//	{
-	//		GameObject objHit = hitInfo.pObject->ToGameObject();
-	//		Name* pName       = TryGet<Name>(objHit);
-	//		if (pName)
-	//		{
-	//			VCU_LOG("{}に当たった！", pName->content);
+	bool isHealing{ false };
+	for (auto& hitInfo : hitsInfo)
+	{
+		if (hitInfo.pObject)
+		{
+			GameObject objHit = hitInfo.pObject->ToGameObject();
+			Tag* pTag         = TryGet<Tag>(objHit);
+			if (pTag && pTag->Has("OtherPlayer"))
+			{
+				isHealing = true;
+				if (objHit == objHealTargetOtherPlayer && Get<OtherPlayer>(objHit).Data().hp <= 0)
+				{
+					healTimeLeftSec -= Get<DeltaTime>();
+					if (healTimeLeftSec <= 0.0f)
+					{
+						healTimeLeftSec = HEAL_TIME;
+						hotBar.RemoveConsumableItem();
+						Get<OtherPlayer>(objHit).Data().hp = RESPAWN_HEALTH;
+					}
+				}
+				else
+				{
+					if (Get<OtherPlayer>(objHit).Data().hp <= 0)
+					{
+						objHealTargetOtherPlayer = objHit;
+						healTimeLeftSec          = HEAL_TIME;
+					}
+				}
+			}
+		}
+	}
 
-	//			const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(_itemId);
-
-	//			// ハーベスタブルオブジェクトならダメージを与える
-	//			if (pName->content == "ハーベスタブル")
-	//			{
-	//
-	//			}
-	//		}
-	//	}
-	//}
+	if (!isHealing)
+	{
+		healTimeLeftSec = HEAL_TIME;
+	}
 }
 
 void ItemActionMedicals::Update(
@@ -71,15 +95,10 @@ void ItemActionMedicals::Update(
 
 	if (_playerHandData.isActing)
 	{
-		if (_playerHandData.transformAnimator.onFinished)
-		{
-			Action(_itemId, _playerData, _playerHandData);
-		}
-
+		Action(_itemId, _playerData, _playerHandData);
 		if (_playerHandData.transformAnimator.isFinished)
 		{
 			_playerHandData.isActing = false;
-			Action(_itemId, _playerData, _playerHandData);
 		}
 	}
 	else

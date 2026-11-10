@@ -5,7 +5,11 @@
 #include "OtherPlayerHand.h"
 #include "Player/PlayerAnimType.h"
 
-void OtherPlayer::Start() {}
+void OtherPlayer::Start()
+{
+	obb.offset = OBB_OFFSET;
+	obb.scale  = Vec3::One() * OBB_SCALE;
+}
 
 void OtherPlayer::Update()
 {
