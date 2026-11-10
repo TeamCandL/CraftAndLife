@@ -31,7 +31,7 @@ struct PlayerData
 	};
 	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
-	Component<Transform> transform{};
+	Component<Transform> transform{ Vec3{ -88.0, 0.0, -91.0 } };
 	Component<TransformAnimator> transformAnimator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
 	bool isAnimPreviewingDebug{};                      ///< アニメーションテスト用ふらぐ
 	Component<RigidBody> rigidBody{};
