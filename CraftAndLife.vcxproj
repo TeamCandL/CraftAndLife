@@ -462,6 +462,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionMedicals.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionShield.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />

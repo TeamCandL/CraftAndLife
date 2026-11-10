@@ -8,7 +8,7 @@ struct OtherPlayerData
 {
 	OtherPlayerData(
 	    const std::string& _name) :
-	    name{ _name }
+	    name{ std::string{ "#" } + _name }
 	{
 	}
 

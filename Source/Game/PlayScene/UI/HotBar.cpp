@@ -263,7 +263,7 @@ bool HotBar::SwapConsumableItem(
     ItemId _newItemId)
 {
 	ItemInfo info = Get<ItemSystem>().GetInfo(_newItemId);
-	if (info._type != ItemType::Consumables && info._type != ItemType::Arrow)
+	if (info._type != ItemType::Consumables && info._type != ItemType::Medicals && info._type != ItemType::Arrow)
 	{
 		_oldItemStack = ItemStack::EmptyStack();
 		return false;
@@ -375,6 +375,7 @@ size_t HotBar::GetSlotIndexFrom(
 		break;
 	case ItemType::Consumables:
 	case ItemType::Arrow:
+	case ItemType::Medicals:
 		slotIndex = CONSUMABLE_SLOT_INDEX;
 		break;
 	case ItemType::Tools:
