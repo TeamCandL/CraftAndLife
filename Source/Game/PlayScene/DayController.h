@@ -49,8 +49,7 @@ struct DayControllerData
 	// 現在の日付（1日目から開始）
 	int32_t currentDay{ 1 };
 
-	// 日付が変更されたか
-	bool isDayChanged{ false };
+	bool isDayChanged{ true };  ///< 日付が変更されたフレームか
 
 	float currentTimeSec{};
 	GameObject objSky{};
@@ -98,5 +97,12 @@ struct DayController : ObjectBase<DayControllerData>
 	bool IsNight() const
 	{
 		return Data().isNight;
+	}
+
+	/// @brief	現在のフレームで日付が変更されたかどうかを取得する
+	/// @return
+	bool IsDayChanged() const
+	{
+		return isDayChanged;
 	}
 };

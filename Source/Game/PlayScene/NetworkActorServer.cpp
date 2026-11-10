@@ -53,6 +53,16 @@ void NetworkActorServer::Update()
 		DayController& dayController = Get<DayController>(Data().objDayController);
 		VCU_LOG("現在の日付: {}", dayController.GetCurrentDay());
 
+		if (dayController.IsDayChanged())
+		{
+			Data().isInitialized = false;
+		}
+		if (!IsInitialized())
+		{
+			Data().isSpawnEnemies = false;
+			Data().isInitialized  = true;
+		}
+
 		if (dayController.IsNight())
 		{
 			CreateEnemies();
@@ -114,13 +124,13 @@ void NetworkActorServer::CreateBoss(
 
 void NetworkActorServer::CreateEnemies()
 {
-	if (IsInitialized())
+	if (IsSpawnEnemies())
 	{
 		return;
 	}
 
 	// 敵管理オブジェクトを生成
-	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+	Data().objEnemyController = GetScene().Instantiate<EnemyController>(objPlaySceneUIController);
 
 	// 自分自身のGameObjectをEnemyControllerに渡す
 	Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
@@ -142,7 +152,7 @@ void NetworkActorServer::CreateEnemies()
 	}
 
 	//  生成済みにする
-	Data().isInitialized = true;
+	Data().isSpawnEnemies = true;
 }
 
 void NetworkActorServer::EnemyStateRegistries(

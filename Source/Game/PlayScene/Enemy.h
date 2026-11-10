@@ -22,7 +22,7 @@ namespace EnemyParam
 	const std::vector<bool> HasLongAttack{ false, false, true, false, true };            /// 遠距離攻撃の有無
 	const std::vector<float> VisibilityDist{ 50.0f, 100.0f, 80.0f, 40.0f, 140.0f };      /// 視認距離
 	const std::vector<float> VisibilityAngle{ 180.0f, 200.0f, 300.0f, 240.0f, 260.0f };  /// 視認角度
-	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.5f, 1.0f, 3.0f };             /// 攻撃クールタイム
+	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.0f, 1.0f, 3.0f };             /// 攻撃クールタイム
 	const std::vector<float> RotationAnglePerSec{ 10.0f, 7.0f, 15.0f, 13.0f, 10.5f };    /// 回転速度
 	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };                      /// モデルの大きさ
 	const std::vector<int32_t> DropItemId{ 9, 9, 10, 11, 12 };                           /// ドロップアイテムID
@@ -146,7 +146,8 @@ struct EnemyData
 	    bool isBoss_) :
 	    transform{ position_ },
 	    enemyType{ static_cast<EnemyType>(enemyType_) },
-	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] }
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] },
+	    isBoss{ isBoss_ }
 	{
 		objEnemyController = objEnemyController_;
 		isBoss             = isBoss_;

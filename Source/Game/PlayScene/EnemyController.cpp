@@ -2,6 +2,7 @@
 #include "EnemyController.h"
 #include "Enemy.h"
 #include "UI/BossInfo.h"
+#include "PlaySceneUIController.h"
 
 void EnemyController::Start() {}
 
@@ -16,7 +17,7 @@ void EnemyController::AddEnemy(
 
 	if (Get<Enemy>(_enemy).Data().isBoss)
 	{
-		Get<BossInfo>(objBossInfo).SetBoss(_enemy);
+		Get<BossInfo>(Get<PlaySceneUIController>(objPlaySceneUIController).Data().objBossInfo).SetBoss(_enemy);
 	}
 }
 
