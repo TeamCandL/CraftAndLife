@@ -162,6 +162,10 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 		attentionLevel = 0;
 	}
 
+	/// @brief リスポーン
+	/// @param _hp リスポーン時のHP
+	void Respawn(const int32_t _hp);
+
 	/// @brief アイテムを与える(ホットバーで回収できるアイテムとは限らない)
 	/// @param _itemId アイテムId
 	/// @param _fromPosition どこからアイテムを取得したかの座標
