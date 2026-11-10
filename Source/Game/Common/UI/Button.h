@@ -19,7 +19,7 @@ namespace UI
 		    textureHover{ _hover },
 		    texturePush{ _push },
 		    transform{ _begin, _scale },
-		    text{ font, _color, _content }
+		    text{ _font, _color, _content }
 		{
 		}
 

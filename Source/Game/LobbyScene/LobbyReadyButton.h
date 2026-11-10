@@ -7,6 +7,8 @@ struct LobbyReadyButtonData
 	std::string_view textureReadyFileName{ "Image/Lobby/ReadyButton.png" };
 	std::string_view textureWaitingFileName{ "Image/Lobby/WaitingButton.png" };
 	std::string_view textureGameStartFileName{ "Image/Lobby/GameStartButton.png" };
+	std::string_view textureNormalFileName{ "Image/Lobby/SelectedButton.png" };
+	std::string_view textureSelectedFileName{ "Image/Lobby/SelectedButton.png" };
 
 	GameObject objButton{};  ///< ボタンオブジェクト
 	Vec2 begin{ 720, 840 };  ///< ボタンの開始位置ピクセル
