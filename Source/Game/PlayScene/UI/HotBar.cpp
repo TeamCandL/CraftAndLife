@@ -284,6 +284,34 @@ bool HotBar::SwapItem(
 	return SwapItemImpl(_oldItemStack, _newItemId, slotIndex);
 }
 
+std::vector<ItemStack> HotBar::GetAllSlotItem()
+{
+	std::vector<ItemStack> itemStacks;
+	for (int i = 0; i < slots.size(); i++)
+	{
+		// バッグは取得させない
+		if (i == BAG_SLOT_INDEX)
+			continue;
+		SlotItem& slotItem = Get<SlotItem>(Get<Slot>(slots[i]).Data().slotItem);
+		// 空のアイテムは取得させない
+		if (slotItem.Data().id == EMPTY_ITEM_ID || slotItem.Data().count == 0)
+			continue;
+
+		itemStacks.emplace_back(slotItem.Data().id, slotItem.Data().count);
+	}
+	return itemStacks;
+}
+
+void HotBar::ClearAllSlotItem()
+{
+	for (int i = 0; i < slots.size(); i++)
+	{
+		if (i == BAG_SLOT_INDEX)
+			continue;
+		Get<SlotItem>(Get<Slot>(slots[i]).Data().slotItem).Reset();
+	}
+}
+
 bool HotBar::CanRemoveItem(
     ItemType _itemType,
     int _count)
