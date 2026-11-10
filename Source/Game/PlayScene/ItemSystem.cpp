@@ -239,7 +239,12 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        0,
 
-	                        PlayerJobType_Archer });
+	                        PlayerJobType_Archer,
+	                        Vec3{
+	                            1,
+	                            1,
+	                            1,
+	                        } });
 	craft.clear();
 	craft.push_back({ 7, 3 });
 	craft.push_back({ 8, 10 });
@@ -320,8 +325,36 @@ ItemSystemData::ItemSystemData()
 	                        10.0f,
 	                        8,
 	                        0,
-	                        8 });
+	                        8,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
 	allItemList.push_back({ 21, ItemType::EnemyAttack, "近距離攻撃", {}, {}, false, craft, 10.0f, 15, 0, 15 });
+	allItemList.push_back({ 22,
+	                        ItemType::PlayerAttackSword,
+	                        "プレイヤー剣の攻撃",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        1.0f,
+	                        5,
+	                        0,
+	                        5,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 2 } });
+	allItemList.push_back({ 23,
+	                        ItemType::PlayerAttackSword,
+	                        "プレイヤー大剣の攻撃",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        1.0f,
+	                        5,
+	                        0,
+	                        5,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 5 } });
 }
 
 ItemInfo ItemSystem::GetInfo(
@@ -341,6 +374,7 @@ ItemInfo ItemSystem::GetInfo(
 	info._damageForObject = allItemList[id]._damageForObject;
 
 	info.canUseJobType = allItemList[id].canUseJobType;
+	info.colliderSize  = allItemList[id].colliderSize;
 	return info;
 }
 

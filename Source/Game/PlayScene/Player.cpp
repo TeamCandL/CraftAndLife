@@ -189,16 +189,16 @@ void Player::Update()
 		Dead();
 	}
 
-	// お試しで出してるエンティティ
-	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
-	{
-		SpawnItem(9);
-	}
+	//// お試しで出してるエンティティ 辞めました。
+	// if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
+	//{
+	//	SpawnItem(9);
+	// }
 
-	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
+	/*if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		SpawnItem(8);
-	}
+	    SpawnItem(8);
+	}*/
 
 	// 近くのアイテムを拾う
 	UpdatePickNearestItem();
@@ -209,7 +209,6 @@ void Player::Update()
 		// 選択スロットのアイテムを投げ捨てる
 		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 		{
-
 			if (hotbar.CanRemoveSelectedItem())
 			{
 				ItemId selectedItemId = hotbar.GetSelectedItemId();
@@ -237,6 +236,10 @@ void Player::Update()
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
 		Damaged(10, transform.position);
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::L))
+	{
+		Respawn(maxHP);
 	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
@@ -610,6 +613,13 @@ void Player::DeadAnim()
 		animIndex = PlayerAnimType_Die;
 		animSpeed = 0.0f;
 	}
+}
+
+void Player::Respawn(
+    const int32_t _hp)
+{
+	hp = _hp;
+	SetHelthState(HelthState_Live);
 }
 
 void Player::GiveItem(

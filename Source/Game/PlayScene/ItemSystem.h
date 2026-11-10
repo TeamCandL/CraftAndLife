@@ -6,17 +6,18 @@
 
 enum ItemType
 {
-	Weapons = 0,  ///<	武器
-	Tools,        ///<	道具
-	WeaponBow,    ///<	弓
-	Shield,       ///<	盾
-	Arrow,        ///<	矢
-	Consumables,  ///<	消費アイテム
-	Materials,    ///<	素材アイテム
-	Medicals,     ///<	蘇生アイテム
-	Backpack,     ///<	バックパック
-	EnemyAttack,  ///<	敵の攻撃アイテム
-	ItemTypeMax,  ///<	その他アイテム
+	Weapons = 0,        ///<	武器
+	Tools,              ///<	道具
+	WeaponBow,          ///<	弓
+	Shield,             ///<	盾
+	Arrow,              ///<	矢
+	Consumables,        ///<	消費アイテム
+	Materials,          ///<	素材アイテム
+	Medicals,           ///<	蘇生アイテム
+	Backpack,           ///<	バックパック
+	EnemyAttack,        ///<	敵の攻撃アイテム
+	PlayerAttackSword,  ///<	プレイヤーの剣攻撃アイテム
+	ItemTypeMax,        ///<	その他アイテム
 };
 
 struct CraftInfo
@@ -40,6 +41,8 @@ struct ItemInfo
 	int32_t _damageForMob{};
 
 	PlayerJobType canUseJobType{};
+
+	Vec3 colliderSize{};  ///< コライダーの大きさ
 };
 
 struct ItemAllInfo
@@ -59,6 +62,8 @@ struct ItemAllInfo
 	const int32_t _damageForMob{};     ///<	モブへの攻撃力
 
 	PlayerJobType canUseJobType{ PlayerJobType_Max };  ///<	使用可能な職業タイプ
+
+	Vec3 colliderSize{};  ///< コライダーの大きさ
 };
 
 struct ItemStack

@@ -42,10 +42,11 @@ void PlayScene::Start()
 
 	// GameObject objTerrain = Instantiate<Terrain>();
 
-	GameObject objDayController = Instantiate<DayController>(objSky);
+	GameObject objDayController         = Instantiate<DayController>(objSky);
+	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 
 	GameObject objMainCamera = Instantiate<MainCamera>();
-	GameObject objPlayer     = Instantiate<Player>(objMainCamera);
+	GameObject objPlayer     = Instantiate<Player>(objMainCamera, objOtherPlayerController);
 
 	Instantiate<DeathUI>(objPlayer, true);
 
@@ -56,8 +57,6 @@ void PlayScene::Start()
 	// ホスト判定オブジェクトを生成
 	GameObject objNetworkActorServer =
 	    Instantiate<NetworkActorServer>(objPlayer, objDayController, objPlaySceneUIController);
-
-	// GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 
 	// デバッグ用に敵を生成する
 	// GameObject objEnemyController = Instantiate<EnemyController>();
@@ -72,7 +71,8 @@ void PlayScene::Start()
 	    objMainCamera,
 	    objNetworkActorServer,
 	    objDayController,
-	    objHarvestableController);
+	    objHarvestableController,
+	    objOtherPlayerController);
 
 	// クリア・ゲームオーバー共通フェード
 	GameObject objClearFade = Instantiate<ClearFade>();

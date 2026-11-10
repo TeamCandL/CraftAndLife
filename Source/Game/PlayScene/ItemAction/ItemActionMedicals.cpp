@@ -6,6 +6,7 @@
 #include <Game/System/RaycastSystem.h>
 #include "../OtherPlayer.h"
 #include "../UI/HotBar.h"
+#include "../OtherPlayerController.h"
 
 void ItemActionMedicals::Action(
     const ItemId _itemId,
@@ -42,6 +43,8 @@ void ItemActionMedicals::Action(
 						healTimeLeftSec = HEAL_TIME;
 						hotBar.RemoveConsumableItem();
 						Get<OtherPlayer>(objHit).Data().hp = RESPAWN_HEALTH;
+						Get<OtherPlayerController>(_playerData.objOtherPlayerController)
+						    .AddRespawn(Get<OtherPlayer>(objHit).Data().name.content, RESPAWN_HEALTH);
 					}
 				}
 				else
