@@ -340,10 +340,15 @@ void Enemy::CloseAttack()
 void Enemy::AttackCollider()
 {
 	attacked = true;
+
 	// あとから修正
 	// Get<AudioManager>().Play(attackSE);
 
-	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+	// 近距離攻撃用アイテム
+	const ItemId ITEM_ID_CLOSE_ATTACK{ 21 };
+
+	// 敵の位置に攻撃判定用エンティティを生成
+	Get<EntitySystem>().Spawn(ITEM_ID_CLOSE_ATTACK, transform.position, Vec3{ 0.0f, 0.0f, 0.0f });
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
@@ -406,5 +411,5 @@ void Enemy::RegisterStates(
 	registry.Register("hp", hp);
 	// registry.Register("followed", followed);
 	registry.Register("alive", alive);
-	// registry.Register("attacked", attacked);
+	registry.Register("attacked", attacked);
 }
