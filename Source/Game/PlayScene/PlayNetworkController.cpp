@@ -395,107 +395,110 @@ void PlayNetworkController::Update()
 		if (actorServer.IsHost() && actorServer.IsInitialized())
 		{
 			GameObject objEnemyController = actorServer.GetEnemyController();
-			auto enemyStatuses            = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
-
-			// 送信済みの敵IDを記録する
-			std::unordered_set<int> enemyIds;
-
-			for (const EnemyStatus& enemy : enemyStatuses)
+			if (!objEnemyController.IsEmpty())
 			{
-				// 同じIDがすでに登録されていたら送信しない
-				if (!enemyIds.insert(enemy.enemyId).second)
+				auto enemyStatuses = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
+
+				// 送信済みの敵IDを記録する
+				std::unordered_set<int> enemyIds;
+
+				for (const EnemyStatus& enemy : enemyStatuses)
 				{
-					// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
-					continue;
+					// 同じIDがすでに登録されていたら送信しない
+					if (!enemyIds.insert(enemy.enemyId).second)
+					{
+						// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
+						continue;
+					}
+
+					Protocol::UpdateEnemy enemyMessage{};
+
+					enemyMessage.enemyId   = enemy.enemyId;
+					enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
+
+					enemyMessage.positionX = enemy.enemyPosition.x;
+					enemyMessage.positionY = enemy.enemyPosition.y;
+					enemyMessage.positionZ = enemy.enemyPosition.z;
+
+					enemyMessage.rotationX = 0.0f;
+					enemyMessage.rotationY = enemy.enemyAngleY;
+
+					VCU_LOG(
+					    "送信前の敵座標 ID={}: ({}, {}, {})",
+					    enemy.enemyId,
+					    enemy.enemyPosition.x,
+					    enemy.enemyPosition.y,
+					    enemy.enemyPosition.z);
+
+					networkSessionManager.Send(enemyMessage);
 				}
 
-				Protocol::UpdateEnemy enemyMessage{};
+				// 敵ステート送信処理
+				const bool fullSync = actorServer.IsFullSync();
+				auto& registries    = actorServer.GetEnemyStateRegistries();
 
-				enemyMessage.enemyId   = enemy.enemyId;
-				enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
+				Protocol::UpdatedEnemyStates enemyStateMessage{};
+				enemyStateMessage.isFullSync = fullSync;
 
-				enemyMessage.positionX = enemy.enemyPosition.x;
-				enemyMessage.positionY = enemy.enemyPosition.y;
-				enemyMessage.positionZ = enemy.enemyPosition.z;
+				std::vector<int32_t> enemyStateIds;
+				std::vector<uint8_t> values;
 
-				enemyMessage.rotationX = 0.0f;
-				enemyMessage.rotationY = enemy.enemyAngleY;
+				std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
 
-				VCU_LOG(
-				    "送信前の敵座標 ID={}: ({}, {}, {})",
-				    enemy.enemyId,
-				    enemy.enemyPosition.x,
-				    enemy.enemyPosition.y,
-				    enemy.enemyPosition.z);
+				VCU_LOG("敵ステート送信 FullSync={}", fullSync);
+				VCU_LOG("敵ステート登録数={}", registries.size());
 
-				networkSessionManager.Send(enemyMessage);
-			}
-
-			// 敵ステート送信処理
-			const bool fullSync = actorServer.IsFullSync();
-			auto& registries    = actorServer.GetEnemyStateRegistries();
-
-			Protocol::UpdatedEnemyStates enemyStateMessage{};
-			enemyStateMessage.isFullSync = fullSync;
-
-			std::vector<int32_t> enemyStateIds;
-			std::vector<uint8_t> values;
-
-			std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
-
-			VCU_LOG("敵ステート送信 FullSync={}", fullSync);
-			VCU_LOG("敵ステート登録数={}", registries.size());
-
-			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
-			{
-				if (!registries[enemyId].has_value())
-					continue;
-
-				auto& registry = *registries[enemyId];
-
-				// 初回は全ステート、それ以降は変更分だけ取得
-				const auto changes = registry.GetStates(fullSync);
-				VCU_LOG("敵 ID={} 取得ステート数={}", enemyId, changes.size());
-				for (const auto& change : changes)
+				for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
 				{
-					VCU_LOG("送信対象 ID={} Name={}", enemyId, change.name);
-					enemyStateIds.push_back(static_cast<int32_t>(enemyId));
+					if (!registries[enemyId].has_value())
+						continue;
 
-					// 値をエンコード
-					StateValueCode::Encode(change.value, values);
+					auto& registry = *registries[enemyId];
 
-					if (!enemyStateMessage.stateName.empty())
-						enemyStateMessage.stateName += '\n';
+					// 初回は全ステート、それ以降は変更分だけ取得
+					const auto changes = registry.GetStates(fullSync);
+					VCU_LOG("敵 ID={} 取得ステート数={}", enemyId, changes.size());
+					for (const auto& change : changes)
+					{
+						VCU_LOG("送信対象 ID={} Name={}", enemyId, change.name);
+						enemyStateIds.push_back(static_cast<int32_t>(enemyId));
 
-					enemyStateMessage.stateName += change.name;
+						// 値をエンコード
+						StateValueCode::Encode(change.value, values);
+
+						if (!enemyStateMessage.stateName.empty())
+							enemyStateMessage.stateName += '\n';
+
+						enemyStateMessage.stateName += change.name;
+					}
+
+					if (!changes.empty())
+						pendingChanges.emplace_back(enemyId, changes);
 				}
 
-				if (!changes.empty())
-					pendingChanges.emplace_back(enemyId, changes);
-			}
-
-			// 送信するステートがある場合のみ送信
-			if (!enemyStateIds.empty())
-			{
-				enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
-
-				enemyStateMessage.values.Resize(values.size());
-
-				for (size_t i = 0; i < values.size(); ++i)
-					enemyStateMessage.values[i] = values[i];
-
-				networkSessionManager.Send(enemyStateMessage);
-
-				// 送信後に変更を確定
-				for (const auto& [enemyId, changes] : pendingChanges)
+				// 送信するステートがある場合のみ送信
+				if (!enemyStateIds.empty())
 				{
-					if (enemyId < registries.size() && registries[enemyId].has_value())
-						registries[enemyId]->CommitChanges(changes);
-				}
+					enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
 
-				// 初回同期完了
-				if (fullSync)
-					actorServer.ResetFullSync();
+					enemyStateMessage.values.Resize(values.size());
+
+					for (size_t i = 0; i < values.size(); ++i)
+						enemyStateMessage.values[i] = values[i];
+
+					networkSessionManager.Send(enemyStateMessage);
+
+					// 送信後に変更を確定
+					for (const auto& [enemyId, changes] : pendingChanges)
+					{
+						if (enemyId < registries.size() && registries[enemyId].has_value())
+							registries[enemyId]->CommitChanges(changes);
+					}
+
+					// 初回同期完了
+					if (fullSync)
+						actorServer.ResetFullSync();
+				}
 			}
 		}
 

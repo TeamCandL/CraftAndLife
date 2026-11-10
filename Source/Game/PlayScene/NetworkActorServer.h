@@ -15,9 +15,19 @@ struct NetworkActorServerData
 	    objDayController{ _objDayController }
 	{
 	}
+	NetworkActorServerData(
+	    const GameObject _objPlayer,
+	    GameObject _objDayController,
+	    GameObject _objPlaySceneUIController) :
+	    objPlayer{ _objPlayer },
+	    objDayController{ _objDayController },
+	    objPlaySceneUIController{ _objPlaySceneUIController }
+	{
+	}
 
 	bool isHost{ false };
 
+	bool isSpawnEnemies{ false };
 	bool isInitialized{ false };
 
 	GameObject objPlayer{};
@@ -25,6 +35,7 @@ struct NetworkActorServerData
 	GameObject objOtherEnemyController{};
 	GameObject objNetworkActorServer{};
 	GameObject objDayController{};
+	GameObject objPlaySceneUIController{};
 
 	/// @brief 自プレイヤーのステート登録情報
 	StateRegistry playerStateRegistry;
@@ -109,10 +120,16 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 		return Data().objEnemyController;
 	}
 
-	// 敵の生成が完了しているか確認
+	/// @brief イベントの初期化が完了しているか確認
+	/// @return
 	bool IsInitialized() const
 	{
 		return Data().isInitialized;
+	}
+	// 敵の生成が完了しているか設定
+	bool IsSpawnEnemies() const
+	{
+		return Data().isSpawnEnemies;
 	}
 
 	// 敵ステート登録情報を取得
