@@ -70,7 +70,7 @@ void TitlePageController::CreateTitlePage()
 {
 	data.objUIs.push_back(GetScene().Instantiate<TitleLogo>());
 
-	data.objUIs.push_back(GetScene().Instantiate<TitleLogoStartGuide>());
+	// data.objUIs.push_back(GetScene().Instantiate<TitleLogoStartGuide>());
 }
 
 /// @brief チーム選択ページ
