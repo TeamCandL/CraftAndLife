@@ -1018,6 +1018,8 @@ pre-commit install</Command>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\DebugLine.hlsl" />
+    <FxCompile Include="Resource\Shader\Entity.hlsl" />
+    <FxCompile Include="Resource\Shader\EntityEdge.hlsl" />
     <FxCompile Include="Resource\Shader\Toon.hlsl" />
     <FxCompile Include="Resource\Shader\ShadowMap.hlsl" />
     <FxCompile Include="Resource\Shader\SkyBox.hlsl" />
