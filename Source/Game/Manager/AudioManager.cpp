@@ -1,4 +1,6 @@
+
 #include "AudioManager.h"
+#include <algorithm>
 
 void AudioManager::Start()
 {
@@ -206,62 +208,18 @@ void AudioManager::StopJump()
 	}
 }
 
-void AudioManager::LateUpdate(
-    const float _deltaTime)
-{
-	// 連続再生の管理
-	if (pNextSequenceAudio)
-	{
-		sequenceTimeLeft -= _deltaTime;
-
-		// 1つ目の音声が終了したら2つ目を再生
-		if (sequenceTimeLeft <= 0.0f)
-		{
-			Resource<ResourceType::Audio>* pNext = pNextSequenceAudio;
-
-			// 再生前に解除
-			pNextSequenceAudio = nullptr;
-			sequenceTimeLeft   = 0.0f;
-
-			Play(*pNext);
-		}
-	}
-
-	// ここから下は既存の処理
-	for (size_t i = 0; i < players.size();)
-	{
-		players[i].timeLeftSec -= _deltaTime;
-
-		if (players[i].timeLeftSec <= 0.0f)
-		{
-			if (players[i].pSourceVoice)
-			{
-				players[i].pSourceVoice->Stop();
-				players[i].pSourceVoice->DestroyVoice();
-				players[i].pSourceVoice = nullptr;
-			}
-
-			if (i + 1 < players.size())
-			{
-				players[i] = std::move(players.back());
-			}
-
-			players.pop_back();
-		}
-		else
-		{
-			++i;
-		}
-	}
-}
-
-void AudioManager::Update() {}
-
 // BGMを再生
 void AudioManager::SetBGM(
-    Resource<ResourceType::Audio>& _resource)
+    Resource<ResourceType::Audio>& _resource,
+    bool _isLoop,
+    float _volume)
 {
 	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
 
 	if (pBGMSourceVoice)
 	{
@@ -281,6 +239,9 @@ void AudioManager::SetBGM(
 		return;
 	}
 
+	// 音量を設定
+	pBGMSourceVoice->SetVolume(std::clamp(_volume, 0.0f, 1.0f));
+
 	const XAUDIO2_BUFFER BUFFER{
 		.Flags      = XAUDIO2_END_OF_STREAM,
 		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
@@ -289,7 +250,7 @@ void AudioManager::SetBGM(
 		.PlayLength = 0,
 		.LoopBegin  = 0,
 		.LoopLength = 0,
-		.LoopCount  = XAUDIO2_LOOP_INFINITE,
+		.LoopCount  = static_cast<UINT32>(_isLoop ? XAUDIO2_LOOP_INFINITE : 0),
 		.pContext   = 0,
 	};
 
@@ -399,6 +360,59 @@ void AudioManager::SetBGMStart()
 		pBGMSourceVoice->Start();
 	}
 }
+
+void AudioManager::LateUpdate(
+    const float _deltaTime)
+{
+	// 連続再生の管理
+	if (pNextSequenceAudio)
+	{
+		sequenceTimeLeft -= _deltaTime;
+
+		// 1つ目の音声が終了したら2つ目を再生
+		if (sequenceTimeLeft <= 0.0f)
+		{
+			Resource<ResourceType::Audio>* pNext = pNextSequenceAudio;
+
+			// 再生前に解除
+			pNextSequenceAudio = nullptr;
+			sequenceTimeLeft   = 0.0f;
+
+			Play(*pNext);
+		}
+	}
+
+	// ここから下は既存の処理
+	for (size_t i = 0; i < players.size();)
+	{
+		players[i].timeLeftSec -= _deltaTime;
+
+		if (players[i].timeLeftSec <= 0.0f)
+		{
+			if (players[i].pSourceVoice)
+			{
+				players[i].pSourceVoice->Stop();
+				players[i].pSourceVoice->DestroyVoice();
+				players[i].pSourceVoice = nullptr;
+			}
+
+			if (i + 1 < players.size())
+			{
+				players[i] = std::move(players.back());
+			}
+
+			players.pop_back();
+		}
+		else
+		{
+			++i;
+		}
+	}
+}
+
+void AudioManager::Update() {}
+
+// BGMを停止・再生する処理は上記の通り
 
 void AudioManager::Release()
 {
