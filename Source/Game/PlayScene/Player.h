@@ -175,6 +175,9 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 	void TryAddItem(ItemId _id);
 	void SpawnItem(ItemId _id);
 
+	/// @brief バッグ、ホットバーが現在持っているアイテムを返す。ホットバーが持つ「バッグ」は返さない
+	/// @return
 	std::vector<ItemStack> GetHavingItem();
+	/// @brief バッグ、ホットバーが現在持っているアイテムを削除する。ホットバーが持つ「バッグ」は削除されない。
 	void ClearAllItem();
 };
