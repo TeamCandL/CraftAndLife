@@ -122,6 +122,8 @@ struct HotBar : ObjectBase<HotBarData>
 	bool SwapConsumableItem(ItemStack& _oldItemStack, ItemId _newItemId);
 	bool SwapItem(ItemStack& _oldItemStack, ItemId _newItemId);
 
+	std::vector<ItemStack> GetAllSlotItem();
+	void ClearAllSlotItem();
 	template <typename T> void SetOnChangedSelectedItemCallback(T&& _func);
 
   private:
