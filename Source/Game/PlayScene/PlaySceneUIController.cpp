@@ -26,7 +26,7 @@
 
 void PlaySceneUIController::Start()
 {
-	objTaskBackground = GetScene().Instantiate<TaskBackground>();
+	objTaskBackground = GetScene().Instantiate<TaskBackground>(objDayContloller);
 	objMiniMap        = GetScene().Instantiate<MiniMap>(objPlayer, objOtherPlayerController);
 	objOtherInfo      = GetScene().Instantiate<OtherInfo>();
 	objSelfInfo       = GetScene().Instantiate<SelfInfo>();
