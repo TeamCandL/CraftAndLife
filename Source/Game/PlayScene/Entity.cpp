@@ -108,6 +108,10 @@ void Entity::Draw()
 		return;  // 取得されているなら無視
 	}
 
+	if (model.IsNull())
+	{
+		return;
+	}
 	Get<Dx11Manager>().SetShader(mainShader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
