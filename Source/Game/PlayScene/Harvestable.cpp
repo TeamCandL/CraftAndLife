@@ -11,19 +11,19 @@ void Harvestable::Start()
 	{
 	case HarvestableType::Tree:
 		model         = Resource<Model>{ "Model/Harvestable/Tree.fbx" };
-		maxDurability = 30;
+		maxDurability = 60;
 		obb.scale     = { 0.5f, 2.0f, 0.2f };
 		break;
 
 	case HarvestableType::TreeHigh:
 		model         = Resource<Model>{ "Model/Harvestable/TreeHigh.fbx" };
-		maxDurability = 60;
+		maxDurability = 120;
 		obb.scale     = { 0.5f, 3.0f, 0.2f };
 		break;
 
 	case HarvestableType::Rock:
 		model         = Resource<Model>{ "Model/Harvestable/Rock.fbx" };
-		maxDurability = 50;
+		maxDurability = 100;
 		obb.scale     = { 0.5f, 0.5f, 0.5f };
 		break;
 
@@ -122,24 +122,24 @@ void Harvestable::OnBroken()
 	switch (type)
 	{
 	case HarvestableType::Tree:
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 0.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 0.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
 		break;
 
 	case HarvestableType::TreeHigh:
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 1.0f);
 		break;
 
 	case HarvestableType::Rock:
-		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 0.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 0.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 1.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 1.0f);
 		break;
 
 	default:

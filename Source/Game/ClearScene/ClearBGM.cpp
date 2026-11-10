@@ -3,5 +3,6 @@
 
 void ClearBGM::Start()
 {
-	ManagerRegistry::Ref<AudioManager>().SetBGM(Data().bgm);
+	// ループなしで再生
+	ManagerRegistry::Ref<AudioManager>().SetBGM(Data().bgm, false, Data().volume);
 }

@@ -7,6 +7,39 @@
 
 void OtherPlayer::Start()
 {
+	const auto& status = Get<SessionManager>().RefStatus();
+
+	// プレイヤー名からIDを検索
+	auto it = std::ranges::find(status.memberNames, name.content);
+
+	if (it == status.memberNames.end())
+	{
+		VCU_LOG("プレイヤーが見つかりません: {}", name.content);
+		return;
+	}
+
+	// 名前とIDは同じインデックスで管理されている
+	const size_t index = std::distance(status.memberNames.begin(), it);
+
+	if (index >= status.memberId.size())
+	{
+		return;
+	}
+
+	const int32_t playerId = status.memberId[index];
+
+	// IDからRoleIdを取得
+	auto roleIt = status.memberRoles.find(playerId);
+
+	if (roleIt == status.memberRoles.end())
+	{
+		VCU_LOG("RoleId取得失敗: {}", playerId);
+		return;
+	}
+
+	role = roleIt->second;
+
+	VCU_LOG("{} のRoleId: {}", name.content, role);
 	obb.offset = OBB_OFFSET;
 	obb.scale  = Vec3::One() * OBB_SCALE;
 }
@@ -136,19 +169,19 @@ void OtherPlayer::Update()
 	// =====================================
 	if (isDead)
 	{
-		// animIndex = PlayerAnimType_Die;
+		animIndex = PlayerAnimType_Die;
 
-		// if (dieAnimTimeSec > 0.0f)
-		//{
-		//	dieAnimTimeSec = std::max(0.0f, dieAnimTimeSec - Get<DeltaTime>());
+		if (dieAnimTimeSec > 0.0f)
+		{
+			dieAnimTimeSec = std::max(0.0f, dieAnimTimeSec - Get<DeltaTime>());
 
-		//	animSpeed = 1.0f;
-		//}
-		// else
-		//{
-		//	animSpeed = 0.0f;
-		//}
-		animSpeed = 0.0f;
+			animSpeed = 1.0f;
+		}
+		else
+		{
+			animSpeed = 0.0f;
+		}
+		// animSpeed = 0.0f;
 	}
 }
 

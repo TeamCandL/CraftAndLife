@@ -67,6 +67,7 @@ void Player::Update()
 	std::string playerName         = sessionManager.RefStatus().name;
 
 	ImGui::Begin("Player");
+
 	ImGui::DragInt("anim", &animIndex, 1, 0);
 	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
 	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
@@ -79,6 +80,39 @@ void Player::Update()
 	Vec3 angles = transform.rotation.ToEuler();
 	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
 	transform.rotation = Quaternion::FromEuler(angles);
+
+	// ジョブ割り振り
+	if (!isJobAssigned)
+	{
+		const auto& status = Get<SessionManager>().RefStatus();
+
+		// 自分のプレイヤーIDを取得
+		auto nameIt = std::ranges::find(status.memberNames, status.name);
+
+		if (nameIt != status.memberNames.end())
+		{
+			const size_t index = std::distance(status.memberNames.begin(), nameIt);
+
+			if (index < status.memberId.size())
+			{
+				const int32_t playerId = status.memberId[index];
+
+				// 自分のロールIDを取得
+				auto roleIt = status.memberRoles.find(playerId);
+
+				if (roleIt != status.memberRoles.end())
+				{
+					const int32_t roleId = roleIt->second;
+
+					if (roleId >= 0 && roleId < PlayerJobType_Max)
+					{
+						SetJob(static_cast<PlayerJobType>(roleId));
+						isJobAssigned = true;
+					}
+				}
+			}
+		}
+	}
 
 	if (ImGui::Button("出力"))
 	{
@@ -693,4 +727,18 @@ void Player::SpawnItem(
 	    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 
 	VCU_LOG("objPawn");
+}
+
+std::vector<ItemStack> Player::GetHavingItem()
+{
+	auto bagItems    = Get<PlayerBag>(objPlayerBag).GetItemStacks();
+	auto hotBarItems = Get<HotBar>(objHotbar).GetAllSlotItem();
+	bagItems.insert(bagItems.end(), hotBarItems.begin(), hotBarItems.end());
+	return bagItems;
+}
+
+void Player::ClearAllItem()
+{
+	Get<PlayerBag>(objPlayerBag).ClearItems();
+	Get<HotBar>(objHotbar).ClearAllSlotItem();
 }

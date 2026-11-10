@@ -44,7 +44,7 @@ struct OtherPlayerData
 	int32_t maxHP{ 100 };
 
 	// 死亡アニメーション再生時間
-	inline static constexpr float DIE_ANIM_TIME_SEC_MAX{ 20.0f / 60.0f };
+	inline static constexpr float DIE_ANIM_TIME_SEC_MAX{ 19.0f / 60.0f };
 	float dieAnimTimeSec{ DIE_ANIM_TIME_SEC_MAX };
 };
 
