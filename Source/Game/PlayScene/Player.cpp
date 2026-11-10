@@ -67,6 +67,7 @@ void Player::Update()
 	std::string playerName         = sessionManager.RefStatus().name;
 
 	ImGui::Begin("Player");
+
 	ImGui::DragInt("anim", &animIndex, 1, 0);
 	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
 	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
@@ -726,4 +727,18 @@ void Player::SpawnItem(
 	    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 
 	VCU_LOG("objPawn");
+}
+
+std::vector<ItemStack> Player::GetHavingItem()
+{
+	auto bagItems    = Get<PlayerBag>(objPlayerBag).GetItemStacks();
+	auto hotBarItems = Get<HotBar>(objHotbar).GetAllSlotItem();
+	bagItems.insert(bagItems.end(), hotBarItems.begin(), hotBarItems.end());
+	return bagItems;
+}
+
+void Player::ClearAllItem()
+{
+	Get<PlayerBag>(objPlayerBag).ClearItems();
+	Get<HotBar>(objHotbar).ClearAllSlotItem();
 }
