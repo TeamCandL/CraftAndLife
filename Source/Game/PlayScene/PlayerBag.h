@@ -54,6 +54,7 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	{
 		return items;
 	}
+	std::vector<ItemStack> GetItemStacks();
 	/// @brief バッグの容量を拡張
 	/// @param _capacity 拡張する容量
 	void ExpansionCapacity(const unsigned int _capacity);
@@ -77,6 +78,7 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	/// @param _craftItemId
 	/// @return ItemInfoの vector<CraftInfo> _craftInfoと同じ順番で格納された、素材の充足状況
 	std::vector<CraftMaterialRequirement> GetCraftRequirements(const ItemId _craftItemId);
+	void ClearItems();
 
   private:
 	void Sort();
