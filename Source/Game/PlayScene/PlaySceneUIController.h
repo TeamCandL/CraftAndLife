@@ -51,4 +51,9 @@ struct PlaySceneUIController : ObjectBase<PlaySceneUIControllerData>
 
 	/// @brief 開始処理
 	void Start() override;
+
+	void Update() override
+	{
+		// UIの更新処理は各UIオブジェクトに任せるため、ここでは特に何もしない
+	}
 };

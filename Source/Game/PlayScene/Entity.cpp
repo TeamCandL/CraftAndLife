@@ -113,6 +113,12 @@ void Entity::Draw()
 	    {
 		    Get<Dx11Manager>().SetShader(mainShader);
 		    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+		    if (model.IsNull())
+		    {
+			    return;
+		    }
+		    Get<Dx11Manager>().SetShader(mainShader);
+		    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
 		    const auto& subParts{ model.Get().subParts };
 		    for (const auto& parts : subParts)

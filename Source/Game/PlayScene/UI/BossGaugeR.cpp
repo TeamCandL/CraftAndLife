@@ -9,5 +9,5 @@ void BossGaugeR::Start()
 
 void BossGaugeR::Update()
 {
-	SetActive(Get<BossInfo>(objBossInfo).IsBossActive());
+	SetActive(Get<BossInfo>(objBossInfo).IsActive());
 }
