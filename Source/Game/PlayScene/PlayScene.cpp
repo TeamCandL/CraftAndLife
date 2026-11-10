@@ -54,9 +54,10 @@ void PlayScene::Start()
 	GameObject objPlaySceneUIController =
 	    Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController, objDayController);
 	// ホスト判定オブジェクトを生成
-	GameObject objNetworkActorServer = Instantiate<NetworkActorServer>(objPlayer, objDayController);
+	GameObject objNetworkActorServer =
+	    Instantiate<NetworkActorServer>(objPlayer, objDayController, objPlaySceneUIController);
 
-	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
+	// GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 
 	// デバッグ用に敵を生成する
 	// GameObject objEnemyController = Instantiate<EnemyController>();
@@ -72,10 +73,6 @@ void PlayScene::Start()
 	    objNetworkActorServer,
 	    objDayController,
 	    objHarvestableController);
-
-	// プレイ画面UIを生成
-	GameObject objPlaySceneUIController =
-	    Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController, objDayController);
 
 	// クリア・ゲームオーバー共通フェード
 	GameObject objClearFade = Instantiate<ClearFade>();

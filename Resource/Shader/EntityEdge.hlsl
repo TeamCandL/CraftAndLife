@@ -4,6 +4,9 @@
 #include "Vertex/ModelVertex.hlsli"
 #include "Material/ModelMaterial.hlsli"
 
+Texture2D g_texture : register(t0);
+SamplerState g_sampler : register(s0);
+
 #define MAX_BONES 256
 
 cbuffer BoneBuffer : register(b4)
@@ -11,12 +14,13 @@ cbuffer BoneBuffer : register(b4)
 	matrix BoneMatrices[MAX_BONES];
 };
 
-// ★ C++側からのバインド忘れを防ぐため、太さをここで直接定義します（必要に応じて数値を調整してください）
-static const float EdgeWidth = 0.02f;
+// 輪郭の太さ
+static const float EdgeWidth = 0.07f;
 
 struct VSOutput
 {
 	float4 pos : SV_Position;
+	float2 uv : TEXCOORD0; // UV座標を追加
 };
 
 VSOutput VS(ModelVertex input)
@@ -51,12 +55,25 @@ VSOutput VS(ModelVertex input)
 	worldPos = mul(worldPos, Transform_World);
 
 	output.pos = mul(worldPos, Camera_ViewProjection);
+	output.uv = input.uv; // UVをピクセルシェーダーに渡す
 
 	return output;
 }
 
 float4 PS(VSOutput input) : SV_Target0
 {
-	// 輪郭の色（黒。お好みで変更してください）
+	// テクスチャがある場合はアルファ（透明度）をチェックして抜き取る
+	[branch]
+	if (ModelMaterial_HasTexture_HasSkin_HasAnim.x > 0.5f)
+	{
+		float4 texColor = g_texture.Sample(g_sampler, input.uv);
+		// 透明な部分（アルファが低い部分）はエッジを描画しないように削る
+		if (texColor.a < 0.1f)
+		{
+			clip(-1.0f);
+		}
+	}
+
+	// 綺麗な黄色を返す
 	return float4(1.0f, 1.0f, 0.0f, 1.0f);
 }

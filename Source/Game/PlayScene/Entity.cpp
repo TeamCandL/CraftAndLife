@@ -107,30 +107,16 @@ void Entity::Draw()
 	{
 		return;  // 取得されているなら無視
 	}
-
+	if (model.IsNull())
+	{
+		return;
+	}
 	Get<Dx11Manager>().EnqueueTransparent(
 	    [this]()
 	    {
-		    Get<Dx11Manager>().SetShader(mainShader);
-		    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
-		    if (model.IsNull())
-		    {
-			    return;
-		    }
-		    Get<Dx11Manager>().SetShader(mainShader);
-		    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
-
-		    const auto& subParts{ model.Get().subParts };
-		    for (const auto& parts : subParts)
-		    {
-			    Get<Dx11Manager>().SetSurface(parts.mesh);
-			    Get<Dx11Manager>().SetMaterial(parts.material);
-			    Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
-			    Get<Dx11Manager>().Draw();
-		    }
-
 		    Get<Dx11Manager>().SetShader(edgeShader);
 		    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+		    Get<Dx11Manager>().ChangeDepthState(DepthStateType_Background);
 
 		    const auto& edgeParts{ model.Get().subParts };
 		    for (const auto& parts : edgeParts)
@@ -141,17 +127,37 @@ void Entity::Draw()
 			    Get<Dx11Manager>().Draw();
 		    }
 
-		    /*Get<Dx11Manager>().SetShader(edgeShader);
-		    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
-
-		    const auto& subParts{ model.Get().subParts };
-		    for (const auto& parts : subParts)
+		    if (itemId != ITEM_ID_ENEMY_ATTACK_STRING)
 		    {
-		        Get<Dx11Manager>().SetSurface(parts.mesh);
-		        Get<Dx11Manager>().SetMaterial(parts.material);
-		        Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
-		        Get<Dx11Manager>().Draw();
-		    }*/
+			    Get<Dx11Manager>().ChangeDepthState(DepthStateType_Standard);
+
+			    Get<Dx11Manager>().SetShader(mainShader);
+			    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+			    Get<Dx11Manager>().SetShader(mainShader);
+			    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+			    const auto& subParts{ model.Get().subParts };
+			    for (const auto& parts : subParts)
+			    {
+				    Get<Dx11Manager>().SetSurface(parts.mesh);
+				    Get<Dx11Manager>().SetMaterial(parts.material);
+				    Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+				    Get<Dx11Manager>().Draw();
+			    }
+
+			    /*Get<Dx11Manager>().SetShader(edgeShader);
+			    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+			    const auto& subParts{ model.Get().subParts };
+			    for (const auto& parts : subParts)
+			    {
+			        Get<Dx11Manager>().SetSurface(parts.mesh);
+			        Get<Dx11Manager>().SetMaterial(parts.material);
+			        Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+			        Get<Dx11Manager>().Draw();
+			    }*/
+		    }
 	    });
 }
 

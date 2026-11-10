@@ -39,8 +39,9 @@ struct EntityData
 	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
 	float friction{ 0.9f };       ///< 摩擦力
 
-	float despawnTimeLeftSec{ 60.0f * 2.0f };  ///< 死ぬまでの時間(秒)
-	float pickupCooldownSec{ 3.0f };           ///< 拾えない時間(秒)
+	float despawnTimeLeftSec{ 60.0f * 2.0f };        ///< 死ぬまでの時間(秒)
+	float pickupCooldownSec{ 3.0f };                 ///< 拾えない時間(秒)
+	const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };  ///< 敵の攻撃のアイテムId
 };
 
 /// @brief エンティティ
