@@ -50,7 +50,6 @@ void PlayScene::Start()
 
 	Instantiate<DeathUI>(objPlayer, true);
 
-	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 	// プレイ画面UIを生成
 	GameObject objPlaySceneUIController =
 	    Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController, objDayController);
