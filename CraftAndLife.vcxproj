@@ -779,6 +779,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlayerRespawnedNetworkData.h" />
     <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />

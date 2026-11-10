@@ -44,7 +44,7 @@ void ItemActionMedicals::Action(
 						hotBar.RemoveConsumableItem();
 						Get<OtherPlayer>(objHit).Data().hp = RESPAWN_HEALTH;
 						Get<OtherPlayerController>(_playerData.objOtherPlayerController)
-						    .PushRespawn(Get<OtherPlayer>(objHit).Data().name.content);
+						    .AddRespawn(Get<OtherPlayer>(objHit).Data().name.content, RESPAWN_HEALTH);
 					}
 				}
 				else

@@ -29,6 +29,7 @@
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/PlayScene/IEntitySystemNetwork.h>
 #include <Game/PlayScene/PlayerHand.h>
+#include <Game/PlayScene/PlayerRespawnedNetworkData.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
 #include <Game/PlayScene/HarvestableController.h>
@@ -547,7 +548,17 @@ void PlayNetworkController::Update()
 			networkSessionManager.Send(message);
 		}
 
-		OtherPlayerController& otherPlayerController = Get<OtherPlayerController>(objOtherPlayerController);
+		OtherPlayerController& otherPlayerController          = Get<OtherPlayerController>(objOtherPlayerController);
+		std::vector<PlayerRespawnedData> playerRespawnedsData = otherPlayerController.TakeRespawn();
+		for (auto& data : playerRespawnedsData)
+		{
+			Protocol::PlayerRespawned message{};
+
+			message.playerName = data.playerName;
+			message.hp         = data.hp;
+
+			networkSessionManager.Send(message);
+		}
 
 		/*  // エンティティシステムを変更したため無視
 		// エンティティ生成情報送信
