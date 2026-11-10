@@ -48,7 +48,7 @@ void NetworkActorServer::Update()
 	// ホスト専用処理
 	if (IsHost())
 	{
-#if 0
+#if 1
 		// 日付の取得確認
 		DayController& dayController = Get<DayController>(Data().objDayController);
 		VCU_LOG("現在の日付: {}", dayController.GetCurrentDay());
@@ -58,8 +58,8 @@ void NetworkActorServer::Update()
 			CreateEnemies();
 		}
 
-#elif 1
-		CreateEnemies();
+#elif 0
+		// CreateEnemies();
 
 #endif
 
@@ -102,6 +102,15 @@ void NetworkActorServer::CreateEnemy(
 
 	EnemyStateRegistries(objEnemy);
 }
+void NetworkActorServer::CreateBoss(
+    EnemyType type,
+    const Vec3& position)
+{
+	GameObject objEnemy =
+	    GetScene().Instantiate<Enemy>(Data().objEnemyController, position, static_cast<int>(type), true);
+
+	EnemyStateRegistries(objEnemy);
+}
 
 void NetworkActorServer::CreateEnemies()
 {
@@ -117,13 +126,20 @@ void NetworkActorServer::CreateEnemies()
 	Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
 
 	// 敵を生成（同じ種類も複数生成可能）
-	// CreateEnemy(EnemyType::Skeleton);
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 1.0f, 7.0f, 2.0f });
-	// CreateEnemy(EnemyType::Spider, Vec3{ -1.0f, 7.0f, 2.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
-	// CreateEnemy(EnemyType::BossSkeleton, Vec3{ 1.0f, 5.0f, 2.0f });
-	// CreateEnemy(EnemyType::Bat, Vec3{ 1.0f, 7.0f, 5.0f });
-	// CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
+	if (Get<DayController>(objDayController).GetCurrentDay() == 2)
+	{
+		CreateEnemy(EnemyType::Bat, Vec3{ 30.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Bat, Vec3{ -30.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 20.0f, 0.0f, 25.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ -20.0f, 0.0f, 25.0f });
+		CreateEnemy(EnemyType::BossSkeleton, Vec3{ 00.0f, 0.0f, 40.0f });
+		CreateBoss(EnemyType::Dragon, Vec3{ 0.0f, 0.0f, 70.0f });
+	}
 
 	//  生成済みにする
 	Data().isInitialized = true;

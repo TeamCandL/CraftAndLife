@@ -53,6 +53,7 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 
 	void CreateEnemy(EnemyType type);
 	void CreateEnemy(EnemyType type, const Vec3& position);
+	void CreateBoss(EnemyType type, const Vec3& position);
 	void CreateEnemies();
 	void EnemyStateRegistries(GameObject objEnemy);
 
