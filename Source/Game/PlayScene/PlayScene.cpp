@@ -70,7 +70,8 @@ void PlayScene::Start()
 	    objHarvestableController);
 
 	// プレイ画面UIを生成
-	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController);
+	GameObject objPlaySceneUIController =
+	    Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController, objDayController);
 
 	// クリア・ゲームオーバー共通フェード
 	GameObject objClearFade = Instantiate<ClearFade>();

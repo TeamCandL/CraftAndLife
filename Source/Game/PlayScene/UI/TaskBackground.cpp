@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "TaskBackground.h"
 #include <Game/Manager/SessionManager.h>
+#include "../DayController.h"
 
 void TaskBackground::Start()
 {
@@ -9,5 +10,26 @@ void TaskBackground::Start()
 
 void TaskBackground::Update()
 {
-	text.content = Get<SessionManager>().RefStatus().imLobbyHost ? "自分はホストだよ" : "自分はゲストだよ";
+	int currentDay = Get<DayController>(objDayContloller).GetCurrentDay();
+
+	// Dayが3のときだけ、ダウンタイマーを表示する
+	if (currentDay == 3)
+	{
+		float limitTime     = 80.0f;
+		float currentTime   = Get<DayController>(objDayContloller).GetCurrentTimeSec();
+		float remainingTime = limitTime - currentTime;
+
+		// マイナスにならないように止める
+		if (remainingTime < 0.0f)
+		{
+			remainingTime = 0.0f;
+		}
+
+		text.content = std::format("Day: {} / Rest: {:05.2f}", currentDay, remainingTime);
+	}
+	else
+	{
+		// 1日目や2日目は秒数を表示しない
+		text.content = std::format("Day: {}", currentDay);
+	}
 }
