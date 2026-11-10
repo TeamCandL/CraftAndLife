@@ -19,6 +19,7 @@
 #include <Game/Network/Protocols/EntitySpawned.h>
 #include <Game/Network/Protocols/EntityPickRequest.h>
 #include <Game/Network/Protocols/EntityPicked.h>
+#include <Game/Network/Protocols/PlayerRespawned.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -31,6 +32,7 @@
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
 #include <Game/PlayScene/HarvestableController.h>
+#include "OtherPlayerController.h"
 
 using enum NetworkSessionManager::State;
 
@@ -286,6 +288,18 @@ void PlayNetworkController::Update()
 				    entitySystem.RemoveFromNetwork(message.entityId);
 				    break;
 			    }
+			    case ProtocolType::PlayerRespawned:
+			    {
+				    Protocol::PlayerRespawned message{};
+				    converter.ToMessage(_event.data, message);
+
+				    if (Get<SessionManager>().RefStatus().name == message.playerName)
+				    {
+					    VCU_LOG("自分が生き返った！！");
+					    Get<Player>(objPlayer).Respawn(message.hp);
+				    }
+				    break;
+			    }
 			    default:
 				    VCU_LOG("想定外の謎プロトコルを取得:{}", static_cast<int>(protocolType));
 				    break;
@@ -532,6 +546,8 @@ void PlayNetworkController::Update()
 
 			networkSessionManager.Send(message);
 		}
+
+		OtherPlayerController& otherPlayerController = Get<OtherPlayerController>(objOtherPlayerController);
 
 		/*  // エンティティシステムを変更したため無視
 		// エンティティ生成情報送信

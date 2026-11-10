@@ -16,6 +16,8 @@ struct OtherPlayerControllerData
 
 	// 他プレイヤーの名前UI
 	std::map<std::string, GameObject> nameToObjPlayerName{};
+
+	std::vector<std::string> respawn{};
 };
 
 struct OtherPlayerController : ObjectBase<OtherPlayerControllerData>
@@ -27,4 +29,15 @@ struct OtherPlayerController : ObjectBase<OtherPlayerControllerData>
 	std::vector<GameObject> GetOtherPlayers() const;
 
 	bool TryGetOtherPlayer(const std::string& playerName, GameObject& outPlayer) const;
+
+	std::vector<std::string> TakeRespawn()
+	{
+		return std::exchange(respawn, {});
+	}
+
+	void PushRespawn(
+	    const std::string& _name)
+	{
+		respawn.push_back(_name);
+	}
 };

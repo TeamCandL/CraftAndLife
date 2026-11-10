@@ -7,6 +7,7 @@
 #include "Player/PlayerAnimType.h"
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
+#include "OtherPlayerController.h"
 
 struct StateRegistry;
 
@@ -14,8 +15,10 @@ struct StateRegistry;
 struct PlayerData
 {
 	PlayerData(
-	    const GameObject _objMainCamera) :
-	    objMainCamera{ _objMainCamera }
+	    const GameObject _objMainCamera,
+	    const GameObject _objOtherPlayerController) :
+	    objMainCamera{ _objMainCamera },
+	    objOtherPlayerController{ _objOtherPlayerController }
 	{
 	}
 
@@ -49,6 +52,7 @@ struct PlayerData
 	GameObject objPlayerHand{};        ///< プレイヤーの手持ち
 	GameObject objPlayerBag{};
 	GameObject objHotbar{};
+	GameObject objOtherPlayerController{};  ///< 他プレイヤーのコントローラーオブジェクト
 	PlayerRoleType role{ PlayerRoleType_Max };
 
 	float angleX{};
