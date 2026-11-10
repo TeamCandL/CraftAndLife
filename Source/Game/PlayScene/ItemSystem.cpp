@@ -321,6 +321,7 @@ ItemSystemData::ItemSystemData()
 	                        8,
 	                        0,
 	                        8 });
+	allItemList.push_back({ 21, ItemType::EnemyAttack, "近距離攻撃", {}, {}, false, craft, 10.0f, 15, 0, 15 });
 }
 
 ItemInfo ItemSystem::GetInfo(
