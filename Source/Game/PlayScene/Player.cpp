@@ -81,6 +81,39 @@ void Player::Update()
 	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
 	transform.rotation = Quaternion::FromEuler(angles);
 
+	// ジョブ割り振り
+	if (!isJobAssigned)
+	{
+		const auto& status = Get<SessionManager>().RefStatus();
+
+		// 自分のプレイヤーIDを取得
+		auto nameIt = std::ranges::find(status.memberNames, status.name);
+
+		if (nameIt != status.memberNames.end())
+		{
+			const size_t index = std::distance(status.memberNames.begin(), nameIt);
+
+			if (index < status.memberId.size())
+			{
+				const int32_t playerId = status.memberId[index];
+
+				// 自分のロールIDを取得
+				auto roleIt = status.memberRoles.find(playerId);
+
+				if (roleIt != status.memberRoles.end())
+				{
+					const int32_t roleId = roleIt->second;
+
+					if (roleId >= 0 && roleId < PlayerJobType_Max)
+					{
+						SetJob(static_cast<PlayerJobType>(roleId));
+						isJobAssigned = true;
+					}
+				}
+			}
+		}
+	}
+
 	if (ImGui::Button("出力"))
 	{
 		fs::path filePath{ "./animDumpForPlayer.txt" };

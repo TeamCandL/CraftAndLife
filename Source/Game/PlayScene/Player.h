@@ -40,6 +40,7 @@ struct PlayerData
 	Component<Name> name{ "Player" };
 
 	PlayerJobType jobType{ PlayerJobType_Healer };  ///< プレイヤーの役職
+	bool isJobAssigned{ false };                    ///< 役職が割り当てられたかどうか
 	HelthState helthState{ HelthState_Live };       ///< プレイヤーの生存ステータス
 
 	GameObject objMainCamera{};        ///< プレイヤーのカメラ

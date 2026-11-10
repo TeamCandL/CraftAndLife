@@ -253,6 +253,15 @@ void SessionManager::SetMemberInfo(
 		inSessionStatus_.memberRoles[playerId] = roleId;
 
 		VCU_LOG("メンバー登録: ID={}, Name={}, RoleID={}", playerId, name, roleId);
+
+		// プレイヤーステータスを初期化
+		auto& playerStatus =
+		    inSessionStatus_.playersStatus.try_emplace(std::string{ name }, InSessionStatus::PlayerStatus{})
+		        .first->second;
+
+		// ステートの初期値を登録
+		playerStatus.states.try_emplace("hp", int32_t{ 100 });
+		playerStatus.states.try_emplace("alive", true);
 	}
 	VCU_LOG("登録完了: メンバー数={}", inSessionStatus_.memberNames.size());
 }
@@ -329,10 +338,13 @@ void SessionManager::UpdatePlayers(
 		}
 
 		InSessionStatus::PlayerStatus& playerStatus = inSessionStatus_.playersStatus[std::string{ line }];
-		playerStatus.position                       = Vec3{
-            _positions[i * Vec3::AT_MAX + Vec3::AT_X],
-            _positions[i * Vec3::AT_MAX + Vec3::AT_Y],
-            _positions[i * Vec3::AT_MAX + Vec3::AT_Z],
+
+		VCU_LOG("PlayerStatus取得成功");
+
+		playerStatus.position = Vec3{
+			_positions[i * Vec3::AT_MAX + Vec3::AT_X],
+			_positions[i * Vec3::AT_MAX + Vec3::AT_Y],
+			_positions[i * Vec3::AT_MAX + Vec3::AT_Z],
 		};
 
 		playerStatus.rotation = Vec2{
