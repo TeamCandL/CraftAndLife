@@ -15,7 +15,7 @@ void TaskBackground::Update()
 	// Dayが3のときだけ、ダウンタイマーを表示する
 	if (currentDay == 3)
 	{
-		float limitTime     = 80.0f;
+		float limitTime     = 47.0f;
 		float currentTime   = Get<DayController>(objDayContloller).GetCurrentTimeSec();
 		float remainingTime = limitTime - currentTime;
 
