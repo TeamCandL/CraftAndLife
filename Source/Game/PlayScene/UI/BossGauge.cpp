@@ -12,7 +12,7 @@ void BossGauge::Start()
 
 void BossGauge::Update()
 {
-	SetActive(Get<BossInfo>(objBossInfo).IsBossActive());
+	SetActive(Get<BossInfo>(objBossInfo).IsActive());
 	if (Get<BossInfo>(objBossInfo).IsBossActive())
 	{
 		if (rateOfHp < 0.0f)

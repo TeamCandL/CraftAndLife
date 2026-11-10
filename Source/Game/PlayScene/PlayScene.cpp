@@ -51,7 +51,8 @@ void PlayScene::Start()
 
 	GameObject objOtherPlayerController = Instantiate<OtherPlayerController>();
 	// プレイ画面UIを生成
-	GameObject objPlaySceneUIController = Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController);
+	GameObject objPlaySceneUIController =
+	    Instantiate<PlaySceneUIController>(objPlayer, objOtherPlayerController, objDayController);
 	// ホスト判定オブジェクトを生成
 	GameObject objNetworkActorServer =
 	    Instantiate<NetworkActorServer>(objPlayer, objDayController, objPlaySceneUIController);
