@@ -5,17 +5,18 @@
 #include "Enemy.h"
 #include "EnemyController.h"
 #include "OtherEnemyController.h"
+#include "DayController.h"
 
 void NetworkActorServer::Start()
 {
 	// プレイヤーのステートを登録
-	if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
-	{
-		Player& player = Get<Player>(Data().objPlayer);
-		player.RegisterStates(Data().playerStateRegistry);
+	// if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+	//{
+	//	Player& player = Get<Player>(Data().objPlayer);
+	//	player.RegisterStates(Data().playerStateRegistry);
 
-		Data().isPlayerStateRegistered = true;
-	}
+	//	Data().isPlayerStateRegistered = true;
+	//}
 
 	// ゲストなら敵を生成しない
 	if (!IsHost())
@@ -31,19 +32,36 @@ void NetworkActorServer::Update()
 	// ホスト情報を更新
 	Data().isHost = Get<SessionManager>().RefStatus().imLobbyHost;
 
-	// ホストになったときの処理
+	// ホスト・ゲスト共通：自分のプレイヤーステートを登録
+	if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+	{
+		Player& player = Get<Player>(Data().objPlayer);
+		player.RegisterStates(Data().playerStateRegistry);
+
+		Get<SessionManager>().SetSelfStateRegistry(&Data().playerStateRegistry);
+
+		VCU_LOG("プレイヤーステート登録完了: {}", Data().playerStateRegistry.GetAllStates().size());
+
+		Data().isPlayerStateRegistered = true;
+	}
+
+	// ホスト専用処理
 	if (IsHost())
 	{
-		// プレイヤーステート登録
-		if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
-		{
-			Player& player = Get<Player>(Data().objPlayer);
-			player.RegisterStates(Data().playerStateRegistry);
+#if 1
+		// 日付の取得確認
+		DayController& dayController = Get<DayController>(Data().objDayController);
+		VCU_LOG("現在の日付: {}", dayController.GetCurrentDay());
 
-			Data().isPlayerStateRegistered = true;
+		if (dayController.IsNight())
+		{
+			CreateEnemies();
 		}
 
-		CreateEnemies();
+#elif 0
+		// CreateEnemies();
+
+#endif
 
 		Data().enemyStateSyncTimer -= Get<DeltaTime>();
 
@@ -84,6 +102,15 @@ void NetworkActorServer::CreateEnemy(
 
 	EnemyStateRegistries(objEnemy);
 }
+void NetworkActorServer::CreateBoss(
+    EnemyType type,
+    const Vec3& position)
+{
+	GameObject objEnemy =
+	    GetScene().Instantiate<Enemy>(Data().objEnemyController, position, static_cast<int>(type), true);
+
+	EnemyStateRegistries(objEnemy);
+}
 
 void NetworkActorServer::CreateEnemies()
 {
@@ -99,13 +126,20 @@ void NetworkActorServer::CreateEnemies()
 	Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
 
 	// 敵を生成（同じ種類も複数生成可能）
-	// CreateEnemy(EnemyType::Skeleton);
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 1.0f, 7.0f, 2.0f });
-	// CreateEnemy(EnemyType::Spider, Vec3{ -1.0f, 7.0f, 2.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
-	// CreateEnemy(EnemyType::BossSkeleton, Vec3{ 1.0f, 5.0f, 2.0f });
-	// CreateEnemy(EnemyType::Bat, Vec3{ 1.0f, 7.0f, 5.0f });
-	// CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
+	if (Get<DayController>(objDayController).GetCurrentDay() == 2)
+	{
+		CreateEnemy(EnemyType::Bat, Vec3{ 30.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Bat, Vec3{ -30.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 20.0f, 0.0f, 25.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ -20.0f, 0.0f, 25.0f });
+		CreateEnemy(EnemyType::BossSkeleton, Vec3{ 00.0f, 0.0f, 40.0f });
+		CreateBoss(EnemyType::Dragon, Vec3{ 0.0f, 0.0f, 70.0f });
+	}
 
 	//  生成済みにする
 	Data().isInitialized = true;

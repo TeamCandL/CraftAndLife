@@ -63,17 +63,6 @@ void HotBar::Start()
 
 void HotBar::Update()
 {
-	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
-	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
-	{
-		MoveFocusToLeft();
-		OnChangedSelectedItem();
-	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
-	{
-		MoveFocusToRight();
-		OnChangedSelectedItem();
-	}
 	/// -----------------
 	/// スロットのUI更新
 	/// -----------------
@@ -130,7 +119,20 @@ void HotBar::Update()
 	}
 }
 
-void HotBar::UpdateSlot() {}
+void HotBar::UpdateSlot()
+{
+	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
+	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
+	{
+		MoveFocusToLeft();
+		OnChangedSelectedItem();
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
+	{
+		MoveFocusToRight();
+		OnChangedSelectedItem();
+	}
+}
 
 void HotBar::MoveFocusToRight()
 {
@@ -261,7 +263,7 @@ bool HotBar::SwapConsumableItem(
     ItemId _newItemId)
 {
 	ItemInfo info = Get<ItemSystem>().GetInfo(_newItemId);
-	if (info._type != ItemType::Consumables && info._type != ItemType::Arrow)
+	if (info._type != ItemType::Consumables && info._type != ItemType::Medicals && info._type != ItemType::Arrow)
 	{
 		_oldItemStack = ItemStack::EmptyStack();
 		return false;
@@ -373,6 +375,7 @@ size_t HotBar::GetSlotIndexFrom(
 		break;
 	case ItemType::Consumables:
 	case ItemType::Arrow:
+	case ItemType::Medicals:
 		slotIndex = CONSUMABLE_SLOT_INDEX;
 		break;
 	case ItemType::Tools:

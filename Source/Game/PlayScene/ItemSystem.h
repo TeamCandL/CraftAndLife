@@ -15,6 +15,7 @@ enum ItemType
 	Materials,    ///<	素材アイテム
 	Medicals,     ///<	蘇生アイテム
 	Backpack,     ///<	バックパック
+	EnemyAttack,  ///<	敵の攻撃アイテム
 	ItemTypeMax,  ///<	その他アイテム
 };
 
@@ -36,6 +37,7 @@ struct ItemInfo
 	float _coolTime{};
 	int32_t _damageForEnemy{};
 	int32_t _damageForObject{};
+	int32_t _damageForMob{};
 
 	PlayerJobType canUseJobType{};
 };
@@ -54,6 +56,7 @@ struct ItemAllInfo
 	const float _coolTime{};           ///<	クールタイム
 	const int32_t _damageForEnemy{};   ///<	敵への攻撃力
 	const int32_t _damageForObject{};  ///<	オブジェクトへの攻撃力
+	const int32_t _damageForMob{};     ///<	モブへの攻撃力
 
 	PlayerJobType canUseJobType{ PlayerJobType_Max };  ///<	使用可能な職業タイプ
 };

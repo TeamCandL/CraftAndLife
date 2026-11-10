@@ -14,6 +14,7 @@
 #include "StateRegistry.h"
 #include "../Manager/SessionManager.h"
 #include "EntitySystem.h"
+#include "../PlayScene/Player/HelthState.h"
 
 void Enemy::Start()
 {
@@ -29,6 +30,11 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	{
+		hp -= 10;
+	}
+
 	if (!alive)
 		return;
 
@@ -84,8 +90,42 @@ void Enemy::Update()
 
 	ImGui::End();
 
-	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
-		hp = 0;
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader{ sessionManager };
+
+	reader.ForeachPlayer(
+	    [&](const std::string& playerName, const StateTarget& target)
+	    {
+		    int32_t healthState{};
+
+		    VCU_LOG("プレイヤー確認開始: {}", playerName);
+
+		    if (!reader.TryGetState(target, "helthState", healthState))
+		    {
+			    VCU_LOG("プレイヤーの生存状態取得失敗: {}", playerName);
+			    return;
+		    }
+
+		    VCU_LOG("プレイヤーの生存状態取得成功: 名前={}, helthState={}", playerName, healthState);
+
+		    if (healthState == HelthState_Dead)
+		    {
+			    VCU_LOG("死亡プレイヤーのため追跡対象外: {}", playerName);
+			    return;
+		    }
+
+		    VCU_LOG("生存プレイヤー確認: {}", playerName);
+
+		    // int32_t healthState{};
+
+		    // if (!reader.TryGetState(target, "helthState", healthState))
+		    //  return;
+
+		    // if (healthState == HelthState_Dead)
+		    //  return;
+
+		    // 生存プレイヤーとして追跡対象に追加
+	    });
 
 	if (alive)
 	{
@@ -105,12 +145,6 @@ void Enemy::Update()
 		networkActor.OnEnemyDeath(enemyId);
 
 		// 敵の管理スロットを空にする
-		controller.RemoveEnemy(enemyId);
-
-		VCU_LOG("[Enemy] OnEnemyDeath 呼び出し ID={}", enemyId);
-		networkActor.OnEnemyDeath(enemyId);
-
-		VCU_LOG("[Enemy] Controllerから削除 ID={}", enemyId);
 		controller.RemoveEnemy(enemyId);
 
 		DestroyMe();
@@ -163,14 +197,17 @@ void Enemy::Move(
 void Enemy::Sensor(
     Vec3 Fwd_)
 {
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader(sessionManager);
+
 	Vec3 targetPos_{ DEFAULT_TARGET_POS };
 	float targetDist{ -1.0f };
 	int32_t targetAttentionLevel{ 0 };
 	std::vector<TargetInfo> players;
-	Get<SessionManager>().ForeachPlayerStatus(
+	sessionManager.ForeachPlayerStatus(
 	    [&players](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
 	    {
-		    players.push_back({ _status.position, _status.attentionLevel });
+		    players.push_back({ _name, _status.position, _status.attentionLevel });
 	    });
 	for (TargetInfo objPlayer : players)
 	{
@@ -204,6 +241,24 @@ void Enemy::Sensor(
 			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
 			float visibilityDot = std::cosf(visibilityAngle);
 			if (dot <= visibilityDot)
+			{
+			}
+		}
+
+		int32_t playerId{};
+		if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
+		{
+			StateTarget target = StateTarget::Player(playerId);
+
+			int32_t helthState{};
+			bool flag = reader.TryGetState(target, "helthState", helthState);
+			if (flag)
+			{
+				if (helthState == HelthState_::HelthState_Live)
+				{
+				}
+			}
+			else
 			{
 			}
 		}
@@ -298,8 +353,20 @@ void Enemy::AttackCollider(
 	attacked = true;
 	// あとから修正
 	// Get<AudioManager>().Play(attackSE);
+	const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 
-	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f, forward_, 10.0f);
+	Vec3 dir = forward_.Normalize() * 10.0f;
+	if (dir.Length() <= FLT_EPSILON)
+	{
+		dir = Vec3::Forward();
+	}
+
+	// 蜘蛛の糸攻撃！
+	Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
+
+	// NOTE: エンティティへ移行しますた
+	// GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f,
+	// forward_, 10.0f);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
@@ -311,8 +378,6 @@ void Enemy::Damaged(
 		hp -= damage;
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
-
-	VCU_ASSERT(hp > 0);
 }
 
 void Enemy::SetWanderingCheckPoint(

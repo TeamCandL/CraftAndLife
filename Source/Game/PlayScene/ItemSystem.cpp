@@ -16,6 +16,7 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
 
 	allItemList.push_back({ 1,
@@ -30,6 +31,7 @@ ItemSystemData::ItemSystemData()
 
 	                        1.0f,
 	                        10,
+	                        0,
 	                        0 });
 
 	allItemList.push_back({ 2,
@@ -45,6 +47,7 @@ ItemSystemData::ItemSystemData()
 	                        2.0f,
 	                        0,
 	                        25,
+	                        0,
 
 	                        PlayerJobType_Max });
 	craft.clear();
@@ -61,6 +64,7 @@ ItemSystemData::ItemSystemData()
 
 	                        0.5f,
 	                        8,
+	                        0,
 	                        0,
 
 	                        PlayerJobType_Archer });
@@ -79,6 +83,7 @@ ItemSystemData::ItemSystemData()
 	                        0.6f,
 	                        12,
 	                        0,
+	                        0,
 
 	                        PlayerJobType_Max });
 	craft.clear();
@@ -95,7 +100,8 @@ ItemSystemData::ItemSystemData()
 
 	                        1.0f,
 	                        0,
-	                        20,
+	                        5,
+	                        0,
 
 	                        PlayerJobType_Max });
 	craft.clear();
@@ -112,7 +118,8 @@ ItemSystemData::ItemSystemData()
 
 	                        0.8f,
 	                        0,
-	                        10 });
+	                        5,
+	                        0 });
 	allItemList.push_back({ 7,
 	                        ItemType::Materials,
 	                        "石",
@@ -123,6 +130,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0,
 	                        0 });
 	allItemList.push_back({ 8,
@@ -135,6 +143,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0,
 	                        0 });
 	allItemList.push_back({ 9,
@@ -160,6 +169,7 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 11,
 	                        ItemType::Materials,
@@ -171,6 +181,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0,
 	                        0 });
 	allItemList.push_back({ 12,
@@ -184,6 +195,7 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
 	allItemList.push_back({ 13,
 	                        ItemType::Consumables,
@@ -195,6 +207,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        0,
 	                        0,
 	                        0 });
 	allItemList.push_back({ 14,
@@ -222,8 +235,10 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        10,  // TODO: 仮
 	                        0,
 	                        0,
+
 	                        PlayerJobType_Archer });
 	craft.clear();
 	craft.push_back({ 7, 3 });
@@ -240,6 +255,8 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0,
+	                        0,
+
 	                        PlayerJobType_Tank });
 	craft.clear();
 	craft.push_back({ 7, 7 });
@@ -256,6 +273,7 @@ ItemSystemData::ItemSystemData()
 	                        2.0f,
 	                        35,
 	                        10,
+	                        0,
 
 	                        PlayerJobType_Fighter });
 	craft.clear();
@@ -273,6 +291,7 @@ ItemSystemData::ItemSystemData()
 	                        5.0f,
 	                        0,
 	                        0,
+	                        0,
 
 	                        PlayerJobType_Healer });
 	craft.clear();
@@ -287,7 +306,21 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
+	allItemList.push_back({ 20,
+	                        ItemType::EnemyAttack,
+	                        "糸攻撃",
+	                        "Image/EmptyItem.png",
+	                        "Model/HandMaterial/HandString.fbx",
+
+	                        false,
+	                        craft,
+
+	                        10.0f,
+	                        8,
+	                        0,
+	                        8 });
 }
 
 ItemInfo ItemSystem::GetInfo(

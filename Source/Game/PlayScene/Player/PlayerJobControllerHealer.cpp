@@ -23,7 +23,7 @@ void PlayerJobControllerHealer::Update(
 			    return;
 		    }
 
-		    bool isDown = std::get<bool>(_status.states.at("alive"));
+		    bool isDown = std::get<int32_t>(_status.states.at("hp")) <= 0;
 
 		    if (isDown)
 		    {

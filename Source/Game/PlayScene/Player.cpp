@@ -20,6 +20,7 @@
 #include "StateRegistry.h"
 #include <Game/Manager/AudioManager.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
+#include <Game/PlayScene/DebugPoint.h>
 
 void Player::Start()
 {
@@ -151,6 +152,7 @@ void Player::Update()
 	else if (helthState == HelthState_Dead)
 	{
 		DeadAnim();
+		Dead();
 	}
 
 	// お試しで出してるエンティティ
@@ -167,24 +169,23 @@ void Player::Update()
 	// 近くのアイテムを拾う
 	UpdatePickNearestItem();
 
-	// クラフト画面を開く
-	if (Get<InputSystem>().GetKeyDown(KeyCode::C) ||
-	    Get<AbstructInputSystem>().GetPadInputSystem().IsButtonTriggered(GameInputGamepadY))
-	{
-		isOpenCraftUI = !isOpenCraftUI;
-	}
-
-	// 選択スロットのアイテムを投げ捨てる
-	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && isOpenCraftUI == false)
+	if (isOpenCraftUI == false)
 	{
 		HotBar& hotbar = Get<HotBar>(objHotbar);
-
-		if (hotbar.CanRemoveSelectedItem())
+		// 選択スロットのアイテムを投げ捨てる
+		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 		{
-			ItemId selectedItemId = hotbar.GetSelectedItemId();
-			hotbar.RemoveSelectedItem();
-			SpawnItem(selectedItemId);
+
+			if (hotbar.CanRemoveSelectedItem())
+			{
+				ItemId selectedItemId = hotbar.GetSelectedItemId();
+				hotbar.RemoveSelectedItem();
+				SpawnItem(selectedItemId);
+			}
 		}
+
+		// ホットバーのスロットの動作を更新する
+		hotbar.UpdateSlot();
 	}
 
 	/*
@@ -201,7 +202,7 @@ void Player::Update()
 
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
-		Damaged(10);
+		Damaged(10, transform.position);
 	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
@@ -236,10 +237,35 @@ void Player::AttackCollider()
 }
 
 void Player::Damaged(
-    int32_t damage)
+    int32_t damage,
+    const Vec3 _worldPosition)
 {
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
+		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+
+		if (isHoldShield)
+		{
+			Vec3 dir = _worldPosition - transform.position;
+
+			float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(transform.Forward(), dir));
+
+			// 有効角度のcosf
+			float thresholdDot = std::cosf(shieldGurdAngleRad);
+
+			if (dot > thresholdDot)
+			{
+				VCU_LOG("防いだ!");
+
+				// 盾で防いだ音を再生
+				Get<AudioManager>().Play(shieldGuardSE);
+
+				return;  // 防いだ判定
+			}
+
+			VCU_LOG("防いでいない!");
+		}
+
 		if (jobStatus.maxHpBoost > 0.0f)
 		{
 			jobStatus.maxHpBoost -= damage;
@@ -262,8 +288,6 @@ void Player::Damaged(
 		{
 			hp = 0;
 		}
-
-		nowDamagedCoolTime = DAMAGED_COOL_TIME;
 	}
 
 	if (hp <= 0)
@@ -554,6 +578,29 @@ void Player::DeadAnim()
 	}
 }
 
+void Player::GiveItem(
+    const ItemId _itemId,
+    const Vec3 _fromPosition)
+{
+	// 本当に取得可能な距離かを計測する
+	if ((_fromPosition - transform.position).Length() > entityPickupRadiusOnNetwork)
+	{
+		// 取得できない距離なら無視する
+		return;
+	}
+
+	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(_itemId);
+	if (ITEM_INFO._type == ItemType::EnemyAttack)  // 敵の攻撃ならダメージを
+	{
+		GetScene().Instantiate<DebugPoint>(_fromPosition);
+		Damaged(ITEM_INFO._damageForEnemy, _fromPosition);
+	}
+	else  // それ以外なら基本的にホットバーかバックパックへ
+	{
+		TryAddItem(_itemId);
+	}
+}
+
 void Player::RegisterStates(
     StateRegistry& registry) const
 {
@@ -576,14 +623,7 @@ float Player::GetAngleY() const
 
 void Player::UpdatePickNearestItem()
 {
-	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
-
-	// エンティティを拾うことができた場合
-	if (objPick)
-	{
-		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
-		TryAddItem(pickedItemId);
-	}
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, entityPickupRadius);
 }
 
 void Player::TryAddItem(

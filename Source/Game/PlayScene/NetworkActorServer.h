@@ -9,8 +9,10 @@
 struct NetworkActorServerData
 {
 	NetworkActorServerData(
-	    const GameObject _objPlayer) :
-	    objPlayer{ _objPlayer }
+	    const GameObject _objPlayer,
+	    GameObject _objDayController) :
+	    objPlayer{ _objPlayer },
+	    objDayController{ _objDayController }
 	{
 	}
 
@@ -22,6 +24,7 @@ struct NetworkActorServerData
 	GameObject objEnemyController{};
 	GameObject objOtherEnemyController{};
 	GameObject objNetworkActorServer{};
+	GameObject objDayController{};
 
 	/// @brief 自プレイヤーのステート登録情報
 	StateRegistry playerStateRegistry;
@@ -50,6 +53,7 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 
 	void CreateEnemy(EnemyType type);
 	void CreateEnemy(EnemyType type, const Vec3& position);
+	void CreateBoss(EnemyType type, const Vec3& position);
 	void CreateEnemies();
 	void EnemyStateRegistries(GameObject objEnemy);
 

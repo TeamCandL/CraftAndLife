@@ -31,7 +31,7 @@ struct PlayerData
 	};
 	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
-	Component<Transform> transform{};
+	Component<Transform> transform{ Vec3{ -88.0, 0.0, -91.0 } };
 	Component<TransformAnimator> transformAnimator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
 	bool isAnimPreviewingDebug{};                      ///< アニメーションテスト用ふらぐ
 	Component<RigidBody> rigidBody{};
@@ -86,6 +86,9 @@ struct PlayerData
 	// ジャンプ音
 	Resource<Audio> jumpSE{ "BGM_SE/Jump.mp3" };
 
+	// 盾で攻撃を防いだときのSE
+	Resource<ResourceType::Audio> shieldGuardSE{ "BGM_SE/ShieldGuard.mp3" };
+
 	// 足音を鳴らす間隔
 	float footstepTimer{ 0.0f };
 
@@ -110,8 +113,15 @@ struct PlayerData
 		float dieAnimTimeSec{ DIE_ANIM_TIME_SEC_MAX };
 	} liveStatus;  ///< 生存中のステータス
 
+	float entityPickupRadius{ 3.0f };                                ///< アイテム取得リクエスト可能な距離
+	float entityPickupRadiusOnNetwork{ entityPickupRadius + 3.0f };  ///< 通信でアイテム取得判定をする際に取得可能な距離
+
 	// クラフトUIを開いているか(クラフト機能側がUIを表示するか判定するのに使う)
 	bool isOpenCraftUI{ false };
+
+	bool isHoldShield{ false };  ///< シールドを構えているか true / false
+
+	float shieldGurdAngleRad{ DirectX::XM_PI / 180.0f * 90.0f };  ///< シールドで防げる正面に対する攻撃の角度
 };
 
 /// @brief プレイヤー
@@ -130,7 +140,7 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void AttackCollider();
 
-	void Damaged(int32_t damage);
+	void Damaged(int32_t _damage, Vec3 _worldPos);
 
 	/// @brief 生存ステータスを設定する
 	/// @param _state 生存ステータス
@@ -145,6 +155,16 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	/// @brief 死亡アニメーション
 	void DeadAnim();
+	/// @brief 死亡処理
+	void Dead()
+	{
+		attentionLevel = 0;
+	}
+
+	/// @brief アイテムを与える(ホットバーで回収できるアイテムとは限らない)
+	/// @param _itemId アイテムId
+	/// @param _fromPosition どこからアイテムを取得したかの座標
+	void GiveItem(const ItemId _itemId, const Vec3 _fromPosition);
 
 	void RegisterStates(StateRegistry& registry) const;
 
