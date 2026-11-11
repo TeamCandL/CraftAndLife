@@ -86,7 +86,7 @@ void NetworkActorServer::Update()
 		// ゲストなら他の敵を同期するコントローラーを生成
 		if (Data().objOtherEnemyController.IsEmpty())
 		{
-			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>();
+			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>(objPlaySceneUIController);
 		}
 	}
 }

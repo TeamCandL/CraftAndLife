@@ -16,6 +16,7 @@ struct BossInfoData
 	Component<UIImage> image{ texture };
 
 	GameObject objBoss{};        ///< ボスのオブジェクト
+	int32_t bossEnemyId{ -1 };   ///< ボスの敵ID
 	HpInfo hpInfo{};             ///< ボスのHP情報
 	bool isBossActive{ false };  ///< ボスがアクティブかどうか
 };
@@ -28,7 +29,11 @@ struct BossInfo : ObjectBase<BossInfoData>
 	/// @brief 更新処理
 	void Update() override;
 
+	// ホスト用
 	void SetBoss(GameObject objBoss_);
+
+	// ゲスト用
+	void SetBoss(int32_t enemyId, int32_t maxHP);
 
 	bool IsBossActive() const
 	{
