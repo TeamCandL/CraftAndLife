@@ -1,5 +1,6 @@
 #include "PlayerBag.h"
 #include <Game/Manager/SessionManager.h>
+#include <Game/Manager/AudioManager.h>
 
 #include <numeric>
 
@@ -60,6 +61,7 @@ std::vector<ItemStack> PlayerBag::GetItemStacks()
                 {
                     return _stack.id == id;
                 });
+
 			// 既に同じアイテムが入っているなら加算
 			if (itr != itemStacks.end())
 			{
@@ -160,6 +162,8 @@ bool PlayerBag::TryCraft(
 		int idx = FindCraftMaterialSlot(craftInfo);
 		if (idx == -1)
 		{
+			// 素材不足：失敗音
+			Get<AudioManager>().Play(mistakeSE);
 			return false;
 		}
 		stackUsedCraftTmps.push_back(ItemConsumption{ .slotIndex = idx, .useItemCount = craftInfo._value });
@@ -173,6 +177,7 @@ bool PlayerBag::TryCraft(
 			assert(false);
 			return false;
 		}
+
 		BagItemStack& slot = items[reservation.slotIndex];
 		slot.count -= reservation.useItemCount;
 
@@ -181,7 +186,12 @@ bool PlayerBag::TryCraft(
 			slot = BagItemStack::EmptyStack();
 		}
 	}
+
 	Sort();
+
+	// クラフト成功音
+	Get<AudioManager>().Play(craftingSE);
+
 	return true;
 }
 
@@ -191,6 +201,7 @@ void PlayerBag::AddItem(
 	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
 	if (itemType == ItemType::Weapons)
 		return;
+
 	// 既に同じIDのアイテムが存在する場合は、スタック可能なスロットに追加する
 
 	// 同じIDのアイテムの範囲を取得
@@ -249,6 +260,7 @@ void PlayerBag::AddItem(
 				break;
 
 			itr->id = _id;
+
 			// スロットの最大スタック数を超える場合は、最大数まで追加して残りは次スロットに追加
 			if (remain > itr->maxStack)
 			{
@@ -356,6 +368,7 @@ int PlayerBag::FindCraftMaterialSlot(
 	{
 		return -1;
 	}
+
 	auto idx = std::distance(items.begin(), foundItemStack);
 	return static_cast<int>(idx);
 }

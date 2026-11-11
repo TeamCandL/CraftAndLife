@@ -103,6 +103,15 @@ struct PlayerData
 	// 着地音
 	Resource<Audio> landingSE{ "BGM_SE/Landing.mp3" };
 
+	// アイテム入手時のSE
+	Resource<Audio> obtainItemSE{ "BGM_SE/Obtain Item.mp3" };
+
+	// 蘇生されたときのSE
+	Resource<Audio> resuscitationSE{ "BGM_SE/Resuscitation.mp3" };
+
+	// 死亡時のSE
+	Resource<Audio> deathSE{ "BGM_SE/Death.mp3" };
+
 	// 足音の間隔（秒）
 	const float FOOTSTEP_INTERVAL{ 0.4f };
 
