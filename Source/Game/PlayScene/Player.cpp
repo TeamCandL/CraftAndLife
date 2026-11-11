@@ -456,7 +456,7 @@ void Player::MoveBody()
 	Vec3 nextPosition = transform.position;
 	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
 
-	nextPosition = Get<TerrainSystem>().ToSafePosition(nextPosition);
+	nextPosition = Get<TerrainSystem>().ToSafePosition(nextPosition, Vec3::One() * radius);
 
 	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
 

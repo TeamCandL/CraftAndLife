@@ -25,6 +25,7 @@ struct TerrainSystem : SystemObjectBase<TerrainSystem, TerrainSystemData>
 
 	/// @brief 指定の座標を地形の範囲内へ変換する
 	/// @param _position 指定の座標
+	/// @param _marginWidth マージン幅
 	/// @return 地形の範囲内の座標
-	Vec3 ToSafePosition(const Vec3 _position);
+	Vec3 ToSafePosition(const Vec3 _position, const Vec3 _marginWidth);
 };
