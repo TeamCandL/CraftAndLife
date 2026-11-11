@@ -306,6 +306,9 @@ void Player::Damaged(
 			{
 				VCU_LOG("防いだ!");
 
+				// 盾で防いだときのSE
+				Get<AudioManager>().Play(shieldGuardSE);
+
 				// 盾で防いだ場合はHPを減らさない
 				return;
 			}
@@ -441,6 +444,11 @@ void Player::MoveBody()
 	auto pPlayerInput                = inputSystem.GetPlayerInput();
 
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
+
+	if (isOpenCraftUI)
+	{
+		bodyMove = Vec2::Zero();
+	}
 
 	float moveSpeed = jobStatus.moveSpeed;
 

@@ -9,18 +9,14 @@ void Main(
     const HINSTANCE _hInstance)
 {
 	cha::GameLoop gameLoop{ {
-#if 0
+#if _DEBUG
 		.clientSize = { 1920, 1080 },
 		.targetFPS  = 60,
-		.isWindow   = false,
+		.isWindow   = true,
 #elif 1
 		.clientSize = { 1920, 1080 },
 		.targetFPS  = 60,
-		.isWindow   = true,
-#else
-		.clientSize = { 1600, 900 },
-		.targetFPS  = 60,
-		.isWindow   = true,
+		.isWindow   = false,
 #endif
 	} };
 
