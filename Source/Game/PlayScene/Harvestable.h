@@ -16,8 +16,9 @@ enum class HarvestableType : int32_t
 /// @brief 採取可能なもののデータ
 struct HarvestableData
 {
-	const ItemId ITEM_ID_ROCK{ 7 };  ///< 石のアイテムId
-	const ItemId ITEM_ID_WOOD{ 8 };  ///< 木のアイテムId
+	const ItemId ITEM_ID_ROCK{ 7 };       ///< 石のアイテムId
+	const ItemId ITEM_ID_WOOD{ 8 };       ///< 木のアイテムId
+	const ItemId ITEM_ID_Mushroom{ 14 };  ///< キノコのアイテムId
 
 	// モデルの種類
 	HarvestableType type{ HarvestableType::Tree };
