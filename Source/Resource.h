@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ ‚Å¶¬‚³‚ê‚½ƒCƒ“ƒNƒ‹[ƒh ƒtƒ@ƒCƒ‹B
-// D:\GE3A37\workspace\CraftAndLife\Resource\Resource.rc ‚Åg—p
+// Microsoft Visual C++ ã§ç”Ÿæˆã•ã‚ŒãŸã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ ãƒ•ã‚¡ã‚¤ãƒ«ã€‚
+// D:\GE3A37\workspace\CraftAndLife\Resource\Resource.rc ã§ä½¿ç”¨
 //
 #define IDI_ICON1 102
 #define IDS_APP_TITLE 103
