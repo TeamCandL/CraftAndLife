@@ -17,7 +17,7 @@ void Harvestable::Start()
 
 	case HarvestableType::TreeHigh:
 		model         = Resource<Model>{ "Model/Harvestable/TreeHigh.fbx" };
-		maxDurability = 120;
+		maxDurability = 90;
 		obb.scale     = { 0.5f, 3.0f, 0.2f };
 		break;
 
