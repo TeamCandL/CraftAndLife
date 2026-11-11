@@ -309,6 +309,8 @@ void HotBar::ClearAllSlotItem()
 		if (i == BAG_SLOT_INDEX)
 			continue;
 		Get<SlotItem>(Get<Slot>(slots[i]).Data().slotItem).Reset();
+		if (i == currentSlotIdx)
+			OnChangedSelectedItem();
 	}
 }
 

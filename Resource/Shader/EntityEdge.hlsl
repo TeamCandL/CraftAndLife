@@ -1,3 +1,4 @@
+
 #include "Camera.hlsli"
 #include "Transform.hlsli"
 #include "ModelTransform.hlsli"
@@ -75,5 +76,5 @@ float4 PS(VSOutput input) : SV_Target0
 	}
 
 	// 綺麗な黄色を返す
-	return float4(1.0f, 1.0f, 0.0f, 1.0f);
+	return float4(1.0f, 1.0f, 1.0f, 1.0f);
 }
