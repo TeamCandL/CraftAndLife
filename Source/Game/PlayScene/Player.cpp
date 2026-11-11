@@ -103,7 +103,7 @@ void Player::Update()
 {
 	SessionManager& sessionManager = Get<SessionManager>();
 	std::string playerName         = sessionManager.RefStatus().name;
-
+#ifdef USE_IMGUI
 	ImGui::Begin("Player");
 	if (ImGui::Button("ClearItem"))
 	{
@@ -117,10 +117,14 @@ void Player::Update()
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::Separator();
 	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+#endif
 
 	Vec3 angles = transform.rotation.ToEuler();
+#ifdef USE_IMGUI
 	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+#endif
 	transform.rotation = Quaternion::FromEuler(angles);
+#ifdef USE_IMGUI
 
 	if (ImGui::Button("出力"))
 	{
@@ -165,7 +169,7 @@ void Player::Update()
 	}
 
 	ImGui::End();
-
+#endif
 	if (isAnimPreviewingDebug)
 
 	{

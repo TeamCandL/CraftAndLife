@@ -3,9 +3,11 @@
 void DebugPoint::Draw()
 {
 	return;
+#ifdef USE_IMGUI
 	ImGui::Begin("DebugPoint");
 	ImGui::InputFloat3("focusPoint", transform.position.v);
 	ImGui::End();
+#endif  // _DEBUG
 
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());

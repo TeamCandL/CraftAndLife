@@ -16,7 +16,7 @@ void AbstructInputSystem::Update()
 	if (pPlayerInput && pUIInput)
 	{
 		PadInputSystem& padInputSystem = Get<PadInputSystem>();
-
+#ifdef USE_IMGUI
 		ImGui::Begin("AbstrucInputSystem");
 		if (padInputSystem.IsConnected())
 		{
@@ -75,6 +75,7 @@ void AbstructInputSystem::Update()
 			ImGui::Text("コントローラーは未接続です。");
 		}
 		ImGui::End();
+#endif
 	}
 }
 

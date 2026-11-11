@@ -200,8 +200,9 @@ void CraftUI::Start()
 
 void CraftUI::Update()
 {
+#ifdef USE_IMGUI
 	DrawDebugItemAddWindow();
-
+#endif
 	PlayerData& playerData = Get<Player>(objPlayer).Data();
 
 	if (playerData.isOpenCraftUI == false)
