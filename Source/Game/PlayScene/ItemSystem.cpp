@@ -317,7 +317,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::EnemyAttack,
 	                        "糸攻撃",
 	                        "Image/EmptyItem.png",
-	                        "Model/HandMaterial/StringRetopo.fbx",
+	                        "Model/HandMaterial/HandString.fbx",
 
 	                        false,
 	                        craft,
