@@ -302,14 +302,15 @@ void Player::Damaged(
 			{
 				VCU_LOG("防いだ!");
 
-				// 盾で防いだ音を再生
-				Get<AudioManager>().Play(shieldGuardSE);
-
-				return;  // 防いだ判定
+				// 盾で防いだ場合はHPを減らさない
+				return;
 			}
 
 			VCU_LOG("防いでいない!");
 		}
+
+		// ダメージ適用前のHPを保存
+		int32_t beforeHP = hp;
 
 		if (jobStatus.maxHpBoost > 0.0f)
 		{
@@ -329,6 +330,13 @@ void Player::Damaged(
 			hp -= damage;
 		}
 
+		// HPが実際に減った場合だけSEを再生
+		if (hp < beforeHP)
+		{
+			Get<AudioManager>().Play(enemyHitSE);
+		}
+
+		// HPが0未満にならないようにする
 		if (hp < 0)
 		{
 			hp = 0;
@@ -590,6 +598,8 @@ void Player::MoveBody()
 			transform.position.y = groundHeight;
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
+
+			Get<AudioManager>().PlayLanding(landingSE);
 		}
 
 		if (jumpVelocity < 0.0f)

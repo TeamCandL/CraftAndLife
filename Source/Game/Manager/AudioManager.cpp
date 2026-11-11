@@ -1,4 +1,3 @@
-
 #include "AudioManager.h"
 #include <algorithm>
 
@@ -205,6 +204,72 @@ void AudioManager::StopJump()
 	{
 		pJumpSourceVoice->Stop();
 		pJumpSourceVoice->FlushSourceBuffers();
+	}
+}
+
+// 着地音を再生
+void AudioManager::PlayLanding(
+    Resource<ResourceType::Audio>& _resource)
+{
+	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// 初回だけSourceVoiceを作成
+	if (!pLandingSourceVoice)
+	{
+		HRESULT hResult = pXAudio2->CreateSourceVoice(&pLandingSourceVoice, &audio.waveFormatEx.Format);
+
+		if (FAILED(hResult) || pLandingSourceVoice == nullptr)
+		{
+			return;
+		}
+	}
+
+	// 再生中なら停止してバッファをクリア
+	pLandingSourceVoice->Stop();
+	pLandingSourceVoice->FlushSourceBuffers();
+
+	// 着地音の音量を1.5倍に設定
+	pLandingSourceVoice->SetVolume(1.5f);
+
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
+		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
+		.pAudioData = audio.buffer.data(),
+		.PlayBegin  = 0,
+		.PlayLength = 0,
+		.LoopBegin  = 0,
+		.LoopLength = 0,
+		.LoopCount  = 0,
+		.pContext   = 0,
+	};
+
+	HRESULT hResult = pLandingSourceVoice->SubmitSourceBuffer(&BUFFER);
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+
+	hResult = pLandingSourceVoice->Start();
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+}
+
+// 着地音を停止
+void AudioManager::StopLanding()
+{
+	if (pLandingSourceVoice)
+	{
+		pLandingSourceVoice->Stop();
+		pLandingSourceVoice->FlushSourceBuffers();
 	}
 }
 
@@ -429,6 +494,14 @@ void AudioManager::Release()
 		pJumpSourceVoice->Stop();
 		pJumpSourceVoice->DestroyVoice();
 		pJumpSourceVoice = nullptr;
+	}
+
+	// 着地音を停止・破棄
+	if (pLandingSourceVoice)
+	{
+		pLandingSourceVoice->Stop();
+		pLandingSourceVoice->DestroyVoice();
+		pLandingSourceVoice = nullptr;
 	}
 
 	// 環境音を停止
