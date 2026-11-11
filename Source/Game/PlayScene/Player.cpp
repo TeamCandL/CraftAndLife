@@ -460,6 +460,8 @@ void Player::MoveBody()
 	Vec3 nextPosition = transform.position;
 	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
 
+	nextPosition = Get<TerrainSystem>().ToSafePosition(nextPosition);
+
 	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
 
 	if (animSpeed > 0.01f)
