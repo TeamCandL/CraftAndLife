@@ -306,6 +306,9 @@ void Player::Damaged(
 			{
 				VCU_LOG("防いだ!");
 
+				// 盾で防いだときのSE
+				Get<AudioManager>().Play(shieldGuardSE);
+
 				// 盾で防いだ場合はHPを減らさない
 				return;
 			}
