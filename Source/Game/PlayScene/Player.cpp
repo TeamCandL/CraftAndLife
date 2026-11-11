@@ -25,6 +25,12 @@
 
 void Player::Start()
 {
+#ifdef _DEBUG
+	filterAddItemOnJob = false;
+#else
+	filterAddItemOnJob = true;
+#endif  // _DEBUG
+
 	obb.isTrigger = true;
 
 	transform.scale = Vec3::One() * 200.0f;
@@ -59,32 +65,6 @@ void Player::Start()
 		    VCU_LOG("change selected item");
 	    });
 
-	SetJob(PlayerJobType_Archer);
-}
-
-void Player::Update()
-{
-	SessionManager& sessionManager = Get<SessionManager>();
-	std::string playerName         = sessionManager.RefStatus().name;
-
-	ImGui::Begin("Player");
-	if (ImGui::Button("ClearItem"))
-	{
-		ClearAllItem();
-	}
-	ImGui::DragInt("anim", &animIndex, 1, 0);
-	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
-	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
-	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
-	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
-	ImGui::Text("プレイヤー名：%s", playerName.c_str());
-	ImGui::Separator();
-	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
-
-	Vec3 angles = transform.rotation.ToEuler();
-	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
-	transform.rotation = Quaternion::FromEuler(angles);
-
 	// ジョブ割り振り
 	if (!isJobAssigned)
 	{
@@ -117,6 +97,30 @@ void Player::Update()
 			}
 		}
 	}
+}
+
+void Player::Update()
+{
+	SessionManager& sessionManager = Get<SessionManager>();
+	std::string playerName         = sessionManager.RefStatus().name;
+
+	ImGui::Begin("Player");
+	if (ImGui::Button("ClearItem"))
+	{
+		ClearAllItem();
+	}
+	ImGui::DragInt("anim", &animIndex, 1, 0);
+	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
+	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
+	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
+	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
+	ImGui::Text("プレイヤー名：%s", playerName.c_str());
+	ImGui::Separator();
+	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+
+	Vec3 angles = transform.rotation.ToEuler();
+	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+	transform.rotation = Quaternion::FromEuler(angles);
 
 	if (ImGui::Button("出力"))
 	{
@@ -451,6 +455,8 @@ void Player::MoveBody()
 	// 地形に沿った移動
 	Vec3 nextPosition = transform.position;
 	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
+
+	nextPosition = Get<TerrainSystem>().ToSafePosition(nextPosition);
 
 	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
 
