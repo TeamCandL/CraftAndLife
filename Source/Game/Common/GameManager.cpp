@@ -25,6 +25,7 @@
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/ItemSystem.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/PlayScene/TutorialSystem.h>
 
 void GameManager::Start()
 {
@@ -55,6 +56,7 @@ void GameManager::Start()
 	GetScene().Instantiate<TerrainSystem>();
 	GetScene().Instantiate<ItemSystem>();
 	GetScene().Instantiate<EntitySystem>();
+	GetScene().Instantiate<TutorialSystem>();
 }
 
 void GameManager::Update()

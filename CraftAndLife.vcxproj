@@ -501,6 +501,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\PlaySceneUIController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainSystem.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\TutorialSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossGaugeR.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossGauge.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossHp.cpp" />
@@ -778,6 +779,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\ITutorialObserver.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRespawnedNetworkData.h" />
     <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
@@ -812,6 +814,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
     <ClInclude Include="Source\Game\PlayScene\StateValueCode.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\TutorialSystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\TutorialPhaseType.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossGaugeR.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossGauge.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossHp.h" />
