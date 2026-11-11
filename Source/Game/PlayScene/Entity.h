@@ -18,7 +18,7 @@ struct EntityData
 		                         RasterizerConfig{ .cullMode = D3D11_CULL_NONE,
 		                                           .fillMode = D3D11_FILL_SOLID } };  ///< メインのモデル描画用シェーダ
 	Resource<Shader> edgeShader{ "Shader/EntityEdge.hlsl",
-		                         RasterizerConfig{ .cullMode = D3D11_CULL_NONE,
+		                         RasterizerConfig{ .cullMode = D3D11_CULL_FRONT,
 		                                           .fillMode = D3D11_FILL_SOLID } };  ///< エッジ(輪郭)描画用シェーダ
 	Resource<Model> model{};                                                          ///< モデル
 
