@@ -68,7 +68,10 @@ void Player::Update()
 	std::string playerName         = sessionManager.RefStatus().name;
 
 	ImGui::Begin("Player");
-
+	if (ImGui::Button("ClearItem"))
+	{
+		ClearAllItem();
+	}
 	ImGui::DragInt("anim", &animIndex, 1, 0);
 	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
 	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
@@ -696,9 +699,6 @@ void Player::TryAddItem(
 	/// ----------------------------------------------
 	/// 今のjobで、引数のアイテムを追加できるか確認
 	/// ----------------------------------------------
-
-	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
-	bool filterAddItemOnJob{ false };
 
 	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
 	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);
