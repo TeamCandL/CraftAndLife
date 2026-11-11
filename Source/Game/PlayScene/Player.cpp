@@ -445,6 +445,11 @@ void Player::MoveBody()
 
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
 
+	if (isOpenCraftUI)
+	{
+		bodyMove = Vec2::Zero();
+	}
+
 	float moveSpeed = jobStatus.moveSpeed;
 
 	// カメラの向きを取得
