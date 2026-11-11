@@ -34,7 +34,7 @@ void TPSCamera::Update(
 	auto pPlayerInput                = inputSystem.GetPlayerInput();
 
 	// 回転スピード
-	const float ROTATE_SPEED{ rotateSpeedPerSec * DELTA_TIME };
+	const Vec2 ROTATE_SPEED{ rotateSpeedPerSec * DELTA_TIME };
 	// 移動スピード
 	const float MOVE_SPEED{ moveSpeedPerSec * DELTA_TIME };
 
@@ -42,8 +42,8 @@ void TPSCamera::Update(
 	float xRotateAssist{ angles.x * angles.x * xRotateAssistRatio + 1.0f };
 
 	// カメラ移動をカメラの回転に適用
-	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED * xRotateAssist;
-	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED;
+	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED.x * xRotateAssist;
+	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED.y;
 
 	// 角度に制限をつける
 	angles.x = std::clamp(angles.x, angleLimitXMin, angleLimitXMax);
