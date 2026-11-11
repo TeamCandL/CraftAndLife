@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <vector>
 #include <Game/PlayScene/ITerrain.h>
+#include <Game/PlayScene/ItemId.h>
 
 // ============================================================
 // マップ調整設定
@@ -86,6 +87,12 @@ namespace MapConfig
 	constexpr int32_t WATERFALL_TIERS     = 4;      // 滝の段数
 	constexpr float WATERFALL_STEP_HEIGHT = 2.0f;   // 1段あたりの高さ
 	constexpr float WATER_SURFACE_OFFSET  = 0.15f;  // 水面の高さ補正
+
+	// --------------------------------------------------------
+	// 8. アイテム設置
+	// --------------------------------------------------------
+	const ItemId ITEM_ID_ROCK{ 7 };  ///< 石のアイテムId
+	const ItemId ITEM_ID_TREE{ 8 };  ///< 木のアイテムId
 }  // namespace MapConfig
 
 // ============================================================
