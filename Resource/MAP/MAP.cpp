@@ -1033,3 +1033,18 @@ Vec3 MAP::GetNormal(
 
 	return Vec3{ NORMAL.x / NORMAL_LENGTH, NORMAL.y / NORMAL_LENGTH, NORMAL.z / NORMAL_LENGTH };
 }
+
+Vec3 MAP::GetSize()
+{
+	return Vec3{ static_cast<float>(MapConfig::MAP_WIDTH), MapConfig::MAX_HEIGHT, static_cast<float>(MapConfig::MAP_DEPTH) };
+}
+
+Vec3 MAP::GetMinPosition()
+{
+	return Vec3();
+}
+
+Vec3 MAP::GetMaxPosition()
+{
+	return Vec3();
+}

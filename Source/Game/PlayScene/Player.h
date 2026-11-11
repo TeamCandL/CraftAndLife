@@ -135,6 +135,8 @@ struct PlayerData
 	float shieldGurdAngleRad{ DirectX::XM_PI / 180.0f * 90.0f };  ///< シールドで防げる正面に対する攻撃の角度
 	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
 	bool filterAddItemOnJob{ false };
+
+	float radius{ 1.0f };  ///< プレイヤーの半径
 };
 
 /// @brief プレイヤー

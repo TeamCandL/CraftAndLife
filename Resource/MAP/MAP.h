@@ -175,4 +175,16 @@ struct MAP : ObjectBase<MapData>, ITerrain
 	// ITerrainの実装
 	float GetHeight(const float _worldX, const float _worldZ) override;
 	Vec3 GetNormal(const float _worldX, const float _worldZ) override;
+
+	/// @brief 地形のサイズを取得する
+	/// @return 地形のサイズ
+	Vec3 GetSize() override;
+
+	/// @brief 最小地点のワールド座標を取得する
+	/// @return 最小地点のワールド座標
+	Vec3 GetMinPosition() override;
+
+	/// @brief 最大地点のワールド座標を取得する
+	/// @return 最大地点のワールド座標
+	Vec3 GetMaxPosition() override;
 };

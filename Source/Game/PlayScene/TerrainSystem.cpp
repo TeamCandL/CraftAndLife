@@ -19,3 +19,8 @@ float TerrainSystem::GetHeight(
 	}
 	return 0.0f;
 }
+
+Vec3 TerrainSystem::ToSafePosition(
+    const Vec3 _position)
+{
+}

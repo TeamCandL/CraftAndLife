@@ -22,4 +22,9 @@ struct TerrainSystem : SystemObjectBase<TerrainSystem, TerrainSystemData>
 	/// @param _worldZ ワールド座標z
 	/// @return ワールド座標y
 	float GetHeight(const float _worldX, const float _worldZ);
+
+	/// @brief 指定の座標を地形の範囲内へ変換する
+	/// @param _position 指定の座標
+	/// @return 地形の範囲内の座標
+	Vec3 ToSafePosition(const Vec3 _position);
 };
