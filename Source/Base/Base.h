@@ -60,3 +60,11 @@ namespace cha
 }  // namespace cha
 
 using namespace cha;
+
+// ImGui表示を有効にする場合は、こちらを1にしてください
+#define ENABLE_DEBUG_UI 0
+
+#if _DEBUG || ENABLE_DEBUG_UI
+#define USE_IMGUI
+#else
+#endif

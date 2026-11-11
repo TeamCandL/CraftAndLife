@@ -39,12 +39,13 @@ void Enemy::Update()
 		return;
 
 	attacked = false;
-
+#ifdef USE_IMGUI
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
 	ImGui::DragInt("HP", &hp);
 	ImGui::End();
+#endif
 
 	if (hp <= 0)
 	{
@@ -82,6 +83,7 @@ void Enemy::Update()
 		}
 		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
+#ifdef USE_IMGUI
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
@@ -90,7 +92,7 @@ void Enemy::Update()
 	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
 
 	ImGui::End();
-
+#endif
 	SessionManager& sessionManager = Get<SessionManager>();
 	SessionStateReader reader{ sessionManager };
 

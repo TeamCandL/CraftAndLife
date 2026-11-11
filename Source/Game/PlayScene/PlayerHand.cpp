@@ -130,12 +130,19 @@ void PlayerHand::Start()
 void PlayerHand::Update(
     PlayerData& _playerData)
 {
+#ifdef USE_IMGUI
+
 	ImGui::Begin("PlayerHand");
 
 	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+#endif
 	Vec3 angles = transform.rotation.ToEuler();
+#ifdef USE_IMGUI
+
 	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+#endif
 	transform.rotation = Quaternion::FromEuler(angles);
+#ifdef USE_IMGUI
 
 	if (ImGui::Button("出力"))
 	{
@@ -192,7 +199,7 @@ void PlayerHand::Update(
 	}
 
 	ImGui::End();
-
+#endif
 	if (isAnimPreviewingDebug)
 	{
 		transformAnimator.playAnimation = "";

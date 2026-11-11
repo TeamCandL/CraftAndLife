@@ -14,7 +14,7 @@ void PlayerBag::Update()
 {
 	static ItemId id{ 0 };
 	auto& status = Get<SessionManager>().RefStatus();
-
+#ifdef USE_IMGUI
 	// デバッグ用のUI
 	ImGui::Begin(std::format("Bag:{}", status.name.c_str()).c_str());
 	if (ImGui::Button("ExpansiionCapa"))
@@ -42,6 +42,7 @@ void PlayerBag::Update()
 		}
 	}
 	ImGui::End();
+#endif
 }
 
 std::vector<ItemStack> PlayerBag::GetItemStacks()
