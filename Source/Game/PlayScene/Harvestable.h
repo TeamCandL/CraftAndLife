@@ -16,8 +16,21 @@ enum class HarvestableType : int32_t
 /// @brief 採取可能なもののデータ
 struct HarvestableData
 {
-	const ItemId ITEM_ID_ROCK{ 7 };  ///< 石のアイテムId
-	const ItemId ITEM_ID_WOOD{ 8 };  ///< 木のアイテムId
+	const ItemId ITEM_ID_ROCK{ 7 };       ///< 石のアイテムId
+	const ItemId ITEM_ID_WOOD{ 8 };       ///< 木のアイテムId
+	const ItemId ITEM_ID_Mushroom{ 14 };  ///< キノコのアイテムId
+
+	// 木の破壊音
+	Resource<Audio> treeDestructionSE{ "BGM_SE/Tree destruction.mp3" };
+
+	// 岩の破壊音
+	Resource<Audio> rockDestructionSE{ "BGM_SE/Rock destruction.mp3" };
+
+	// 木が破壊された瞬間のSE
+	Resource<Audio> brokenTreeSE{ "BGM_SE/Broken tree.mp3" };
+
+	// 岩が破壊された瞬間のSE
+	Resource<Audio> brokenRockSE{ "BGM_SE/Broken rock.mp3" };
 
 	// モデルの種類
 	HarvestableType type{ HarvestableType::Tree };

@@ -19,6 +19,7 @@
 #include <Game/Network/Protocols/EntitySpawned.h>
 #include <Game/Network/Protocols/EntityPickRequest.h>
 #include <Game/Network/Protocols/EntityPicked.h>
+#include <Game/Network/Protocols/PlayerRespawned.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -28,9 +29,11 @@
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/PlayScene/IEntitySystemNetwork.h>
 #include <Game/PlayScene/PlayerHand.h>
+#include <Game/PlayScene/PlayerRespawnedNetworkData.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
 #include <Game/PlayScene/HarvestableController.h>
+#include "OtherPlayerController.h"
 
 using enum NetworkSessionManager::State;
 
@@ -286,6 +289,18 @@ void PlayNetworkController::Update()
 				    entitySystem.RemoveFromNetwork(message.entityId);
 				    break;
 			    }
+			    case ProtocolType::PlayerRespawned:
+			    {
+				    Protocol::PlayerRespawned message{};
+				    converter.ToMessage(_event.data, message);
+
+				    if (Get<SessionManager>().RefStatus().name == message.playerName)
+				    {
+					    VCU_LOG("自分が生き返った！！");
+					    Get<Player>(objPlayer).Respawn(message.hp);
+				    }
+				    break;
+			    }
 			    default:
 				    VCU_LOG("想定外の謎プロトコルを取得:{}", static_cast<int>(protocolType));
 				    break;
@@ -395,107 +410,149 @@ void PlayNetworkController::Update()
 		if (actorServer.IsHost() && actorServer.IsInitialized())
 		{
 			GameObject objEnemyController = actorServer.GetEnemyController();
-			auto enemyStatuses            = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
-
-			// 送信済みの敵IDを記録する
-			std::unordered_set<int> enemyIds;
-
-			for (const EnemyStatus& enemy : enemyStatuses)
+			if (!objEnemyController.IsEmpty())
 			{
-				// 同じIDがすでに登録されていたら送信しない
-				if (!enemyIds.insert(enemy.enemyId).second)
+				auto enemyStatuses = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
+
+				// 送信済みの敵IDを記録する
+				std::unordered_set<int> enemyIds;
+
+				for (const EnemyStatus& enemy : enemyStatuses)
 				{
-					// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
-					continue;
+					// 同じIDがすでに登録されていたら送信しない
+					if (!enemyIds.insert(enemy.enemyId).second)
+					{
+						// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
+						continue;
+					}
+
+					Protocol::UpdateEnemy enemyMessage{};
+
+					enemyMessage.enemyId   = enemy.enemyId;
+					enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
+
+					enemyMessage.positionX = enemy.enemyPosition.x;
+					enemyMessage.positionY = enemy.enemyPosition.y;
+					enemyMessage.positionZ = enemy.enemyPosition.z;
+
+					enemyMessage.rotationX = 0.0f;
+					enemyMessage.rotationY = enemy.enemyAngleY;
+
+					VCU_LOG(
+					    "送信前の敵座標 ID={}: ({}, {}, {})",
+					    enemy.enemyId,
+					    enemy.enemyPosition.x,
+					    enemy.enemyPosition.y,
+					    enemy.enemyPosition.z);
+
+					networkSessionManager.Send(enemyMessage);
 				}
 
-				Protocol::UpdateEnemy enemyMessage{};
+				// 敵ステート送信処理
+				const bool fullSync = actorServer.IsFullSync();
+				auto& registries    = actorServer.GetEnemyStateRegistries();
 
-				enemyMessage.enemyId   = enemy.enemyId;
-				enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
+				const auto& pendingDeaths = actorServer.GetPendingEnemyDeaths();
 
-				enemyMessage.positionX = enemy.enemyPosition.x;
-				enemyMessage.positionY = enemy.enemyPosition.y;
-				enemyMessage.positionZ = enemy.enemyPosition.z;
+				Protocol::UpdatedEnemyStates enemyStateMessage{};
+				enemyStateMessage.isFullSync = fullSync;
 
-				enemyMessage.rotationX = 0.0f;
-				enemyMessage.rotationY = enemy.enemyAngleY;
+				std::vector<int32_t> enemyStateIds;
+				std::vector<uint8_t> values;
 
-				VCU_LOG(
-				    "送信前の敵座標 ID={}: ({}, {}, {})",
-				    enemy.enemyId,
-				    enemy.enemyPosition.x,
-				    enemy.enemyPosition.y,
-				    enemy.enemyPosition.z);
+				std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
 
-				networkSessionManager.Send(enemyMessage);
-			}
+				VCU_LOG("敵ステート送信 FullSync={}", fullSync);
+				VCU_LOG("敵ステート登録数={}", registries.size());
 
-			// 敵ステート送信処理
-			const bool fullSync = actorServer.IsFullSync();
-			auto& registries    = actorServer.GetEnemyStateRegistries();
-
-			Protocol::UpdatedEnemyStates enemyStateMessage{};
-			enemyStateMessage.isFullSync = fullSync;
-
-			std::vector<int32_t> enemyStateIds;
-			std::vector<uint8_t> values;
-
-			std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
-
-			VCU_LOG("敵ステート送信 FullSync={}", fullSync);
-			VCU_LOG("敵ステート登録数={}", registries.size());
-
-			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
-			{
-				if (!registries[enemyId].has_value())
-					continue;
-
-				auto& registry = *registries[enemyId];
-
-				// 初回は全ステート、それ以降は変更分だけ取得
-				const auto changes = registry.GetStates(fullSync);
-				VCU_LOG("敵 ID={} 取得ステート数={}", enemyId, changes.size());
-				for (const auto& change : changes)
+				// ステート名を改行区切りで追加
+				auto AddStateName = [&enemyStateMessage](const std::string& name)
 				{
-					VCU_LOG("送信対象 ID={} Name={}", enemyId, change.name);
-					enemyStateIds.push_back(static_cast<int32_t>(enemyId));
-
-					// 値をエンコード
-					StateValueCode::Encode(change.value, values);
-
 					if (!enemyStateMessage.stateName.empty())
+					{
 						enemyStateMessage.stateName += '\n';
+					}
 
-					enemyStateMessage.stateName += change.name;
-				}
+					enemyStateMessage.stateName += name;
+				};
 
-				if (!changes.empty())
-					pendingChanges.emplace_back(enemyId, changes);
-			}
-
-			// 送信するステートがある場合のみ送信
-			if (!enemyStateIds.empty())
-			{
-				enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
-
-				enemyStateMessage.values.Resize(values.size());
-
-				for (size_t i = 0; i < values.size(); ++i)
-					enemyStateMessage.values[i] = values[i];
-
-				networkSessionManager.Send(enemyStateMessage);
-
-				// 送信後に変更を確定
-				for (const auto& [enemyId, changes] : pendingChanges)
+				for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
 				{
-					if (enemyId < registries.size() && registries[enemyId].has_value())
-						registries[enemyId]->CommitChanges(changes);
+					if (!registries[enemyId].has_value())
+						continue;
+
+					// 死亡済みの敵はレジストリのポインタを参照しない
+					if (actorServer.IsDeathQueued(static_cast<int32_t>(enemyId)))
+					{
+						continue;
+					}
+
+					// 初回は全ステート、それ以降は変更分だけ取得
+					auto& registry     = *registries[enemyId];
+					const auto changes = registry.GetStates(fullSync);
+
+					VCU_LOG("敵 ID={} 取得ステート数={}", enemyId, changes.size());
+
+					for (const auto& change : changes)
+					{
+						VCU_LOG("送信対象 ID={} Name={}", enemyId, change.name);
+						enemyStateIds.push_back(static_cast<int32_t>(enemyId));
+
+						// 値をエンコード
+						StateValueCode::Encode(change.value, values);
+
+						AddStateName(change.name);
+					}
+
+					if (!changes.empty())
+						pendingChanges.emplace_back(enemyId, changes);
 				}
 
-				// 初回同期完了
-				if (fullSync)
-					actorServer.ResetFullSync();
+				// 死亡通知の送信
+				for (const auto& death : pendingDeaths)
+				{
+					enemyStateIds.push_back(death.enemyId);
+
+					// 死亡通知は alive = false
+					StateValueCode::Encode(StateValue{ death.alive }, values);
+					AddStateName("alive");
+				}
+
+				// 送信するステートがある場合のみ送信
+				if (!enemyStateIds.empty())
+				{
+					enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
+
+					enemyStateMessage.values.Resize(values.size());
+
+					for (size_t i = 0; i < values.size(); ++i)
+						enemyStateMessage.values[i] = values[i];
+
+					networkSessionManager.Send(enemyStateMessage);
+
+					// 送信後に変更を確定
+					for (const auto& [enemyId, changes] : pendingChanges)
+					{
+						if (enemyId < registries.size() && registries[enemyId].has_value())
+							registries[enemyId]->CommitChanges(changes);
+					}
+
+					// 死亡通知を送信した敵のレジストリを解除
+					for (const auto& death : pendingDeaths)
+					{
+						actorServer.ReleaseActor(death.enemyId);
+					}
+
+					// 死亡通知キューをクリア
+					if (!pendingDeaths.empty())
+					{
+						actorServer.ClearPendingEnemyDeaths();
+					}
+
+					// 初回同期完了
+					if (fullSync)
+						actorServer.ResetFullSync();
+				}
 			}
 		}
 
@@ -526,6 +583,18 @@ void PlayNetworkController::Update()
 			message.positionX = data.position.x;
 			message.positionY = data.position.y;
 			message.positionZ = data.position.z;
+
+			networkSessionManager.Send(message);
+		}
+
+		OtherPlayerController& otherPlayerController          = Get<OtherPlayerController>(objOtherPlayerController);
+		std::vector<PlayerRespawnedData> playerRespawnedsData = otherPlayerController.TakeRespawn();
+		for (auto& data : playerRespawnedsData)
+		{
+			Protocol::PlayerRespawned message{};
+
+			message.playerName = data.playerName;
+			message.hp         = data.hp;
 
 			networkSessionManager.Send(message);
 		}

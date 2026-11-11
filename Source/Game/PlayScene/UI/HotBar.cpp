@@ -2,6 +2,7 @@
 #include "pch\pch.h"
 #include "MiniMapPoint.h"
 #include <Game/System/AbstructInputSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 namespace
 {
@@ -309,6 +310,8 @@ void HotBar::ClearAllSlotItem()
 		if (i == BAG_SLOT_INDEX)
 			continue;
 		Get<SlotItem>(Get<Slot>(slots[i]).Data().slotItem).Reset();
+		if (i == currentSlotIdx)
+			OnChangedSelectedItem();
 	}
 }
 
@@ -380,8 +383,18 @@ bool HotBar::SwapItemImpl(
 void HotBar::MoveFocusImpl(
     int _dir)
 {
+	// 移動前の選択スロットを保存
+	int previousSlotIdx = currentSlotIdx;
+
+	// 選択スロットを移動
 	currentSlotIdx += _dir;
 	currentSlotIdx = (currentSlotIdx + slots.size()) % slots.size();
+
+	// 選択スロットが変わった場合のみSEを再生
+	if (currentSlotIdx != previousSlotIdx)
+	{
+		Get<AudioManager>().Play(moveHotbarSlotSE);
+	}
 }
 
 SlotItemData& HotBar::GetSlotItemData(

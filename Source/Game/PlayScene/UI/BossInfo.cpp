@@ -9,7 +9,6 @@ void BossInfo::Start()
 
 void BossInfo::Update()
 {
-	SetActive(isBossActive);
 
 	if (isBossActive)
 	{
@@ -26,6 +25,7 @@ void BossInfo::Update()
 	{
 		hpInfo.hp       = 0;
 		hpInfo.rateOfHp = 0.0f;
+		SetActive(false);
 	}
 }
 

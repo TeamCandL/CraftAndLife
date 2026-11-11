@@ -22,7 +22,7 @@ struct BossInfoData
 
 struct BossInfo : ObjectBase<BossInfoData>
 {
-	using ObjectBase<BossInfoData>::ObjectBase;
+	// using ObjectBase<BossInfoData>::ObjectBase;
 	/// @brief 開始処理
 	void Start() override;
 	/// @brief 更新処理

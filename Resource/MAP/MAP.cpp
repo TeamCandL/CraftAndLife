@@ -9,6 +9,7 @@
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/Harvestable.h>
 #include <Game/PlayScene/HarvestableController.h>
+#include <Game/PlayScene/EntitySystem.h>
 
 #include <algorithm>
 #include <cmath>
@@ -635,6 +636,68 @@ void MAP::Start()
 		float z;
 		float scale;
 	};
+	
+	struct HarvestableEntity
+	{
+		ItemId itemId;
+		float x;
+		float z;
+	};
+	
+	const HarvestableEntity harvestableEntities[] = {
+		// ==============================
+		// 木のアイテム（16個）
+		// ==============================
+		{ 8, -86.0f, -91.0f },
+		{ 8, -82.0f, -98.0f },
+		{ 8, -94.0f, -86.0f },
+		{ 8, -78.0f, -91.0f },
+
+		{ 8, -88.0f, -78.0f },
+		{ 8, -73.0f, -96.0f },
+		{ 8, -68.0f, -88.0f },
+		{ 8, -99.0f, -91.0f },
+
+		{ 8, -62.0f, -96.0f },
+		{ 8, -76.0f, -72.0f },
+		{ 8, -58.0f, -82.0f },
+		{ 8, -91.0f, -60.0f },
+
+		{ 8, -52.0f, -95.0f },
+		{ 8, -65.0f, -65.0f },
+		{ 8, -45.0f, -78.0f },
+		{ 8, -55.0f, -55.0f },
+
+		// ==============================
+		// 石のアイテム（16個）
+		// ==============================
+		{ 7, -84.0f, -84.0f },
+		{ 7, -76.0f, -97.0f },
+		{ 7, -97.0f, -99.0f },
+		{ 7, -70.0f, -85.0f },
+
+		{ 7, -82.0f, -68.0f },
+		{ 7, -62.0f, -88.0f },
+		{ 7, -56.0f, -92.0f },
+		{ 7, -96.0f, -55.0f },
+
+		{ 7, -48.0f, -96.0f },
+		{ 7, -68.0f, -55.0f },
+		{ 7, -42.0f, -88.0f },
+		{ 7, -88.0f, -48.0f },
+
+		{ 7, -55.0f, -42.0f },
+		{ 7, -38.0f, -70.0f },
+		{ 7, -72.0f, -40.0f },
+		{ 7, -45.0f, -50.0f },
+
+		
+	};
+	for (const auto& entity : harvestableEntities)
+	{
+		const float y = GetHeight(entity.x, entity.z);
+		Get<EntitySystem>().Spawn(entity.itemId, Vec3(entity.x,y,entity.z), Vec3());
+	}
 
 	const HarvestablePlacement placements[] = {
 		// スタート付近の木
@@ -1032,4 +1095,23 @@ Vec3 MAP::GetNormal(
 	}
 
 	return Vec3{ NORMAL.x / NORMAL_LENGTH, NORMAL.y / NORMAL_LENGTH, NORMAL.z / NORMAL_LENGTH };
+}
+
+Vec3 MAP::GetSize()
+{
+	return Vec3{ static_cast<float>(MapConfig::MAP_WIDTH), MapConfig::MAX_HEIGHT, static_cast<float>(MapConfig::MAP_DEPTH) };
+}
+
+Vec3 MAP::GetMinPosition()
+{
+	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+	return Vec3{ -HALF_WIDTH, MapConfig::BASE_HEIGHT, -HALF_DEPTH };
+}
+
+Vec3 MAP::GetMaxPosition()
+{
+	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+	return Vec3{ HALF_WIDTH, MapConfig::MAX_HEIGHT, HALF_DEPTH };
 }

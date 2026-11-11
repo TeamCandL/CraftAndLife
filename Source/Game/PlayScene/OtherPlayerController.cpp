@@ -16,6 +16,7 @@ void OtherPlayerController::Update()
 	{
 		return;
 	}
+#ifdef USE_IMGUI
 
 	ImGui::Begin("SessionManager");
 
@@ -32,7 +33,7 @@ void OtherPlayerController::Update()
 	    });
 
 	ImGui::End();
-
+#endif
 	// --------------------------------
 	// 退出したプレイヤーを削除
 	// =====================================

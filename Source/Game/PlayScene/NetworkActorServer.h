@@ -15,9 +15,25 @@ struct NetworkActorServerData
 	    objDayController{ _objDayController }
 	{
 	}
+	NetworkActorServerData(
+	    const GameObject _objPlayer,
+	    GameObject _objDayController,
+	    GameObject _objPlaySceneUIController) :
+	    objPlayer{ _objPlayer },
+	    objDayController{ _objDayController },
+	    objPlaySceneUIController{ _objPlaySceneUIController }
+	{
+	}
+
+	struct EnemyDeathData
+	{
+		int32_t enemyId{};
+		bool alive{ false };
+	};
 
 	bool isHost{ false };
 
+	bool isSpawnEnemies{ false };
 	bool isInitialized{ false };
 
 	GameObject objPlayer{};
@@ -25,6 +41,7 @@ struct NetworkActorServerData
 	GameObject objOtherEnemyController{};
 	GameObject objNetworkActorServer{};
 	GameObject objDayController{};
+	GameObject objPlaySceneUIController{};
 
 	/// @brief 自プレイヤーのステート登録情報
 	StateRegistry playerStateRegistry;
@@ -33,6 +50,7 @@ struct NetworkActorServerData
 
 	/// @brief 敵IDごとのステート登録情報
 	std::vector<std::optional<StateRegistry>> enemyStateRegistries;
+	std::vector<EnemyDeathData> pendingEnemyDeaths;
 	/// @brief 敵IDごとの死亡通知送信登録状態
 	std::vector<bool> enemyDeathQueued;
 	/// @brief 敵ステートの全同期間隔（秒）
@@ -109,10 +127,16 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 		return Data().objEnemyController;
 	}
 
-	// 敵の生成が完了しているか確認
+	/// @brief イベントの初期化が完了しているか確認
+	/// @return
 	bool IsInitialized() const
 	{
 		return Data().isInitialized;
+	}
+	// 敵の生成が完了しているか設定
+	bool IsSpawnEnemies() const
+	{
+		return Data().isSpawnEnemies;
 	}
 
 	// 敵ステート登録情報を取得
@@ -124,6 +148,16 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	const std::vector<std::optional<StateRegistry>>& GetEnemyStateRegistries() const
 	{
 		return Data().enemyStateRegistries;
+	}
+
+	const std::vector<NetworkActorServerData::EnemyDeathData>& GetPendingEnemyDeaths() const
+	{
+		return Data().pendingEnemyDeaths;
+	}
+
+	void ClearPendingEnemyDeaths()
+	{
+		Data().pendingEnemyDeaths.clear();
 	}
 
 	// 全同期タイマーを取得

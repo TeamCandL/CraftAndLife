@@ -39,16 +39,18 @@ void Enemy::Update()
 		return;
 
 	attacked = false;
-
+#ifdef USE_IMGUI
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
 	ImGui::DragInt("HP", &hp);
 	ImGui::End();
+#endif
 
 	if (hp <= 0)
 	{
 		SetAlive(false);
+		DropItem();
 	}
 
 	// VCU_LOG("敵の追跡状況：{}", followed);
@@ -81,6 +83,7 @@ void Enemy::Update()
 		}
 		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
+#ifdef USE_IMGUI
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
@@ -89,7 +92,7 @@ void Enemy::Update()
 	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
 
 	ImGui::End();
-
+#endif
 	SessionManager& sessionManager = Get<SessionManager>();
 	SessionStateReader reader{ sessionManager };
 
@@ -340,10 +343,15 @@ void Enemy::CloseAttack()
 void Enemy::AttackCollider()
 {
 	attacked = true;
+
 	// あとから修正
 	// Get<AudioManager>().Play(attackSE);
 
-	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+	// 近距離攻撃用アイテム
+	const ItemId ITEM_ID_CLOSE_ATTACK{ 21 };
+
+	// 敵の位置に攻撃判定用エンティティを生成
+	Get<EntitySystem>().Spawn(ITEM_ID_CLOSE_ATTACK, transform.position, Vec3{ 0.0f, 0.0f, 0.0f });
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
@@ -397,7 +405,7 @@ void Enemy::SetWanderingCheckPoint(
 
 void Enemy::DropItem()
 {
-	Get<EntitySystem>().Spawn(dropItemID, transform.position, { 0.0f, 0.0f, 0.0f });
+	Get<EntitySystem>().Spawn(dropItemID, transform.position + Vec3::Up(), Vec3::Zero());
 }
 
 void Enemy::RegisterStates(
@@ -406,5 +414,5 @@ void Enemy::RegisterStates(
 	registry.Register("hp", hp);
 	// registry.Register("followed", followed);
 	registry.Register("alive", alive);
-	// registry.Register("attacked", attacked);
+	registry.Register("attacked", attacked);
 }

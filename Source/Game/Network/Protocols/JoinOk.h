@@ -21,11 +21,13 @@ namespace Protocol
 			_registry.AddMember(playerName);
 			_registry.AddMember(playerId);
 			_registry.AddMember(roleId);
+			_registry.AddMember(imHost);
 		}
 
 		// 以下通信メンバーたち
 		std::string playerName{};  ///< プレイヤー名
 		int32_t playerId{};        ///< プレイヤーID
 		int32_t roleId{};          ///< ジョブID
+		int32_t imHost{};          ///< 私はホストです
 	};
 }  // namespace Protocol

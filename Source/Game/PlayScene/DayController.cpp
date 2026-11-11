@@ -6,10 +6,12 @@
 
 void DayController::Update()
 {
+#ifdef USE_IMGUI
 	ImGui::Begin("DayController");
 	ImGui::DragFloat("boost", &boost, 1.0f, 1.0f);
 	ImGui::DragFloat("currentTimeSec", &currentTimeSec);
 	ImGui::End();
+#endif  // _DEBUG
 
 	const float DELTA_TIME = Get<DeltaTime>();
 	const float MAX_TIME   = skyAnimKeys.back().timeSec;
@@ -22,8 +24,10 @@ void DayController::Update()
 	// ゲストだけホストの時刻に近づける
 	const InSessionStatus& status = Get<SessionManager>().RefStatus();
 
+	isDayChanged = false;
 	if (status.imLobbyHost && currentTimeSec >= MAX_TIME)
 	{
+		isDayChanged = true;
 		currentDay++;
 	}
 
