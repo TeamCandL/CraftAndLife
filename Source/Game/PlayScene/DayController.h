@@ -46,8 +46,22 @@ struct DayControllerData
 	// 現在の時間帯
 	bool isNight{ false };
 
+	// 現在の日付（1日目から開始）
+	int32_t currentDay{ 1 };
+
+	bool isDayChanged{ true };  ///< 日付が変更されたフレームか
+
 	float currentTimeSec{};
 	GameObject objSky{};
+
+	// 昼の環境音
+	Resource<Audio> daytimeAmbientSE{ "BGM_SE/Daytime ambient sounds.mp3" };
+
+	// 夜の環境音
+	Resource<Audio> nighttimeAmbientSE{ "BGM_SE/Nighttime ambient sounds.mp3" };
+
+	// 環境音の初期化が済んでいるか
+	bool isAmbientInitialized{ false };
 };
 
 struct DayController : ObjectBase<DayControllerData>
@@ -65,5 +79,30 @@ struct DayController : ObjectBase<DayControllerData>
 	    float _timeSec)
 	{
 		Data().currentTimeSec = _timeSec;
+	}
+
+	int32_t GetCurrentDay() const
+	{
+		return Data().currentDay;
+	}
+
+	void SetCurrentDay(
+	    int32_t _day)
+	{
+		Data().currentDay = _day;
+	}
+
+	/// @brief 現在が夜かどうかを取得
+	/// @return true：夜 / false：昼
+	bool IsNight() const
+	{
+		return Data().isNight;
+	}
+
+	/// @brief	現在のフレームで日付が変更されたかどうかを取得する
+	/// @return
+	bool IsDayChanged() const
+	{
+		return isDayChanged;
 	}
 };

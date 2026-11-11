@@ -6,7 +6,7 @@
 /// @brief メインのカメラデータ
 struct MainCameraData
 {
-	Vec2 angles{};                    ///< 現在のカメラの角度
+	Vec2 angles{ 0.0, 0.7 };          ///< 現在のカメラの角度
 	Vec3 position{};                  ///< 現在のカメラの座標
 	float moveSpeedPerSec{ 0.01f };   ///< カメラの移動スピード(/秒)
 	float rotateSpeedPerSec{ 1.0f };  ///< カメラの回転スピード(/秒)
@@ -38,6 +38,10 @@ struct MainCamera : ObjectBase<MainCameraData>, IMainCamera
 	/// @brief 注視している座標を取得する
 	/// @return 注視している座標 xyz
 	Vec3 GetFocusPosition();
+
+	/// @brief カメラの座標を取得する
+	/// @return カメラの座標 xyz
+	Vec3 GetPosition();
 
 	// IMainCamera を介して継承されました
 	void UpdatePositionFromTarget(const GameObject _objTarget) override;

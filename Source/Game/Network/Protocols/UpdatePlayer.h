@@ -25,6 +25,8 @@ namespace Protocol
 			    .AddMember(rotationX)
 			    .AddMember(rotationY)
 
+			    .AddMember(haveItemId)
+			    .AddMember(attentionLevel)
 			    .AddMember(flag);
 		}
 
@@ -38,13 +40,17 @@ namespace Protocol
 		}
 
 		// 以下通信メンバーたち
-		float positionX{};
-		float positionY{};
-		float positionZ{};
+		float positionX{};  ///< 座標(x)
+		float positionY{};  ///< 座標(y)
+		float positionZ{};  ///< 座標(z)
 
-		float rotationX{};
-		float rotationY{};
+		float rotationX{};  ///< 腕の回転(x)
+		float rotationY{};  ///< ボディの回転(y)
 
-		int32_t flag{};
+		int32_t haveItemId{};  ///< 持っているアイテムのId
+
+		int32_t attentionLevel{};  ///< 注目度
+
+		int32_t flag{};  ///< フラグ
 	};
 }  // namespace Protocol

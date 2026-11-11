@@ -14,6 +14,7 @@
 #include "System/EffectSystem.h"
 
 #include "Component/Name.h"
+#include "Component/Tag.h"
 #include "Component/Transform.h"
 #include "Component/DynamicTransform.h"
 #include "Component/UI/UITransform.h"

@@ -16,6 +16,7 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
 
 	allItemList.push_back({ 1,
@@ -30,6 +31,7 @@ ItemSystemData::ItemSystemData()
 
 	                        1.0f,
 	                        10,
+	                        0,
 	                        0 });
 
 	allItemList.push_back({ 2,
@@ -45,11 +47,12 @@ ItemSystemData::ItemSystemData()
 	                        2.0f,
 	                        0,
 	                        25,
+	                        0,
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 9, 3 });
-	craft.push_back({ 11, 2 });
+	craft.push_back({ 8, 3 });
+	craft.push_back({ 10, 2 });
 	allItemList.push_back({ 3,
 	                        ItemType::WeaponBow,
 	                        "弓",
@@ -62,11 +65,12 @@ ItemSystemData::ItemSystemData()
 	                        0.5f,
 	                        8,
 	                        0,
+	                        0,
 
 	                        PlayerJobType_Archer });
 	craft.clear();
-	craft.push_back({ 8, 3 });
-	craft.push_back({ 9, 2 });
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 2 });
 	allItemList.push_back({ 4,
 	                        ItemType::Weapons,
 	                        "剣",
@@ -79,11 +83,12 @@ ItemSystemData::ItemSystemData()
 	                        0.6f,
 	                        12,
 	                        0,
+	                        0,
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 8, 5 });
-	craft.push_back({ 9, 3 });
+	craft.push_back({ 7, 5 });
+	craft.push_back({ 8, 3 });
 	allItemList.push_back({ 5,
 	                        ItemType::Tools,
 	                        "ハンマー",
@@ -95,30 +100,14 @@ ItemSystemData::ItemSystemData()
 
 	                        1.0f,
 	                        0,
-	                        20,
+	                        5,
+	                        0,
 
 	                        PlayerJobType_Max });
 	craft.clear();
-	craft.push_back({ 8, 7 });
-	craft.push_back({ 9, 4 });
-	allItemList.push_back({ 6,
-	                        ItemType::Weapons,
-	                        "大剣",
-	                        "Image/Item/IconSwordBig.png",
-	                        "Model/HandWeapon/HandSwordBig.fbx",
-
-	                        true,
-	                        craft,
-
-	                        2.0f,
-	                        35,
-	                        10,
-
-	                        PlayerJobType_Fighter });
-	craft.clear();
+	craft.push_back({ 7, 3 });
 	craft.push_back({ 8, 3 });
-	craft.push_back({ 9, 3 });
-	allItemList.push_back({ 7,
+	allItemList.push_back({ 6,
 	                        ItemType::Tools,
 	                        "斧",
 	                        "Image/Item/IconAxe.png",
@@ -129,8 +118,9 @@ ItemSystemData::ItemSystemData()
 
 	                        0.8f,
 	                        0,
-	                        10 });
-	allItemList.push_back({ 8,
+	                        5,
+	                        0 });
+	allItemList.push_back({ 7,
 	                        ItemType::Materials,
 	                        "石",
 	                        "Image/Item/IconRock.png",
@@ -141,8 +131,9 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
-	allItemList.push_back({ 9,
+	allItemList.push_back({ 8,
 	                        ItemType::Materials,
 	                        "木材",
 	                        "Image/Item/IconWood.png",
@@ -153,8 +144,9 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
-	allItemList.push_back({ 10,
+	allItemList.push_back({ 9,
 	                        ItemType::Materials,
 	                        "骨",
 	                        "Image/Item/IconBone.png",
@@ -166,7 +158,7 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0 });
-	allItemList.push_back({ 11,
+	allItemList.push_back({ 10,
 	                        ItemType::Materials,
 	                        "蜘蛛の糸",
 	                        "Image/Item/IconString.png",
@@ -177,8 +169,9 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
-	allItemList.push_back({ 12,
+	allItemList.push_back({ 11,
 	                        ItemType::Materials,
 	                        "生肉",
 	                        "Image/Item/IconMeat.png",
@@ -189,8 +182,9 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
-	allItemList.push_back({ 13,
+	allItemList.push_back({ 12,
 	                        ItemType::Materials,
 	                        "爪",
 	                        "Image/Item/IconClaw.png",
@@ -201,8 +195,9 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
-	allItemList.push_back({ 14,
+	allItemList.push_back({ 13,
 	                        ItemType::Consumables,
 	                        "焼肉",
 	                        "Image/InvalidImage.png",
@@ -213,9 +208,10 @@ ItemSystemData::ItemSystemData()
 
 	                        0.0f,
 	                        0,
+	                        0,
 	                        0 });
-	allItemList.push_back({ 15,
-	                        ItemType::Consumables,
+	allItemList.push_back({ 14,
+	                        ItemType::Materials,
 	                        "キノコ",
 	                        "Image/Item/IconMushroom.png",
 	                        "Model/HandFood/HandMushroom.fbx",
@@ -227,9 +223,9 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        0 });
 	craft.clear();
-	craft.push_back({ 8, 1 });
-	craft.push_back({ 9, 2 });
-	allItemList.push_back({ 16,
+	craft.push_back({ 7, 1 });
+	craft.push_back({ 8, 2 });
+	allItemList.push_back({ 15,
 	                        ItemType::Arrow,
 	                        "矢",
 	                        "Image/Item/IconArrow.png",
@@ -239,13 +235,20 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.0f,
+	                        10,  // TODO: 仮
 	                        0,
 	                        0,
-	                        PlayerJobType_Archer });
+
+	                        PlayerJobType_Archer,
+	                        Vec3{
+	                            1,
+	                            1,
+	                            1,
+	                        } });
 	craft.clear();
-	craft.push_back({ 8, 3 });
-	craft.push_back({ 9, 10 });
-	allItemList.push_back({ 17,
+	craft.push_back({ 7, 3 });
+	craft.push_back({ 8, 10 });
+	allItemList.push_back({ 16,
 	                        ItemType::Shield,
 	                        "盾",
 	                        "Image/Item/IconShield.png",
@@ -257,7 +260,101 @@ ItemSystemData::ItemSystemData()
 	                        0.0f,
 	                        0,
 	                        0,
+	                        0,
+
 	                        PlayerJobType_Tank });
+	craft.clear();
+	craft.push_back({ 7, 7 });
+	craft.push_back({ 8, 4 });
+	allItemList.push_back({ 17,
+	                        ItemType::Weapons,
+	                        "大剣",
+	                        "Image/Item/IconSwordBig.png",
+	                        "Model/HandWeapon/HandSwordBig.fbx",
+
+	                        true,
+	                        craft,
+
+	                        2.0f,
+	                        35,
+	                        10,
+	                        0,
+
+	                        PlayerJobType_Fighter });
+	craft.clear();
+	craft.push_back({ 10, 5 });
+	craft.push_back({ 14, 4 });
+	allItemList.push_back({ 18,
+	                        ItemType::Medicals,
+	                        "医療キット",
+	                        "Image/Item/IconMedicalKit.png",
+	                        "Model/HandWeapon/HandMedicalKit.fbx",
+
+	                        true,
+	                        craft,
+
+	                        5.0f,
+	                        0,
+	                        0,
+	                        0,
+
+	                        PlayerJobType_Healer });
+	craft.clear();
+	allItemList.push_back({ 19,
+	                        ItemType::Backpack,
+	                        "バックパック",
+	                        "Image/Item/IconBackPack.png",
+	                        "Model/HandBackPack/HandBackPack.fbx",
+
+	                        false,
+	                        craft,
+
+	                        0.0f,
+	                        0,
+	                        0,
+	                        0 });
+	allItemList.push_back({ 20,
+	                        ItemType::EnemyAttack,
+	                        "糸攻撃",
+	                        "Image/EmptyItem.png",
+	                        "Model/HandMaterial/StringRetopo.fbx",
+
+	                        false,
+	                        craft,
+
+	                        10.0f,
+	                        8,
+	                        0,
+	                        8,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
+	allItemList.push_back({ 21, ItemType::EnemyAttack, "近距離攻撃", {}, {}, false, craft, 10.0f, 15, 0, 15 });
+	allItemList.push_back({ 22,
+	                        ItemType::PlayerAttackSword,
+	                        "プレイヤー剣の攻撃",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        1.0f,
+	                        5,
+	                        0,
+	                        5,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 2 } });
+	allItemList.push_back({ 23,
+	                        ItemType::PlayerAttackSword,
+	                        "プレイヤー大剣の攻撃",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        1.0f,
+	                        5,
+	                        0,
+	                        5,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 5 } });
 }
 
 ItemInfo ItemSystem::GetInfo(
@@ -277,6 +374,7 @@ ItemInfo ItemSystem::GetInfo(
 	info._damageForObject = allItemList[id]._damageForObject;
 
 	info.canUseJobType = allItemList[id].canUseJobType;
+	info.colliderSize  = allItemList[id].colliderSize;
 	return info;
 }
 

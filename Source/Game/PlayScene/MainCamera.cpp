@@ -16,7 +16,7 @@ void MainCamera::Update()
 	CursorSystem& cursor                = Get<CursorSystem>();
 	InputSystem& input                  = Get<InputSystem>();
 	CameraSystemData& camera            = Get<CameraSystem>().Data();
-
+#ifdef USE_IMGUI
 	ImGui::Begin("DebugCamera");
 
 	ImGui::DragFloat3("position", camera.transform.position.v);
@@ -41,15 +41,15 @@ void MainCamera::Update()
 	}
 
 	ImGui::End();
-
-	// #ifdef _DEBUG
+#endif
+#ifdef USE_IMGUI
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.WantCaptureMouse || io.WantCaptureKeyboard)
 	{
 		// ImGui操作中なら無視
 		return;
 	}
-	// #endif
+#endif
 
 	if (rawMouseInput.GetMouseDown(MouseCode_Left))
 	{
@@ -118,6 +118,11 @@ void MainCamera::SetCameraType(
 Vec3 MainCamera::GetFocusPosition()
 {
 	return Get<IMainCameraUpdater>(objUpdater).GetFocusPosition();
+}
+
+Vec3 MainCamera::GetPosition()
+{
+	return position;
 }
 
 void MainCamera::UpdatePositionFromTarget(

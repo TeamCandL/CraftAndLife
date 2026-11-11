@@ -7,6 +7,7 @@
 #include "Player/PlayerAnimType.h"
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
+#include "OtherPlayerController.h"
 
 struct StateRegistry;
 
@@ -14,8 +15,10 @@ struct StateRegistry;
 struct PlayerData
 {
 	PlayerData(
-	    const GameObject _objMainCamera) :
-	    objMainCamera{ _objMainCamera }
+	    const GameObject _objMainCamera,
+	    const GameObject _objOtherPlayerController) :
+	    objMainCamera{ _objMainCamera },
+	    objOtherPlayerController{ _objOtherPlayerController }
 	{
 	}
 
@@ -31,14 +34,16 @@ struct PlayerData
 	};
 	// Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/character-female-a.fbx" };
 
-	Component<Transform> transform{};
-	Component<TransformAnimator> animator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
+	Component<Transform> transform{ Vec3{ -88.0, 0.0, -91.0 } };
+	Component<TransformAnimator> transformAnimator{};  ///< FBXではなくTransformコンポーネントのアニメーションするやつ
+	bool isAnimPreviewingDebug{};                      ///< アニメーションテスト用ふらぐ
 	Component<RigidBody> rigidBody{};
 	Component<StaticOBB> obb{};
 	Component<OBBRenderer> obbRenderer{};
 	Component<Name> name{ "Player" };
 
 	PlayerJobType jobType{ PlayerJobType_Healer };  ///< プレイヤーの役職
+	bool isJobAssigned{ false };                    ///< 役職が割り当てられたかどうか
 	HelthState helthState{ HelthState_Live };       ///< プレイヤーの生存ステータス
 
 	GameObject objMainCamera{};        ///< プレイヤーのカメラ
@@ -47,6 +52,7 @@ struct PlayerData
 	GameObject objPlayerHand{};        ///< プレイヤーの手持ち
 	GameObject objPlayerBag{};
 	GameObject objHotbar{};
+	GameObject objOtherPlayerController{};  ///< 他プレイヤーのコントローラーオブジェクト
 	PlayerRoleType role{ PlayerRoleType_Max };
 
 	float angleX{};
@@ -82,8 +88,20 @@ struct PlayerData
 	// 足音SE
 	Resource<Audio> footstepSE{ "BGM_SE/footsteps.mp3" };
 
+	// ジャンプ音
+	Resource<Audio> jumpSE{ "BGM_SE/Jump.mp3" };
+
+	// 盾で攻撃を防いだときのSE
+	Resource<ResourceType::Audio> shieldGuardSE{ "BGM_SE/ShieldGuard.mp3" };
+
+	// HP減少時のSE
+	Resource<ResourceType::Audio> enemyHitSE{ "BGM_SE/Striking the enemy.mp3" };
+
 	// 足音を鳴らす間隔
 	float footstepTimer{ 0.0f };
+
+	// 着地音
+	Resource<Audio> landingSE{ "BGM_SE/Landing.mp3" };
 
 	// 足音の間隔（秒）
 	const float FOOTSTEP_INTERVAL{ 0.4f };
@@ -94,6 +112,8 @@ struct PlayerData
 	struct JobStatus
 	{
 		float moveSpeed{ 0.1f };
+		Vec3 moveVelocity{};
+		float maxHpBoost{ 0.0f };
 	} jobStatus;  ///< プレイヤーの役職固有のステータス
 
 	// inline static const float DIE_ANIM_TIME_SEC_MAX{ 21.0f / 60.0f };  ///< 死亡アニメーションの時間
@@ -104,8 +124,19 @@ struct PlayerData
 		float dieAnimTimeSec{ DIE_ANIM_TIME_SEC_MAX };
 	} liveStatus;  ///< 生存中のステータス
 
+	float entityPickupRadius{ 3.0f };                                ///< アイテム取得リクエスト可能な距離
+	float entityPickupRadiusOnNetwork{ entityPickupRadius + 3.0f };  ///< 通信でアイテム取得判定をする際に取得可能な距離
+
 	// クラフトUIを開いているか(クラフト機能側がUIを表示するか判定するのに使う)
 	bool isOpenCraftUI{ false };
+
+	bool isHoldShield{ false };  ///< シールドを構えているか true / false
+
+	float shieldGurdAngleRad{ DirectX::XM_PI / 180.0f * 90.0f };  ///< シールドで防げる正面に対する攻撃の角度
+	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
+	bool filterAddItemOnJob{ false };
+
+	float radius{ 1.0f };  ///< プレイヤーの半径
 };
 
 /// @brief プレイヤー
@@ -124,7 +155,7 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void AttackCollider();
 
-	void Damaged(int32_t damage);
+	void Damaged(int32_t _damage, Vec3 _worldPos);
 
 	/// @brief 生存ステータスを設定する
 	/// @param _state 生存ステータス
@@ -139,6 +170,20 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	/// @brief 死亡アニメーション
 	void DeadAnim();
+	/// @brief 死亡処理
+	void Dead()
+	{
+		attentionLevel = 0;
+	}
+
+	/// @brief リスポーン
+	/// @param _hp リスポーン時のHP
+	void Respawn(const int32_t _hp);
+
+	/// @brief アイテムを与える(ホットバーで回収できるアイテムとは限らない)
+	/// @param _itemId アイテムId
+	/// @param _fromPosition どこからアイテムを取得したかの座標
+	void GiveItem(const ItemId _itemId, const Vec3 _fromPosition);
 
 	void RegisterStates(StateRegistry& registry) const;
 
@@ -148,4 +193,10 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 	void UpdatePickNearestItem();
 	void TryAddItem(ItemId _id);
 	void SpawnItem(ItemId _id);
+
+	/// @brief バッグ、ホットバーが現在持っているアイテムを返す。ホットバーが持つ「バッグ」は返さない
+	/// @return
+	std::vector<ItemStack> GetHavingItem();
+	/// @brief バッグ、ホットバーが現在持っているアイテムを削除する。ホットバーが持つ「バッグ」は削除されない。
+	void ClearAllItem();
 };

@@ -6,24 +6,26 @@
 
 struct TargetInfo
 {
+	std::string _name{};
 	Vec3 _pos{};
 	int32_t _attentionLevel{ 5 };
+	int32_t _alive{};
 };
 
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
 {
-	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };               ///< 体力
-	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };               ///< 攻撃力
-	const std::vector<float> Speed{ 10.0f, 7.5f, 12.0f, 15.0f, 11.5f };  ///< 移動速度
-	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };
-	const std::vector<bool> HasLongAttack{ false, false, false, false, true };
-	const std::vector<float> VisibilityDist{ 100.0f, 200.0f, 100.0f, 80.0f, 300.0f };
-	const std::vector<float> VisibilityAngle{ 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };
-	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.5f, 1.0f, 3.0f };
-	const std::vector<float> RotationAnglePerSec{ 30.0f, 20.0f, 45.0f, 40.0f, 35.0f };
-	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };
-	const std::vector<int32_t> DropItemId{ 10, 10, 11, 12, 13 };
+	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };                               ///< 体力
+	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };                               ///< 攻撃力
+	const std::vector<float> Speed{ 5.0f, 3.5f, 6.5f, 7.5f, 4.5f };                      ///< 移動速度
+	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };              /// 近距離攻撃の有無
+	const std::vector<bool> HasLongAttack{ false, false, true, false, true };            /// 遠距離攻撃の有無
+	const std::vector<float> VisibilityDist{ 50.0f, 100.0f, 80.0f, 40.0f, 140.0f };      /// 視認距離
+	const std::vector<float> VisibilityAngle{ 180.0f, 200.0f, 300.0f, 240.0f, 260.0f };  /// 視認角度
+	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.0f, 1.0f, 3.0f };             /// 攻撃クールタイム
+	const std::vector<float> RotationAnglePerSec{ 10.0f, 7.0f, 15.0f, 13.0f, 10.5f };    /// 回転速度
+	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };                      /// モデルの大きさ
+	const std::vector<int32_t> DropItemId{ 9, 9, 10, 11, 12 };                           /// ドロップアイテムID
 }  // namespace EnemyParam
 
 struct StateRegistry;
@@ -144,7 +146,8 @@ struct EnemyData
 	    bool isBoss_) :
 	    transform{ position_ },
 	    enemyType{ static_cast<EnemyType>(enemyType_) },
-	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] }
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] },
+	    isBoss{ isBoss_ }
 	{
 		objEnemyController = objEnemyController_;
 		isBoss             = isBoss_;
@@ -194,7 +197,8 @@ struct EnemyData
 	//----------------------//
 	//---------/SE/---------//
 	//----------------------//
-	Resource<Audio> attackSE{ "BGM_SE/Striking the enemy.mp3" };  ///< 攻撃SE
+	// あとから修正
+	// Resource<Audio> attackSE{ "BGM_SE/Striking the enemy.mp3" };  ///< 攻撃SE
 	// Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
 
 	std::array<Resource<Model>, EnemyType_Max> models{
@@ -207,8 +211,9 @@ struct EnemyData
 	Component<Transform> transform{ Vec3{},
 		                            Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, 0.0f, 0.0f }) };  ///< 座標系
 	Component<RigidBody> rigidBody{};                                                                  ///< 剛体
-	Component<StaticOBB> obb{};       ///< OBB当たり判定
-	Component<Name> name{ "Enemy" };  ///< 名前
+	Component<StaticOBB> obb{};            ///< OBB当たり判定
+	Component<OBBRenderer> obbRenderer{};  ///< OBB描画
+	Component<Name> name{ "Enemy" };       ///< 名前
 
 	float angleX{};
 	float angleY{};
@@ -245,7 +250,7 @@ struct EnemyData
 
 	const Vec3 DEFAULT_TARGET_POS{ 0.0f, -100.0f, 0.0f };
 
-	const float WAN_RANGE{ 45 };  ///< 徘徊範囲
+	const float WAN_RANGE{ 50 };  ///< 徘徊範囲
 	const float WAN_REFERENCE{
 		WAN_RANGE / 2
 	};  ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する
@@ -273,9 +278,9 @@ struct Enemy : ObjectBase<EnemyData>
 	/// @param vecZ_ Z軸の移動量
 	/// @param spd_ 速度
 	/// @param angleY_	Y軸の回転角度
-	void Move(Vec3 target_, Vec3 pos_, Vec3 Fwd, float spd_);
+	void Move(Vec3 target_, Vec3 pos_, Vec3 Fwd_, float spd_);
 	/// @brief プレイヤーの視認
-	void Sensor();
+	void Sensor(Vec3 Fwd_);
 
 	/// @brief 描画処理
 	void Draw() override;

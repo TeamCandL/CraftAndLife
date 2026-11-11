@@ -1,4 +1,6 @@
 #include "PlayerBag.h"
+#include <Game/Manager/SessionManager.h>
+
 #include <numeric>
 
 PlayerBagData::PlayerBagData()
@@ -11,9 +13,10 @@ void PlayerBag::Start() {}
 void PlayerBag::Update()
 {
 	static ItemId id{ 0 };
-
+	auto& status = Get<SessionManager>().RefStatus();
+#ifdef USE_IMGUI
 	// デバッグ用のUI
-	ImGui::Begin("Bag");
+	ImGui::Begin(std::format("Bag:{}", status.name.c_str()).c_str());
 	if (ImGui::Button("ExpansiionCapa"))
 	{
 		ExpansionCapacity(10);
@@ -39,6 +42,37 @@ void PlayerBag::Update()
 		}
 	}
 	ImGui::End();
+#endif
+}
+
+std::vector<ItemStack> PlayerBag::GetItemStacks()
+{
+	std::vector<ItemStack> itemStacks;
+	for (auto& item : items)
+	{
+		if (item.IsEmpty() == false)
+		{
+			ItemId id = item.id;
+			auto itr  = std::find_if(
+                itemStacks.begin(),
+                itemStacks.end(),
+                [id](const ItemStack& _stack)
+                {
+                    return _stack.id == id;
+                });
+			// 既に同じアイテムが入っているなら加算
+			if (itr != itemStacks.end())
+			{
+				itr->count += item.count;
+			}
+			// 無いなら新たに追加
+			else
+			{
+				itemStacks.emplace_back(id, item.count);
+			}
+		}
+	}
+	return itemStacks;
 }
 
 void PlayerBag::ExpansionCapacity(
@@ -268,6 +302,12 @@ std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
 	}
 
 	return craftMaterials;
+}
+
+void PlayerBag::ClearItems()
+{
+	BagItemStack emptyStack = BagItemStack::EmptyStack();
+	std::fill(items.begin(), items.end(), emptyStack);
 }
 
 void PlayerBag::Sort()

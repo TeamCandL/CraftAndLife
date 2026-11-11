@@ -443,3 +443,5 @@ Library/Release/*
 
 /x64/Debug.zip
 /Resource/imgui.ini
+/x64/Debug3.zip
+/x64/*

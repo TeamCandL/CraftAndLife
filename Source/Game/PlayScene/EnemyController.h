@@ -1,13 +1,22 @@
 #pragma once
 #include <Game/Game.h>
 #include "EnemyStatus.h"
+#include <Game/PlayScene/NetworkActorServer.h>
 
 struct EnemyControllerData
 {
+	EnemyControllerData(
+	    GameObject _objPlaySceneUIController) :
+	    objPlaySceneUIController{ _objPlaySceneUIController }
+	{
+	}
+
 	std::vector<GameObject> allEnemys;  ///< 全ての敵の情報を格納する
 	int32_t nextEnemyId = 0;
 
-	GameObject objBossInfo{};  ///< ボスのHPUIのオブジェクト
+	GameObject objBossInfo{};               ///< ボスのHPUIのオブジェクト
+	GameObject objPlaySceneUIController{};  ///< UIコントローラーのオブジェクト
+	GameObject objNetworkActorServer{};     ///< ネットワークアクターサーバーのオブジェクト
 };
 
 struct EnemyController : ObjectBase<EnemyControllerData>
@@ -31,4 +40,14 @@ struct EnemyController : ObjectBase<EnemyControllerData>
 	/// @param enemyId ダメージを受ける敵のID
 	/// @param damage ダメージ量
 	void DamagedEnemy(int32_t enemyId, int32_t damage);
+
+	/// @brief IDを指定して敵の管理スロットを空にする
+	void RemoveEnemy(int32_t enemyId);
+
+	/// @brief 指定したIDの敵が存在するか確認
+	bool IsExistEnemy(int32_t enemyId);
+
+	void SetNetworkActorServer(GameObject obj);
+
+	GameObject GetNetworkActorServer() const;
 };

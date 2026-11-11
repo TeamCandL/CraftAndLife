@@ -1,4 +1,3 @@
-
 #include "GameLoop.h"
 
 #include "Core/ResourceManagerInstance.h"
@@ -36,6 +35,8 @@
 #endif
 
 #include "ManagerRegistry.h"
+
+#include "Game/Manager/AudioManager.h"
 
 cha::GameLoop::GameLoop(
     const ClientConfig _clientConfig) :
@@ -163,6 +164,9 @@ void cha::GameLoop::Run(
 
 	IGameLoopCallable& callableSceneManager{ sceneManager };
 
+	AudioManager& audioManager = ManagerRegistry::Add<AudioManager>();
+	audioManager.Start();
+
 	while (true)
 	{
 		if (issueManager.HasError())
@@ -212,6 +216,8 @@ void cha::GameLoop::Run(
 
 		// ライトの更新
 		lightManager.Update();
+
+		audioManager.LateUpdate(ManagerRegistry::Ref<DeltaTime>());
 #pragma endregion
 
 #pragma region シャドウマップ描画

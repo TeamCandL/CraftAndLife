@@ -4,9 +4,7 @@
 /// @brief 単体音声の再生ステータス用
 struct AudioPlayer
 {
-	AudioPlayer(
-		IXAudio2SourceVoice* _pSourceVoice,
-		Resource<ResourceType::Audio>& _srouce);
+	AudioPlayer(IXAudio2SourceVoice* _pSourceVoice, Resource<ResourceType::Audio>& _srouce);
 
 	/// @brief この音声プレイヤーが再生中か
 	/// @return 再生中 true / false

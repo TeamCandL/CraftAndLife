@@ -127,6 +127,24 @@ namespace
 
 			const std::string& name = stateNames[i];
 
+			std::visit(
+			    [id, &name](const auto& stateValue)
+			    {
+				    using T = std::decay_t<decltype(stateValue)>;
+
+				    std::string valueText;
+
+				    if constexpr (std::is_same_v<T, bool>)
+					    valueText = stateValue ? "true" : "false";
+				    else if constexpr (std::is_same_v<T, std::string>)
+					    valueText = stateValue;
+				    else
+					    valueText = std::to_string(stateValue);
+
+				    VCU_LOG("ステート受信: ID={}, Name={}, Value={}", id, name, valueText);
+			    },
+			    value);
+
 			auto& states = status->states;
 			auto stateIt = states.find(name);
 
@@ -157,16 +175,41 @@ void SessionManager::SetPlayerName(
 	inSessionStatus_.name = _name;
 }
 
-void SessionManager::SetMemberNames(
-    const std::string_view _names)
+void SessionManager::SetPlayerRole(
+    int32_t _playerId,
+    int32_t _roleId)
 {
+	// プレイヤーIDに対応する役割を設定
+	inSessionStatus_.memberRoles[_playerId] = _roleId;
+}
+
+bool SessionManager::TryGetPlayerRole(
+    int32_t _playerId,
+    int32_t& _outRoleId) const
+{
+	// 役割を検索
+	auto it = inSessionStatus_.memberRoles.find(_playerId);
+	if (it == inSessionStatus_.memberRoles.end())
+	{
+		return false;
+	}
+
+	_outRoleId = it->second;
+	return true;
+}
+
+void SessionManager::SetMemberInfo(
+    const std::string_view _members)
+{
+	VCU_LOG("SetMemberInfo 呼び出し");
+	VCU_LOG("受信したメンバー情報: {}", _members);
+
 	inSessionStatus_.memberNames.clear();
 	inSessionStatus_.memberId.clear();
-
-	int32_t id = 0;
+	inSessionStatus_.memberRoles.clear();
 
 	// 文字列を改行で分解してく
-	for (auto&& line_range : _names | std::views::split('\n'))
+	for (auto&& line_range : _members | std::views::split('\n'))
 	{
 		std::string_view line{ line_range.begin(), line_range.end() };
 
@@ -181,9 +224,46 @@ void SessionManager::SetMemberNames(
 			continue;
 		}
 
-		inSessionStatus_.memberNames.push_back(std::string{ line });
-		inSessionStatus_.memberId.push_back(id++);
+		// ID、名前、RoleID の区切り位置を取得
+		const size_t firstComma = line.find(',');
+		if (firstComma == std::string_view::npos)
+		{
+			continue;
+		}
+
+		const size_t secondComma = line.find(',', firstComma + 1);
+		if (secondComma == std::string_view::npos)
+		{
+			continue;
+		}
+
+		// 各情報を取り出す
+		const std::string_view idText = line.substr(0, firstComma);
+
+		const std::string_view name = line.substr(firstComma + 1, secondComma - firstComma - 1);
+
+		const std::string_view roleText = line.substr(secondComma + 1);
+
+		// 数値に変換
+		const int32_t playerId = std::stoi(std::string{ idText });
+		const int32_t roleId   = std::stoi(std::string{ roleText });
+
+		inSessionStatus_.memberNames.push_back(std::string{ name });
+		inSessionStatus_.memberId.push_back(playerId);
+		inSessionStatus_.memberRoles[playerId] = roleId;
+
+		VCU_LOG("メンバー登録: ID={}, Name={}, RoleID={}", playerId, name, roleId);
+
+		// プレイヤーステータスを初期化
+		auto& playerStatus =
+		    inSessionStatus_.playersStatus.try_emplace(std::string{ name }, InSessionStatus::PlayerStatus{})
+		        .first->second;
+
+		// ステートの初期値を登録
+		playerStatus.states.try_emplace("hp", int32_t{ 100 });
+		playerStatus.states.try_emplace("alive", true);
 	}
+	VCU_LOG("登録完了: メンバー数={}", inSessionStatus_.memberNames.size());
 }
 
 void SessionManager::SetJoinRoomName(
@@ -201,7 +281,9 @@ void SessionManager::SetLobbyHost(
 void SessionManager::UpdatePlayers(
     const std::string_view _names,
     SizedBuffer<float>& _positions,
-    SizedBuffer<float>& _rotations)
+    SizedBuffer<float>& _rotations,
+    SizedBuffer<int32_t>& _haveItemIds,
+    SizedBuffer<int32_t>& _attentionLevel)
 {
 	inSessionStatus_.updatedFlag = !inSessionStatus_.updatedFlag;
 	auto& playerStatus           = inSessionStatus_.playersStatus;
@@ -237,6 +319,18 @@ void SessionManager::UpdatePlayers(
 			break;
 		}
 
+		if (i >= _haveItemIds.Size())
+		{
+			VCU_LOG("取得した名前分のアイテムIdのサイズが足りない({}個以上必要)", i);
+			break;
+		}
+
+		if (i >= _attentionLevel.Size())
+		{
+			VCU_LOG("取得した名前分の注目度データのサイズが足りない({}個以上必要)", i);
+			break;
+		}
+
 		// CRLF 対策OtherPlayer
 		if (!line.empty() && line.back() == '\r')
 		{
@@ -244,17 +338,22 @@ void SessionManager::UpdatePlayers(
 		}
 
 		InSessionStatus::PlayerStatus& playerStatus = inSessionStatus_.playersStatus[std::string{ line }];
-		playerStatus.position                       = Vec3{
-            _positions[i * Vec3::AT_MAX + Vec3::AT_X],
-            _positions[i * Vec3::AT_MAX + Vec3::AT_Y],
-            _positions[i * Vec3::AT_MAX + Vec3::AT_Z],
+
+		VCU_LOG("PlayerStatus取得成功");
+
+		playerStatus.position = Vec3{
+			_positions[i * Vec3::AT_MAX + Vec3::AT_X],
+			_positions[i * Vec3::AT_MAX + Vec3::AT_Y],
+			_positions[i * Vec3::AT_MAX + Vec3::AT_Z],
 		};
 
 		playerStatus.rotation = Vec2{
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_X],
 			_rotations[i * Vec2::AT_MAX + Vec2::AT_Y],
 		};
-		playerStatus.updatedFlag = !playerStatus.updatedFlag;  // 更新フラグを反転
+		playerStatus.haveItemId     = _haveItemIds[i];
+		playerStatus.attentionLevel = _attentionLevel[i];
+		playerStatus.updatedFlag    = !playerStatus.updatedFlag;  // 更新フラグを反転
 
 		// VCU_LOG(
 		//     "Update position[{}] = ({}, {}, {})",
@@ -296,6 +395,48 @@ bool SessionManager::IsExistPlayer(
 	return inSessionStatus_.playersStatus.count(_playerName) != 0;
 }
 
+bool SessionManager::TryGetPlayerName(
+    int32_t _playerId,
+    std::string& _outName) const
+{
+	const auto& ids   = inSessionStatus_.memberId;
+	const auto& names = inSessionStatus_.memberNames;
+
+	if (ids.size() != names.size())
+		return false;
+
+	auto it = std::ranges::find(ids, _playerId);
+
+	if (it == ids.end())
+		return false;
+
+	const size_t index = std::distance(ids.begin(), it);
+
+	_outName = names[index];
+	return true;
+}
+
+bool SessionManager::TryGetPlayerId(
+    std::string_view _playerName,
+    int32_t& _outId) const
+{
+	const auto& ids   = inSessionStatus_.memberId;
+	const auto& names = inSessionStatus_.memberNames;
+
+	if (ids.size() != names.size())
+		return false;
+
+	auto it = std::ranges::find(names, _playerName);
+
+	if (it == names.end())
+		return false;
+
+	const size_t index = std::distance(names.begin(), it);
+
+	_outId = ids[index];
+	return true;
+}
+
 bool SessionManager::HasAllPlayersStatus() const
 {
 	return inSessionStatus_.playersStatus.size() > 0;
@@ -312,19 +453,16 @@ bool SessionManager::UpdatePlayerStates(
 	    _values,
 	    [this](int32_t playerId) -> InSessionStatus::PlayerStatus*
 	    {
-		    // プレイヤーIDからID配列内の位置を検索
-		    auto idIt = std::ranges::find(inSessionStatus_.memberId, playerId);
+		    std::string playerName;
 
-		    if (idIt == inSessionStatus_.memberId.end())
+		    // プレイヤーIDから名前を取得
+		    if (!TryGetPlayerName(playerId, playerName))
 		    {
-			    VCU_LOG("プレイヤーステート更新失敗：プレイヤーID={} が存在しません", playerId);
+			    VCU_LOG("プレイヤーステート更新失敗：ID={} の名前を取得できません", playerId);
 			    return nullptr;
 		    }
 
-		    // IDと同じインデックスの名前を取得
-		    const size_t index     = std::distance(inSessionStatus_.memberId.begin(), idIt);
-		    const auto& playerName = inSessionStatus_.memberNames[index];
-
+		    // 名前からプレイヤーステータスを取得
 		    auto it = inSessionStatus_.playersStatus.find(playerName);
 
 		    if (it == inSessionStatus_.playersStatus.end())
@@ -418,7 +556,7 @@ bool SessionManager::UpdateEnemyStates(
 
 		    if (it == inSessionStatus_.enemiesStatus.end())
 		    {
-			    VCU_LOG("敵ステート更新失敗：敵ID={} が存在しません", enemyId);
+			    VCU_LOG("ステート更新失敗：敵ID={} が存在しません", enemyId);
 			    return nullptr;
 		    }
 
@@ -426,9 +564,22 @@ bool SessionManager::UpdateEnemyStates(
 	    });
 }
 
+void SessionManager::SetSelfStateRegistry(
+    const StateRegistry* _registry)
+{
+	selfStateRegistry_ = _registry;
+}
+
+const StateRegistry* SessionManager::GetSelfStateRegistry() const
+{
+	return selfStateRegistry_;
+}
+
 void SessionManager::UpdateDayTime(
-    float _currentTimeSec)
+    float _currentTimeSec,
+    int32_t _dayCount)
 {
 	inSessionStatus_.currentTimeSec     = _currentTimeSec;
+	inSessionStatus_.dayCount           = _dayCount;
 	inSessionStatus_.hasReceivedDayTime = true;
 }
