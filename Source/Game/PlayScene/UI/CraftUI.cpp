@@ -204,7 +204,10 @@ void CraftUI::Update()
 	DrawDebugItemAddWindow();
 #endif
 	PlayerData& playerData = Get<Player>(objPlayer).Data();
-
+	if (playerData.helthState == HelthState_Dead)
+	{
+		playerData.isOpenCraftUI = false;
+	}
 	if (playerData.isOpenCraftUI == false)
 	{
 		SetActiveAll(false);
