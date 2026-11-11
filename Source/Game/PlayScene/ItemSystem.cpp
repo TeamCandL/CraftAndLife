@@ -211,7 +211,7 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        0 });
 	allItemList.push_back({ 14,
-	                        ItemType::Consumables,
+	                        ItemType::Materials,
 	                        "キノコ",
 	                        "Image/Item/IconMushroom.png",
 	                        "Model/HandFood/HandMushroom.fbx",
