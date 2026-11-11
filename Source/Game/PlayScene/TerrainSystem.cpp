@@ -23,4 +23,14 @@ float TerrainSystem::GetHeight(
 Vec3 TerrainSystem::ToSafePosition(
     const Vec3 _position)
 {
+	ITerrain& terrain = Get<ITerrain>(objMainTerrain);
+
+	Vec3 posMin = terrain.GetMinPosition();
+	Vec3 posMax = terrain.GetMaxPosition();
+
+	return Vec3{
+		std::clamp(_position.x, posMin.x, posMax.x),
+		std::clamp(_position.y, posMin.y, posMax.y),
+		std::clamp(_position.z, posMin.z, posMax.z),
+	};
 }
