@@ -28,8 +28,12 @@ inline void from_json(
 	_data.text.content = _j.at("content").get<std::string>();
 
 	FontLoadConfig config;
-	config.fontSize = _j.at("fontSize").get<float>();
-
+	config.fontSize                 = _j.at("fontSize").get<float>();
+	std::string alignmentHorirontal = _j.value("textAlignHorizontal", "");
+	if (alignmentHorirontal == "CENTER")
+	{
+		config.textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER;
+	}
 	Resource<ResourceType::Font> font{ config };
 	_data.text.font = font;
 }
