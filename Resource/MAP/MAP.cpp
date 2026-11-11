@@ -1104,10 +1104,14 @@ Vec3 MAP::GetSize()
 
 Vec3 MAP::GetMinPosition()
 {
-	return Vec3();
+	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+	return Vec3{ -HALF_WIDTH, MapConfig::BASE_HEIGHT, -HALF_DEPTH };
 }
 
 Vec3 MAP::GetMaxPosition()
 {
-	return Vec3();
+	const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+	const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+	return Vec3{ HALF_WIDTH, MapConfig::MAX_HEIGHT, HALF_DEPTH };
 }
