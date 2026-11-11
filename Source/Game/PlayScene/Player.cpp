@@ -21,6 +21,7 @@
 #include <Game/Manager/AudioManager.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include <Game/PlayScene/DebugPoint.h>
+#include <shigaLibrary/SgRandom.h>
 
 void Player::Start()
 {
@@ -348,8 +349,23 @@ void Player::SetHelthState(
 		break;
 
 	case HelthState_Dead:
+	{
 		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_Ghost);
+
+		// アイテムをふぁいやーする処理
+		std::vector<ItemStack> itemStacks = GetHavingItem();
+		for (auto& itemStack : itemStacks)
+		{
+			int r      = Random::GetRandom(1, 360);
+			float rRad = DirectX::XM_PI / 180.0f * static_cast<float>(r);
+			Get<EntitySystem>().Spawn(
+			    itemStack.id,
+			    transform.position + Vec3::Up(),
+			    Vec3{ std::cosf(rRad), 2.0f, std::sinf(rRad) } * 5.0f);
+		}
+		ClearAllItem();
 		break;
+	}
 
 	default:
 		VCU_ASSERT("不正な生存ステータスですよ。");
@@ -667,6 +683,10 @@ float Player::GetAngleY() const
 
 void Player::UpdatePickNearestItem()
 {
+	if (helthState != HelthState_Live)
+	{
+		return;  // 生きていないなら取れないよ！！！
+	}
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, entityPickupRadius);
 }
 
