@@ -7,6 +7,7 @@
 #include "Player/PlayerAnimType.h"
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
+#include "OtherPlayerController.h"
 
 struct StateRegistry;
 
@@ -14,8 +15,10 @@ struct StateRegistry;
 struct PlayerData
 {
 	PlayerData(
-	    const GameObject _objMainCamera) :
-	    objMainCamera{ _objMainCamera }
+	    const GameObject _objMainCamera,
+	    const GameObject _objOtherPlayerController) :
+	    objMainCamera{ _objMainCamera },
+	    objOtherPlayerController{ _objOtherPlayerController }
 	{
 	}
 
@@ -49,6 +52,7 @@ struct PlayerData
 	GameObject objPlayerHand{};        ///< プレイヤーの手持ち
 	GameObject objPlayerBag{};
 	GameObject objHotbar{};
+	GameObject objOtherPlayerController{};  ///< 他プレイヤーのコントローラーオブジェクト
 	PlayerRoleType role{ PlayerRoleType_Max };
 
 	float angleX{};
@@ -90,8 +94,14 @@ struct PlayerData
 	// 盾で攻撃を防いだときのSE
 	Resource<ResourceType::Audio> shieldGuardSE{ "BGM_SE/ShieldGuard.mp3" };
 
+	// HP減少時のSE
+	Resource<ResourceType::Audio> enemyHitSE{ "BGM_SE/Striking the enemy.mp3" };
+
 	// 足音を鳴らす間隔
 	float footstepTimer{ 0.0f };
+
+	// 着地音
+	Resource<Audio> landingSE{ "BGM_SE/Landing.mp3" };
 
 	// 足音の間隔（秒）
 	const float FOOTSTEP_INTERVAL{ 0.4f };
@@ -123,6 +133,10 @@ struct PlayerData
 	bool isHoldShield{ false };  ///< シールドを構えているか true / false
 
 	float shieldGurdAngleRad{ DirectX::XM_PI / 180.0f * 90.0f };  ///< シールドで防げる正面に対する攻撃の角度
+	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
+	bool filterAddItemOnJob{ false };
+
+	float radius{ 0.5f };  ///< プレイヤーの半径
 };
 
 /// @brief プレイヤー
@@ -161,6 +175,10 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 	{
 		attentionLevel = 0;
 	}
+
+	/// @brief リスポーン
+	/// @param _hp リスポーン時のHP
+	void Respawn(const int32_t _hp);
 
 	/// @brief アイテムを与える(ホットバーで回収できるアイテムとは限らない)
 	/// @param _itemId アイテムId

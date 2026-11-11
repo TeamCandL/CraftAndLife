@@ -434,6 +434,12 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Common\UI\Image.cpp" />
     <ClCompile Include="Source\Game\Common\VirtualInputManager.cpp" />
     <ClCompile Include="Source\Game\Component\SoundManager.cpp" />
+    <ClCompile Include="Source\Game\Component\Tag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\Game\Component\Transform.cpp" />
     <ClCompile Include="Source\Game\Component\TransformAnimator.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyNetworkController.cpp" />
@@ -730,6 +736,12 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Common\Sky\SkyMaterial.h" />
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
+    <ClInclude Include="Source\Game\Component\Tag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
     <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
@@ -740,6 +752,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\EntityPickRequest.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntitySpawned.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntitySpawnRequest.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\PlayerRespawned.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
@@ -766,6 +779,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlayerRespawnedNetworkData.h" />
     <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
@@ -1018,6 +1032,8 @@ pre-commit install</Command>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\DebugLine.hlsl" />
+    <FxCompile Include="Resource\Shader\Entity.hlsl" />
+    <FxCompile Include="Resource\Shader\EntityEdge.hlsl" />
     <FxCompile Include="Resource\Shader\Toon.hlsl" />
     <FxCompile Include="Resource\Shader\ShadowMap.hlsl" />
     <FxCompile Include="Resource\Shader\SkyBox.hlsl" />

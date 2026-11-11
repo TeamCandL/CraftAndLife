@@ -14,9 +14,13 @@ struct EntityData
 	{
 	}
 
-	Resource<Shader> mainShader{ "Shader/Unlit.hlsl" };  ///< メインのモデル描画用シェーダ
-	Resource<Shader> edgeShader{ "Shader/Unlit.hlsl" };  ///< エッジ(輪郭)描画用シェーダ
-	Resource<Model> model{};                             ///< モデル
+	Resource<Shader> mainShader{ "Shader/Entity.hlsl",
+		                         RasterizerConfig{ .cullMode = D3D11_CULL_NONE,
+		                                           .fillMode = D3D11_FILL_SOLID } };  ///< メインのモデル描画用シェーダ
+	Resource<Shader> edgeShader{ "Shader/EntityEdge.hlsl",
+		                         RasterizerConfig{ .cullMode = D3D11_CULL_FRONT,
+		                                           .fillMode = D3D11_FILL_SOLID } };  ///< エッジ(輪郭)描画用シェーダ
+	Resource<Model> model{};                                                          ///< モデル
 
 	Component<Transform> transform{};      ///< 座標系
 	Component<RigidBody> rigidbody{};      ///< 剛体
@@ -35,8 +39,9 @@ struct EntityData
 	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
 	float friction{ 0.9f };       ///< 摩擦力
 
-	float despawnTimeLeftSec{ 60.0f * 2.0f };  ///< 死ぬまでの時間(秒)
-	float pickupCooldownSec{ 3.0f };           ///< 拾えない時間(秒)
+	float despawnTimeLeftSec{ 60.0f * 2.0f };        ///< 死ぬまでの時間(秒)
+	float pickupCooldownSec{ 3.0f };                 ///< 拾えない時間(秒)
+	const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };  ///< 敵の攻撃のアイテムId
 };
 
 /// @brief エンティティ

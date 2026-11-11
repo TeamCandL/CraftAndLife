@@ -4,6 +4,7 @@
 #include <Game/PlayScene/UI/ListBox.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/Manager/SessionManager.h>
 
 #include "HotBar.h"
 #include <ranges>
@@ -12,8 +13,7 @@
 
 void CraftUI::Start()
 {
-	// ジョブによってクラフト可能か切り替えるかどうか。falseにすれば、どのジョブも弓作ったりできる。デバッグ用。
-	bool filterCraftableItemOnJob{ false };
+	bool filterCraftableItemOnJob{ Get<Player>(objPlayer).Data().filterAddItemOnJob };
 	playerJobType = Get<Player>(objPlayer).Data().jobType;
 
 	const auto& allItemList = Get<ItemSystem>().Data().allItemList;
@@ -200,8 +200,9 @@ void CraftUI::Start()
 
 void CraftUI::Update()
 {
+#ifdef USE_IMGUI
 	DrawDebugItemAddWindow();
-
+#endif
 	PlayerData& playerData = Get<Player>(objPlayer).Data();
 
 	if (playerData.isOpenCraftUI == false)
@@ -369,8 +370,10 @@ void CraftUI::SetRecipeUIActive(
 void CraftUI::DrawDebugItemAddWindow()
 {
 	auto& allItemList = Get<ItemSystem>().Data().allItemList;
+	auto& status      = Get<SessionManager>().RefStatus();
 
-	ImGui::Begin("Debug_Item_Add");
+	// デバッグ用のUI
+	ImGui::Begin(std::format("Debug_Item_Add:{}", status.name.c_str()).c_str());
 
 	for (auto& itemAllInfo : allItemList)
 	{

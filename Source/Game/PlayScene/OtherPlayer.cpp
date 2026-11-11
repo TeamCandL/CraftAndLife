@@ -40,6 +40,8 @@ void OtherPlayer::Start()
 	role = roleIt->second;
 
 	VCU_LOG("{} のRoleId: {}", name.content, role);
+	obb.offset = OBB_OFFSET;
+	obb.scale  = Vec3::One() * OBB_SCALE;
 }
 
 void OtherPlayer::Update()

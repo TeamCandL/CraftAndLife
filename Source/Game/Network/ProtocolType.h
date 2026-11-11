@@ -34,5 +34,7 @@ enum struct ProtocolType : uint8_t
 	EntityPickRequest,   ///< 指定のアイテムエンティティを拾いたい！と伝える
 	EntityPicked,        ///< 指定したエンティティは拾われた
 
+	PlayerRespawned,  ///< プレイヤー蘇生の通信
+
 	Idk,
 };

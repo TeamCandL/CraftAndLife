@@ -21,9 +21,16 @@
 #include <Game/Manager/AudioManager.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include <Game/PlayScene/DebugPoint.h>
+#include <shigaLibrary/SgRandom.h>
 
 void Player::Start()
 {
+#ifdef _DEBUG
+	filterAddItemOnJob = false;
+#else
+	filterAddItemOnJob = true;
+#endif  // _DEBUG
+
 	obb.isTrigger = true;
 
 	transform.scale = Vec3::One() * 200.0f;
@@ -58,29 +65,6 @@ void Player::Start()
 		    VCU_LOG("change selected item");
 	    });
 
-	SetJob(PlayerJobType_Archer);
-}
-
-void Player::Update()
-{
-	SessionManager& sessionManager = Get<SessionManager>();
-	std::string playerName         = sessionManager.RefStatus().name;
-
-	ImGui::Begin("Player");
-
-	ImGui::DragInt("anim", &animIndex, 1, 0);
-	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
-	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
-	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
-	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
-	ImGui::Text("プレイヤー名：%s", playerName.c_str());
-	ImGui::Separator();
-	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
-
-	Vec3 angles = transform.rotation.ToEuler();
-	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
-	transform.rotation = Quaternion::FromEuler(angles);
-
 	// ジョブ割り振り
 	if (!isJobAssigned)
 	{
@@ -113,6 +97,34 @@ void Player::Update()
 			}
 		}
 	}
+}
+
+void Player::Update()
+{
+	SessionManager& sessionManager = Get<SessionManager>();
+	std::string playerName         = sessionManager.RefStatus().name;
+#ifdef USE_IMGUI
+	ImGui::Begin("Player");
+	if (ImGui::Button("ClearItem"))
+	{
+		ClearAllItem();
+	}
+	ImGui::DragInt("anim", &animIndex, 1, 0);
+	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
+	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
+	ImGui::DragFloat("rotationX", &transform.rotation.x, 1, 0);
+	ImGui::DragFloat("rotationY", &transform.rotation.y, 1, 0);
+	ImGui::Text("プレイヤー名：%s", playerName.c_str());
+	ImGui::Separator();
+	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+#endif
+
+	Vec3 angles = transform.rotation.ToEuler();
+#ifdef USE_IMGUI
+	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+#endif
+	transform.rotation = Quaternion::FromEuler(angles);
+#ifdef USE_IMGUI
 
 	if (ImGui::Button("出力"))
 	{
@@ -157,7 +169,7 @@ void Player::Update()
 	}
 
 	ImGui::End();
-
+#endif
 	if (isAnimPreviewingDebug)
 
 	{
@@ -189,16 +201,16 @@ void Player::Update()
 		Dead();
 	}
 
-	// お試しで出してるエンティティ
-	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
-	{
-		SpawnItem(9);
-	}
+	//// お試しで出してるエンティティ 辞めました。
+	// if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
+	//{
+	//	SpawnItem(9);
+	// }
 
-	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
+	/*if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		SpawnItem(8);
-	}
+	    SpawnItem(8);
+	}*/
 
 	// 近くのアイテムを拾う
 	UpdatePickNearestItem();
@@ -209,7 +221,6 @@ void Player::Update()
 		// 選択スロットのアイテムを投げ捨てる
 		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 		{
-
 			if (hotbar.CanRemoveSelectedItem())
 			{
 				ItemId selectedItemId = hotbar.GetSelectedItemId();
@@ -237,6 +248,10 @@ void Player::Update()
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
 		Damaged(10, transform.position);
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::L))
+	{
+		Respawn(maxHP);
 	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
@@ -291,14 +306,15 @@ void Player::Damaged(
 			{
 				VCU_LOG("防いだ!");
 
-				// 盾で防いだ音を再生
-				Get<AudioManager>().Play(shieldGuardSE);
-
-				return;  // 防いだ判定
+				// 盾で防いだ場合はHPを減らさない
+				return;
 			}
 
 			VCU_LOG("防いでいない!");
 		}
+
+		// ダメージ適用前のHPを保存
+		int32_t beforeHP = hp;
 
 		if (jobStatus.maxHpBoost > 0.0f)
 		{
@@ -318,6 +334,13 @@ void Player::Damaged(
 			hp -= damage;
 		}
 
+		// HPが実際に減った場合だけSEを再生
+		if (hp < beforeHP)
+		{
+			Get<AudioManager>().Play(enemyHitSE);
+		}
+
+		// HPが0未満にならないようにする
 		if (hp < 0)
 		{
 			hp = 0;
@@ -345,8 +368,23 @@ void Player::SetHelthState(
 		break;
 
 	case HelthState_Dead:
+	{
 		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_Ghost);
+
+		// アイテムをふぁいやーする処理
+		std::vector<ItemStack> itemStacks = GetHavingItem();
+		for (auto& itemStack : itemStacks)
+		{
+			int r      = Random::GetRandom(1, 360);
+			float rRad = DirectX::XM_PI / 180.0f * static_cast<float>(r);
+			Get<EntitySystem>().Spawn(
+			    itemStack.id,
+			    transform.position + Vec3::Up(),
+			    Vec3{ std::cosf(rRad), 2.0f, std::sinf(rRad) } * 5.0f);
+		}
+		ClearAllItem();
 		break;
+	}
 
 	default:
 		VCU_ASSERT("不正な生存ステータスですよ。");
@@ -421,6 +459,8 @@ void Player::MoveBody()
 	// 地形に沿った移動
 	Vec3 nextPosition = transform.position;
 	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
+
+	nextPosition = Get<TerrainSystem>().ToSafePosition(nextPosition, Vec3::One() * radius);
 
 	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
 
@@ -564,6 +604,8 @@ void Player::MoveBody()
 			transform.position.y = groundHeight;
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
+
+			Get<AudioManager>().PlayLanding(landingSE);
 		}
 
 		if (jumpVelocity < 0.0f)
@@ -612,6 +654,13 @@ void Player::DeadAnim()
 	}
 }
 
+void Player::Respawn(
+    const int32_t _hp)
+{
+	hp = _hp;
+	SetHelthState(HelthState_Live);
+}
+
 void Player::GiveItem(
     const ItemId _itemId,
     const Vec3 _fromPosition)
@@ -657,6 +706,10 @@ float Player::GetAngleY() const
 
 void Player::UpdatePickNearestItem()
 {
+	if (helthState != HelthState_Live)
+	{
+		return;  // 生きていないなら取れないよ！！！
+	}
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, entityPickupRadius);
 }
 
@@ -666,9 +719,6 @@ void Player::TryAddItem(
 	/// ----------------------------------------------
 	/// 今のjobで、引数のアイテムを追加できるか確認
 	/// ----------------------------------------------
-
-	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
-	bool filterAddItemOnJob{ false };
 
 	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
 	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);

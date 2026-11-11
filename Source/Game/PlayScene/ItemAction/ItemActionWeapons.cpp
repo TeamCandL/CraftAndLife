@@ -6,6 +6,7 @@
 #include <Game/System/RaycastSystem.h>
 #include "../Harvestable.h"
 #include "../Enemy.h"
+#include "../EntitySystem.h"
 
 void ItemActionWeapons::Update(
     const ItemId _itemId,
@@ -67,11 +68,22 @@ void ItemActionWeapons::Action(
     PlayerData& _playerData,
     PlayerHandData& _playerHandData)
 {
+	const float ACTION_RANGE  // アイテムアクションの届く範囲
+	    { _itemId == ITEM_ID_SWORD_BIG ? swordBigItemRange : standardItemRange };
+
+	const ItemInfo ITEM_INFO{ Get<ItemSystem>().GetInfo(_itemId) };
+	if (ITEM_INFO._type == ItemType::Weapons)
+	{
+		Get<EntitySystem>().Spawn(
+		    _itemId == ITEM_ID_SWORD_BIG ? ITEM_ID_PLAYER_ATTACK_SWORD_BIG : ITEM_ID_PLAYER_ATTACK_SWORD,
+		    _playerData.transform.position + (_playerData.transform.Forward() * (ACTION_RANGE * 0.5f)),
+		    _playerData.transform.Forward());
+		return;
+	}
+
 	Vec3 positionFrom = _playerData.transform.position + Vec3::Up() * 1.0f;
 	Vec3 positionTo   = Get<MainCamera>(_playerData.objMainCamera).GetFocusPosition();
 
-	const float ACTION_RANGE  // アイテムアクションの届く範囲
-	    { _itemId == ITEM_ID_SWORD_BIG ? swordBigItemRange : standardItemRange };
 	std::vector<RaycastHitInfo> hitsInfo =
 	    Get<RaycastSystem>().RaycastAll(positionFrom, (positionTo - positionFrom).Normalize(), ACTION_RANGE);
 
@@ -111,12 +123,13 @@ void ItemActionWeapons::Action(
 						break;
 					}
 				}
-				else if (pName->content == "Enemy")
-				{
-					// 当たっているのが敵なら敵へダメージを与える
-					Enemy& enemy = Get<Enemy>(objHit);
-					enemy.Damaged(ITEM_INFO._damageForEnemy);
-				}
+				// プレイヤーの攻撃エンティティとして出します
+				// else if (pName->content == "Enemy")
+				//{
+				//	// 当たっているのが敵なら敵へダメージを与える
+				//	Enemy& enemy = Get<Enemy>(objHit);
+				//	enemy.Damaged(ITEM_INFO._damageForEnemy);
+				//}
 			}
 		}
 	}

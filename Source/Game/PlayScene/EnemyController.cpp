@@ -2,6 +2,10 @@
 #include "EnemyController.h"
 #include "Enemy.h"
 #include "UI/BossInfo.h"
+#include "UI/BossHp.h"
+#include "UI/BossName.h"
+#include "UI/BossGauge.h"
+#include "UI/BossGaugeR.h"
 #include "PlaySceneUIController.h"
 
 void EnemyController::Start() {}
@@ -24,7 +28,13 @@ void EnemyController::AddEnemy(
 
 	if (Get<Enemy>(_enemy).Data().isBoss)
 	{
-		Get<BossInfo>(Get<PlaySceneUIController>(objPlaySceneUIController).Data().objBossInfo).SetBoss(_enemy);
+		PlaySceneUIController playSceneUIController = Get<PlaySceneUIController>(objPlaySceneUIController);
+		Get<BossInfo>(playSceneUIController.Data().objBossInfo).SetBoss(_enemy);
+		Get<BossInfo>(playSceneUIController.Data().objBossInfo).SetActive(true);
+		Get<BossHp>(playSceneUIController.Data().objBossHp).SetActive(true);
+		Get<BossName>(playSceneUIController.Data().objBossName).SetActive(true);
+		Get<BossGauge>(playSceneUIController.Data().objBossGauge).SetActive(true);
+		Get<BossGaugeR>(playSceneUIController.Data().objBossGaugeR).SetActive(true);
 	}
 }
 

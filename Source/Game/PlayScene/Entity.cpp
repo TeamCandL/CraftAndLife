@@ -4,14 +4,18 @@
 
 void Entity::Start()
 {
-	model = Get<ItemSystem>().GetModel(itemId);
+	model     = Get<ItemSystem>().GetModel(itemId);
+	obb.scale = Get<ItemSystem>().GetInfo(itemId).colliderSize;
 
 	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(itemId);
+	if (ITEM_INFO._type == ItemType::EnemyAttack || ITEM_INFO._type == ItemType::PlayerAttackSword)
+	{
+		// 落下しないし減速もしない！
+		gravityPerSec = 0.0f;
+		friction      = 0.0f;
+	}
 	if (ITEM_INFO._type == ItemType::EnemyAttack)
 	{
-		// 敵の攻撃なら落下しないし減速もしない！
-		gravityPerSec          = 0.0f;
-		friction               = 0.0f;
 		isDestroyedOnCollision = true;          // 何かに触れたら消滅します
 		canHitToPlayer         = true;          // プレイヤーへ触れたら取れます
 		pickupCooldownSec      = 99999999.0f;   // 絶対に取得できない
@@ -23,6 +27,15 @@ void Entity::Start()
 	else if (ITEM_INFO._type == ItemType::Arrow)
 	{
 		canHitToEnemy = true;
+	}
+	else if (ITEM_INFO._type == ItemType::PlayerAttackSword)
+	{
+		pickupCooldownSec = 99999999.0f;  // 絶対に取得できない
+		canHitToEnemy     = true;
+		if (ITEM_INFO._coolTime > FLT_EPSILON)  // クールタイムが0より大きいなら
+		{
+			despawnTimeLeftSec = ITEM_INFO._coolTime;
+		}
 	}
 }
 
@@ -107,34 +120,58 @@ void Entity::Draw()
 	{
 		return;  // 取得されているなら無視
 	}
-
 	if (model.IsNull())
 	{
 		return;
 	}
-	Get<Dx11Manager>().SetShader(mainShader);
-	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+	Get<Dx11Manager>().EnqueueTransparent(
+	    [this]()
+	    {
+		    Get<Dx11Manager>().SetShader(edgeShader);
+		    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+		    Get<Dx11Manager>().ChangeDepthState(DepthStateType_Background);
 
-	const auto& subParts{ model.Get().subParts };
-	for (const auto& parts : subParts)
-	{
-		Get<Dx11Manager>().SetSurface(parts.mesh);
-		Get<Dx11Manager>().SetMaterial(parts.material);
-		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
-		Get<Dx11Manager>().Draw();
-	}
+		    const auto& edgeParts{ model.Get().subParts };
+		    for (const auto& parts : edgeParts)
+		    {
+			    Get<Dx11Manager>().SetSurface(parts.mesh);
+			    Get<Dx11Manager>().SetMaterial(parts.material);
+			    Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+			    Get<Dx11Manager>().Draw();
+		    }
 
-	/*Get<Dx11Manager>().SetShader(edgeShader);
-	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+		    if (itemId != ITEM_ID_ENEMY_ATTACK_STRING)
+		    {
+			    Get<Dx11Manager>().ChangeDepthState(DepthStateType_Standard);
 
-	const auto& subParts{ model.Get().subParts };
-	for (const auto& parts : subParts)
-	{
-	    Get<Dx11Manager>().SetSurface(parts.mesh);
-	    Get<Dx11Manager>().SetMaterial(parts.material);
-	    Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
-	    Get<Dx11Manager>().Draw();
-	}*/
+			    Get<Dx11Manager>().SetShader(mainShader);
+			    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+			    Get<Dx11Manager>().SetShader(mainShader);
+			    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+			    const auto& subParts{ model.Get().subParts };
+			    for (const auto& parts : subParts)
+			    {
+				    Get<Dx11Manager>().SetSurface(parts.mesh);
+				    Get<Dx11Manager>().SetMaterial(parts.material);
+				    Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+				    Get<Dx11Manager>().Draw();
+			    }
+
+			    /*Get<Dx11Manager>().SetShader(edgeShader);
+			    Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+			    const auto& subParts{ model.Get().subParts };
+			    for (const auto& parts : subParts)
+			    {
+			        Get<Dx11Manager>().SetSurface(parts.mesh);
+			        Get<Dx11Manager>().SetMaterial(parts.material);
+			        Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+			        Get<Dx11Manager>().Draw();
+			    }*/
+		    }
+	    });
 }
 
 void Entity::SetVelocity(

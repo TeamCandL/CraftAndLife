@@ -1,4 +1,6 @@
 #include "PlayerBag.h"
+#include <Game/Manager/SessionManager.h>
+
 #include <numeric>
 
 PlayerBagData::PlayerBagData()
@@ -11,9 +13,10 @@ void PlayerBag::Start() {}
 void PlayerBag::Update()
 {
 	static ItemId id{ 0 };
-
+	auto& status = Get<SessionManager>().RefStatus();
+#ifdef USE_IMGUI
 	// デバッグ用のUI
-	ImGui::Begin("Bag");
+	ImGui::Begin(std::format("Bag:{}", status.name.c_str()).c_str());
 	if (ImGui::Button("ExpansiionCapa"))
 	{
 		ExpansionCapacity(10);
@@ -39,6 +42,7 @@ void PlayerBag::Update()
 		}
 	}
 	ImGui::End();
+#endif
 }
 
 std::vector<ItemStack> PlayerBag::GetItemStacks()

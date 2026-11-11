@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <vector>
 #include <Game/PlayScene/ITerrain.h>
+#include <Game/PlayScene/ItemId.h>
 
 // ============================================================
 // マップ調整設定
@@ -86,6 +87,12 @@ namespace MapConfig
 	constexpr int32_t WATERFALL_TIERS     = 4;      // 滝の段数
 	constexpr float WATERFALL_STEP_HEIGHT = 2.0f;   // 1段あたりの高さ
 	constexpr float WATER_SURFACE_OFFSET  = 0.15f;  // 水面の高さ補正
+
+	// --------------------------------------------------------
+	// 8. アイテム設置
+	// --------------------------------------------------------
+	const ItemId ITEM_ID_ROCK{ 7 };  ///< 石のアイテムId
+	const ItemId ITEM_ID_TREE{ 8 };  ///< 木のアイテムId
 }  // namespace MapConfig
 
 // ============================================================
@@ -175,4 +182,16 @@ struct MAP : ObjectBase<MapData>, ITerrain
 	// ITerrainの実装
 	float GetHeight(const float _worldX, const float _worldZ) override;
 	Vec3 GetNormal(const float _worldX, const float _worldZ) override;
+
+	/// @brief 地形のサイズを取得する
+	/// @return 地形のサイズ
+	Vec3 GetSize() override;
+
+	/// @brief 最小地点のワールド座標を取得する
+	/// @return 最小地点のワールド座標
+	Vec3 GetMinPosition() override;
+
+	/// @brief 最大地点のワールド座標を取得する
+	/// @return 最大地点のワールド座標
+	Vec3 GetMaxPosition() override;
 };
