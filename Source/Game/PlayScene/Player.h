@@ -94,8 +94,14 @@ struct PlayerData
 	// 盾で攻撃を防いだときのSE
 	Resource<ResourceType::Audio> shieldGuardSE{ "BGM_SE/ShieldGuard.mp3" };
 
+	// HP減少時のSE
+	Resource<ResourceType::Audio> enemyHitSE{ "BGM_SE/Striking the enemy.mp3" };
+
 	// 足音を鳴らす間隔
 	float footstepTimer{ 0.0f };
+
+	// 着地音
+	Resource<Audio> landingSE{ "BGM_SE/Landing.mp3" };
 
 	// 足音の間隔（秒）
 	const float FOOTSTEP_INTERVAL{ 0.4f };

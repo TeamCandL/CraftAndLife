@@ -20,6 +20,12 @@ struct HarvestableData
 	const ItemId ITEM_ID_WOOD{ 8 };       ///< 木のアイテムId
 	const ItemId ITEM_ID_Mushroom{ 14 };  ///< キノコのアイテムId
 
+	// 木の破壊音
+	Resource<Audio> treeDestructionSE{ "BGM_SE/Tree destruction.mp3" };
+
+	// 岩の破壊音
+	Resource<Audio> rockDestructionSE{ "BGM_SE/Rock destruction.mp3" };
+
 	// モデルの種類
 	HarvestableType type{ HarvestableType::Tree };
 

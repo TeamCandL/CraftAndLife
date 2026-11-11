@@ -49,6 +49,7 @@ void Enemy::Update()
 	if (hp <= 0)
 	{
 		SetAlive(false);
+		DropItem();
 	}
 
 	// VCU_LOG("敵の追跡状況：{}", followed);
@@ -402,7 +403,7 @@ void Enemy::SetWanderingCheckPoint(
 
 void Enemy::DropItem()
 {
-	Get<EntitySystem>().Spawn(dropItemID, transform.position, { 0.0f, 0.0f, 0.0f });
+	Get<EntitySystem>().Spawn(dropItemID, transform.position + Vec3::Up(), Vec3::Zero());
 }
 
 void Enemy::RegisterStates(

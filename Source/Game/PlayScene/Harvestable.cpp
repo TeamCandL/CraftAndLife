@@ -1,7 +1,7 @@
-
 #include "pch/pch.h"
 #include "Harvestable.h"
 #include "EntitySystem.h"
+#include <Game/Manager/AudioManager.h>
 
 /// @brief 初期化
 void Harvestable::Start()
@@ -96,6 +96,22 @@ void Harvestable::TakeDamage(
 
 	// 耐久値を減らす
 	durability -= damage;
+
+	// 種類に応じた破壊音を再生
+	switch (type)
+	{
+	case HarvestableType::Tree:
+	case HarvestableType::TreeHigh:
+		Get<AudioManager>().Play(treeDestructionSE);
+		break;
+
+	case HarvestableType::Rock:
+		Get<AudioManager>().Play(rockDestructionSE);
+		break;
+
+	default:
+		break;
+	}
 
 	// 耐久値が0以下になったら採取済みにする
 	if (durability <= 0)

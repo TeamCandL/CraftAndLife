@@ -1,4 +1,3 @@
-
 #pragma once
 #include <Base/Base.h>
 #include "AudioManager/AudioPlayer.h"
@@ -58,6 +57,12 @@ struct AudioManager : IManager
 	// ジャンプ音を停止する
 	void StopJump();
 
+	// 着地音を再生する
+	void PlayLanding(Resource<ResourceType::Audio>& _resource);
+
+	// 着地音を停止する
+	void StopLanding();
+
   private:
 	ComPtr<IXAudio2> pXAudio2{};
 	IXAudio2MasteringVoice* pMasterVoice{ nullptr };
@@ -69,6 +74,9 @@ struct AudioManager : IManager
 	IXAudio2SourceVoice* pFootstepSourceVoice{ nullptr };
 
 	IXAudio2SourceVoice* pJumpSourceVoice{ nullptr };
+
+	// 着地音用
+	IXAudio2SourceVoice* pLandingSourceVoice{ nullptr };
 
 	std::vector<AudioPlayer> players{};
 
