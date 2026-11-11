@@ -118,6 +118,8 @@ class SessionManager : public IManager
 	    std::string_view _stateNames,
 	    SizedBuffer<uint8_t>& _values);
 
+	bool TryGetEnemyAlive(int32_t _enemyID, bool& _outAlive) const;
+
 	/// @brief 各敵を周回する
 	/// @tparam Func コールバック [](int, const InSessionStatus::EnemyStatus&){}
 	/// @param _func コールバック [](int, const InSessionStatus::EnemyStatus&){}
