@@ -1,24 +1,23 @@
 #pragma once
-#include "IUIInput.h"
+#include "NormalUIInput.h"
 #include "../AbstructInputSystem.h"
 
-class TutorialUIInput : public IUIInput
+class TutorialUIInput : public NormalUIInput
 {
   public:
-	/// @brief コンストラクタ
-	/// @param _abstructInputSystem 抽象入力システムの参照ポインタ
-	TutorialUIInput(AbstructInputSystem& _abstructInputSystem);
-	/// @brief デストラクタ
-	~TutorialUIInput() = default;
+	using NormalUIInput::NormalUIInput;
 
-	// IUIInput を介して継承されました
-	bool IsMovedUp() const override;
-	bool IsMovedDown() const override;
-	bool IsMovedLeft() const override;
-	bool IsMovedRight() const override;
-	bool IsSelected() const override;
-	bool IsChanneled() const override;
+	///// @brief コンストラクタ
+	///// @param _abstructInputSystem 抽象入力システムの参照ポインタ
+	// TutorialUIInput(AbstructInputSystem& _abstructInputSystem);
+	///// @brief デストラクタ
+	//~TutorialUIInput() = default;
 
-  private:
-	AbstructInputSystem& abstructInputSystem_;
+	//// IUIInput を介して継承されました
+	// bool IsMovedUp() const override;
+	// bool IsMovedDown() const override;
+	// bool IsMovedLeft() const override;
+	// bool IsMovedRight() const override;
+	// bool IsSelected() const override;
+	// bool IsChanneled() const override;
 };
