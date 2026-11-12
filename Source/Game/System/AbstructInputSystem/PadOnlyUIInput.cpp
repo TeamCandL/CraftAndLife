@@ -16,7 +16,8 @@ bool PadOnlyUIInput::IsMovedUp() const
 bool PadOnlyUIInput::IsMovedDown() const
 {
 	return abstructInputSystem_.GetPadInputSystem().IsFlickedDown(GamePadInputStick::Left) ||
-	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GameInputGamepadButtons::GameInputGamepadDPadDown)
+	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(
+	           GameInputGamepadButtons::GameInputGamepadDPadDown);
 }
 
 bool PadOnlyUIInput::IsMovedLeft() const
