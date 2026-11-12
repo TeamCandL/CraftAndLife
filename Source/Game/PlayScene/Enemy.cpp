@@ -423,16 +423,6 @@ void Enemy::Damaged(
 	{
 		return;
 	}
-
-	// 攻撃した武器に応じてSEを再生
-	if (isGreatsword)
-	{
-		Get<AudioManager>().Play(greatswordDamagedSE);
-	}
-	else
-	{
-		Get<AudioManager>().Play(swordDamagedSE);
-	}
 }
 
 void Enemy::SetWanderingCheckPoint(

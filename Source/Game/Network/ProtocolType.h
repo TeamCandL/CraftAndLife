@@ -36,5 +36,7 @@ enum struct ProtocolType : uint8_t
 
 	PlayerRespawned,  ///< プレイヤー蘇生の通信
 
+	TextChated,
+
 	Idk,
 };

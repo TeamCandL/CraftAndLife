@@ -194,15 +194,6 @@ struct EnemyData
 
 	// Resource<Model> model{"Model/Enemy/Bat.fbx"};
 
-	//----------------------//
-	//---------/SE/---------//
-	//----------------------//
-	// 剣でダメージを受けたときのSE
-	Resource<Audio> swordDamagedSE{ "BGM_SE/To cut with a sword.mp3" };
-
-	// 大剣でダメージを受けたときのSE
-	Resource<Audio> greatswordDamagedSE{ "BGM_SE/Strike with a greatsword.mp3" };
-
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" }, Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
 		Resource<Model>{ "Model/Enemy/Spider.fbx" },   Resource<Model>{ "Model/Enemy/Bat.fbx" },

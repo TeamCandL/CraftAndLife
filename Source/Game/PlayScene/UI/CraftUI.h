@@ -33,7 +33,7 @@ struct RecipeMaterial
 
 struct CraftUIData
 {
-	CraftUIData(GameObject _objPlayer);
+	CraftUIData(GameObject _objPlayer, const GameObject _objTextChated);
 
   protected:
 	ItemId selectedItemId{ EMPTY_ITEM_ID };
@@ -73,6 +73,8 @@ struct CraftUIData
 
 	GameObject objPlayer{};
 	PlayerJobType playerJobType{ PlayerJobType_Max };
+
+	GameObject objChatTextLog{};  ///< テキストチャットUI
 };
 
 struct CraftUI : ObjectBase<CraftUIData>

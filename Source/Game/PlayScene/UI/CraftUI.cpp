@@ -5,6 +5,7 @@
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/EntitySystem.h>
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/UI/ChatTextLog.h>
 
 #include "HotBar.h"
 #include <ranges>
@@ -258,6 +259,9 @@ void CraftUI::Update()
 	// クラフトを試みて、成功した場合
 	if (playerBag.TryCraft(resultItemId))
 	{
+		Get<ChatTextLog>(objChatTextLog)
+		    .AddLogRequest(
+		        std::format("「{}」をクラフトした！ [{}]", info._name, Get<SessionManager>().RefStatus().name));
 		Get<Player>(objPlayer).TryAddItem(resultItemId);
 	}
 }
@@ -457,7 +461,9 @@ void CraftUI::DrawDebugItemAddWindow()
 }
 
 CraftUIData::CraftUIData(
-    GameObject _objPlayer) :
-    objPlayer{ _objPlayer }
+    GameObject _objPlayer,
+    const GameObject _objChatTextLog) :
+    objPlayer{ _objPlayer },
+    objChatTextLog{ _objChatTextLog }
 {
 }
