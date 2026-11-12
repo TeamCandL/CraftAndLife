@@ -291,15 +291,25 @@ void PlayNetworkController::Update()
 					    VCU_LOG("自分が拾った！！");
 					    Get<Player>(objPlayer).GiveItem(message.itemId, position);
 				    }
+				    else
+					    VCU_LOG("他人が拾った！！");
 
 				    // エンティティ拾ったときの座標が音聞こえる範囲なら
-				    if ((Get<Transform>(objPlayer).position - position).Length() <= CanListenDistance)
+				    if (true)  // (Get<Transform>(objPlayer).position - position).Length() <= CanListenDistance
 				    {
-					    switch (message.entityId)
+					    switch (message.itemId)
 					    {
-					    case ITEM_ID_SWORD:
+					    case ITEM_ID_PLAYER_ATTACK_SWORD:
 						    // 剣の音を鳴らす
 						    Get<AudioManager>().Play(swordDamagedSE);
+						    break;
+					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
+						    // 剣の音を鳴らす
+						    Get<AudioManager>().Play(greatswordDamagedSE);
+						    break;
+					    case ITEM_ID_PLAYER_ATTACK_ARROW:
+						    // 剣の音を鳴らす
+						    Get<AudioManager>().Play(impactSE);
 						    break;
 					    default:
 						    // それ以外は音なし 他の人がアイテム拾ったときの音とかもできるよ

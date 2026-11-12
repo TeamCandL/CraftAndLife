@@ -32,10 +32,17 @@ void EntitySystem::Update()
 
 				if (Get<SessionManager>().RefStatus().imLobbyHost)
 				{  // ホストである
-					Get<EntitySystem>().Spawn(ARROW_ITEM_ID, entity.GetPosition(), Vec3::Zero());
+					// ならアイテム化しちゃう！
+					ItemId collectibleItemid = Get<ItemSystem>().ConvertAttackItemToCollectibleItem(entity.GetItemId());
+
+					if (collectibleItemid != 0)
+					{
+						Get<EntitySystem>().Spawn(collectibleItemid, entity.GetPosition(), Vec3::Zero());
+					}
 				}
 
 				entity.Despawn();
+				continue;
 			}
 		}
 

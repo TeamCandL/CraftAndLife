@@ -28,7 +28,7 @@ void Entity::Start()
 	{
 		canHitToEnemy = true;
 	}
-	else if (ITEM_INFO._type == ItemType::PlayerAttackSword)
+	else if (ITEM_INFO._type == ItemType::PlayerAttackSword || ITEM_INFO._type == ItemType::PlayerAttackArrow)
 	{
 		pickupCooldownSec = 99999999.0f;  // 絶対に取得できない
 		canHitToEnemy     = true;
@@ -41,13 +41,7 @@ void Entity::Start()
 	switch (itemId)
 	{
 	case ITEM_ID_PLAYER_ATTACK_ARROW:
-		isDestroyedOnCollision = true;          // 何かに触れたら消滅します
-		canHitToPlayer         = true;          // プレイヤーへ触れたら取れます
-		pickupCooldownSec      = 99999999.0f;   // 絶対に取得できない
-		if (ITEM_INFO._coolTime > FLT_EPSILON)  // クールタイムが0より大きいなら
-		{
-			despawnTimeLeftSec = ITEM_INFO._coolTime;
-		}
+		// case ITEM_ID_ENEMY_ATTACK_STRING:
 		isThrowingItemEntity = true;  // 投げ物
 		break;
 	default:
@@ -253,4 +247,9 @@ Vec3 Entity::GetPosition() const
 bool Entity::IsThrowingItemEntity() const
 {
 	return isThrowingItemEntity;
+}
+
+bool Entity::IsUnderground() const
+{
+	return isUnderground;
 }
