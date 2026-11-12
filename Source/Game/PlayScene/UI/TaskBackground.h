@@ -19,6 +19,7 @@ struct TaskBackgroundData
 	Component<UIImage> image{ texture };
 	Component<UIText> text{ font, Color::WHITE };
 	GameObject objDayContloller{};
+	bool isEnabledDayTimer{};  ///< 残り時間と日付の表示が有効であるか true / false
 };
 
 struct TaskBackground : ObjectBase<TaskBackgroundData>
@@ -28,4 +29,16 @@ struct TaskBackground : ObjectBase<TaskBackgroundData>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+
+	/// @brief タスク内容を設定する
+	/// @param _taskContent タスク内容の文字列
+	void SetTask(const std::string& _taskContent);
+
+	/// @brief 残り時間と日付の表示を有効にする
+	/// @param _enabled 有効 true / false 無効
+	void SetEnableDayTimer(
+	    const bool _enabled)
+	{
+		isEnabledDayTimer = _enabled;
+	}
 };

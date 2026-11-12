@@ -1,23 +1,27 @@
 #pragma once
 #include "NormalUIInput.h"
 #include "../AbstructInputSystem.h"
+#include "../../PlayScene/TutorialSystem.h"
 
 class TutorialUIInput : public NormalUIInput
 {
   public:
-	using NormalUIInput::NormalUIInput;
-
-	///// @brief コンストラクタ
-	///// @param _abstructInputSystem 抽象入力システムの参照ポインタ
-	// TutorialUIInput(AbstructInputSystem& _abstructInputSystem);
-	///// @brief デストラクタ
-	//~TutorialUIInput() = default;
+	TutorialUIInput(
+	    TutorialSystem& _tutorialSystem,
+	    AbstructInputSystem& _abstructInputSystem) :
+	    tutorialSystem_{ _tutorialSystem },
+	    NormalUIInput{ _abstructInputSystem }
+	{
+	}
 
 	//// IUIInput を介して継承されました
-	// bool IsMovedUp() const override;
-	// bool IsMovedDown() const override;
-	// bool IsMovedLeft() const override;
-	// bool IsMovedRight() const override;
-	// bool IsSelected() const override;
-	// bool IsChanneled() const override;
+	bool IsMovedUp() const override;
+	bool IsMovedDown() const override;
+	bool IsMovedLeft() const override;
+	bool IsMovedRight() const override;
+	bool IsSelected() const override;
+	bool IsChanneled() const override;
+
+  private:
+	TutorialSystem& tutorialSystem_;
 };

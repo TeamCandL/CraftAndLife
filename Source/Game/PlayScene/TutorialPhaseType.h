@@ -15,3 +15,12 @@ enum TutorialElementType_ : TutorialElementType
 };
 
 using TutorialElementFlags = std::bitset<TutorialElementType_Max>;
+
+/// @brief チュートリアルでフォーカスする必要がある種類
+using TutorialFocusType = int32_t;
+enum TutorialForcusType_ : TutorialFocusType
+{
+	TutorialForcusType_MoveCamera,  ///< カメラ移動
+	TutorialForcusType_MoveBody,    ///< ボディ移動
+	TutorialForcusType_None_Max,    ///< 特に何もない 集中タイプの最大数
+};

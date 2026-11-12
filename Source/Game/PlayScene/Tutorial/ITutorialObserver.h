@@ -1,6 +1,6 @@
 #pragma once
 #include <Game/Game.h>
-#include "TutorialPhaseType.h"
+#include "../TutorialPhaseType.h"
 
 /// @brief チュートリアルチェック受信オブジェクトのインタフェース
 class ITutorialObserver

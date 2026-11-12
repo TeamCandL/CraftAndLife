@@ -27,6 +27,7 @@
 #include <Game/Manager/AudioManager.h>
 #include "ClearSceneTrigger.h"
 #include "ClearFade.h"
+#include "Tutorial/TutorialFirstStep.h"
 
 void PlayScene::Start()
 {
@@ -79,4 +80,7 @@ void PlayScene::Start()
 
 	// クリア・ゲームオーバー切り替え判定
 	Instantiate<ClearSceneTrigger>(objDayController, objClearFade, objNetworkActorServer);
+
+	// チュートリアル最初のステップ
+	Instantiate<TutorialFirstStep>(objPlaySceneUIController, objPlayer, objMainCamera);
 }

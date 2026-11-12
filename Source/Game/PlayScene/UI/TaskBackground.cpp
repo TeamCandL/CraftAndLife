@@ -5,11 +5,16 @@
 
 void TaskBackground::Start()
 {
-	text.content = "テストタスク";
+	text.content = "-----";
 }
 
 void TaskBackground::Update()
 {
+	if (!isEnabledDayTimer)
+	{
+		return;  // 残り時間と日付の表示が有効ではないなら無視！
+	}
+
 	int currentDay = Get<DayController>(objDayContloller).GetCurrentDay();
 
 	// Dayが3のときだけ、ダウンタイマーを表示する
@@ -32,4 +37,10 @@ void TaskBackground::Update()
 		// 1日目や2日目は秒数を表示しない
 		text.content = std::format("Day: {}", currentDay);
 	}
+}
+
+void TaskBackground::SetTask(
+    const std::string& _taskContent)
+{
+	text.content = _taskContent;
 }
