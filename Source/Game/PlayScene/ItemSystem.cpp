@@ -328,7 +328,19 @@ ItemSystemData::ItemSystemData()
 	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 1 } });
-	allItemList.push_back({ 21, ItemType::EnemyAttack, "近距離攻撃", {}, {}, false, craft, 10.0f, 15, 0, 15 });
+	allItemList.push_back({ 21,
+	                        ItemType::EnemyAttack,
+	                        "近距離攻撃",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        1.0f,
+	                        15,
+	                        0,
+	                        15,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
 	allItemList.push_back({ 22,
 	                        ItemType::PlayerAttackSword,
 	                        "プレイヤー剣の攻撃",

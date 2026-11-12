@@ -21,8 +21,37 @@ void OtherEnemy::Update()
 		const InSessionStatus::EnemyStatus& status = sessionManager.RefEnemyStatus(enemyId);
 
 		// 座標と角度の更新
-		transform.position = status.position;
-		transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
+		// transform.position = status.position;
+		// transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
+
+		// 最新のネットワーク座標
+		targetPosition = status.position;
+
+		const Quaternion targetRotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
+
+		// 初回は即座に合わせる
+		if (!isPositionInitialized)
+		{
+			transform.position = targetPosition;
+			transform.rotation = targetRotation;
+
+			previousPosition = targetPosition;
+			previousRotation = targetRotation;
+
+			isPositionInitialized = true;
+		}
+		else
+		{
+			// 位置を50%補間
+			transform.position = (previousPosition + targetPosition) * 0.5f;
+
+			// 回転を50%補間
+			transform.rotation = Quaternion::Slerp(previousRotation, targetRotation, 0.5f);
+
+			// 次回用に保存
+			previousPosition = targetPosition;
+			previousRotation = targetRotation;
+		}
 
 		bool alive = true;
 		int32_t hp = 0;
