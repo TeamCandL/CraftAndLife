@@ -12,13 +12,13 @@ void UI::ListBox::Start()
 void UI::ListBox::Update()
 {
 	// パッドからフォーカス操作
-	auto& padInput = Get<AbstructInputSystem>().GetPadInputSystem();
+	auto uiInput = Get<AbstructInputSystem>().GetUIInput();
 
-	if (padInput.IsFlickedDown(GamePadInputStick::Left) || Get<InputSystem>().GetKeyDown(KeyCode::S))
+	if (uiInput->IsMovedDown())
 	{
 		MoveFocus(1);
 	}
-	if (padInput.IsFlickedUp(GamePadInputStick::Left) || Get<InputSystem>().GetKeyDown(KeyCode::W))
+	if (uiInput->IsMovedUp())
 	{
 		MoveFocus(-1);
 	}
