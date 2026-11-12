@@ -1,5 +1,6 @@
 #pragma once
 #include <Game/Game.h>
+#include "ItemId.h"
 
 struct PlayNetworkControllerData
 {
@@ -28,6 +29,22 @@ struct PlayNetworkControllerData
 	GameObject objHarvestableController{};  ///< ハーベスタブルオブジェクトコントローラー
 	GameObject objOtherPlayerController{};  ///< 他プレイヤーの操作するやつのオブジェクト
 	GameObject objUIController{};           ///< UIControllerのオブジェクト
+
+	//----------------------//
+	//---------/SE/---------//
+	//----------------------//
+	// 剣でダメージを受けたときのSE
+	Resource<Audio> swordDamagedSE{ "BGM_SE/To cut with a sword.mp3" };
+
+	// 大剣でダメージを受けたときのSE
+	Resource<Audio> greatswordDamagedSE{ "BGM_SE/Strike with a greatsword.mp3" };
+
+	Resource<Audio> impactSE{ "BGM_SE/Impact.mp3" };
+
+	const float CanListenDistance{ 25.0f };  ///< 聞こえる距離
+
+	// アイテムId
+	inline static const ItemId ITEM_ID_SWORD{ 4 };  ///< 剣のアイテムId
 };
 
 struct PlayNetworkController : ObjectBase<PlayNetworkControllerData>

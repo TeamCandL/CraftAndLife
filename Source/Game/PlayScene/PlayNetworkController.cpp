@@ -37,6 +37,7 @@
 #include "OtherPlayerController.h"
 #include <Game/PlayScene/PlaySceneUIController.h>
 #include <Game/PlayScene/UI/ChatTextLog.h>
+#include <Game/Manager/AudioManager.h>
 
 using enum NetworkSessionManager::State;
 
@@ -280,12 +281,27 @@ void PlayNetworkController::Update()
 				    Protocol::EntityPicked message{};
 				    converter.ToMessage(_event.data, message);
 
+				    Vec3 position = Vec3{ message.positionX, message.positionY, message.positionZ };
+
 				    if (Get<SessionManager>().RefStatus().name == message.pickerName)
 				    {
 					    VCU_LOG("自分が拾った！！");
-					    Get<Player>(objPlayer).GiveItem(
-					        message.itemId,
-					        Vec3{ message.positionX, message.positionY, message.positionZ });
+					    Get<Player>(objPlayer).GiveItem(message.itemId, position);
+				    }
+
+				    // エンティティ拾ったときの座標が音聞こえる範囲なら
+				    if ((Get<Transform>(objPlayer).position - position).Length() <= CanListenDistance)
+				    {
+					    switch (message.entityId)
+					    {
+					    case ITEM_ID_SWORD:
+						    // 剣の音を鳴らす
+						    Get<AudioManager>().Play(swordDamagedSE);
+						    break;
+					    default:
+						    // それ以外は音なし 他の人がアイテム拾ったときの音とかもできるよ
+						    break;
+					    }
 				    }
 
 				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
