@@ -77,5 +77,5 @@ void PlayScene::Start()
 	GameObject objClearFade = Instantiate<ClearFade>();
 
 	// クリア・ゲームオーバー切り替え判定
-	Instantiate<ClearSceneTrigger>(objDayController, objClearFade);
+	Instantiate<ClearSceneTrigger>(objDayController, objClearFade, objNetworkActorServer);
 }

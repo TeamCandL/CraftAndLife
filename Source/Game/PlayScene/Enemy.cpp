@@ -32,7 +32,7 @@ void Enemy::Update()
 {
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-		hp -= 10;
+		hp -= 100;
 	}
 
 	if (!alive)
@@ -49,6 +49,7 @@ void Enemy::Update()
 
 	if (hp <= 0)
 	{
+		hp = 0;
 		SetAlive(false);
 		DropItem();
 	}
@@ -359,7 +360,7 @@ void Enemy::AttackCollider(
     const Vec3& forward_)
 {
 	attacked = true;
-	// あとから修正
+
 	// Get<AudioManager>().Play(attackSE);
 	const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 

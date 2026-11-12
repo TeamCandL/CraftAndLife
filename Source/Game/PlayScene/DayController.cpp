@@ -49,10 +49,8 @@ void DayController::Update()
 		currentTimeSec = std::fmodf(std::fmodf(currentTimeSec, MAX_TIME) + MAX_TIME, MAX_TIME);
 
 		// ゲスト側も日付変更を検出
-		if (!status.imLobbyHost && PREVIOUS_TIME_SEC > MAX_TIME * 0.5f && currentTimeSec < MAX_TIME * 0.5f)
-		{
-			currentDay++;
-		}
+		// ゲストはホストから受信した日数に合わせる
+		currentDay = status.dayCount;
 
 		constexpr float CORRECTION_SPEED = 3.0f;
 
