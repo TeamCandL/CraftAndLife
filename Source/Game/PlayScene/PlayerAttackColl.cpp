@@ -2,9 +2,7 @@
 #include "PlayerAttackColl.h"
 #include "Enemy.h"
 
-void PlayerAttackColl::Start()
-{
-}
+void PlayerAttackColl::Start() {}
 
 void PlayerAttackColl::Update()
 {
@@ -17,7 +15,11 @@ void PlayerAttackColl::Update()
 	}
 }
 
-void PlayerAttackColl::SendDamage(Enemy& enemy, int32_t)
+void PlayerAttackColl::SendDamage(
+    Enemy& enemy,
+    int32_t damage)
 {
-	enemy.Damaged(damage);
+	// 敵へのダメージ処理
+	// 実際にHPが減った場合のみ、Enemy側でSEを再生する
+	enemy.Damaged(damage, isGreatsword);
 }

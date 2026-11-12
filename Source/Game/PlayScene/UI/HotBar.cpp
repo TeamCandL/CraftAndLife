@@ -2,6 +2,7 @@
 #include "pch\pch.h"
 #include "MiniMapPoint.h"
 #include <Game/System/AbstructInputSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 namespace
 {
@@ -263,7 +264,7 @@ bool HotBar::SwapConsumableItem(
     ItemId _newItemId)
 {
 	ItemInfo info = Get<ItemSystem>().GetInfo(_newItemId);
-	if (info._type != ItemType::Consumables && info._type != ItemType::Arrow)
+	if (info._type != ItemType::Consumables && info._type != ItemType::Medicals && info._type != ItemType::Arrow)
 	{
 		_oldItemStack = ItemStack::EmptyStack();
 		return false;
@@ -282,6 +283,36 @@ bool HotBar::SwapItem(
 		return false;
 
 	return SwapItemImpl(_oldItemStack, _newItemId, slotIndex);
+}
+
+std::vector<ItemStack> HotBar::GetAllSlotItem()
+{
+	std::vector<ItemStack> itemStacks;
+	for (int i = 0; i < slots.size(); i++)
+	{
+		// バッグは取得させない
+		if (i == BAG_SLOT_INDEX)
+			continue;
+		SlotItem& slotItem = Get<SlotItem>(Get<Slot>(slots[i]).Data().slotItem);
+		// 空のアイテムは取得させない
+		if (slotItem.Data().id == EMPTY_ITEM_ID || slotItem.Data().count == 0)
+			continue;
+
+		itemStacks.emplace_back(slotItem.Data().id, slotItem.Data().count);
+	}
+	return itemStacks;
+}
+
+void HotBar::ClearAllSlotItem()
+{
+	for (int i = 0; i < slots.size(); i++)
+	{
+		if (i == BAG_SLOT_INDEX)
+			continue;
+		Get<SlotItem>(Get<Slot>(slots[i]).Data().slotItem).Reset();
+		if (i == currentSlotIdx)
+			OnChangedSelectedItem();
+	}
 }
 
 bool HotBar::CanRemoveItem(
@@ -352,8 +383,18 @@ bool HotBar::SwapItemImpl(
 void HotBar::MoveFocusImpl(
     int _dir)
 {
+	// 移動前の選択スロットを保存
+	int previousSlotIdx = currentSlotIdx;
+
+	// 選択スロットを移動
 	currentSlotIdx += _dir;
 	currentSlotIdx = (currentSlotIdx + slots.size()) % slots.size();
+
+	// 選択スロットが変わった場合のみSEを再生
+	if (currentSlotIdx != previousSlotIdx)
+	{
+		Get<AudioManager>().Play(moveHotbarSlotSE);
+	}
 }
 
 SlotItemData& HotBar::GetSlotItemData(
@@ -375,6 +416,7 @@ size_t HotBar::GetSlotIndexFrom(
 		break;
 	case ItemType::Consumables:
 	case ItemType::Arrow:
+	case ItemType::Medicals:
 		slotIndex = CONSUMABLE_SLOT_INDEX;
 		break;
 	case ItemType::Tools:

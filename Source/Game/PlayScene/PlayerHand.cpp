@@ -7,7 +7,9 @@
 #include "ItemAction/ItemActionWeapons.h"
 #include "ItemAction/ItemActionWeaponBow.h"
 #include "ItemAction/ItemActionShield.h"
+#include "ItemAction/ItemActionConsumables.h"
 #include "ItemAction/ItemActionBackpack.h"
+#include "ItemAction/ItemActionMedicals.h"
 #include <Game/Manager/SessionManager.h>
 
 void PlayerHand::Start()
@@ -85,20 +87,62 @@ void PlayerHand::Start()
 		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
 	};
 
-	transformAnimator.playAnimation = "idle";
+	transformAnimator.animations["idleMedicals"] = { TransformAnimationKey{
+		0.0f,
+		Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		Quaternion::FromEuler(Vec3{ 1.476950f, -0.159000f, -3.073822f }),
+		Vec3{ 0.005000f, 0.005000f, 0.005000f } } };
 
-	SetItem(3);
+	transformAnimator.animations["usingMedicals"] = {
+		TransformAnimationKey{ 0.00f,
+		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.810997f, -2.760000f, -0.106622f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.03f,
+		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.810993f, 2.458997f, -0.106620f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.06f,
+		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.810989f, -0.613000f, 3.018000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.09f,
+		                       Vec3{ 0.003000f, 0.006000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.947996f, 1.847999f, -0.124000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.12f,
+		                       Vec3{ 0.003000f, 0.006000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.202000f, -1.293606f, 0.871000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.15f,
+		                       Vec3{ 0.003000f, 0.003000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.202000f, 2.529001f, 0.871000f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+		TransformAnimationKey{ 0.18f,
+		                       Vec3{ 0.003000f, 0.002000f, 0.001000f },
+		                       Quaternion::FromEuler(Vec3{ 0.810997f, -2.760000f, -0.106622f }),
+		                       Vec3{ 0.005000f, 0.005000f, 0.005000f } },
+	};
+
+	transformAnimator.playAnimation = "idle";
 }
 
 void PlayerHand::Update(
     PlayerData& _playerData)
 {
+#ifdef USE_IMGUI
+
 	ImGui::Begin("PlayerHand");
 
 	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+#endif
 	Vec3 angles = transform.rotation.ToEuler();
+#ifdef USE_IMGUI
+
 	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+#endif
 	transform.rotation = Quaternion::FromEuler(angles);
+#ifdef USE_IMGUI
 
 	if (ImGui::Button("出力"))
 	{
@@ -155,7 +199,7 @@ void PlayerHand::Update(
 	}
 
 	ImGui::End();
-
+#endif
 	if (isAnimPreviewingDebug)
 	{
 		transformAnimator.playAnimation = "";
@@ -212,7 +256,10 @@ void PlayerHand::SetItem(
 		objItemAction = GetScene().Instantiate<ItemActionWeaponBow>();
 		break;
 	case ItemType::Consumables:
+		objItemAction = GetScene().Instantiate<ItemActionConsumables>();
 		break;
+	case ItemType::Medicals:
+		objItemAction = GetScene().Instantiate<ItemActionMedicals>();
 		break;
 	case ItemType::Backpack:
 		objItemAction = GetScene().Instantiate<ItemActionBackpack>();

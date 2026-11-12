@@ -8,16 +8,20 @@ namespace Protocol
 	{
 		/// @brief プロトコルの種類を取得する
 		/// @return プロトコルの種類
-		ProtocolType GetProtocolType() const override { return ProtocolType::LobbyMembers; }
+		ProtocolType GetProtocolType() const override
+		{
+			return ProtocolType::LobbyMembers;
+		}
 
 		/// @brief メンバーをロードする
 		/// @param _registry メンバーを登録するやつ
-		void LoadMembers(MessageRegistry& _registry) override
+		void LoadMembers(
+		    MessageRegistry& _registry) override
 		{
-			_registry.AddMember(names);
+			_registry.AddMember(members);
 		}
 
 		// 以下通信メンバーたち
-		std::string names{};
+		std::string members{};
 	};
-}
+}  // namespace Protocol

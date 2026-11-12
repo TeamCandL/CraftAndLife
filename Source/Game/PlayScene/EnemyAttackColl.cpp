@@ -54,6 +54,5 @@ void EnemyAttackColl::SendDamage(
     Player& player,
     int32_t damage)
 {
-	player.Damaged(damage);
-	// player.Damaged(damage, transform.position);
+	player.Damaged(damage, transform.position);
 }

@@ -30,20 +30,27 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	{
+		hp -= 10;
+	}
+
 	if (!alive)
 		return;
 
 	attacked = false;
-
+#ifdef USE_IMGUI
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
 	ImGui::DragInt("HP", &hp);
 	ImGui::End();
+#endif
 
 	if (hp <= 0)
 	{
 		SetAlive(false);
+		DropItem();
 	}
 
 	// VCU_LOG("敵の追跡状況：{}", followed);
@@ -76,6 +83,7 @@ void Enemy::Update()
 		}
 		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
+#ifdef USE_IMGUI
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
@@ -86,9 +94,43 @@ void Enemy::Update()
 	ImGui::DragFloat3("targetPosition : ", targetPos.v);
 
 	ImGui::End();
+#endif
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader{ sessionManager };
 
-	if (Get<InputSystem>().GetKeyDown(KeyCode::J))
-		hp = 0;
+	reader.ForeachPlayer(
+	    [&](const std::string& playerName, const StateTarget& target)
+	    {
+		    int32_t healthState{};
+
+		    VCU_LOG("プレイヤー確認開始: {}", playerName);
+
+		    if (!reader.TryGetState(target, "helthState", healthState))
+		    {
+			    VCU_LOG("プレイヤーの生存状態取得失敗: {}", playerName);
+			    return;
+		    }
+
+		    VCU_LOG("プレイヤーの生存状態取得成功: 名前={}, helthState={}", playerName, healthState);
+
+		    if (healthState == HelthState_Dead)
+		    {
+			    VCU_LOG("死亡プレイヤーのため追跡対象外: {}", playerName);
+			    return;
+		    }
+
+		    VCU_LOG("生存プレイヤー確認: {}", playerName);
+
+		    // int32_t healthState{};
+
+		    // if (!reader.TryGetState(target, "helthState", healthState))
+		    //  return;
+
+		    // if (healthState == HelthState_Dead)
+		    //  return;
+
+		    // 生存プレイヤーとして追跡対象に追加
+	    });
 
 	if (alive)
 	{
@@ -108,12 +150,6 @@ void Enemy::Update()
 		networkActor.OnEnemyDeath(enemyId);
 
 		// 敵の管理スロットを空にする
-		controller.RemoveEnemy(enemyId);
-
-		VCU_LOG("[Enemy] OnEnemyDeath 呼び出し ID={}", enemyId);
-		networkActor.OnEnemyDeath(enemyId);
-
-		VCU_LOG("[Enemy] Controllerから削除 ID={}", enemyId);
 		controller.RemoveEnemy(enemyId);
 
 		DestroyMe();
@@ -309,10 +345,15 @@ void Enemy::CloseAttack()
 void Enemy::AttackCollider()
 {
 	attacked = true;
+
 	// あとから修正
 	// Get<AudioManager>().Play(attackSE);
 
-	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+	// 近距離攻撃用アイテム
+	const ItemId ITEM_ID_CLOSE_ATTACK{ 21 };
+
+	// 敵の位置に攻撃判定用エンティティを生成
+	Get<EntitySystem>().Spawn(ITEM_ID_CLOSE_ATTACK, transform.position, Vec3{ 0.0f, 0.0f, 0.0f });
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
@@ -322,21 +363,78 @@ void Enemy::AttackCollider(
 	attacked = true;
 	// あとから修正
 	// Get<AudioManager>().Play(attackSE);
+	const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 
-	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f, forward_, 10.0f);
+	Vec3 dir = forward_.Normalize() * 10.0f;
+	if (dir.Length() <= FLT_EPSILON)
+	{
+		dir = Vec3::Forward();
+	}
+
+	// 蜘蛛の糸攻撃！
+	Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
+
+	// NOTE: エンティティへ移行しますた
+	// GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f,
+	// forward_, 10.0f);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
+/// @brief ダメージを受ける
+/// @param damage 受けるダメージ量
+/// @param isGreatsword 大剣による攻撃かどうか
+/// @brief 通常のダメージ処理
+/// @param damage 受けるダメージ量
 void Enemy::Damaged(
     int32_t damage)
 {
-	if (nowDamagedCoolTime <= 0.0)
+	// 0以下のダメージは無視
+	if (damage <= 0)
 	{
-		hp -= damage;
-		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+		return;
 	}
 
-	VCU_ASSERT(hp > 0);
+	// ダメージクールタイム中なら無視
+	if (nowDamagedCoolTime > 0.0f)
+	{
+		return;
+	}
+
+	// HPを減らす
+	hp -= damage;
+
+	// ダメージクールタイムを設定
+	nowDamagedCoolTime = DAMAGED_COOL_TIME;
+}
+
+/// @brief 剣・大剣によるダメージ処理
+/// @param damage 受けるダメージ量
+/// @param isGreatsword 大剣による攻撃かどうか
+void Enemy::Damaged(
+    int32_t damage,
+    bool isGreatsword)
+{
+	// ダメージを受ける前のHPを保存
+	const int32_t previousHP = hp;
+
+	// 通常のダメージ処理を実行
+	Damaged(damage);
+
+	// HPが減っていなければSEを鳴らさない
+	if (hp == previousHP)
+	{
+		return;
+	}
+
+	// 攻撃した武器に応じてSEを再生
+	if (isGreatsword)
+	{
+		Get<AudioManager>().Play(greatswordDamagedSE);
+	}
+	else
+	{
+		Get<AudioManager>().Play(swordDamagedSE);
+	}
 }
 
 void Enemy::SetWanderingCheckPoint(
@@ -356,7 +454,7 @@ void Enemy::SetWanderingCheckPoint(
 
 void Enemy::DropItem()
 {
-	Get<EntitySystem>().Spawn(dropItemID, transform.position, { 0.0f, 0.0f, 0.0f });
+	Get<EntitySystem>().Spawn(dropItemID, transform.position + Vec3::Up(), Vec3::Zero());
 }
 
 void Enemy::RegisterStates(
@@ -365,5 +463,5 @@ void Enemy::RegisterStates(
 	registry.Register("hp", hp);
 	// registry.Register("followed", followed);
 	registry.Register("alive", alive);
-	// registry.Register("attacked", attacked);
+	registry.Register("attacked", attacked);
 }

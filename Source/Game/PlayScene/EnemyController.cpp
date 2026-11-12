@@ -2,6 +2,11 @@
 #include "EnemyController.h"
 #include "Enemy.h"
 #include "UI/BossInfo.h"
+#include "UI/BossHp.h"
+#include "UI/BossName.h"
+#include "UI/BossGauge.h"
+#include "UI/BossGaugeR.h"
+#include "PlaySceneUIController.h"
 
 void EnemyController::Start() {}
 
@@ -11,12 +16,25 @@ void EnemyController::AddEnemy(
     const GameObject _enemy)
 {
 	// 敵に固有IDを割り振る
-	Get<Enemy>(_enemy).SetID(nextEnemyId++);
+	Enemy& enemy = Get<Enemy>(_enemy);
+
+	enemy.SetID(nextEnemyId++);
 	allEnemys.push_back(_enemy);
+
+	// ID割り当て後にステートを登録
+	NetworkActorServer& networkActor = Get<NetworkActorServer>(Data().objNetworkActorServer);
+
+	networkActor.EnemyStateRegistries(_enemy);
 
 	if (Get<Enemy>(_enemy).Data().isBoss)
 	{
-		Get<BossInfo>(objBossInfo).SetBoss(_enemy);
+		PlaySceneUIController playSceneUIController = Get<PlaySceneUIController>(objPlaySceneUIController);
+		Get<BossInfo>(playSceneUIController.Data().objBossInfo).SetBoss(_enemy);
+		Get<BossInfo>(playSceneUIController.Data().objBossInfo).SetActive(true);
+		Get<BossHp>(playSceneUIController.Data().objBossHp).SetActive(true);
+		Get<BossName>(playSceneUIController.Data().objBossName).SetActive(true);
+		Get<BossGauge>(playSceneUIController.Data().objBossGauge).SetActive(true);
+		Get<BossGaugeR>(playSceneUIController.Data().objBossGaugeR).SetActive(true);
 	}
 }
 

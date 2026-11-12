@@ -34,7 +34,7 @@ void TPSCamera::Update(
 	auto pPlayerInput                = inputSystem.GetPlayerInput();
 
 	// 回転スピード
-	const float ROTATE_SPEED{ rotateSpeedPerSec * DELTA_TIME };
+	const Vec2 ROTATE_SPEED{ rotateSpeedPerSec * DELTA_TIME };
 	// 移動スピード
 	const float MOVE_SPEED{ moveSpeedPerSec * DELTA_TIME };
 
@@ -42,8 +42,8 @@ void TPSCamera::Update(
 	float xRotateAssist{ angles.x * angles.x * xRotateAssistRatio + 1.0f };
 
 	// カメラ移動をカメラの回転に適用
-	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED * xRotateAssist;
-	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED;
+	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED.x * xRotateAssist;
+	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED.y;
 
 	// 角度に制限をつける
 	angles.x = std::clamp(angles.x, angleLimitXMin, angleLimitXMax);
@@ -58,14 +58,14 @@ void TPSCamera::UpdatePositionFromTarget(
 	CameraSystemData& camera = Get<CameraSystem>().Data();
 
 	Vec3 targetPosition = Get<Transform>(_objTarget).position;
-
+#ifdef USE_IMGUI
 	ImGui::Begin("TPS.UpdatePositionFromTarget");
 	ImGui::DragFloat("xRotateAssistRatio", &xRotateAssistRatio, 0.1f);
 	ImGui::DragFloat3("offsetFar", offsetFar.v, 0.1f);
 	ImGui::DragFloat3("offsetNearLower", offsetNearLower.v, 0.1f);
 	ImGui::DragFloat3("offsetNearUpper", offsetNearUpper.v, 0.1f);
 	ImGui::DragFloat2("angles", _data.angles.v);
-
+#endif
 	Mat4x4 rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(_data.angles.x, _data.angles.y, 0.0f);
 
 	// MEMO: 始点から終点までの線分と地面の平面との交点に移動する
@@ -115,9 +115,9 @@ void TPSCamera::UpdatePositionFromTarget(
 	    fp0,
 	    fp1,
 	    targetPosition.y + /*targetPosition.y + std::min(focusOffsetMax.y, focusOffsetMin.y) - 0.1f*/ 0.5f);
-
+#ifdef USE_IMGUI
 	ImGui::DragFloat("focusPointT", &focusPointT);
-
+#endif
 	Vec3 localOffset =
 	    DirectX::XMVector3TransformCoord(Mathf::Lerp(offsetNearLower, offsetFar, focusPointT), rotationMatrix);
 
@@ -125,9 +125,9 @@ void TPSCamera::UpdatePositionFromTarget(
 	    targetPosition + axisOffset,  // 線分の始点
 	    targetPosition + localOffset,
 	    GROUND_HEIGHT);  // 本来のカメラワールド座標 終点
-
+#ifdef USE_IMGUI
 	ImGui::DragFloat("finalCameraT", &finalCameraT);
-
+#endif
 	if (finalCameraT < 1.0f)  // 上を向いたとき下の地面に当たるなら再計算する
 	{
 		localOffset =
@@ -154,8 +154,9 @@ void TPSCamera::UpdatePositionFromTarget(
 	    Quaternion::FromLookAtQuaternion(camera.transform.position, finalFocusPoint, Vec3::Up());
 
 	focusPosition = finalFocusPoint;
-
+#ifdef USE_IMGUI
 	ImGui::End();
+#endif
 }
 
 void TPSCamera::OnDestroy()

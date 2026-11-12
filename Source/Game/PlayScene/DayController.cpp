@@ -6,18 +6,30 @@
 
 void DayController::Update()
 {
+#ifdef USE_IMGUI
 	ImGui::Begin("DayController");
 	ImGui::DragFloat("boost", &boost, 1.0f, 1.0f);
 	ImGui::DragFloat("currentTimeSec", &currentTimeSec);
 	ImGui::End();
+#endif  // _DEBUG
 
 	const float DELTA_TIME = Get<DeltaTime>();
 	const float MAX_TIME   = skyAnimKeys.back().timeSec;
+
+	// 前フレームの時刻を保存
+	const float PREVIOUS_TIME_SEC = currentTimeSec;
 
 	currentTimeSec += DELTA_TIME * boost;
 
 	// ゲストだけホストの時刻に近づける
 	const InSessionStatus& status = Get<SessionManager>().RefStatus();
+
+	isDayChanged = false;
+	if (status.imLobbyHost && currentTimeSec >= MAX_TIME)
+	{
+		isDayChanged = true;
+		currentDay++;
+	}
 
 	if (!status.imLobbyHost && status.hasReceivedDayTime)
 	{
@@ -31,6 +43,15 @@ void DayController::Update()
 		else if (diff < -MAX_TIME * 0.5f)
 		{
 			diff += MAX_TIME;
+		}
+
+		// 時刻を0～180秒の範囲に収める
+		currentTimeSec = std::fmodf(std::fmodf(currentTimeSec, MAX_TIME) + MAX_TIME, MAX_TIME);
+
+		// ゲスト側も日付変更を検出
+		if (!status.imLobbyHost && PREVIOUS_TIME_SEC > MAX_TIME * 0.5f && currentTimeSec < MAX_TIME * 0.5f)
+		{
+			currentDay++;
 		}
 
 		constexpr float CORRECTION_SPEED = 3.0f;

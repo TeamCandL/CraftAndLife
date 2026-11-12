@@ -11,10 +11,8 @@ void BossHp::Start()
 
 void BossHp::Update()
 {
-	SetActive(Get<BossInfo>(objBossInfo).IsBossActive());
-	if (IsActive())
-	{
-		HpInfo hpInfo = Get<BossInfo>(objBossInfo).GetHpInfo();
-		text.content  = std::to_string(hpInfo.hp) + " / " + std::to_string(hpInfo.maxHP);
-	}
+	SetActive(Get<BossInfo>(objBossInfo).IsActive());
+
+	HpInfo hpInfo = Get<BossInfo>(objBossInfo).GetHpInfo();
+	text.content  = std::to_string(hpInfo.hp) + " / " + std::to_string(hpInfo.maxHP);
 }
