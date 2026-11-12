@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include <Game/System/CameraSystem.h>
 #include <Base/Manager/ScreenSize.h>
+#include "../Manager/SessionManager.h"
 
 void EnemyHpBar::Start()
 {
@@ -22,6 +23,13 @@ void EnemyHpBar::Update()
 	ImGui::DragFloat3("position:", m_worldPosition.v);
 	ImGui::DragInt("hp : ", &HP);
 	ImGui::End();
+
+	SessionManager& sessionManager = Get<SessionManager>();
+	if (sessionManager.RefStatus().imLobbyHost)
+	{
+		Enemy& enemy = Get<Enemy>(ownerEnemy);
+		hp           = enemy.Data().hp;
+	}
 
 	// 1. 敵のワールド座標に頭上オフセットを加算
 	Vec3 worldPosition = m_worldPosition + m_offset;

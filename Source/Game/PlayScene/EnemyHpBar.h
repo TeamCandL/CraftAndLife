@@ -4,7 +4,6 @@
 
 struct EnemyHpBarData
 {
-	// 敵生成時に初期位置を受け取れるコンストラクタ
 	EnemyHpBarData() = default;
 	EnemyHpBarData(
 	    const Vec3& initialPos)
@@ -22,15 +21,16 @@ struct EnemyHpBarData
 	{
 	}
 
-	// 背景用UI（必要に応じてテクスチャやスプライトコンポーネントを追加してください）
-	Resource<Texture> texture{ "Image/UI/PlayerName_background.png" };
-
+	// --- 背景用 ---
+	Resource<Texture> bgTexture{ "Image/UI/self_info.png" };
 	Component<UITransform> backgroundTransform{ Vec2::Zero(), Vec2{ 240, 65 }, UILayerOrder{}.WithUser(9999) };
+	Component<UIImage> backgroundImage{ bgTexture };
 
-	Component<UIImage> image{ texture };
-
-	// 減るゲージ（バー）用UI
+	// --- 減るゲージ（バー）用 ---
+	// ※バー用の画像パスは、ご自身のプロジェクトのゲージ画像に合わせて変更してください
+	Resource<Texture> barTexture{ "Image/UI/Mygauge.png" };
 	Component<UITransform> barTransform{ Vec2{ 0, 0 }, Vec2{ 100, 16 }, UILayerOrder{}.WithUser(10000) };
+	Component<UIImage> barImage{ barTexture };
 
 	GameObject ownerEnemy;
 	int32_t hp{};

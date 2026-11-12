@@ -18,6 +18,8 @@ struct EnemyControllerData
 	GameObject objPlaySceneUIController{};  ///< UIコントローラーのオブジェクト
 	GameObject objNetworkActorServer{};     ///< ネットワークアクターサーバーのオブジェクト
 
+	GameObject objEnemiesInfo{};  // 配列にする必要あるかもね
+
 	std::vector<GameObject> objEnemyHpBar;
 };
 
