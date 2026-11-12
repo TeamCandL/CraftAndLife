@@ -50,4 +50,12 @@ class IEntity
 	/// @brief 座標を取得する
 	/// @return ワールド座標 (x,y,z)
 	virtual Vec3 GetPosition() const = 0;
+
+	/// @brief 投げて回収可能なエンティティか
+	/// @return true / false
+	virtual bool IsThrowingItemEntity() const = 0;
+
+	/// @brief 地面の下にいるか
+	/// @return true / false
+	virtual bool IsUnderground() const = 0;
 };

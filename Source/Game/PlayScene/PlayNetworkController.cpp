@@ -247,7 +247,10 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedDayTime dayTimeMessage{};
 				    converter.ToMessage(_event.data, dayTimeMessage);
 				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec, dayTimeMessage.dayCount);
-
+				    VCU_LOG(
+				        "UpdatedDayTime受信: currentTimeSec={}, dayCount={}",
+				        dayTimeMessage.currentTimeSec,
+				        dayTimeMessage.dayCount);
 				    break;
 			    }
 			    case ProtocolType::BreakHarvestable:
@@ -288,15 +291,25 @@ void PlayNetworkController::Update()
 					    VCU_LOG("自分が拾った！！");
 					    Get<Player>(objPlayer).GiveItem(message.itemId, position);
 				    }
+				    else
+					    VCU_LOG("他人が拾った！！");
 
 				    // エンティティ拾ったときの座標が音聞こえる範囲なら
-				    if ((Get<Transform>(objPlayer).position - position).Length() <= CanListenDistance)
+				    if (true)  // (Get<Transform>(objPlayer).position - position).Length() <= CanListenDistance
 				    {
-					    switch (message.entityId)
+					    switch (message.itemId)
 					    {
-					    case ITEM_ID_SWORD:
+					    case ITEM_ID_PLAYER_ATTACK_SWORD:
 						    // 剣の音を鳴らす
 						    Get<AudioManager>().Play(swordDamagedSE);
+						    break;
+					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
+						    // 剣の音を鳴らす
+						    Get<AudioManager>().Play(greatswordDamagedSE);
+						    break;
+					    case ITEM_ID_PLAYER_ATTACK_ARROW:
+						    // 剣の音を鳴らす
+						    Get<AudioManager>().Play(impactSE);
 						    break;
 					    default:
 						    // それ以外は音なし 他の人がアイテム拾ったときの音とかもできるよ
@@ -542,6 +555,10 @@ void PlayNetworkController::Update()
 				// 死亡通知の送信
 				for (const auto& death : pendingDeaths)
 				{
+					enemyStateIds.push_back(death.enemyId);
+					StateValueCode::Encode(StateValue{ int32_t{ 0 } }, values);
+					AddStateName("hp");
+
 					enemyStateIds.push_back(death.enemyId);
 
 					// 死亡通知は alive = false

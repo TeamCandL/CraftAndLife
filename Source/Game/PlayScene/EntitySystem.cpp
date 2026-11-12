@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "ItemSystem.h"
 #include <Game/Manager/AudioManager.h>
+#include <Game/Manager/SessionManager.h>
 
 void EntitySystem::Update()
 {
@@ -21,6 +22,28 @@ void EntitySystem::Update()
 		{
 			GetScene().Destroy(obj);
 			continue;
+		}
+
+		if (entity.IsThrowingItemEntity())
+		{
+			if (entity.IsUnderground())
+			{
+				// 地面の下にいる！
+
+				if (Get<SessionManager>().RefStatus().imLobbyHost)
+				{  // ホストである
+					// ならアイテム化しちゃう！
+					ItemId collectibleItemid = Get<ItemSystem>().ConvertAttackItemToCollectibleItem(entity.GetItemId());
+
+					if (collectibleItemid != 0)
+					{
+						Get<EntitySystem>().Spawn(collectibleItemid, entity.GetPosition(), Vec3::Zero());
+					}
+				}
+
+				entity.Despawn();
+				continue;
+			}
 		}
 
 		if (entity.CanHitToPlayer())

@@ -44,7 +44,9 @@ struct PlayNetworkControllerData
 	const float CanListenDistance{ 25.0f };  ///< 聞こえる距離
 
 	// アイテムId
-	inline static const ItemId ITEM_ID_SWORD{ 4 };  ///< 剣のアイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_SWORD{ 22 };      ///< 剣攻撃のアイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_SWORD_BIG{ 23 };  ///< 大剣攻撃のアイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };      ///< 矢攻撃のアイテムId
 };
 
 struct PlayNetworkController : ObjectBase<PlayNetworkControllerData>

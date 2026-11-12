@@ -11,6 +11,7 @@ struct EntitySystemData
 	std::vector<EntityPickData> picksData{};    ///< 拾ったデータ
 
 	const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };
+	const ItemId ARROW_ITEM_ID{ 15 };  ///< 矢のアイテムId
 };
 
 struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntitySystemNetwork
