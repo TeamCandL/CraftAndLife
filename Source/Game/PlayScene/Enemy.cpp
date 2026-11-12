@@ -70,7 +70,7 @@ void Enemy::Update()
 	Sensor(transform.Down());
 
 	nowAttackCoolTime -= Get<DeltaTime>();
-	if (nowAttackCoolTime <= 0.0f)
+	if (nowAttackCoolTime <= 0.0f && followed)
 	{
 		Attack(targetPos);
 	}
@@ -97,9 +97,12 @@ void Enemy::Update()
 #ifdef USE_IMGUI
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
-	ImGui::DragInt("modelIndex", &modelIndex);
-	modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
-	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
+	// ImGui::DragInt("modelIndex", &modelIndex);
+	// modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
+	// ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
+
+	ImGui::DragFloat3("targetPosition : ", targetPos.v);
+	ImGui::DragFloat3("checkPointPosition : ", Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3().v);
 
 	ImGui::End();
 #endif
@@ -185,7 +188,7 @@ void Enemy::Move(
 	{
 		Vec3 crossed = Math::GetCrossProduct(Fwd_, tPos - ePos);
 
-		torque += crossed.y * Math::GetRad(rotationAnglePerSec);
+		torque += crossed.y * Math::GetRad(rotationAnglePerSec) * Get<DeltaTime>();
 
 		Vec3 angles        = transform.rotation.ToEuler();
 		angles.x           = -DirectX::XM_PIDIV2;
@@ -254,30 +257,30 @@ void Enemy::Sensor(
 			}
 		}
 
-		int32_t playerId{};
-		if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
+		/// @brief 生存状態のプレイヤーから追跡対象を決定する
 		{
-			StateTarget target = StateTarget::Player(playerId);
+			// int32_t playerId{};
+			// if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
+			//{
+			//	StateTarget target = StateTarget::Player(playerId);
 
-			int32_t helthState{};
-			bool flag = reader.TryGetState(target, "helthState", helthState);
-			if (flag)
-			{
-				if (helthState == HelthState_::HelthState_Live)
-				{
-				}
-			}
-			else
-			{
-			}
+			//	int32_t helthState{};
+			//	bool flag = reader.TryGetState(target, "helthState", helthState);
+			//	if (flag)
+			//	{
+			//		if (helthState == HelthState_::HelthState_Live)
+			//		{
+			//		}
+			//	}
+			//	else
+			//	{
+			//	}
+			//}
 		}
 	}
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
-		if (!objWanderingCheckPoint.IsEmpty())
-		{
-			GetScene().Destroy(objWanderingCheckPoint);
-		}
+
 		targetPos = targetPos_;
 		followed  = true;
 	}
@@ -320,19 +323,16 @@ void Enemy::OnDestroy()
 void Enemy::Attack(
     Vec3 targetPos_)
 {
-	if (followed)
+	if (nowAttackCoolTime <= 0.0f)
 	{
-		if (nowAttackCoolTime <= 0.0f)
+		float dist = (targetPos_ - transform.position).Length();
+		if (hasLongAttack && dist > 10.0f)
 		{
-			float dist = (targetPos_ - transform.position).Length();
-			if (hasLongAttack && dist > 5.0f)
-			{
-				LongAttack();
-			}
-			else if (hasCloseAttack && dist <= 5.0f)
-			{
-				CloseAttack();
-			}
+			LongAttack();
+		}
+		else if (hasCloseAttack && dist <= 10.0f)
+		{
+			CloseAttack();
 		}
 	}
 }
@@ -431,16 +431,6 @@ void Enemy::Damaged(
 	{
 		return;
 	}
-
-	// 攻撃した武器に応じてSEを再生
-	if (isGreatsword)
-	{
-		Get<AudioManager>().Play(greatswordDamagedSE);
-	}
-	else
-	{
-		Get<AudioManager>().Play(swordDamagedSE);
-	}
 }
 
 void Enemy::SetWanderingCheckPoint(
@@ -455,7 +445,6 @@ void Enemy::SetWanderingCheckPoint(
 	position      = position + range_;
 
 	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position);
-	followed               = false;
 }
 
 void Enemy::DropItem()

@@ -355,6 +355,19 @@ ItemSystemData::ItemSystemData()
 	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 5 } });
+	allItemList.push_back({ 24,
+	                        ItemType::PlayerAttackArrow,
+	                        "プレイヤー矢の攻撃",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        1.0f,
+	                        5,
+	                        0,
+	                        5,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 5 } });
 }
 
 ItemInfo ItemSystem::GetInfo(
