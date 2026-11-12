@@ -11,17 +11,17 @@
     "name": "craftable_list_group",
     "type": "GROUP",
     "x": 425,
-    "y": 241,
+    "y": 195,
     "width": 275,
-    "height": 598,
+    "height": 644,
     "children": {
       "self_info_background": {
         "name": "self_info_background",
         "type": "RECTANGLE",
         "x": 429,
-        "y": 241,
+        "y": 195,
         "width": 271,
-        "height": 598
+        "height": 644
       },
       "Rectangle 6": {
         "name": "Rectangle 6",
@@ -73,9 +73,9 @@
     "name": "craft_preview",
     "type": "RECTANGLE",
     "x": 700,
-    "y": 241,
-    "width": 619,
-    "height": 598
+    "y": 195,
+    "width": 625,
+    "height": 644
   },
   "recipe_group": {
     "name": "recipe_group",
@@ -205,17 +205,17 @@
     "name": "selected_item_frame",
     "type": "GROUP",
     "x": 700,
-    "y": 241,
-    "width": 619,
-    "height": 186,
+    "y": 195,
+    "width": 625,
+    "height": 232,
     "children": {
       "background": {
         "name": "background",
         "type": "INSTANCE",
         "x": 700,
-        "y": 241,
-        "width": 619,
-        "height": 186,
+        "y": 195,
+        "width": 625,
+        "height": 232,
         "children": {
           "Rectangle": {
             "name": "Rectangle",
@@ -230,20 +230,31 @@
       "icon": {
         "name": "icon",
         "type": "RECTANGLE",
-        "x": 789,
-        "y": 270,
-        "width": 128,
-        "height": 128
+        "x": 759,
+        "y": 235,
+        "width": 142,
+        "height": 142
       },
       "name": {
         "name": "name",
         "type": "TEXT",
-        "x": 976,
-        "y": 280,
+        "x": 930,
+        "y": 265,
         "width": 64,
         "height": 93,
         "fontSize": 64,
         "content": "斧"
+      },
+      "only_job_label": {
+        "name": "only_job_label",
+        "type": "TEXT",
+        "x": 930,
+        "y": 218,
+        "width": 123,
+        "height": 92,
+        "fontSize": 32,
+        "content": "",
+        "textAlignHorizontal":  "LEFT"
       }
     }
   }

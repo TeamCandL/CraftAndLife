@@ -5,30 +5,33 @@
 #include <fstream>
 #include <Game/Manager/SessionManager.h>
 #include <Game/PlayScene/Player/PlayerJobType.h>
-
-std::string GetJobName(
-    PlayerJobType _jobType)
+namespace
 {
-	switch (_jobType)
+
+	std::string GetJobName(
+	    PlayerJobType _jobType)
 	{
-	case PlayerJobType_Healer:  ///< 回復使い
-		return "ヒーラー";
-		break;
-	case PlayerJobType_Tank:  ///< 盾使い
-		return "タンク";
-		break;
-	case PlayerJobType_Fighter:  ///< 大剣使い
-		return "ファイター";
-		break;
-	case PlayerJobType_Archer:  ///< 弓使い
-		return "アーチャー";
-		break;
-	case PlayerJobType_Max:  ///< 最大数
-	default:
-		return "無効";
-		break;
+		switch (_jobType)
+		{
+		case PlayerJobType_Healer:  ///< 回復使い
+			return "ヒーラー";
+			break;
+		case PlayerJobType_Tank:  ///< 盾使い
+			return "タンク";
+			break;
+		case PlayerJobType_Fighter:  ///< 大剣使い
+			return "ファイター";
+			break;
+		case PlayerJobType_Archer:  ///< 弓使い
+			return "アーチャー";
+			break;
+		case PlayerJobType_Max:  ///< 最大数
+		default:
+			return "無効";
+			break;
+		}
 	}
-}
+}  // namespace
 
 void LobbyUI::Start()
 {

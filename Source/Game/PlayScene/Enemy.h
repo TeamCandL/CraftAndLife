@@ -197,9 +197,11 @@ struct EnemyData
 	//----------------------//
 	//---------/SE/---------//
 	//----------------------//
-	// あとから修正
-	// Resource<Audio> attackSE{ "BGM_SE/Striking the enemy.mp3" };  ///< 攻撃SE
-	// Resource<Audio> damagedSE{ "Sound/Damaged.wav" };            ///< 被ダメージSE
+	// 剣でダメージを受けたときのSE
+	Resource<Audio> swordDamagedSE{ "BGM_SE/To cut with a sword.mp3" };
+
+	// 大剣でダメージを受けたときのSE
+	Resource<Audio> greatswordDamagedSE{ "BGM_SE/Strike with a greatsword.mp3" };
 
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" }, Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
@@ -320,7 +322,14 @@ struct Enemy : ObjectBase<EnemyData>
 	void AttackCollider(const Vec3& forward_);
 	/// @brief
 	/// @param damage 受けるダメージ量
+	/// @brief ダメージを受ける（通常攻撃・弓など）
+	/// @param damage 受けるダメージ量
 	void Damaged(int32_t damage);
+
+	/// @brief 剣・大剣によるダメージを受ける
+	/// @param damage 受けるダメージ量
+	/// @param isGreatsword 大剣による攻撃かどうか
+	void Damaged(int32_t damage, bool isGreatsword);
 	/// @brief 生死を設定
 	/// @param alive_ 生死の状態
 	void SetAlive(

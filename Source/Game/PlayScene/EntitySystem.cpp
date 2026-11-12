@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Enemy.h"
 #include "ItemSystem.h"
+#include <Game/Manager/AudioManager.h>
 
 void EntitySystem::Update()
 {
@@ -13,7 +14,9 @@ void EntitySystem::Update()
 		{
 			continue;  // オブジェクトがないなら無視
 		}
+
 		IEntity& entity = Get<IEntity>(obj);
+
 		if (entity.IsPicked() || entity.IsDespawned())
 		{
 			GetScene().Destroy(obj);
@@ -23,16 +26,17 @@ void EntitySystem::Update()
 		if (entity.CanHitToPlayer())
 		{
 			DynamicOBB* pDynamicOBB = TryGet<DynamicOBB>(obj);
+
 			if (pDynamicOBB)
 			{
 				for (auto& info : pDynamicOBB->hitGameObjects)
 				{
-					///	取得したオブジェクトの名前を『.content』で取得。
-					///	※ここでは、それがプレイヤーであるかを判定している。
 					Name* pName = TryGet<Name>(info.gameObject);
+
 					if (pName && pName->content == "Player")
 					{
-						entity.Pick();  // 拾いましたよ！(ダメージを)
+						entity.Pick();
+
 						picksData.push_back(EntityPickData{
 						    .entityId = entity.GetEntityId(),
 						    .position = entity.GetPosition(),
@@ -41,28 +45,52 @@ void EntitySystem::Update()
 				}
 			}
 		}
+
 		if (entity.CanHitToEnemy())
 		{
 			DynamicOBB* pDynamicOBB = TryGet<DynamicOBB>(obj);
+
 			if (pDynamicOBB)
 			{
 				for (auto& info : pDynamicOBB->hitGameObjects)
 				{
-					///	取得したオブジェクトの名前を『.content』で取得。
-					///	※ここでは、それが敵であるかを判定している。
 					Name* pName = TryGet<Name>(info.gameObject);
-					if (pName &&
-					    pName->content ==
-					        "Enemy")  // OtherEnemyにはEnemyという名前が付いていないため実質ホストのみの処理となるのであーる😎
+
+					if (pName && pName->content == "Enemy")
 					{
-						entity.Pick();  // 拾いましたよ！(敵に当たって消えましたよ)
+						entity.Pick();
+
+						// 矢が敵に命中したときの着弾音
+						if (entity.GetItemId() == 15)
+						{
+							Get<AudioManager>().Play(impactSE);
+						}
+
 						picksData.push_back(EntityPickData{
 						    .entityId = entity.GetEntityId(),
-						    .position = Vec3::Up() * 10000,  // 有り得ない位置にすることで取得不可能に
+						    .position = Vec3::Up() * 10000,
 						});
 
-						Get<Enemy>(info.gameObject)
-						    .Damaged(Get<ItemSystem>().GetInfo(entity.GetItemId())._damageForEnemy);
+						Enemy& enemy = Get<Enemy>(info.gameObject);
+
+						const ItemId itemId = entity.GetItemId();
+
+						const int32_t damage = Get<ItemSystem>().GetInfo(itemId)._damageForEnemy;
+
+						// 剣・大剣の攻撃だけ種類を判別して渡す
+						if (itemId == 22)  // 通常の剣
+						{
+							enemy.Damaged(damage, false);
+						}
+						else if (itemId == 23)  // 大剣
+						{
+							enemy.Damaged(damage, true);
+						}
+						else
+						{
+							// 弓など、その他の攻撃は従来どおり
+							enemy.Damaged(damage);
+						}
 					}
 				}
 			}
@@ -90,22 +118,22 @@ GameObject EntitySystem::PickNearest(
 	{
 		if (obj.IsEmpty())
 		{
-			continue;  // objが空っぽなら無視
+			continue;
 		}
 
 		IEntity& entity = Get<IEntity>(obj);
 
 		if (entity.CanPickup() == false)
 		{
-			continue;  // 拾えません！無視
+			continue;
 		}
 
 		Transform* pTransform = TryGet<Transform>(obj);
+
 		if (pTransform)
 		{
 			const float DISTANCE = (pTransform->position - _pos).Length();
 
-			// 距離がより近いなら選ぶ
 			if (DISTANCE <= minDistance)
 			{
 				minDistance  = DISTANCE;
@@ -117,7 +145,9 @@ GameObject EntitySystem::PickNearest(
 	if (!objMinEntity.IsEmpty())
 	{
 		IEntity& entity = Get<IEntity>(objMinEntity);
-		entity.Pick();  // 拾いましたよ！
+
+		entity.Pick();
+
 		picksData.push_back(EntityPickData{
 		    .entityId = entity.GetEntityId(),
 		    .position = entity.GetPosition(),
@@ -134,6 +164,7 @@ void EntitySystem::SpawnFromNetwork(
     const Vec3 _velocity)
 {
 	objEntities.emplace_back(GetScene().Instantiate<Entity>(_itemId, _entityId));
+
 	Get<IEntity>(objEntities.back()).SetPosition(_position);
 	Get<IEntity>(objEntities.back()).SetVelocity(_velocity);
 }
@@ -148,8 +179,9 @@ void EntitySystem::RemoveFromNetwork(
 {
 	if (objEntities[_entityId].IsEmpty())
 	{
-		return;  // すでに消されているなら無視
+		return;
 	}
+
 	Get<IEntity>(objEntities[_entityId]).Pick();
 	GetScene().Destroy(objEntities[_entityId]);
 }
