@@ -29,7 +29,7 @@ void ItemActionWeaponBow::Action(
 
 		// 中央の矢
 		entitySystem.Spawn(
-		    ARROW_ITEM_ID,
+		    ITEM_ID_PLAYER_ATTACK_ARROW,
 		    firePositionFrom,
 		    (firePositionTo - firePositionFrom).Normalize() * FIRE_SPEED_PER_SEC);
 

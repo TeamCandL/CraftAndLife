@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "ItemSystem.h"
 #include <Game/Manager/AudioManager.h>
+#include <Game/Manager/SessionManager.h>
 
 void EntitySystem::Update()
 {
@@ -21,6 +22,21 @@ void EntitySystem::Update()
 		{
 			GetScene().Destroy(obj);
 			continue;
+		}
+
+		if (entity.IsThrowingItemEntity())
+		{
+			if (entity.IsUnderground())
+			{
+				// 地面の下にいる！
+
+				if (Get<SessionManager>().RefStatus().imLobbyHost)
+				{  // ホストである
+					Get<EntitySystem>().Spawn(ARROW_ITEM_ID, entity.GetPosition(), Vec3::Zero());
+				}
+
+				entity.Despawn();
+			}
 		}
 
 		if (entity.CanHitToPlayer())

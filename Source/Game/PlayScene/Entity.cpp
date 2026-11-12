@@ -37,6 +37,22 @@ void Entity::Start()
 			despawnTimeLeftSec = ITEM_INFO._coolTime;
 		}
 	}
+
+	switch (itemId)
+	{
+	case ITEM_ID_PLAYER_ATTACK_ARROW:
+		isDestroyedOnCollision = true;          // 何かに触れたら消滅します
+		canHitToPlayer         = true;          // プレイヤーへ触れたら取れます
+		pickupCooldownSec      = 99999999.0f;   // 絶対に取得できない
+		if (ITEM_INFO._coolTime > FLT_EPSILON)  // クールタイムが0より大きいなら
+		{
+			despawnTimeLeftSec = ITEM_INFO._coolTime;
+		}
+		isThrowingItemEntity = true;  // 投げ物
+		break;
+	default:
+		break;
+	}
 }
 
 void Entity::Update()
@@ -75,12 +91,18 @@ void Entity::Update()
 	float deltaY = velocity.y * DELTA_TIME;
 
 	const float HEIGHT = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
-
 	if (HEIGHT >= transform.position.y + deltaY)
 	{
-		velocity.y           = 0.0f;
-		transform.position.y = HEIGHT;
-		isHitCollider        = true;
+		if (isThrowingItemEntity)
+		{
+			isUnderground = true;
+		}
+		else
+		{
+			velocity.y           = 0.0f;
+			transform.position.y = HEIGHT;
+			isHitCollider        = true;
+		}
 	}
 	else
 	{
@@ -226,4 +248,9 @@ bool Entity::CanHitToEnemy() const
 Vec3 Entity::GetPosition() const
 {
 	return transform.position;
+}
+
+bool Entity::IsThrowingItemEntity() const
+{
+	return isThrowingItemEntity;
 }
