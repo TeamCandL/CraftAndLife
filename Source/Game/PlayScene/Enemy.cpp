@@ -92,6 +92,7 @@ void Enemy::Update()
 	// ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
 
 	ImGui::DragFloat3("targetPosition : ", targetPos.v);
+	ImGui::DragFloat3("checkPointPosition : ", Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3().v);
 
 	ImGui::End();
 #endif
@@ -181,7 +182,7 @@ void Enemy::Move(
 	{
 		Vec3 crossed = Math::GetCrossProduct(Fwd_, tPos - ePos);
 
-		torque += crossed.y * Math::GetRad(rotationAnglePerSec);
+		torque += crossed.y * Math::GetRad(rotationAnglePerSec) * Get<DeltaTime>();
 
 		Vec3 angles        = transform.rotation.ToEuler();
 		angles.x           = -DirectX::XM_PIDIV2;
@@ -250,32 +251,32 @@ void Enemy::Sensor(
 			}
 		}
 
-		int32_t playerId{};
-		if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
+		/// @brief 生存状態のプレイヤーから追跡対象を決定する
 		{
-			StateTarget target = StateTarget::Player(playerId);
+			// int32_t playerId{};
+			// if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
+			//{
+			//	StateTarget target = StateTarget::Player(playerId);
 
-			int32_t helthState{};
-			bool flag = reader.TryGetState(target, "helthState", helthState);
-			if (flag)
-			{
-				if (helthState == HelthState_::HelthState_Live)
-				{
-				}
-			}
-			else
-			{
-			}
+			//	int32_t helthState{};
+			//	bool flag = reader.TryGetState(target, "helthState", helthState);
+			//	if (flag)
+			//	{
+			//		if (helthState == HelthState_::HelthState_Live)
+			//		{
+			//		}
+			//	}
+			//	else
+			//	{
+			//	}
+			//}
 		}
 	}
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
-		// if (!objWanderingCheckPoint.IsEmpty())
-		//{
-		//	GetScene().Destroy(objWanderingCheckPoint);
-		// }
-		// targetPos = targetPos_;
-		// followed  = true;
+
+		targetPos = targetPos_;
+		followed  = true;
 	}
 	else
 	{
@@ -314,19 +315,16 @@ void Enemy::OnDestroy()
 void Enemy::Attack(
     Vec3 targetPos_)
 {
-	if (followed)
+	if (nowAttackCoolTime <= 0.0f)
 	{
-		if (nowAttackCoolTime <= 0.0f)
+		float dist = (targetPos_ - transform.position).Length();
+		if (hasLongAttack && dist > 10.0f)
 		{
-			float dist = (targetPos_ - transform.position).Length();
-			if (hasLongAttack && dist > 5.0f)
-			{
-				LongAttack();
-			}
-			else if (hasCloseAttack && dist <= 5.0f)
-			{
-				CloseAttack();
-			}
+			LongAttack();
+		}
+		else if (hasCloseAttack && dist <= 10.0f)
+		{
+			CloseAttack();
 		}
 	}
 }
@@ -449,7 +447,6 @@ void Enemy::SetWanderingCheckPoint(
 	position      = position + range_;
 
 	objWanderingCheckPoint = GetScene().Instantiate<EnemyCheckPoint>(position);
-	followed               = false;
 }
 
 void Enemy::DropItem()
