@@ -17,13 +17,13 @@ namespace EnemyParam
 {
 	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };                               ///< 体力
 	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };                               ///< 攻撃力
-	const std::vector<float> Speed{ 5.0f, 3.5f, 6.5f, 7.5f, 4.5f };                      ///< 移動速度
+	const std::vector<float> Speed{ 6.0f, 3.5f, 10.5f, 7.5f, 8.0f };                     ///< 移動速度
 	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };              /// 近距離攻撃の有無
 	const std::vector<bool> HasLongAttack{ false, false, true, false, true };            /// 遠距離攻撃の有無
-	const std::vector<float> VisibilityDist{ 50.0f, 100.0f, 80.0f, 40.0f, 140.0f };      /// 視認距離
+	const std::vector<float> VisibilityDist{ 15.0f, 50.0f, 30.0f, 10.0f, 60.0f };        /// 視認距離
 	const std::vector<float> VisibilityAngle{ 180.0f, 200.0f, 300.0f, 240.0f, 260.0f };  /// 視認角度
 	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.0f, 1.0f, 3.0f };             /// 攻撃クールタイム
-	const std::vector<float> RotationAnglePerSec{ 10.0f, 7.0f, 15.0f, 13.0f, 10.5f };    /// 回転速度
+	const std::vector<float> RotationAnglePerSec{ 13.5f, 9.0f, 20.0f, 16.5f, 11.5f };    /// 回転速度
 	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };                      /// モデルの大きさ
 	const std::vector<int32_t> DropItemId{ 9, 9, 10, 11, 12 };                           /// ドロップアイテムID
 }  // namespace EnemyParam
@@ -33,6 +33,7 @@ struct StateRegistry;
 struct EnemyData
 {
 	Component<Name> nameDEB{};
+	GameObject objHpBar{};
 
 	/// @brief 指定なし生成
 	EnemyData(
@@ -193,15 +194,6 @@ struct EnemyData
 	//     "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"}; ///< モデル
 
 	// Resource<Model> model{"Model/Enemy/Bat.fbx"};
-
-	//----------------------//
-	//---------/SE/---------//
-	//----------------------//
-	// 剣でダメージを受けたときのSE
-	Resource<Audio> swordDamagedSE{ "BGM_SE/To cut with a sword.mp3" };
-
-	// 大剣でダメージを受けたときのSE
-	Resource<Audio> greatswordDamagedSE{ "BGM_SE/Strike with a greatsword.mp3" };
 
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" }, Resource<Model>{ "Model/Enemy/Skeleton.fbx" },

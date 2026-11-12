@@ -60,12 +60,6 @@ void EntitySystem::Update()
 					{
 						entity.Pick();
 
-						// 矢が敵に命中したときの着弾音
-						if (entity.GetItemId() == 15)
-						{
-							Get<AudioManager>().Play(impactSE);
-						}
-
 						picksData.push_back(EntityPickData{
 						    .entityId = entity.GetEntityId(),
 						    .position = Vec3::Up() * 10000,

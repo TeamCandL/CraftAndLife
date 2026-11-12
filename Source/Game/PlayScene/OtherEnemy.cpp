@@ -3,6 +3,8 @@
 #include <Game/Network/NetworkSessionManager.h>
 #include <Game/Network/Protocols/UpdateEnemyDamage.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
+#include "EnemyHpBar.h"
+#include "Enemy.h"
 
 void OtherEnemy::Start()
 {
@@ -22,10 +24,7 @@ void OtherEnemy::Update()
 		transform.position = status.position;
 		transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
 
-		// 死亡ステート確認
 		bool alive = true;
-
-		// HPステート確認
 		int32_t hp = 0;
 
 		SessionStateReader reader{ sessionManager };
@@ -33,10 +32,6 @@ void OtherEnemy::Update()
 		if (reader.TryGetState(StateTarget::Enemy(enemyId), "hp", hp))
 		{
 			VCU_LOG("OtherEnemy ID:{} HP取得成功: {}", enemyId, hp);
-		}
-		else
-		{
-			VCU_LOG("OtherEnemy ID:{} HP取得失敗", enemyId);
 		}
 
 		if (reader.TryGetState(StateTarget::Enemy(enemyId), "alive", alive))

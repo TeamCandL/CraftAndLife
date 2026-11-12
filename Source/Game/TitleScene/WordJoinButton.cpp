@@ -8,6 +8,7 @@
 
 void WordJoinButton::Start()
 {
+	inputWord = "hello";
 	objButton = GetScene().Instantiate<UI::Button>(imageFileName, imageFileName, imageFileName, "", begin, scale);
 }
 

@@ -42,6 +42,8 @@ struct PlaySceneUIControllerData
 
 	GameObject objPlayer{};  ///< MyGaugeに渡すプレイヤー
 	GameObject objOtherPlayerController{};
+
+	GameObject objChatTextLog{};  ///< チャットテキストログ
 };
 
 /// @brief プレイシーンのUI操作

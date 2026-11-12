@@ -71,7 +71,8 @@ void PlayScene::Start()
 	    objNetworkActorServer,
 	    objDayController,
 	    objHarvestableController,
-	    objOtherPlayerController);
+	    objOtherPlayerController,
+	    objPlaySceneUIController);
 
 	// クリア・ゲームオーバー共通フェード
 	GameObject objClearFade = Instantiate<ClearFade>();
