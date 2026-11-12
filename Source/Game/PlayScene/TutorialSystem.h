@@ -7,7 +7,7 @@ struct TutorialSystemData
 {
 	GameObject objObserver{};  ///< チュートリアルオブザーバーオブジェクト
 
-	TutorialPhaseFlags phaseClearFlags{};  ///< 各フェーズをクリアしたかのフラグ
+	TutorialElementFlags elementClearFlags{};  ///< 各要素をクリアしたかのフラグ
 };
 
 /// @brief チュートリアルを管理するシステム

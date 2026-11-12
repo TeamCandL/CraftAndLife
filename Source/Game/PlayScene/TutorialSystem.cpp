@@ -11,15 +11,15 @@ void TutorialSystem::Update()
 		return;  // ターゲットのオブザーバーがないなら無視
 	}
 
-	for (TutorialPhaseType type{}; type < TutorialPhaseType_Max; type++)
+	for (TutorialElementType type{}; type < TutorialElementType_Max; type++)
 	{
-		if (!phaseClearFlags[type])
+		if (!elementClearFlags[type])
 		{
 			ITutorialObserver& observer = Get<ITutorialObserver>(objObserver);
-			phaseClearFlags[type]       = observer.CheckClearedTutorial(type);
-			if (phaseClearFlags[type])
+			elementClearFlags[type]     = observer.CheckClearedTutorial(type);
+			if (elementClearFlags[type])
 			{
-				GameObject objNextObserver = observer.GetNextObserverOnCleardPhase(phaseClearFlags);
+				GameObject objNextObserver = observer.GetNextObserverOnCleardElement(elementClearFlags);
 				if (!objNextObserver.IsEmpty())
 				{
 					objObserver = objNextObserver;

@@ -211,6 +211,6 @@ struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
 	void ClearAllItem();
 
 	// ITutorialObserver を介して継承されました
-	bool CheckClearedTutorial(const TutorialPhaseType _type) override;
-	GameObject GetNextObserverOnCleardPhase(const TutorialPhaseFlags& _flags) override;
+	bool CheckClearedTutorial(const TutorialElementType _type) override;
+	GameObject GetNextObserverOnCleardElement(const TutorialElementFlags& _flags) override;
 };

@@ -822,13 +822,13 @@ void Player::ClearAllItem()
 }
 
 bool Player::CheckClearedTutorial(
-    const TutorialPhaseType _type)
+    const TutorialElementType _type)
 {
 	return false;
 }
 
-GameObject Player::GetNextObserverOnCleardPhase(
-    const TutorialPhaseFlags& _flags)
+GameObject Player::GetNextObserverOnCleardElement(
+    const TutorialElementFlags& _flags)
 {
 	return GameObject();
 }

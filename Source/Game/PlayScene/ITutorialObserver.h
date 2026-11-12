@@ -9,7 +9,7 @@ class ITutorialObserver
 	ITutorialObserver()          = default;
 	virtual ~ITutorialObserver() = default;
 
-	virtual bool CheckClearedTutorial(const TutorialPhaseType _type) = 0;
+	virtual bool CheckClearedTutorial(const TutorialElementType _type) = 0;
 
-	virtual GameObject GetNextObserverOnCleardPhase(const TutorialPhaseFlags& _flags) = 0;
+	virtual GameObject GetNextObserverOnCleardElement(const TutorialElementFlags& _flags) = 0;
 };

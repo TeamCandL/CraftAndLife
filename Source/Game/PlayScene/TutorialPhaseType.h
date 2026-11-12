@@ -2,16 +2,16 @@
 #include <Game/Game.h>
 
 /// @brief チュートリアルのフェーズ番号
-using TutorialPhaseType = int32_t;
+using TutorialElementType = int32_t;
 
 /// @brief チュートリアルのフェーズ番号
-enum TutorialPhaseType_ : TutorialPhaseType
+enum TutorialElementType_ : TutorialElementType
 {
-	TutorialPhaseType_CheckBodyMove,
-	TutorialPhaseType_CheckCameraMove,
-	TutorialPhaseType_CheckOpenBackpack,
+	TutorialElementType_CheckBodyMove,      ///< プレイヤーの移動があったか
+	TutorialElementType_CheckCameraMove,    ///< プレイヤーのカメラの移動があったか
+	TutorialElementType_CheckOpenBackpack,  ///< バックパックを開いたことがあるか
 
-	TutorialPhaseType_Max,
+	TutorialElementType_Max,
 };
 
-using TutorialPhaseFlags = std::bitset<TutorialPhaseType_Max>;
+using TutorialElementFlags = std::bitset<TutorialElementType_Max>;
