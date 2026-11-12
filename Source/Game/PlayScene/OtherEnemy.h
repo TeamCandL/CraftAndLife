@@ -10,8 +10,12 @@ struct OtherEnemyData
 	    EnemyType _enemyType) :
 	    enemyId{ _enemyId },
 	    enemyType{ _enemyType }
+
 	{
 	}
+
+	// OtherEnemyData 内に追加
+	bool isBoss{ false };  // 必要に応じて同期・判定用に追加
 
 	Resource<Shader> shader{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };  ///< シェーダ
 

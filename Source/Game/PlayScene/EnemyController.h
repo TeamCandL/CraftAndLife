@@ -17,6 +17,8 @@ struct EnemyControllerData
 	GameObject objBossInfo{};               ///< ボスのHPUIのオブジェクト
 	GameObject objPlaySceneUIController{};  ///< UIコントローラーのオブジェクト
 	GameObject objNetworkActorServer{};     ///< ネットワークアクターサーバーのオブジェクト
+
+	std::vector<GameObject> objEnemyHpBar;
 };
 
 struct EnemyController : ObjectBase<EnemyControllerData>

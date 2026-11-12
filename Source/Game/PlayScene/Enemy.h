@@ -33,6 +33,7 @@ struct StateRegistry;
 struct EnemyData
 {
 	Component<Name> nameDEB{};
+	GameObject objHpBar{};
 
 	/// @brief 指定なし生成
 	EnemyData(
@@ -193,15 +194,6 @@ struct EnemyData
 	//     "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"}; ///< モデル
 
 	// Resource<Model> model{"Model/Enemy/Bat.fbx"};
-
-	//----------------------//
-	//---------/SE/---------//
-	//----------------------//
-	// 剣でダメージを受けたときのSE
-	Resource<Audio> swordDamagedSE{ "BGM_SE/To cut with a sword.mp3" };
-
-	// 大剣でダメージを受けたときのSE
-	Resource<Audio> greatswordDamagedSE{ "BGM_SE/Strike with a greatsword.mp3" };
 
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" }, Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
