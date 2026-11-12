@@ -1,6 +1,6 @@
 #include "pch\pch.h"
 #include "TutorialSystem.h"
-#include "ITutorialObserver.h"
+#include "Tutorial/ITutorialObserver.h"
 
 void TutorialSystem::Start() {}
 

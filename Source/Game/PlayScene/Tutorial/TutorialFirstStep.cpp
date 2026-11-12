@@ -19,7 +19,7 @@ void TutorialFirstStep::Start()
 	previousCameraAngles   = Get<MainCamera>(objMainCamera).GetAngle();
 
 	objTaskBackground = Get<PlaySceneUIController>(objPlaySceneUIController).Data().objTaskBackground;
-	Get<TaskBackground>(objTaskBackground).
+	Get<TaskBackground>(objTaskBackground).SetTask("右(→)スティックを倒して周りを見よう！");
 }
 
 bool TutorialFirstStep::CheckClearedTutorial(

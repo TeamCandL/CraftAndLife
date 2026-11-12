@@ -7,7 +7,7 @@ bool TutorialUIInput::IsMovedUp() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalUIInput::IsMovedUp();
+		return __super::IsMovedUp();
 	}
 }
 
@@ -17,7 +17,7 @@ bool TutorialUIInput::IsMovedDown() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalUIInput::IsMovedDown();
+		return __super::IsMovedDown();
 	}
 }
 
@@ -27,7 +27,7 @@ bool TutorialUIInput::IsMovedLeft() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalUIInput::IsMovedLeft();
+		return __super::IsMovedLeft();
 	}
 }
 
@@ -37,7 +37,7 @@ bool TutorialUIInput::IsMovedRight() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalUIInput::IsMovedRight();
+		return __super::IsMovedRight();
 	}
 }
 
@@ -47,7 +47,7 @@ bool TutorialUIInput::IsSelected() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalUIInput::IsSelected();
+		return __super::IsSelected();
 	}
 }
 
@@ -57,6 +57,6 @@ bool TutorialUIInput::IsChanneled() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalUIInput::IsChanneled();
+		return __super::IsChanneled();
 	}
 }

@@ -8,7 +8,6 @@
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
 #include "OtherPlayerController.h"
-#include "ITutorialObserver.h"
 
 struct StateRegistry;
 
@@ -150,7 +149,7 @@ struct PlayerData
 };
 
 /// @brief プレイヤー
-struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
+struct Player : ObjectBase<PlayerData>, IPlayer
 {
 	using ObjectBase<PlayerData>::ObjectBase;
 
@@ -209,8 +208,4 @@ struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
 	std::vector<ItemStack> GetHavingItem();
 	/// @brief バッグ、ホットバーが現在持っているアイテムを削除する。ホットバーが持つ「バッグ」は削除されない。
 	void ClearAllItem();
-
-	// ITutorialObserver を介して継承されました
-	bool CheckClearedTutorial(const TutorialElementType _type) override;
-	GameObject GetNextObserverOnCleardElement(const TutorialElementFlags& _flags) override;
 };

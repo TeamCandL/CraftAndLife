@@ -7,7 +7,7 @@ Vec2 TutorialPlayerInput::GetMoveBody() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::GetMoveBody();
+		return __super::GetMoveBody();
 	}
 }
 
@@ -17,7 +17,7 @@ Vec2 TutorialPlayerInput::GetMoveCamera() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::GetMoveCamera();
+		return __super::GetMoveCamera();
 	}
 }
 
@@ -27,7 +27,7 @@ float TutorialPlayerInput::GetActionTrigger() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::GetActionTrigger();
+		return __super::GetActionTrigger();
 	}
 }
 
@@ -37,7 +37,7 @@ float TutorialPlayerInput::GetSubActionTrigger() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::GetSubActionTrigger();
+		return __super::GetSubActionTrigger();
 	}
 }
 
@@ -47,7 +47,7 @@ bool TutorialPlayerInput::IsActionBegin() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsActionBegin();
+		return __super::IsActionBegin();
 	}
 }
 
@@ -57,7 +57,7 @@ bool TutorialPlayerInput::IsAction() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsAction();
+		return __super::IsAction();
 	}
 }
 
@@ -67,7 +67,7 @@ bool TutorialPlayerInput::IsActionEnd() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsActionEnd();
+		return __super::IsActionEnd();
 	}
 }
 
@@ -77,7 +77,7 @@ bool TutorialPlayerInput::IsSubActionBegin() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsSubActionBegin();
+		return __super::IsSubActionBegin();
 	}
 }
 
@@ -87,7 +87,7 @@ bool TutorialPlayerInput::IsSubAction() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsSubAction();
+		return __super::IsSubAction();
 	}
 }
 
@@ -97,7 +97,7 @@ bool TutorialPlayerInput::IsSubActionEnd() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsSubActionEnd();
+		return __super::IsSubActionEnd();
 	}
 }
 
@@ -107,7 +107,7 @@ bool TutorialPlayerInput::IsMovedHotbarLeft() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsMovedHotbarLeft();
+		return __super::IsMovedHotbarLeft();
 	}
 }
 
@@ -117,7 +117,7 @@ bool TutorialPlayerInput::IsMovedHotbarRight() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsMovedHotbarRight();
+		return __super::IsMovedHotbarRight();
 	}
 }
 
@@ -127,7 +127,7 @@ bool TutorialPlayerInput::IsInteractBegin() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsInteractBegin();
+		return __super::IsInteractBegin();
 	}
 }
 
@@ -137,7 +137,7 @@ bool TutorialPlayerInput::IsInteract() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsInteract();
+		return __super::IsInteract();
 	}
 }
 
@@ -147,7 +147,7 @@ bool TutorialPlayerInput::IsInteractEnd() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsInteractEnd();
+		return __super::IsInteractEnd();
 	}
 }
 
@@ -157,7 +157,7 @@ bool TutorialPlayerInput::IsJumpBegin() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsJumpBegin();
+		return __super::IsJumpBegin();
 	}
 }
 
@@ -167,7 +167,7 @@ bool TutorialPlayerInput::IsJump() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsJump();
+		return __super::IsJump();
 	}
 }
 
@@ -177,6 +177,6 @@ bool TutorialPlayerInput::IsJumpEnd() const
 	{
 	case TutorialForcusType_None_Max:
 	default:
-		return NormalPlayerInput::IsJumpEnd();
+		return __super::IsJumpEnd();
 	}
 }
