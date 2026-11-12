@@ -8,6 +8,7 @@
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
 #include "OtherPlayerController.h"
+#include "ITutorialObserver.h"
 
 struct StateRegistry;
 
@@ -140,7 +141,7 @@ struct PlayerData
 };
 
 /// @brief プレイヤー
-struct Player : ObjectBase<PlayerData>, IPlayer
+struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
 {
 	using ObjectBase<PlayerData>::ObjectBase;
 

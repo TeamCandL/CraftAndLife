@@ -17,4 +17,8 @@ struct TutorialSystem : ObjectBase<TutorialSystemData>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+
+	/// @brief 強制的にチュートリアルオブザーバーオブジェクトを変更する
+	/// @param _obj オブザーバーオブジェクト
+	void ChangeObserverForce(const GameObject _obj);
 };

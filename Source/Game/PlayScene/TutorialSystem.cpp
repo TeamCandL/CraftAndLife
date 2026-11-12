@@ -29,3 +29,9 @@ void TutorialSystem::Update()
 		}
 	}
 }
+
+void TutorialSystem::ChangeObserverForce(
+    const GameObject _obj)
+{
+	objObserver = _obj;
+}
