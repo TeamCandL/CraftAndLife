@@ -247,7 +247,10 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedDayTime dayTimeMessage{};
 				    converter.ToMessage(_event.data, dayTimeMessage);
 				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec, dayTimeMessage.dayCount);
-
+				    VCU_LOG(
+				        "UpdatedDayTime受信: currentTimeSec={}, dayCount={}",
+				        dayTimeMessage.currentTimeSec,
+				        dayTimeMessage.dayCount);
 				    break;
 			    }
 			    case ProtocolType::BreakHarvestable:
@@ -542,6 +545,10 @@ void PlayNetworkController::Update()
 				// 死亡通知の送信
 				for (const auto& death : pendingDeaths)
 				{
+					enemyStateIds.push_back(death.enemyId);
+					StateValueCode::Encode(StateValue{ int32_t{ 0 } }, values);
+					AddStateName("hp");
+
 					enemyStateIds.push_back(death.enemyId);
 
 					// 死亡通知は alive = false

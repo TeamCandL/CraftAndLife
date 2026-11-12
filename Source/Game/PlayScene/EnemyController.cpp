@@ -6,6 +6,7 @@
 #include "UI/BossName.h"
 #include "UI/BossGauge.h"
 #include "UI/BossGaugeR.h"
+#include "EnemyHpBar.h"
 #include "PlaySceneUIController.h"
 
 void EnemyController::Start() {}
@@ -26,7 +27,7 @@ void EnemyController::AddEnemy(
 
 	networkActor.EnemyStateRegistries(_enemy);
 
-	if (Get<Enemy>(_enemy).Data().isBoss)
+	if (enemy.Data().isBoss)
 	{
 		PlaySceneUIController playSceneUIController = Get<PlaySceneUIController>(objPlaySceneUIController);
 		Get<BossInfo>(playSceneUIController.Data().objBossInfo).SetBoss(_enemy);
@@ -35,6 +36,11 @@ void EnemyController::AddEnemy(
 		Get<BossName>(playSceneUIController.Data().objBossName).SetActive(true);
 		Get<BossGauge>(playSceneUIController.Data().objBossGauge).SetActive(true);
 		Get<BossGaugeR>(playSceneUIController.Data().objBossGaugeR).SetActive(true);
+	}
+	else
+	{
+		objEnemyHpBar.push_back(
+		    GetScene().Instantiate<EnemyHpBar>(_enemy, enemy.GetPosition(), enemy.Data().hp, enemy.Data().hp));
 	}
 }
 

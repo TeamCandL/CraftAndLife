@@ -7,6 +7,7 @@
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/NetworkActorServer.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
+#include "EnemyHpBar.h"
 
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
@@ -25,14 +26,14 @@ void Enemy::Start()
 	nowDamagedCoolTime = DAMAGED_COOL_TIME;
 
 	obb.offset    = { 0.0f, 1.0f, 0.5f };
-	obb.isTrigger = true;  ///< 当たり判定を貫通させる(押し出さなくなる)
+	obb.isTrigger = true;
 }
 
 void Enemy::Update()
 {
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-		hp -= 10;
+		hp -= 100;
 	}
 
 	if (!alive)
@@ -49,9 +50,20 @@ void Enemy::Update()
 
 	if (hp <= 0)
 	{
+		hp = 0;
 		SetAlive(false);
 		DropItem();
 	}
+
+	//// ▼ HPバーの位置と割合の更新
+	// if (!objHpBar.IsEmpty())
+	//{
+	//	auto& hpBar = Get<EnemyHpBar>(objHpBar);
+	//	hpBar.SetTargetPosition(transform.position);
+
+	//	float maxHp = static_cast<float>(EnemyParam::Hp[static_cast<int>(enemyType)]);
+	//	hpBar.SetHpRatio(static_cast<float>(hp) / maxHp);
+	//}
 
 	// VCU_LOG("敵の追跡状況：{}", followed);
 	Move(targetPos, transform.position, transform.Down(), speed);
@@ -84,7 +96,6 @@ void Enemy::Update()
 		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
 #ifdef USE_IMGUI
-
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
 	// ImGui::DragInt("modelIndex", &modelIndex);
@@ -121,16 +132,6 @@ void Enemy::Update()
 		    }
 
 		    VCU_LOG("生存プレイヤー確認: {}", playerName);
-
-		    // int32_t healthState{};
-
-		    // if (!reader.TryGetState(target, "helthState", healthState))
-		    //  return;
-
-		    // if (healthState == HelthState_Dead)
-		    //  return;
-
-		    // 生存プレイヤーとして追跡対象に追加
 	    });
 
 	if (alive)
@@ -138,6 +139,12 @@ void Enemy::Update()
 	}
 	else
 	{
+		// ▼ 死亡時にHPバーを削除
+		if (!objHpBar.IsEmpty())
+		{
+			GetScene().Destroy(objHpBar);
+		}
+
 		const int32_t enemyId = GetID();
 		VCU_LOG("[Enemy] 死亡開始 ID={}", enemyId);
 
@@ -308,8 +315,10 @@ void Enemy::Draw()
 
 void Enemy::OnDestroy()
 {
-	int a = 10;
-	a++;
+	if (!objHpBar.IsEmpty())
+	{
+		GetScene().Destroy(objHpBar);
+	}
 }
 
 void Enemy::Attack(
@@ -359,7 +368,7 @@ void Enemy::AttackCollider(
     const Vec3& forward_)
 {
 	attacked = true;
-	// あとから修正
+
 	// Get<AudioManager>().Play(attackSE);
 	const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 

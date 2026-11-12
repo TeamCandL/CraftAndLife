@@ -33,6 +33,7 @@ struct StateRegistry;
 struct EnemyData
 {
 	Component<Name> nameDEB{};
+	GameObject objHpBar{};
 
 	/// @brief 指定なし生成
 	EnemyData(

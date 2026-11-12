@@ -5,14 +5,17 @@ struct ClearSceneTriggerData
 {
 	ClearSceneTriggerData(
 	    GameObject _objDayController,
-	    GameObject _objClearFade) :
+	    GameObject _objClearFade,
+	    GameObject _objNetworkActorServer) :
 	    objDayController{ _objDayController },
-	    objClearFade{ _objClearFade }
+	    objClearFade{ _objClearFade },
+	    objNetworkActorServer{ _objNetworkActorServer }
 	{
 	}
 
 	GameObject objDayController{};
 	GameObject objClearFade{};
+	GameObject objNetworkActorServer{};
 };
 
 struct ClearSceneTrigger : ObjectBase<ClearSceneTriggerData>
