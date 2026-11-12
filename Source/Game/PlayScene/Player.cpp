@@ -330,7 +330,7 @@ void Player::Damaged(
 			}
 			else
 			{
-				hp += jobStatus.maxHpBoost;
+				hp += static_cast<uint32_t>(jobStatus.maxHpBoost);
 			}
 		}
 		else
