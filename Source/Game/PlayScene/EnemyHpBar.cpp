@@ -86,6 +86,13 @@ void EnemyHpBar::SetTargetPosition(
 void EnemyHpBar::SetHp(
     const int32_t _hp)
 {
-	hp      = _hp;
-	hpRatio = hp / maxHp;
+	hp = _hp;
+	// hpRatio = hp / maxHp; //<-
+	// ここの計算がint/intだったから結果が1or0になってしまってることによりHPゲージが吹っ飛んだことが分かった
+
+	// 浮動小数点数で割合を計算
+	hpRatio = float(hp) / float(maxHp);
+
+	// 0.0～1.0の範囲に制限
+	hpRatio = std::clamp(hpRatio, 0.0f, 1.0f);
 }
