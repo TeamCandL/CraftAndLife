@@ -26,6 +26,12 @@ struct HarvestableData
 	// 岩の破壊音
 	Resource<Audio> rockDestructionSE{ "BGM_SE/Rock destruction.mp3" };
 
+	// 木が破壊された瞬間のSE
+	Resource<Audio> brokenTreeSE{ "BGM_SE/Broken tree.mp3" };
+
+	// 岩が破壊された瞬間のSE
+	Resource<Audio> brokenRockSE{ "BGM_SE/Broken rock.mp3" };
+
 	// モデルの種類
 	HarvestableType type{ HarvestableType::Tree };
 

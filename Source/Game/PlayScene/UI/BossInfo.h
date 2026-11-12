@@ -10,14 +10,18 @@ struct HpInfo
 
 struct BossInfoData
 {
-	Resource<Texture> texture{ "Image/UI/boss_info.png" };
+	Resource<Texture> texture{ "Image/UI/Boss_info.png" };
+
+	// BOSS戦BGM
+	Resource<ResourceType::Audio> bossBGM{ "BGM_SE/Boss.mp3" };
 
 	Component<UITransform> transform{ Vec2{ 657, 0 }, Vec2{ 577, 100 } };
 	Component<UIImage> image{ texture };
 
-	GameObject objBoss{};        ///< ボスのオブジェクト
-	HpInfo hpInfo{};             ///< ボスのHP情報
-	bool isBossActive{ false };  ///< ボスがアクティブかどうか
+	GameObject objBoss{};
+	int32_t bossEnemyId{ -1 };
+	HpInfo hpInfo{};
+	bool isBossActive{ false };
 };
 
 struct BossInfo : ObjectBase<BossInfoData>
@@ -28,7 +32,11 @@ struct BossInfo : ObjectBase<BossInfoData>
 	/// @brief 更新処理
 	void Update() override;
 
+	// ホスト用
 	void SetBoss(GameObject objBoss_);
+
+	// ゲスト用
+	void SetBoss(int32_t enemyId, int32_t maxHP);
 
 	bool IsBossActive() const
 	{

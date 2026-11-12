@@ -52,6 +52,9 @@ struct CraftUIData
 	GameObject objSelectedItemImage{};
 	GameObject objSelectedItemText{};
 	GameObject objSelectedItemBackground{};
+	// 選択中のアイテムはそのジョブ専用!って表示する用のテキスト
+	GameObject objSelectedItemOnlyJobLabel{};
+
 	// レシピ画面
 	GameObject objRecipeMaterialLabel{};
 	GameObject objRecipeHeldLabel{};

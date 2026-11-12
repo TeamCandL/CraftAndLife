@@ -17,7 +17,7 @@ void Harvestable::Start()
 
 	case HarvestableType::TreeHigh:
 		model         = Resource<Model>{ "Model/Harvestable/TreeHigh.fbx" };
-		maxDurability = 120;
+		maxDurability = 90;
 		obb.scale     = { 0.5f, 3.0f, 0.2f };
 		break;
 
@@ -138,6 +138,9 @@ void Harvestable::OnBroken()
 	switch (type)
 	{
 	case HarvestableType::Tree:
+		// 木の破壊音
+		Get<AudioManager>().Play(brokenTreeSE);
+
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up(), Vec3::Up() * 0.05f);
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Left(), Vec3::Up() * 0.05f);
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Right(), Vec3::Up() * 0.05f);
@@ -146,6 +149,9 @@ void Harvestable::OnBroken()
 		break;
 
 	case HarvestableType::TreeHigh:
+		// 背の高い木の破壊音
+		Get<AudioManager>().Play(brokenTreeSE);
+
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up(), Vec3::Up() * 0.0f);
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Left(), Vec3::Up() * 0.0f);
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Right(), Vec3::Up() * 0.0f);
@@ -166,13 +172,15 @@ void Harvestable::OnBroken()
 		break;
 
 	case HarvestableType::Rock:
+		// 岩の破壊音
+		Get<AudioManager>().Play(brokenRockSE);
+
 		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position + Vec3::Up(), Vec3::Up() * 0.0f);
 		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position + Vec3::Up() + Vec3::Left(), Vec3::Up() * 0.0f);
 		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position + Vec3::Up() + Vec3::Right(), Vec3::Up() * 0.0f);
 		break;
 
 	default:
-		// 未定義の種類は何も落とさない
 		break;
 	}
 }

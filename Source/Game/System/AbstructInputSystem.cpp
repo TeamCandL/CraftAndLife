@@ -3,12 +3,17 @@
 #include "AbstructInputSystem/NormalPlayerInput.h"
 #include "AbstructInputSystem/PadOnlyPlayerInput.h"
 #include "AbstructInputSystem/NormalUIInput.h"
+#include "AbstructInputSystem/PadOnlyUIInput.h"
 
 void AbstructInputSystem::Start()
 {
+#if _DEBUG
 	SetPlayerInput<NormalPlayerInput>();
-	// SetPlayerInput<PadOnlyPlayerInput>();
 	SetUIInput<NormalUIInput>();
+#else
+	SetPlayerInput<PadOnlyPlayerInput>();
+	SetUIInput<PadOnlyUIInput>();
+#endif
 }
 
 void AbstructInputSystem::Update()

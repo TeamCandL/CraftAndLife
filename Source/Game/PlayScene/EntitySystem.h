@@ -10,6 +10,8 @@ struct EntitySystemData
 	std::vector<EntitySpawnData> spawnsData{};  ///< スポーンデータ
 	std::vector<EntityPickData> picksData{};    ///< 拾ったデータ
 
+	Resource<Audio> impactSE{ "BGM_SE/Impact.mp3" };
+
 	const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };
 };
 

@@ -63,7 +63,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.5f,
-	                        8,
+	                        10,
 	                        0,
 	                        0,
 
@@ -81,7 +81,7 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        0.6f,
-	                        12,
+	                        15,
 	                        0,
 	                        0,
 
@@ -317,15 +317,15 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::EnemyAttack,
 	                        "糸攻撃",
 	                        "Image/EmptyItem.png",
-	                        "Model/HandMaterial/StringRetopo.fbx",
+	                        "Model/HandMaterial/HandString.fbx",
 
 	                        false,
 	                        craft,
 
 	                        10.0f,
-	                        8,
+	                        5,
 	                        0,
-	                        8,
+	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 1 } });
 	allItemList.push_back({ 21, ItemType::EnemyAttack, "近距離攻撃", {}, {}, false, craft, 10.0f, 15, 0, 15 });

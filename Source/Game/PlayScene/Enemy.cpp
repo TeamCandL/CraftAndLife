@@ -59,7 +59,7 @@ void Enemy::Update()
 	Sensor(transform.Down());
 
 	nowAttackCoolTime -= Get<DeltaTime>();
-	if (nowAttackCoolTime <= 0.0f)
+	if (nowAttackCoolTime <= 0.0f && followed)
 	{
 		Attack(targetPos);
 	}
@@ -87,9 +87,11 @@ void Enemy::Update()
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
-	ImGui::DragInt("modelIndex", &modelIndex);
-	modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
-	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
+	// ImGui::DragInt("modelIndex", &modelIndex);
+	// modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
+	// ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
+
+	ImGui::DragFloat3("targetPosition : ", targetPos.v);
 
 	ImGui::End();
 #endif
@@ -268,12 +270,12 @@ void Enemy::Sensor(
 	}
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
-		if (!objWanderingCheckPoint.IsEmpty())
-		{
-			GetScene().Destroy(objWanderingCheckPoint);
-		}
-		targetPos = targetPos_;
-		followed  = true;
+		// if (!objWanderingCheckPoint.IsEmpty())
+		//{
+		//	GetScene().Destroy(objWanderingCheckPoint);
+		// }
+		// targetPos = targetPos_;
+		// followed  = true;
 	}
 	else
 	{
@@ -378,13 +380,60 @@ void Enemy::AttackCollider(
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
+/// @brief ダメージを受ける
+/// @param damage 受けるダメージ量
+/// @param isGreatsword 大剣による攻撃かどうか
+/// @brief 通常のダメージ処理
+/// @param damage 受けるダメージ量
 void Enemy::Damaged(
     int32_t damage)
 {
-	if (nowDamagedCoolTime <= 0.0)
+	// 0以下のダメージは無視
+	if (damage <= 0)
 	{
-		hp -= damage;
-		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+		return;
+	}
+
+	// ダメージクールタイム中なら無視
+	if (nowDamagedCoolTime > 0.0f)
+	{
+		return;
+	}
+
+	// HPを減らす
+	hp -= damage;
+
+	// ダメージクールタイムを設定
+	nowDamagedCoolTime = DAMAGED_COOL_TIME;
+}
+
+/// @brief 剣・大剣によるダメージ処理
+/// @param damage 受けるダメージ量
+/// @param isGreatsword 大剣による攻撃かどうか
+void Enemy::Damaged(
+    int32_t damage,
+    bool isGreatsword)
+{
+	// ダメージを受ける前のHPを保存
+	const int32_t previousHP = hp;
+
+	// 通常のダメージ処理を実行
+	Damaged(damage);
+
+	// HPが減っていなければSEを鳴らさない
+	if (hp == previousHP)
+	{
+		return;
+	}
+
+	// 攻撃した武器に応じてSEを再生
+	if (isGreatsword)
+	{
+		Get<AudioManager>().Play(greatswordDamagedSE);
+	}
+	else
+	{
+		Get<AudioManager>().Play(swordDamagedSE);
 	}
 }
 

@@ -527,10 +527,27 @@ void SessionManager::UpdateEnemies(
 	}
 
 	// 今回受信しなかった敵を削除
+	// 死亡状態の敵は死亡情報を保持する
 	std::erase_if(
 	    enemiesStatus,
 	    [this](const auto& idAndStatus)
 	    {
+		    const auto& states = idAndStatus.second.states;
+
+		    auto aliveIt = states.find("alive");
+
+		    // 死亡状態か確認
+		    if (aliveIt != states.end())
+		    {
+			    if (const bool* alive = std::get_if<bool>(&aliveIt->second))
+			    {
+				    if (!*alive)
+				    {
+					    return false;
+				    }
+			    }
+		    }
+
 		    return idAndStatus.second.updatedFlag != inSessionStatus_.updatedFlag;
 	    });
 }
@@ -552,16 +569,40 @@ bool SessionManager::UpdateEnemyStates(
 	    _values,
 	    [this](int32_t enemyId) -> InSessionStatus::EnemyStatus*
 	    {
-		    auto it = inSessionStatus_.enemiesStatus.find(enemyId);
+		    // 敵ステータスがなければ新しく作成
+		    auto& status = inSessionStatus_.enemiesStatus[enemyId];
 
-		    if (it == inSessionStatus_.enemiesStatus.end())
-		    {
-			    VCU_LOG("ステート更新失敗：敵ID={} が存在しません", enemyId);
-			    return nullptr;
-		    }
-
-		    return &it->second;
+		    return &status;
 	    });
+}
+
+bool SessionManager::TryGetEnemyAlive(
+    int32_t _enemyId,
+    bool& _outAlive) const
+{
+	auto it = inSessionStatus_.enemiesStatus.find(_enemyId);
+
+	if (it == inSessionStatus_.enemiesStatus.end())
+	{
+		return false;
+	}
+
+	auto stateIt = it->second.states.find("alive");
+
+	if (stateIt == it->second.states.end())
+	{
+		return false;
+	}
+
+	const bool* alive = std::get_if<bool>(&stateIt->second);
+
+	if (alive == nullptr)
+	{
+		return false;
+	}
+
+	_outAlive = *alive;
+	return true;
 }
 
 void SessionManager::SetSelfStateRegistry(

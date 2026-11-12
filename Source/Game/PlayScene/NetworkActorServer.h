@@ -25,6 +25,12 @@ struct NetworkActorServerData
 	{
 	}
 
+	struct EnemyDeathData
+	{
+		int32_t enemyId{};
+		bool alive{ false };
+	};
+
 	bool isHost{ false };
 
 	bool isSpawnEnemies{ false };
@@ -44,6 +50,7 @@ struct NetworkActorServerData
 
 	/// @brief 敵IDごとのステート登録情報
 	std::vector<std::optional<StateRegistry>> enemyStateRegistries;
+	std::vector<EnemyDeathData> pendingEnemyDeaths;
 	/// @brief 敵IDごとの死亡通知送信登録状態
 	std::vector<bool> enemyDeathQueued;
 	/// @brief 敵ステートの全同期間隔（秒）
@@ -141,6 +148,16 @@ struct NetworkActorServer : ObjectBase<NetworkActorServerData>
 	const std::vector<std::optional<StateRegistry>>& GetEnemyStateRegistries() const
 	{
 		return Data().enemyStateRegistries;
+	}
+
+	const std::vector<NetworkActorServerData::EnemyDeathData>& GetPendingEnemyDeaths() const
+	{
+		return Data().pendingEnemyDeaths;
+	}
+
+	void ClearPendingEnemyDeaths()
+	{
+		Data().pendingEnemyDeaths.clear();
 	}
 
 	// 全同期タイマーを取得

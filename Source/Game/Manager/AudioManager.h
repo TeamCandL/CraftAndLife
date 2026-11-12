@@ -60,6 +60,12 @@ struct AudioManager : IManager
 	// 着地音を再生する
 	void PlayLanding(Resource<ResourceType::Audio>& _resource);
 
+	// 弓を引き絞る音を再生
+	void PlayBowPull(Resource<ResourceType::Audio>& _resource);
+
+	// 弓を引き絞る音を停止
+	void StopBowPull();
+
 	// 着地音を停止する
 	void StopLanding();
 
@@ -83,4 +89,7 @@ struct AudioManager : IManager
 	// 連続再生用
 	float sequenceTimeLeft{ 0.0f };
 	Resource<ResourceType::Audio>* pNextSequenceAudio{ nullptr };
+
+	// 弓を引き絞る音用
+	IXAudio2SourceVoice* pBowPullSourceVoice{ nullptr };
 };

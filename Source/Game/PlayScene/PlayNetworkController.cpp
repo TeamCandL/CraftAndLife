@@ -452,6 +452,8 @@ void PlayNetworkController::Update()
 				const bool fullSync = actorServer.IsFullSync();
 				auto& registries    = actorServer.GetEnemyStateRegistries();
 
+				const auto& pendingDeaths = actorServer.GetPendingEnemyDeaths();
+
 				Protocol::UpdatedEnemyStates enemyStateMessage{};
 				enemyStateMessage.isFullSync = fullSync;
 
@@ -463,16 +465,34 @@ void PlayNetworkController::Update()
 				VCU_LOG("敵ステート送信 FullSync={}", fullSync);
 				VCU_LOG("敵ステート登録数={}", registries.size());
 
+				// ステート名を改行区切りで追加
+				auto AddStateName = [&enemyStateMessage](const std::string& name)
+				{
+					if (!enemyStateMessage.stateName.empty())
+					{
+						enemyStateMessage.stateName += '\n';
+					}
+
+					enemyStateMessage.stateName += name;
+				};
+
 				for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
 				{
 					if (!registries[enemyId].has_value())
 						continue;
 
-					auto& registry = *registries[enemyId];
+					// 死亡済みの敵はレジストリのポインタを参照しない
+					if (actorServer.IsDeathQueued(static_cast<int32_t>(enemyId)))
+					{
+						continue;
+					}
 
 					// 初回は全ステート、それ以降は変更分だけ取得
+					auto& registry     = *registries[enemyId];
 					const auto changes = registry.GetStates(fullSync);
+
 					VCU_LOG("敵 ID={} 取得ステート数={}", enemyId, changes.size());
+
 					for (const auto& change : changes)
 					{
 						VCU_LOG("送信対象 ID={} Name={}", enemyId, change.name);
@@ -481,14 +501,21 @@ void PlayNetworkController::Update()
 						// 値をエンコード
 						StateValueCode::Encode(change.value, values);
 
-						if (!enemyStateMessage.stateName.empty())
-							enemyStateMessage.stateName += '\n';
-
-						enemyStateMessage.stateName += change.name;
+						AddStateName(change.name);
 					}
 
 					if (!changes.empty())
 						pendingChanges.emplace_back(enemyId, changes);
+				}
+
+				// 死亡通知の送信
+				for (const auto& death : pendingDeaths)
+				{
+					enemyStateIds.push_back(death.enemyId);
+
+					// 死亡通知は alive = false
+					StateValueCode::Encode(StateValue{ death.alive }, values);
+					AddStateName("alive");
 				}
 
 				// 送信するステートがある場合のみ送信
@@ -508,6 +535,18 @@ void PlayNetworkController::Update()
 					{
 						if (enemyId < registries.size() && registries[enemyId].has_value())
 							registries[enemyId]->CommitChanges(changes);
+					}
+
+					// 死亡通知を送信した敵のレジストリを解除
+					for (const auto& death : pendingDeaths)
+					{
+						actorServer.ReleaseActor(death.enemyId);
+					}
+
+					// 死亡通知キューをクリア
+					if (!pendingDeaths.empty())
+					{
+						actorServer.ClearPendingEnemyDeaths();
 					}
 
 					// 初回同期完了

@@ -86,7 +86,7 @@ void NetworkActorServer::Update()
 		// ゲストなら他の敵を同期するコントローラーを生成
 		if (Data().objOtherEnemyController.IsEmpty())
 		{
-			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>();
+			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>(objPlaySceneUIController);
 		}
 	}
 }
@@ -101,7 +101,7 @@ void NetworkActorServer::CreateEnemy(
 	// Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
 
 	// 生成した敵のステートを登録
-	EnemyStateRegistries(objEnemy);
+	// EnemyStateRegistries(objEnemy);
 }
 
 void NetworkActorServer::CreateEnemy(
@@ -110,7 +110,7 @@ void NetworkActorServer::CreateEnemy(
 {
 	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, position, static_cast<int>(type));
 
-	EnemyStateRegistries(objEnemy);
+	// EnemyStateRegistries(objEnemy);
 }
 void NetworkActorServer::CreateBoss(
     EnemyType type,
@@ -119,7 +119,7 @@ void NetworkActorServer::CreateBoss(
 	GameObject objEnemy =
 	    GetScene().Instantiate<Enemy>(Data().objEnemyController, position, static_cast<int>(type), true);
 
-	EnemyStateRegistries(objEnemy);
+	// EnemyStateRegistries(objEnemy);
 }
 
 void NetworkActorServer::CreateEnemies()
@@ -158,11 +158,15 @@ void NetworkActorServer::CreateEnemies()
 void NetworkActorServer::EnemyStateRegistries(
     GameObject objEnemy)
 {
+	VCU_LOG("EnemyStateRegistries 呼び出し");
 	auto& enemy           = Get<Enemy>(objEnemy);
 	const int32_t enemyId = enemy.GetID();
 
+	VCU_LOG("Enemy ID取得: {}", enemyId);
+
 	if (enemyId < 0)
 	{
+		VCU_LOG("Enemy IDが不正");
 		return;
 	}
 
@@ -179,6 +183,8 @@ void NetworkActorServer::EnemyStateRegistries(
 		registries[index].emplace();
 		enemy.RegisterStates(*registries[index]);
 
+		VCU_LOG("Enemy State Registry 登録: ID={}, StateCount={}", enemyId, registries[index]->GetAllStates().size());
+
 		auto& queued = Data().enemyDeathQueued;
 
 		if (queued.size() <= index)
@@ -187,6 +193,10 @@ void NetworkActorServer::EnemyStateRegistries(
 		}
 
 		queued[index] = false;
+	}
+	else
+	{
+		VCU_LOG("既に登録済み: ID={}", enemyId);
 	}
 }
 
@@ -226,6 +236,7 @@ bool NetworkActorServer::IsDeathQueued(
 void NetworkActorServer::OnEnemyDeath(
     int32_t actorId)
 {
+	VCU_LOG("OnEnemyDeath 呼び出し: actorId={}", actorId);
 	// すでに死亡通知を登録済みなら何もしない
 	if (actorId < 0 || IsDeathQueued(actorId))
 	{
@@ -236,7 +247,10 @@ void NetworkActorServer::OnEnemyDeath(
 	// TODO: 死亡通知プロトコルの送信処理
 
 	// 敵のステート登録を解除
-	ReleaseActor(actorId);
+	// ReleaseActor(actorId);
+
+	// 死亡ステートを値として保存
+	Data().pendingEnemyDeaths.push_back({ actorId, false });
 
 	MarkDeathQueued(actorId);
 }

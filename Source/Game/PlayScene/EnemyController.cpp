@@ -16,8 +16,15 @@ void EnemyController::AddEnemy(
     const GameObject _enemy)
 {
 	// 敵に固有IDを割り振る
-	Get<Enemy>(_enemy).SetID(nextEnemyId++);
+	Enemy& enemy = Get<Enemy>(_enemy);
+
+	enemy.SetID(nextEnemyId++);
 	allEnemys.push_back(_enemy);
+
+	// ID割り当て後にステートを登録
+	NetworkActorServer& networkActor = Get<NetworkActorServer>(Data().objNetworkActorServer);
+
+	networkActor.EnemyStateRegistries(_enemy);
 
 	if (Get<Enemy>(_enemy).Data().isBoss)
 	{

@@ -2,6 +2,7 @@
 #include <Game/Manager/SessionManager.h>
 #include <Game/Network/NetworkSessionManager.h>
 #include <Game/Network/Protocols/UpdateEnemyDamage.h>
+#include <Game/Manager/SessionManager/SessionStateReader.h>
 
 void OtherEnemy::Start()
 {
@@ -21,23 +22,54 @@ void OtherEnemy::Update()
 		transform.position = status.position;
 		transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
 
-		VCU_LOG("otherenemy ID:{} rotation: {}, {}", enemyId, status.rotation.x, status.rotation.y);
-	}
+		// 死亡ステート確認
+		bool alive = true;
 
-	// 被弾確認
-	if (damagedFlag)
-	{
-		SendEnemyDamage(enemyId, damage);
+		// HPステート確認
+		int32_t hp = 0;
 
-		damagedFlag = false;
-		damage      = 0;
-	}
+		SessionStateReader reader{ sessionManager };
 
-	if (Get<InputSystem>().GetKeyDown(KeyCode::F))
-	{
-		damage      = 10;
-		damagedFlag = true;
-		VCU_LOG("敵ダメージ送信: ID={}, Damage={}", enemyId, damage);
+		if (reader.TryGetState(StateTarget::Enemy(enemyId), "hp", hp))
+		{
+			VCU_LOG("OtherEnemy ID:{} HP取得成功: {}", enemyId, hp);
+		}
+		else
+		{
+			VCU_LOG("OtherEnemy ID:{} HP取得失敗", enemyId);
+		}
+
+		if (reader.TryGetState(StateTarget::Enemy(enemyId), "alive", alive))
+		{
+			if (!alive)
+			{
+				VCU_LOG("OtherEnemy ID:{} is dead. Destroying...", enemyId);
+
+				DestroyMe();
+				return;
+			}
+		}
+
+		for (const auto& [name, value] : status.states)
+		{
+			VCU_LOG("Enemy ID:{} State:{}", enemyId, name);
+		}
+
+		// 被弾確認
+		if (damagedFlag)
+		{
+			SendEnemyDamage(enemyId, damage);
+
+			damagedFlag = false;
+			damage      = 0;
+		}
+
+		if (Get<InputSystem>().GetKeyDown(KeyCode::F))
+		{
+			damage      = 10;
+			damagedFlag = true;
+			VCU_LOG("敵ダメージ送信: ID={}, Damage={}", enemyId, damage);
+		}
 	}
 }
 
