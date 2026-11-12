@@ -66,7 +66,7 @@ void BossInfo::SetBoss(
 	hpInfo.rateOfHp = 1.0f;
 
 	// BOSS戦BGMをループ再生
-	Get<AudioManager>().SetBGM(bossBGM, true);
+	Get<AudioManager>().SetBGM(bossBGM, true, 0.3f);
 }
 
 // ゲスト用
