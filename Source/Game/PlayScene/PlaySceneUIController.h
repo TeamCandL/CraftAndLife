@@ -42,6 +42,11 @@ struct PlaySceneUIControllerData
 
 	GameObject objPlayer{};  ///< MyGaugeに渡すプレイヤー
 	GameObject objOtherPlayerController{};
+
+	// GameObject objEnemyInfo{};  ///< 敵の体力ゲージUI
+	// GameObject objEnemyHp{};    ///< 敵のHP数値
+	// GameObject objEnemyGaugeR{};  ///< 敵のゲージ、赤
+	// GameObject objEnemyGaugeG{};   ///< 敵のゲージ、緑
 };
 
 /// @brief プレイシーンのUI操作
