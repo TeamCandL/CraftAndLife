@@ -820,3 +820,15 @@ void Player::ClearAllItem()
 	Get<PlayerBag>(objPlayerBag).ClearItems();
 	Get<HotBar>(objHotbar).ClearAllSlotItem();
 }
+
+bool Player::CheckClearedTutorial(
+    const TutorialPhaseType _type)
+{
+	return false;
+}
+
+GameObject Player::GetNextObserverOnCleardPhase(
+    const TutorialPhaseFlags& _flags)
+{
+	return GameObject();
+}

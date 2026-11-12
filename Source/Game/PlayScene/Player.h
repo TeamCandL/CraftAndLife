@@ -209,4 +209,8 @@ struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
 	std::vector<ItemStack> GetHavingItem();
 	/// @brief バッグ、ホットバーが現在持っているアイテムを削除する。ホットバーが持つ「バッグ」は削除されない。
 	void ClearAllItem();
+
+	// ITutorialObserver を介して継承されました
+	bool CheckClearedTutorial(const TutorialPhaseType _type) override;
+	GameObject GetNextObserverOnCleardPhase(const TutorialPhaseFlags& _flags) override;
 };
