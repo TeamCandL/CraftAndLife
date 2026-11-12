@@ -297,7 +297,7 @@ void AudioManager::PlayBowPull(
 		.PlayLength = 0,
 		.LoopBegin  = 0,
 		.LoopLength = 0,
-		.LoopCount  = XAUDIO2_LOOP_INFINITE,
+		.LoopCount  = 0,
 		.pContext   = 0,
 	};
 
