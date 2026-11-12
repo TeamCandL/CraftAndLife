@@ -8,12 +8,14 @@ struct PlayNetworkControllerData
 	    const GameObject _objCamera,
 	    const GameObject _objNetworkActorServer,
 	    const GameObject _objDayController,
-	    const GameObject _objHarvestableController) :
+	    const GameObject _objHarvestableController,
+	    const GameObject _objOtherPlayerController) :
 	    objPlayer{ _objPlayer },
 	    objCamera{ _objCamera },
 	    objNetworkActorServer{ _objNetworkActorServer },
 	    objDayController{ _objDayController },
-	    objHarvestableController{ _objHarvestableController }
+	    objHarvestableController{ _objHarvestableController },
+	    objOtherPlayerController{ _objOtherPlayerController }
 	{
 	}
 
@@ -22,6 +24,7 @@ struct PlayNetworkControllerData
 	GameObject objNetworkActorServer{};     ///< 敵のオブジェクト
 	GameObject objDayController{};          ///< 昼夜サイクルオブジェクト
 	GameObject objHarvestableController{};  ///< ハーベスタブルオブジェクトコントローラー
+	GameObject objOtherPlayerController{};  ///< 他プレイヤーの操作するやつのオブジェクト
 };
 
 struct PlayNetworkController : ObjectBase<PlayNetworkControllerData>

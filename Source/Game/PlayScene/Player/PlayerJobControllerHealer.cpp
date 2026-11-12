@@ -23,7 +23,24 @@ void PlayerJobControllerHealer::Update(
 			    return;
 		    }
 
-		    bool isDown = std::get<bool>(_status.states.at("alive"));
+		    // bool isDown = std::get<int32_t>(_status.states.at("hp")) <= 0;
+
+		    // HPステートが存在するか確認,又は値の型が違う場合に処理をスキップする
+		    auto hpItr = _status.states.find("hp");
+
+		    if (hpItr == _status.states.end())
+		    {
+			    return;
+		    }
+
+		    const int32_t* hp = std::get_if<int32_t>(&hpItr->second);
+
+		    if (!hp)
+		    {
+			    return;
+		    }
+
+		    bool isDown = *hp <= 0;
 
 		    if (isDown)
 		    {

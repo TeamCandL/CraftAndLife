@@ -3,12 +3,12 @@
 #include "LobbyReadyButton.h"
 #include "MemberList.h"
 #include "LobbyNetworkController.h"
-
+#include "LobbyUI.h"
 void LobbyScene::Start()
 {
 	Instantiate<GameManager>();
 	Instantiate<LobbyReadyButton>();
-	GameObject objMemberList = Instantiate<MemberList>();
-
-	Instantiate<LobbyNetworkController>(objMemberList);
+	Instantiate<LobbyUI>();
+	// GameObject objMemberList = Instantiate<MemberList>();
+	Instantiate<LobbyNetworkController>();  //(objMemberList);
 }

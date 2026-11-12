@@ -3,12 +3,17 @@
 #include "AbstructInputSystem/NormalPlayerInput.h"
 #include "AbstructInputSystem/PadOnlyPlayerInput.h"
 #include "AbstructInputSystem/NormalUIInput.h"
+#include "AbstructInputSystem/PadOnlyUIInput.h"
 
 void AbstructInputSystem::Start()
 {
+#if _DEBUG
 	SetPlayerInput<NormalPlayerInput>();
-	// SetPlayerInput<PadOnlyPlayerInput>();
 	SetUIInput<NormalUIInput>();
+#else
+	SetPlayerInput<PadOnlyPlayerInput>();
+	SetUIInput<PadOnlyUIInput>();
+#endif
 }
 
 void AbstructInputSystem::Update()
@@ -16,7 +21,7 @@ void AbstructInputSystem::Update()
 	if (pPlayerInput && pUIInput)
 	{
 		PadInputSystem& padInputSystem = Get<PadInputSystem>();
-
+#ifdef USE_IMGUI
 		ImGui::Begin("AbstrucInputSystem");
 		if (padInputSystem.IsConnected())
 		{
@@ -75,6 +80,7 @@ void AbstructInputSystem::Update()
 			ImGui::Text("コントローラーは未接続です。");
 		}
 		ImGui::End();
+#endif
 	}
 }
 

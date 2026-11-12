@@ -5,6 +5,8 @@
 #include <shigaLibrary/SgRandom.h>
 #include <shigaLibrary/SgMath.h>
 #include <Game/PlayScene/TerrainSystem.h>
+#include <Game/PlayScene/NetworkActorServer.h>
+#include <Game/Manager/SessionManager/SessionStateReader.h>
 
 #include "OtherPlayerController.h"
 #include "OtherPlayer.h"
@@ -12,6 +14,7 @@
 #include "StateRegistry.h"
 #include "../Manager/SessionManager.h"
 #include "EntitySystem.h"
+#include "../PlayScene/Player/HelthState.h"
 
 void Enemy::Start()
 {
@@ -27,36 +30,33 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
-	attacked = false;
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	{
+		hp -= 10;
+	}
 
+	if (!alive)
+		return;
+
+	attacked = false;
+#ifdef USE_IMGUI
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", transform.position.v);
 	ImGui::DragFloat3("scale", transform.scale.v);
 	ImGui::DragInt("HP", &hp);
 	ImGui::End();
+#endif
 
 	if (hp <= 0)
 	{
 		SetAlive(false);
+		DropItem();
 	}
-
-	// 徘徊チェックポイントとの距離(差分)
-	if (!followed)
-	{
-		if (!objWanderingCheckPoint.IsEmpty())
-		{
-			targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
-		}
-		ImGui::Begin("CheckPoint");
-		ImGui::DragFloat3("position", targetPos.v);
-		ImGui::End();
-	}
-
-	Sensor();
 
 	// VCU_LOG("敵の追跡状況：{}", followed);
-
 	Move(targetPos, transform.position, transform.Down(), speed);
+
+	Sensor(transform.Down());
 
 	nowAttackCoolTime -= Get<DeltaTime>();
 	if (nowAttackCoolTime <= 0.0f)
@@ -71,8 +71,9 @@ void Enemy::Update()
 		if (!objWanderingCheckPoint.IsEmpty())
 		{
 			// チェックポイントに到達したら新しいチェックポイントを生成する
-			if ((Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3() - transform.position).Length() < speed)
+			if ((targetPos - transform.position).Length() < 1.0f)
 			{
+				GetScene().Destroy(objWanderingCheckPoint);
 				SetWanderingCheckPoint(transform.position);
 			}
 		}
@@ -80,7 +81,9 @@ void Enemy::Update()
 		{
 			SetWanderingCheckPoint(transform.position);
 		}
+		targetPos = Get<EnemyCheckPoint>(objWanderingCheckPoint).GetPositionVec3();
 	}
+#ifdef USE_IMGUI
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
@@ -89,16 +92,68 @@ void Enemy::Update()
 	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
 
 	ImGui::End();
+#endif
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader{ sessionManager };
+
+	reader.ForeachPlayer(
+	    [&](const std::string& playerName, const StateTarget& target)
+	    {
+		    int32_t healthState{};
+
+		    VCU_LOG("プレイヤー確認開始: {}", playerName);
+
+		    if (!reader.TryGetState(target, "helthState", healthState))
+		    {
+			    VCU_LOG("プレイヤーの生存状態取得失敗: {}", playerName);
+			    return;
+		    }
+
+		    VCU_LOG("プレイヤーの生存状態取得成功: 名前={}, helthState={}", playerName, healthState);
+
+		    if (healthState == HelthState_Dead)
+		    {
+			    VCU_LOG("死亡プレイヤーのため追跡対象外: {}", playerName);
+			    return;
+		    }
+
+		    VCU_LOG("生存プレイヤー確認: {}", playerName);
+
+		    // int32_t healthState{};
+
+		    // if (!reader.TryGetState(target, "helthState", healthState))
+		    //  return;
+
+		    // if (healthState == HelthState_Dead)
+		    //  return;
+
+		    // 生存プレイヤーとして追跡対象に追加
+	    });
 
 	if (alive)
 	{
 	}
 	else
 	{
-		// 敵IDを使って死亡通知を送信キューに登録
-		// Registryの登録を解除
-		// ※上記2つは今後実装する
-		// DestroyMe();
+		const int32_t enemyId = GetID();
+		VCU_LOG("[Enemy] 死亡開始 ID={}", enemyId);
+
+		SetActive(false);
+
+		EnemyController& controller = Get<EnemyController>(objEnemyController);
+
+		NetworkActorServer& networkActor = Get<NetworkActorServer>(controller.GetNetworkActorServer());
+
+		// ステート登録解除・死亡通知登録
+		networkActor.OnEnemyDeath(enemyId);
+
+		// 敵の管理スロットを空にする
+		controller.RemoveEnemy(enemyId);
+
+		DestroyMe();
+
+		VCU_LOG("[Enemy] DestroyMe 呼び出し完了 ID={}", enemyId);
+		return;
 	}
 }
 
@@ -110,7 +165,7 @@ void Enemy::Update()
 void Enemy::Move(
     Vec3 target_,
     Vec3 pos_,
-    Vec3 Fwd,
+    Vec3 Fwd_,
     float spd_)
 {
 	// VCU_LOG("TargetPosition : {}, {}", target_.x, target_.z);
@@ -122,7 +177,7 @@ void Enemy::Move(
 
 	if ((length > 1.0f && followed) || !followed)
 	{
-		Vec3 crossed = Math::GetCrossProduct(Fwd, tPos - ePos);
+		Vec3 crossed = Math::GetCrossProduct(Fwd_, tPos - ePos);
 
 		torque += crossed.y * Math::GetRad(rotationAnglePerSec);
 
@@ -132,26 +187,30 @@ void Enemy::Move(
 		angles.z           = 0.0f;
 		transform.rotation = Quaternion::FromEuler(angles);
 
-		Vec3 move{ (Fwd)*speed };
+		Vec3 move{ (Fwd_)*speed };
 		transform.position += move * Get<DeltaTime>();
 
-		ImGui::Begin("moveVec");
+		/*ImGui::Begin("moveVec");
 		ImGui::DragFloat3("move", move.v);
-		ImGui::End();
+		ImGui::End();*/
 	}
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 }
 
-void Enemy::Sensor()
+void Enemy::Sensor(
+    Vec3 Fwd_)
 {
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader(sessionManager);
+
 	Vec3 targetPos_{ DEFAULT_TARGET_POS };
 	float targetDist{ -1.0f };
 	int32_t targetAttentionLevel{ 0 };
 	std::vector<TargetInfo> players;
-	Get<SessionManager>().ForeachPlayerStatus(
+	sessionManager.ForeachPlayerStatus(
 	    [&players](const std::string& _name, const InSessionStatus::PlayerStatus& _status)
 	    {
-		    players.push_back({ _status.position, _status.attentionLevel });
+		    players.push_back({ _name, _status.position, _status.attentionLevel });
 	    });
 	for (TargetInfo objPlayer : players)
 	{
@@ -182,9 +241,27 @@ void Enemy::Sensor()
 					}
 				}
 			}
-			float dot           = Math::GetDotProduct(transform.Forward(), (objPlayer._pos - transform.position));
+			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
 			float visibilityDot = std::cosf(visibilityAngle);
 			if (dot <= visibilityDot)
+			{
+			}
+		}
+
+		int32_t playerId{};
+		if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
+		{
+			StateTarget target = StateTarget::Player(playerId);
+
+			int32_t helthState{};
+			bool flag = reader.TryGetState(target, "helthState", helthState);
+			if (flag)
+			{
+				if (helthState == HelthState_::HelthState_Live)
+				{
+				}
+			}
+			else
 			{
 			}
 		}
@@ -206,6 +283,9 @@ void Enemy::Sensor()
 
 void Enemy::Draw()
 {
+	if (!alive)
+		return;
+
 	// VCU_LOG("hostEnemy Position: ({}, {}, {})", transform.position.x, transform.position.y, transform.position.z);
 
 	Get<Dx11Manager>().SetShader(shader);
@@ -263,10 +343,15 @@ void Enemy::CloseAttack()
 void Enemy::AttackCollider()
 {
 	attacked = true;
+
 	// あとから修正
 	// Get<AudioManager>().Play(attackSE);
 
-	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+	// 近距離攻撃用アイテム
+	const ItemId ITEM_ID_CLOSE_ATTACK{ 21 };
+
+	// 敵の位置に攻撃判定用エンティティを生成
+	Get<EntitySystem>().Spawn(ITEM_ID_CLOSE_ATTACK, transform.position, Vec3{ 0.0f, 0.0f, 0.0f });
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
@@ -276,18 +361,77 @@ void Enemy::AttackCollider(
 	attacked = true;
 	// あとから修正
 	// Get<AudioManager>().Play(attackSE);
+	const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 
-	GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f, forward_, 10.0f);
+	Vec3 dir = forward_.Normalize() * 10.0f;
+	if (dir.Length() <= FLT_EPSILON)
+	{
+		dir = Vec3::Forward();
+	}
+
+	// 蜘蛛の糸攻撃！
+	Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
+
+	// NOTE: エンティティへ移行しますた
+	// GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f,
+	// forward_, 10.0f);
 	nowAttackCoolTime = ATTACK_COOL_TIME;
 }
 
+/// @brief ダメージを受ける
+/// @param damage 受けるダメージ量
+/// @param isGreatsword 大剣による攻撃かどうか
+/// @brief 通常のダメージ処理
+/// @param damage 受けるダメージ量
 void Enemy::Damaged(
     int32_t damage)
 {
-	if (nowDamagedCoolTime <= 0.0)
+	// 0以下のダメージは無視
+	if (damage <= 0)
 	{
-		hp -= damage;
-		nowDamagedCoolTime = DAMAGED_COOL_TIME;
+		return;
+	}
+
+	// ダメージクールタイム中なら無視
+	if (nowDamagedCoolTime > 0.0f)
+	{
+		return;
+	}
+
+	// HPを減らす
+	hp -= damage;
+
+	// ダメージクールタイムを設定
+	nowDamagedCoolTime = DAMAGED_COOL_TIME;
+}
+
+/// @brief 剣・大剣によるダメージ処理
+/// @param damage 受けるダメージ量
+/// @param isGreatsword 大剣による攻撃かどうか
+void Enemy::Damaged(
+    int32_t damage,
+    bool isGreatsword)
+{
+	// ダメージを受ける前のHPを保存
+	const int32_t previousHP = hp;
+
+	// 通常のダメージ処理を実行
+	Damaged(damage);
+
+	// HPが減っていなければSEを鳴らさない
+	if (hp == previousHP)
+	{
+		return;
+	}
+
+	// 攻撃した武器に応じてSEを再生
+	if (isGreatsword)
+	{
+		Get<AudioManager>().Play(greatswordDamagedSE);
+	}
+	else
+	{
+		Get<AudioManager>().Play(swordDamagedSE);
 	}
 }
 
@@ -308,7 +452,7 @@ void Enemy::SetWanderingCheckPoint(
 
 void Enemy::DropItem()
 {
-	Get<EntitySystem>().Spawn(dropItemID, transform.position, { 0.0f, 0.0f, 0.0f });
+	Get<EntitySystem>().Spawn(dropItemID, transform.position + Vec3::Up(), Vec3::Zero());
 }
 
 void Enemy::RegisterStates(
@@ -317,5 +461,5 @@ void Enemy::RegisterStates(
 	registry.Register("hp", hp);
 	// registry.Register("followed", followed);
 	registry.Register("alive", alive);
-	// registry.Register("attacked", attacked);
+	registry.Register("attacked", attacked);
 }

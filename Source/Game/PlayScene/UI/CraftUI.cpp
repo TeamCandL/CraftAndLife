@@ -4,16 +4,44 @@
 #include <Game/PlayScene/UI/ListBox.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/Manager/SessionManager.h>
 
 #include "HotBar.h"
 #include <ranges>
 #include <format>
 #include <fstream>
 
+namespace
+{
+
+	std::string GetJobName(
+	    PlayerJobType _jobType)
+	{
+		switch (_jobType)
+		{
+		case PlayerJobType_Healer:  ///< 回復使い
+			return "ヒーラー";
+			break;
+		case PlayerJobType_Tank:  ///< 盾使い
+			return "タンク";
+			break;
+		case PlayerJobType_Fighter:  ///< 大剣使い
+			return "ファイター";
+			break;
+		case PlayerJobType_Archer:  ///< 弓使い
+			return "アーチャー";
+			break;
+		case PlayerJobType_Max:  ///< 最大数
+		default:
+			return "無効";
+			break;
+		}
+	}
+}  // namespace
+
 void CraftUI::Start()
 {
-	// ジョブによってクラフト可能か切り替えるかどうか。falseにすれば、どのジョブも弓作ったりできる。デバッグ用。
-	bool filterCraftableItemOnJob{ false };
+	bool filterCraftableItemOnJob{ Get<Player>(objPlayer).Data().filterAddItemOnJob };
 	playerJobType = Get<Player>(objPlayer).Data().jobType;
 
 	const auto& allItemList = Get<ItemSystem>().Data().allItemList;
@@ -49,7 +77,7 @@ void CraftUI::Start()
 	/// ---------------
 	/// リストボックス
 	/// ---------------
-	Vec2 recipeListBegin{ 429, 241 };
+	Vec2 recipeListBegin{ 429, 195 };
 	int recipeElementHeight{ 40 };
 	for (int i = 0; i < craftableItems.size(); i++)
 	{
@@ -79,7 +107,7 @@ void CraftUI::Start()
 	nlohmann::json selectedItemJson = j["selected_item_frame"]["children"];
 	auto& scene                     = GetScene();
 	objSelectedItemBackground       = scene.Instantiate<ImageObject>(
-        Resource<ResourceType::Texture>("Image/UI/slot_panel.png"),
+        Resource<ResourceType::Texture>("Image/UI/selected_item_background.png"),
         Vec2{ 700, 241 },
         Vec2{ 619, 186 },
         2);
@@ -106,6 +134,11 @@ void CraftUI::Start()
 		SetTextObjectFromJson(selectedItemJson["name"], objSelectedItemText);
 	}
 
+	objSelectedItemOnlyJobLabel = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 3, font);
+	{
+		SetTextObjectFromJson(selectedItemJson["only_job_label"], objSelectedItemOnlyJobLabel);
+	}
+
 	/// --------------------
 	/// 充足状況画面
 	/// --------------------
@@ -117,6 +150,9 @@ void CraftUI::Start()
 	SetTextObjectFromJson(recipeGroupJson["held_label"], objRecipeHeldLabel);
 	objRecipeRequiredLabel = scene.Instantiate<TextObject>(Vec2{ 1139, 452 }, Vec2{ 64, 64 }, 3);
 	SetTextObjectFromJson(recipeGroupJson["required_label"], objRecipeRequiredLabel);
+
+	objRecipeSlashLabel = scene.Instantiate<TextObject>(Vec2{ 1115, 454 }, Vec2{ 32, 32 }, 3);
+	SetTextObjectFromJson(recipeGroupJson["slash_label"], objRecipeSlashLabel);
 
 	// 個々の素材のUI
 	{
@@ -140,6 +176,11 @@ void CraftUI::Start()
 		nlohmann::json j               = recipeGroupJson["material_element_first_required"];
 		materialElementRequiredBegin.x = j.at("x").get<int>();
 		materialElementRequiredBegin.y = j.at("y").get<int>();
+	}
+	{
+		nlohmann::json j            = recipeGroupJson["material_element_first_slash"];
+		materialElementSlashBegin.x = j.at("x").get<int>();
+		materialElementSlashBegin.y = j.at("y").get<int>();
 	}
 
 	objCraftBackgroundImage = GetScene().Instantiate<ImageObject>(craftPreviewbackgroundTexture, Vec2{}, Vec2{}, 0);
@@ -176,6 +217,11 @@ void CraftUI::Start()
 				                         materialElementRequiredBegin + Vec2{ 0, (textOffset + 32) * iCraftInfo },
 				                         Vec2{ 32, 32 },
 				                         3),
+				                     // スラッシュのテキスト
+				                     scene.Instantiate<TextObject>(
+				                         materialElementSlashBegin + Vec2{ 0, (textOffset + 32) * iCraftInfo },
+				                         Vec2{ 32, 32 },
+				                         3),
 				                     // 素材のアイテムID
 				                     craftInfo[iCraftInfo]._id };
 			materials.push_back(recipeUI);
@@ -187,10 +233,14 @@ void CraftUI::Start()
 
 void CraftUI::Update()
 {
+#ifdef USE_IMGUI
 	DrawDebugItemAddWindow();
-
+#endif
 	PlayerData& playerData = Get<Player>(objPlayer).Data();
-
+	if (playerData.helthState == HelthState_Dead)
+	{
+		playerData.isOpenCraftUI = false;
+	}
 	if (playerData.isOpenCraftUI == false)
 	{
 		SetActiveAll(false);
@@ -226,10 +276,31 @@ ItemId CraftUI::UpdateUI()
 	// 選択中アイテムの画像、テキストを描画
 	auto itemInfo                                               = Get<ItemSystem>().GetInfo(selectedItemId);
 	Get<ImageObject>(objSelectedItemImage).Data().image.texture = itemInfo._imageId;
+
+	TextObjectData& selectedTextObjectData   = Get<TextObject>(objSelectedItemText).Data();
+	selectedTextObjectData.text.content      = itemInfo._name;
+	selectedTextObjectData.transform.scale.x = selectedTextObjectData.text.content.size() * 64;
+
+	TextObjectData& selectedOnlyJobLabelData = Get<TextObject>(objSelectedItemOnlyJobLabel).Data();
+	auto& status                             = Get<SessionManager>().RefStatus();
+	PlayerData& playerData                   = Get<Player>(objPlayer).Data();
+	PlayerJobType playerJobType              = playerData.jobType;
+	if (itemInfo.canUseJobType == playerJobType)
 	{
-		TextObjectData& selectedTextObjectData   = Get<TextObject>(objSelectedItemText).Data();
-		selectedTextObjectData.text.content      = itemInfo._name;
-		selectedTextObjectData.transform.scale.x = selectedTextObjectData.text.content.size() * 64;
+		if (playerData.isOpenCraftUI)
+		{
+			Get<TextObject>(objSelectedItemOnlyJobLabel).SetActive(true);
+		}
+		selectedOnlyJobLabelData.text.content      = std::format("{}専用!", GetJobName(playerJobType));
+		selectedOnlyJobLabelData.transform.scale.x = selectedOnlyJobLabelData.text.content.size() * 32;
+	}
+	else
+	{
+		if (playerData.isOpenCraftUI)
+		{
+			Get<TextObject>(objSelectedItemOnlyJobLabel).SetActive(false);
+		}
+		selectedOnlyJobLabelData.text.content = "";
 	}
 
 	ItemId resultItemId = EMPTY_ITEM_ID;
@@ -272,10 +343,12 @@ void CraftUI::SetActiveAll(
 	collection.At<IObject>(objSelectedItemImage).SetActive(_isActive);
 	collection.At<IObject>(objSelectedItemText).SetActive(_isActive);
 	collection.At<IObject>(objSelectedItemBackground).SetActive(_isActive);
+	collection.At<IObject>(objSelectedItemOnlyJobLabel).SetActive(_isActive);
 
 	collection.At<IObject>(objRecipeMaterialLabel).SetActive(_isActive);
 	collection.At<IObject>(objRecipeHeldLabel).SetActive(_isActive);
 	collection.At<IObject>(objRecipeRequiredLabel).SetActive(_isActive);
+	collection.At<IObject>(objRecipeSlashLabel).SetActive(_isActive);
 
 	// すべてのレシピを非アクティブにする
 	for (auto& [id, recipe] : recipeUIMap)
@@ -330,6 +403,11 @@ void CraftUI::UpdateRequirementUI(
 			textObjectData.text.content      = std::to_string(requirement.requiredCount);
 			textObjectData.transform.scale.x = textObjectData.text.content.size() * 32;
 		}
+		{
+			TextObjectData& textObjectData   = Get<TextObject>(_recipe.objRecipeSlashElement).Data();
+			textObjectData.text.content      = "/";
+			textObjectData.transform.scale.x = 32;
+		}
 	}
 }
 
@@ -343,14 +421,17 @@ void CraftUI::SetRecipeUIActive(
 		Get<TextObject>(recipe.objRecipeMaterialElementText).SetActive(_isActive);
 		Get<TextObject>(recipe.objRecipeHeldElement).SetActive(_isActive);
 		Get<TextObject>(recipe.objRecipeRequiredElement).SetActive(_isActive);
+		Get<TextObject>(recipe.objRecipeSlashElement).SetActive(_isActive);
 	}
 }
 
 void CraftUI::DrawDebugItemAddWindow()
 {
 	auto& allItemList = Get<ItemSystem>().Data().allItemList;
+	auto& status      = Get<SessionManager>().RefStatus();
 
-	ImGui::Begin("Debug_Item_Add");
+	// デバッグ用のUI
+	ImGui::Begin(std::format("Debug_Item_Add:{}", status.name.c_str()).c_str());
 
 	for (auto& itemAllInfo : allItemList)
 	{

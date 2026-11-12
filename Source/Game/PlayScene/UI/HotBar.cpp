@@ -2,6 +2,7 @@
 #include "pch\pch.h"
 #include "MiniMapPoint.h"
 #include <Game/System/AbstructInputSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 namespace
 {
@@ -9,7 +10,7 @@ namespace
 	constexpr size_t TOOL_SLOT_INDEX{ 1 };
 	constexpr size_t CONSUMABLE_SLOT_INDEX{ 2 };
 	constexpr size_t BAG_SLOT_INDEX{ 3 };
-
+	constexpr ItemId BAG_ITEM_ID{ 19 };
 	bool CannotStack(
 	    ItemType _type)
 	{
@@ -19,6 +20,7 @@ namespace
 		case ItemType::Weapons:
 		case ItemType::WeaponBow:
 		case ItemType::Tools:
+		case ItemType::Backpack:
 			return true;
 		default:
 			return false;
@@ -53,21 +55,15 @@ void HotBar::Start()
 		Get<SlotItemCount>(itemData.objItemCount).Data().transform.scale      = Vec2{ 32 * 2, 32 };
 		Get<SlotItemCount>(itemData.objItemCount).Data().transform.layerOrder = 6;
 	}
+
+	// バッグアイテム作成
+	SlotItem& slotItem    = Get<SlotItem>(Get<Slot>(slots[BAG_SLOT_INDEX]).Data().slotItem);
+	slotItem.Data().id    = BAG_ITEM_ID;
+	slotItem.Data().count = 0;
 }
 
 void HotBar::Update()
 {
-	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
-	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
-	{
-		MoveFocusToLeft();
-		OnChangedSelectedItem();
-	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
-	{
-		MoveFocusToRight();
-		OnChangedSelectedItem();
-	}
 	/// -----------------
 	/// スロットのUI更新
 	/// -----------------
@@ -124,7 +120,20 @@ void HotBar::Update()
 	}
 }
 
-void HotBar::UpdateSlot() {}
+void HotBar::UpdateSlot()
+{
+	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
+	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
+	{
+		MoveFocusToLeft();
+		OnChangedSelectedItem();
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
+	{
+		MoveFocusToRight();
+		OnChangedSelectedItem();
+	}
+}
 
 void HotBar::MoveFocusToRight()
 {
@@ -145,7 +154,7 @@ bool HotBar::CanRemoveSelectedItem(
     int _count)
 {
 	// バッグは除外不可能
-	if (_count == BAG_SLOT_INDEX)
+	if (currentSlotIdx == BAG_SLOT_INDEX)
 		return false;
 
 	SlotItemData& itemData = GetSlotItemData(currentSlotIdx);
@@ -159,7 +168,14 @@ void HotBar::RemoveSelectedItem(
 		return;
 
 	SlotItemData& itemData = GetSlotItemData(currentSlotIdx);
-	itemData.count -= _count;
+	if (CannotStack(Get<ItemSystem>().GetInfo(itemData.id)._type))
+	{
+		itemData.count = 0;
+	}
+	else
+	{
+		itemData.count -= _count;
+	}
 
 	if (itemData.count == 0)
 	{
@@ -248,7 +264,7 @@ bool HotBar::SwapConsumableItem(
     ItemId _newItemId)
 {
 	ItemInfo info = Get<ItemSystem>().GetInfo(_newItemId);
-	if (info._type != ItemType::Consumables && info._type != ItemType::Arrow)
+	if (info._type != ItemType::Consumables && info._type != ItemType::Medicals && info._type != ItemType::Arrow)
 	{
 		_oldItemStack = ItemStack::EmptyStack();
 		return false;
@@ -269,6 +285,36 @@ bool HotBar::SwapItem(
 	return SwapItemImpl(_oldItemStack, _newItemId, slotIndex);
 }
 
+std::vector<ItemStack> HotBar::GetAllSlotItem()
+{
+	std::vector<ItemStack> itemStacks;
+	for (int i = 0; i < slots.size(); i++)
+	{
+		// バッグは取得させない
+		if (i == BAG_SLOT_INDEX)
+			continue;
+		SlotItem& slotItem = Get<SlotItem>(Get<Slot>(slots[i]).Data().slotItem);
+		// 空のアイテムは取得させない
+		if (slotItem.Data().id == EMPTY_ITEM_ID || slotItem.Data().count == 0)
+			continue;
+
+		itemStacks.emplace_back(slotItem.Data().id, slotItem.Data().count);
+	}
+	return itemStacks;
+}
+
+void HotBar::ClearAllSlotItem()
+{
+	for (int i = 0; i < slots.size(); i++)
+	{
+		if (i == BAG_SLOT_INDEX)
+			continue;
+		Get<SlotItem>(Get<Slot>(slots[i]).Data().slotItem).Reset();
+		if (i == currentSlotIdx)
+			OnChangedSelectedItem();
+	}
+}
+
 bool HotBar::CanRemoveItem(
     ItemType _itemType,
     int _count)
@@ -285,6 +331,9 @@ void HotBar::RemoveItem(
     ItemType _itemType,
     int _count)
 {
+	if (CanRemoveItem(_itemType, _count) == false)
+		return;
+
 	size_t slotIndex = GetSlotIndexFrom(_itemType);
 
 	if (slotIndex == -1)
@@ -334,8 +383,18 @@ bool HotBar::SwapItemImpl(
 void HotBar::MoveFocusImpl(
     int _dir)
 {
+	// 移動前の選択スロットを保存
+	int previousSlotIdx = currentSlotIdx;
+
+	// 選択スロットを移動
 	currentSlotIdx += _dir;
 	currentSlotIdx = (currentSlotIdx + slots.size()) % slots.size();
+
+	// 選択スロットが変わった場合のみSEを再生
+	if (currentSlotIdx != previousSlotIdx)
+	{
+		Get<AudioManager>().Play(moveHotbarSlotSE);
+	}
 }
 
 SlotItemData& HotBar::GetSlotItemData(
@@ -357,12 +416,15 @@ size_t HotBar::GetSlotIndexFrom(
 		break;
 	case ItemType::Consumables:
 	case ItemType::Arrow:
+	case ItemType::Medicals:
 		slotIndex = CONSUMABLE_SLOT_INDEX;
 		break;
 	case ItemType::Tools:
 		slotIndex = TOOL_SLOT_INDEX;
 		break;
-
+	case ItemType::Backpack:
+		slotIndex = BAG_SLOT_INDEX;
+		break;
 	default:
 		break;
 	}

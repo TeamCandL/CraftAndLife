@@ -1,0 +1,132 @@
+{
+  "lobby_label": {
+    "name": "lobby_label",
+    "type": "TEXT",
+    "x": 61,
+    "y": 0,
+    "width": 211,
+    "height": 93,
+    "fontSize": 64,
+    "content": "ロビー"
+  },
+  "チーム名:チームアルファ": {
+    "name": "チーム名:チームアルファ",
+    "type": "TEXT",
+    "x": 61,
+    "y": 93,
+    "width": 725,
+    "height": 93,
+    "fontSize": 64,
+    "content": "チーム名:チームアルファ"
+  },
+  "team_name": {
+    "name": "team_name",
+    "type": "TEXT",
+    "x": 331,
+    "y": 93,
+    "width": 435,
+    "height": 93,
+    "fontSize": 64,
+    "content": "チームアルファ"
+  },
+  "team_name_label": {
+    "name": "team_name_label",
+    "type": "TEXT",
+    "x": 61,
+    "y": 93,
+    "width": 270,
+    "height": 93,
+    "fontSize": 64,
+    "content": "チーム名:"
+  },
+  "player_count_label": {
+    "name": "player_count_label",
+    "type": "TEXT",
+    "x": 61,
+    "y": 186,
+    "width": 744,
+    "height": 93,
+    "fontSize": 64,
+    "content": "プレイヤー一覧(最大4人)"
+  },
+  "name 　準備中　ジョブ: ファイター": {
+    "name": "name 　準備中　ジョブ: ファイター",
+    "type": "TEXT",
+    "x": 61,
+    "y": 372,
+    "width": 1108,
+    "height": 93,
+    "fontSize": 64,
+    "content": "name 　準備中　ジョブ: ファイター"
+  },
+  "player_name_first_element": {
+    "name": "player_name_first_element",
+    "type": "TEXT",
+    "x": 61,
+    "y": 372,
+    "width": 364,
+    "height": 93,
+    "fontSize": 64,
+    "content": "プレイヤー1"
+  },
+  "player_ready_first_element": {
+    "name": "player_ready_first_element",
+    "type": "TEXT",
+    "x": 549,
+    "y": 372,
+    "width": 192,
+    "height": 93,
+    "fontSize": 64,
+    "content": "準備中"
+  },
+  "player_job_label_first_element": {
+    "name": "player_job_label_first_element",
+    "type": "TEXT",
+    "x": 803,
+    "y": 372,
+    "width": 211,
+    "height": 93,
+    "fontSize": 64,
+    "content": "ジョブ:"
+  },
+  "player_job_first_element": {
+    "name": "player_job_first_element",
+    "type": "TEXT",
+    "x": 1039,
+    "y": 372,
+    "width": 318,
+    "height": 93,
+    "fontSize": 64,
+    "content": "ファイター"
+  },
+  "name 　準備中　ジョブ: ヒーラー": {
+    "name": "name 　準備中　ジョブ: ヒーラー",
+    "type": "TEXT",
+    "x": 61,
+    "y": 558,
+    "width": 1108,
+    "height": 93,
+    "fontSize": 64,
+    "content": "name 　準備中　ジョブ: ヒーラー"
+  },
+  "name 　準備中　ジョブ: タンク": {
+    "name": "name 　準備中　ジョブ: タンク",
+    "type": "TEXT",
+    "x": 61,
+    "y": 744,
+    "width": 1108,
+    "height": 93,
+    "fontSize": 64,
+    "content": "name 　準備中　ジョブ: タンク"
+  },
+  "name 　準備中　ジョブ: アーチャー": {
+    "name": "name 　準備中　ジョブ: アーチャー",
+    "type": "TEXT",
+    "x": 61,
+    "y": 930,
+    "width": 1108,
+    "height": 93,
+    "fontSize": 64,
+    "content": "name 　準備中　ジョブ: アーチャー"
+  }
+}

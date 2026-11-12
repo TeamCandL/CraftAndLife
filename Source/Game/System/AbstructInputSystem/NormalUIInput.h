@@ -4,22 +4,21 @@
 
 class NormalUIInput : public IUIInput
 {
-public:
+  public:
 	/// @brief コンストラクタ
 	/// @param _abstructInputSystem 抽象入力システムの参照ポインタ
 	NormalUIInput(AbstructInputSystem& _abstructInputSystem);
 	/// @brief デストラクタ
-	~NormalUIInput() = default;
+	virtual ~NormalUIInput() = default;
 
 	// IUIInput を介して継承されました
-	bool IsMovedUp() const override;
-	bool IsMovedDown() const override;
-	bool IsMovedLeft() const override;
-	bool IsMovedRight() const override;
-	bool IsSelected() const override;
-	bool IsChanneled() const override;
+	virtual bool IsMovedUp() const override;
+	virtual bool IsMovedDown() const override;
+	virtual bool IsMovedLeft() const override;
+	virtual bool IsMovedRight() const override;
+	virtual bool IsSelected() const override;
+	virtual bool IsChanneled() const override;
 
-private:
+  protected:
 	AbstructInputSystem& abstructInputSystem_;
-
 };

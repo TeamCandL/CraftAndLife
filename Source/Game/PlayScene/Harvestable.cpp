@@ -1,7 +1,7 @@
-
 #include "pch/pch.h"
 #include "Harvestable.h"
 #include "EntitySystem.h"
+#include <Game/Manager/AudioManager.h>
 
 /// @brief 初期化
 void Harvestable::Start()
@@ -11,26 +11,26 @@ void Harvestable::Start()
 	{
 	case HarvestableType::Tree:
 		model         = Resource<Model>{ "Model/Harvestable/Tree.fbx" };
-		maxDurability = 3;
+		maxDurability = 60;
 		obb.scale     = { 0.5f, 2.0f, 0.2f };
 		break;
 
 	case HarvestableType::TreeHigh:
 		model         = Resource<Model>{ "Model/Harvestable/TreeHigh.fbx" };
-		maxDurability = 5;
+		maxDurability = 90;
 		obb.scale     = { 0.5f, 3.0f, 0.2f };
 		break;
 
 	case HarvestableType::Rock:
 		model         = Resource<Model>{ "Model/Harvestable/Rock.fbx" };
-		maxDurability = 5;
+		maxDurability = 100;
 		obb.scale     = { 0.5f, 0.5f, 0.5f };
 		break;
 
 	default:
 		// 未定義の種類は通常の木にする
 		model         = Resource<Model>{ "Model/Harvestable/Tree.fbx" };
-		maxDurability = 3;
+		maxDurability = 30;
 		break;
 	}
 
@@ -97,6 +97,22 @@ void Harvestable::TakeDamage(
 	// 耐久値を減らす
 	durability -= damage;
 
+	// 種類に応じた破壊音を再生
+	switch (type)
+	{
+	case HarvestableType::Tree:
+	case HarvestableType::TreeHigh:
+		Get<AudioManager>().Play(treeDestructionSE);
+		break;
+
+	case HarvestableType::Rock:
+		Get<AudioManager>().Play(rockDestructionSE);
+		break;
+
+	default:
+		break;
+	}
+
 	// 耐久値が0以下になったら採取済みにする
 	if (durability <= 0)
 	{
@@ -122,20 +138,49 @@ void Harvestable::OnBroken()
 	switch (type)
 	{
 	case HarvestableType::Tree:
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
+		// 木の破壊音
+		Get<AudioManager>().Play(brokenTreeSE);
+
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up(), Vec3::Up() * 0.05f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Left(), Vec3::Up() * 0.05f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Right(), Vec3::Up() * 0.05f);
+		Get<EntitySystem>().Spawn(ITEM_ID_Mushroom, transform.position + Vec3::Up() + Vec3::Back(), Vec3::Up() * 0.05f);
+
 		break;
 
 	case HarvestableType::TreeHigh:
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
-		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position, Vec3::Up() * 20.0f);
+		// 背の高い木の破壊音
+		Get<AudioManager>().Play(brokenTreeSE);
+
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up(), Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Left(), Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Right(), Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Back(), Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Forward(), Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(
+		    ITEM_ID_WOOD,
+		    transform.position + Vec3::Up() + Vec3::Left() + Vec3::Back(),
+		    Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(
+		    ITEM_ID_Mushroom,
+		    transform.position + Vec3::Up() + Vec3::Right() + Vec3::Forward(),
+		    Vec3::Up() * 0.05f);
+		Get<EntitySystem>().Spawn(
+		    ITEM_ID_Mushroom,
+		    transform.position + Vec3::Up() + Vec3::Right() + Vec3::Back(),
+		    Vec3::Up() * 0.05f);
 		break;
 
 	case HarvestableType::Rock:
-		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position, Vec3::Up() * 20.0f);
+		// 岩の破壊音
+		Get<AudioManager>().Play(brokenRockSE);
+
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position + Vec3::Up(), Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position + Vec3::Up() + Vec3::Left(), Vec3::Up() * 0.0f);
+		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position + Vec3::Up() + Vec3::Right(), Vec3::Up() * 0.0f);
 		break;
 
 	default:
-		// 未定義の種類は何も落とさない
 		break;
 	}
 }

@@ -10,6 +10,7 @@ struct InSessionStatus
 	{
 		Vec3 position{ 0, 10, 0 };    ///< 座標
 		Vec2 rotation{ 0, 0 };        ///< 角度データ
+		int32_t haveItemId{};         ///< 持っているアイテムのId
 		bool updatedFlag{ false };    ///< 更新時のフラグ false / true 切り替え用
 		int32_t attentionLevel{ 5 };  ///< 注目度
 
@@ -26,10 +27,12 @@ struct InSessionStatus
 		std::unordered_map<std::string, StateValue> states{};
 	};
 
-	std::string joinRoomName{};              ///< 参加する部屋名
-	std::string name{};                      ///< プレイヤー名
-	std::vector<std::string> memberNames{};  ///< ロビー内メンバー名一覧
-	std::vector<int32_t> memberId{};         ///< ロビー内メンバーのID
+	int32_t haveItemId{};                                ///< 持っているアイテムのId
+	std::string joinRoomName{};                          ///< 参加する部屋名
+	std::string name{};                                  ///< プレイヤー名
+	std::vector<std::string> memberNames{};              ///< ロビー内メンバー名一覧
+	std::vector<int32_t> memberId{};                     ///< ロビー内メンバーのID
+	std::unordered_map<int32_t, int32_t> memberRoles{};  ///< ロビー内メンバーのジョブID
 
 	bool imLobbyHost{ false };                                      ///< 私はホストであるか
 	bool updatedFlag{ false };                                      ///< 更新確認用フラグ false / true 切り替え用
@@ -37,5 +40,6 @@ struct InSessionStatus
 	std::unordered_map<int, EnemyStatus> enemiesStatus{};           ///< 敵の座標情報
 
 	float currentTimeSec;              ///< 昼夜サイクルの現在時刻
+	int32_t dayCount;                  ///< 昼夜サイクルの現在日数
 	bool hasReceivedDayTime{ false };  ///< 昼夜時刻を受信済みか
 };
