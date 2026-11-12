@@ -52,7 +52,7 @@ void Enemy::Update()
 	Sensor(transform.Down());
 
 	nowAttackCoolTime -= Get<DeltaTime>();
-	if (nowAttackCoolTime <= 0.0f)
+	if (nowAttackCoolTime <= 0.0f && followed)
 	{
 		Attack(targetPos);
 	}
@@ -79,9 +79,11 @@ void Enemy::Update()
 
 	ImGui::Begin(std::format("Enemy:{}", nameDEB.content).c_str());
 
-	ImGui::DragInt("modelIndex", &modelIndex);
-	modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
-	ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
+	// ImGui::DragInt("modelIndex", &modelIndex);
+	// modelIndex = std::clamp(modelIndex, 0I32, static_cast<int32_t>(models.size()) - 1);
+	// ImGui::DragInt("animIndex", &animIndex, 1, 0, 0);
+
+	ImGui::DragFloat3("targetPosition : ", targetPos.v);
 
 	ImGui::End();
 
@@ -232,12 +234,12 @@ void Enemy::Sensor(
 	}
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
-		if (!objWanderingCheckPoint.IsEmpty())
-		{
-			GetScene().Destroy(objWanderingCheckPoint);
-		}
-		targetPos = targetPos_;
-		followed  = true;
+		// if (!objWanderingCheckPoint.IsEmpty())
+		//{
+		//	GetScene().Destroy(objWanderingCheckPoint);
+		// }
+		// targetPos = targetPos_;
+		// followed  = true;
 	}
 	else
 	{
