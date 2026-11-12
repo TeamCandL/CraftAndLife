@@ -20,6 +20,7 @@
 #include <Game/Network/Protocols/EntityPickRequest.h>
 #include <Game/Network/Protocols/EntityPicked.h>
 #include <Game/Network/Protocols/PlayerRespawned.h>
+#include <Game/Network/Protocols/TextChated.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -34,6 +35,9 @@
 #include <Game/PlayScene/DayController.h>
 #include <Game/PlayScene/HarvestableController.h>
 #include "OtherPlayerController.h"
+#include <Game/PlayScene/PlaySceneUIController.h>
+#include <Game/PlayScene/UI/ChatTextLog.h>
+#include <Game/Manager/AudioManager.h>
 
 using enum NetworkSessionManager::State;
 
@@ -243,7 +247,10 @@ void PlayNetworkController::Update()
 				    Protocol::UpdatedDayTime dayTimeMessage{};
 				    converter.ToMessage(_event.data, dayTimeMessage);
 				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec, dayTimeMessage.dayCount);
-
+				    VCU_LOG(
+				        "UpdatedDayTime受信: currentTimeSec={}, dayCount={}",
+				        dayTimeMessage.currentTimeSec,
+				        dayTimeMessage.dayCount);
 				    break;
 			    }
 			    case ProtocolType::BreakHarvestable:
@@ -277,12 +284,37 @@ void PlayNetworkController::Update()
 				    Protocol::EntityPicked message{};
 				    converter.ToMessage(_event.data, message);
 
+				    Vec3 position = Vec3{ message.positionX, message.positionY, message.positionZ };
+
 				    if (Get<SessionManager>().RefStatus().name == message.pickerName)
 				    {
 					    VCU_LOG("自分が拾った！！");
-					    Get<Player>(objPlayer).GiveItem(
-					        message.itemId,
-					        Vec3{ message.positionX, message.positionY, message.positionZ });
+					    Get<Player>(objPlayer).GiveItem(message.itemId, position);
+				    }
+				    else
+					    VCU_LOG("他人が拾った！！");
+
+				    // エンティティ拾ったときの座標が音聞こえる範囲なら
+				    if (true)  // (Get<Transform>(objPlayer).position - position).Length() <= CanListenDistance
+				    {
+					    switch (message.itemId)
+					    {
+					    case ITEM_ID_PLAYER_ATTACK_SWORD:
+						    // 剣の音を鳴らす
+						    Get<AudioManager>().Play(swordDamagedSE);
+						    break;
+					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
+						    // 剣の音を鳴らす
+						    Get<AudioManager>().Play(greatswordDamagedSE);
+						    break;
+					    case ITEM_ID_PLAYER_ATTACK_ARROW:
+						    // 剣の音を鳴らす
+						    Get<AudioManager>().Play(impactSE);
+						    break;
+					    default:
+						    // それ以外は音なし 他の人がアイテム拾ったときの音とかもできるよ
+						    break;
+					    }
 				    }
 
 				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
@@ -299,6 +331,18 @@ void PlayNetworkController::Update()
 					    VCU_LOG("自分が生き返った！！");
 					    Get<Player>(objPlayer).Respawn(message.hp);
 				    }
+				    break;
+			    }
+			    case ProtocolType::TextChated:
+			    {
+				    Protocol::TextChated message{};
+				    converter.ToMessage(_event.data, message);
+
+				    PlaySceneUIController& playSceneUIController = Get<PlaySceneUIController>(objUIController);
+
+				    GameObject objChatTextLog = playSceneUIController.Data().objChatTextLog;
+				    Get<ChatTextLog>(objChatTextLog).AddLog(message.content);
+
 				    break;
 			    }
 			    default:
@@ -512,6 +556,10 @@ void PlayNetworkController::Update()
 				for (const auto& death : pendingDeaths)
 				{
 					enemyStateIds.push_back(death.enemyId);
+					StateValueCode::Encode(StateValue{ int32_t{ 0 } }, values);
+					AddStateName("hp");
+
+					enemyStateIds.push_back(death.enemyId);
 
 					// 死亡通知は alive = false
 					StateValueCode::Encode(StateValue{ death.alive }, values);
@@ -595,6 +643,18 @@ void PlayNetworkController::Update()
 
 			message.playerName = data.playerName;
 			message.hp         = data.hp;
+
+			networkSessionManager.Send(message);
+		}
+
+		PlaySceneUIController& playSceneUIController = Get<PlaySceneUIController>(objUIController);
+
+		std::vector<std::string> requestLogs =
+		    Get<ChatTextLog>(playSceneUIController.Data().objChatTextLog).TakeLogRequests();
+		for (auto& log : requestLogs)
+		{
+			Protocol::TextChated message{};
+			message.content = log;
 
 			networkSessionManager.Send(message);
 		}

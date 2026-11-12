@@ -464,6 +464,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EnemyHpBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.cpp" />
@@ -508,6 +509,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossName.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\ChatTextLog.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\DeathUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\CraftUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge1.cpp" />
@@ -755,6 +757,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\EntitySpawned.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntitySpawnRequest.h" />
     <ClInclude Include="Source\Game\Network\Protocols\PlayerRespawned.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\TextChated.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
@@ -769,6 +772,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyHpBar.h" />
     <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
     <ClInclude Include="Source\Game\PlayScene\IEntitySystemNetwork.h" />
@@ -823,6 +827,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossName.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\ChatTextLog.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\DeathUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\CraftUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h" />

@@ -17,6 +17,7 @@ enum ItemType
 	Backpack,           ///<	バックパック
 	EnemyAttack,        ///<	敵の攻撃アイテム
 	PlayerAttackSword,  ///<	プレイヤーの剣攻撃アイテム
+	PlayerAttackArrow,  ///<	プレイヤーの弓攻撃アイテム
 	ItemTypeMax,        ///<	その他アイテム
 };
 
@@ -103,4 +104,9 @@ struct ItemSystem : SystemObjectBase<ItemSystem, ItemSystemData>
 	/// @param _id
 	/// @return
 	Resource<Model> GetModel(const ItemId _id);
+
+	/// @brief 攻撃用アイテムIdをプレイヤーが取得可能なアイテムIdへ変換する
+	/// @param _attackItemId 攻撃用ItemId
+	/// @return アタック用アイテムId
+	ItemId ConvertAttackItemToCollectibleItem(const ItemId _attackItemId);
 };

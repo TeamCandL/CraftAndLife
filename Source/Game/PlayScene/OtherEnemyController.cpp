@@ -6,6 +6,7 @@
 #include "UI/BossName.h"
 #include "UI/BossGauge.h"
 #include "UI/BossGaugeR.h"
+#include "EnemyHpBar.h"
 #include "Enemy.h"
 #include "PlaySceneUIController.h"
 

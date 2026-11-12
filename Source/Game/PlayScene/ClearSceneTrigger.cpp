@@ -5,6 +5,7 @@
 
 #include <Game/Manager/SessionManager.h>
 #include "Player/HelthState.h"
+#include "EnemyController.h"
 
 namespace
 {
@@ -130,9 +131,47 @@ void ClearSceneTrigger::Update()
 
 	const float CURRENT_TIME = dayController.GetCurrentTimeSec();
 
-	// 3日目の昼45秒を経過したらクリア
-	if (CURRENT_DAY >= 3 && CURRENT_TIME >= 45.0f && CURRENT_TIME < 90.0f)
+	// ここでクリア条件を設定する。
+
+	bool isDragonAlive  = true;
+	bool hasDragonState = false;
+
+	if (sessionManager.RefStatus().imLobbyHost)
 	{
-		fade.StartFade(ResultType::Clear);
+		// ホスト側の EnemyController から取得
+		NetworkActorServer& networkActorServer = Get<NetworkActorServer>(Data().objNetworkActorServer);
+
+		GameObject objEnemyController = networkActorServer.GetEnemyController();
+
+		if (!objEnemyController.IsEmpty())
+		{
+			EnemyController& enemyController = Get<EnemyController>(objEnemyController);
+
+			isDragonAlive  = enemyController.IsExistEnemy(10);
+			hasDragonState = true;
+		}
+	}
+	else
+	{
+		// ゲスト側は同期されたステートから取得
+		hasDragonState = sessionManager.TryGetEnemyAlive(10, isDragonAlive);
+	}
+
+	const InSessionStatus& status = sessionManager.RefStatus();
+	if (CURRENT_DAY >= 3 && CURRENT_TIME >= 45.0f && status.currentTimeSec >= 45.0f)
+	{
+		// ドラゴン撃破でクリア
+		if (hasDragonState && !isDragonAlive)
+		{
+			fade.StartFade(ResultType::Clear);
+			return;
+		}
+
+		// 45秒過ぎた時ボスを倒せなければゲームオーバー
+		if (CURRENT_TIME >= 46.0f && status.currentTimeSec >= 46.0f)
+		{
+			fade.StartFade(ResultType::GameOver);
+			return;
+		}
 	}
 }

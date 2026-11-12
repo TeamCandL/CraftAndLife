@@ -35,13 +35,16 @@ struct EntityData
 	bool isDestroyedOnCollision{ false };  ///< 何かに触れると消されるか？ true / false
 	bool canHitToPlayer{ false };          ///< プレイヤーへ当たり判定があるか true / false
 	bool canHitToEnemy{ false };           ///< 敵への当たり判定はあるか true / false
+	bool isThrowingItemEntity{ false };    ///< アイテムとして回収可能な投げ物であるか true / false
+	bool isUnderground{ false };           ///< 地面より下にいるか true / false
 
 	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
 	float friction{ 0.9f };       ///< 摩擦力
 
-	float despawnTimeLeftSec{ 60.0f * 2.0f };        ///< 死ぬまでの時間(秒)
-	float pickupCooldownSec{ 3.0f };                 ///< 拾えない時間(秒)
-	const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };  ///< 敵の攻撃のアイテムId
+	float despawnTimeLeftSec{ 60.0f * 2.0f };                      ///< 死ぬまでの時間(秒)
+	float pickupCooldownSec{ 3.0f };                               ///< 拾えない時間(秒)
+	inline static const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };  ///< 敵の攻撃のアイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };  ///< プレイヤーの攻撃の矢アイテムId
 };
 
 /// @brief エンティティ
@@ -81,4 +84,10 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	bool CanHitToPlayer() const override;
 	bool CanHitToEnemy() const override;
 	Vec3 GetPosition() const override;
+	// IEntity を介して継承されました
+	bool IsThrowingItemEntity() const override;
+
+	/// @brief 地面の下にいるか取得
+	/// @return
+	bool IsUnderground() const override;
 };

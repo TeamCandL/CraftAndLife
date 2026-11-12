@@ -33,6 +33,15 @@ struct OtherPlayerData
 
 	PlayerRoleType role{ PlayerRoleType_Healer };
 
+	// ネットワークから受信した目標座標
+	Vec3 targetPosition{};
+
+	// 補間用
+	float positionInterpolationSpeed = 20.0f;
+
+	// 初回座標受信フラグ
+	bool isPositionInitialized = false;
+
 	int32_t animIndex{};
 	float animSpeed{ 1.0f };
 
