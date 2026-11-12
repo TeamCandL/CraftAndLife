@@ -23,6 +23,7 @@
 #include "UI/PlayerIcon2.h"
 #include "UI/PlayerIcon3.h"
 #include "UI/PlayerIcon4.h"
+#include "UI/ChatTextLog.h"
 
 void PlaySceneUIController::Start()
 {
@@ -45,5 +46,6 @@ void PlaySceneUIController::Start()
 	objBossName       = GetScene().Instantiate<BossName>(objBossInfo);
 	objBossGaugeR     = GetScene().Instantiate<BossGaugeR>(objBossInfo);
 	objBossGauge      = GetScene().Instantiate<BossGauge>(objBossInfo);
-	objCraftUI        = GetScene().Instantiate<CraftUI>(objPlayer);
+	objChatTextLog    = GetScene().Instantiate<ChatTextLog>();
+	objCraftUI        = GetScene().Instantiate<CraftUI>(objPlayer, objChatTextLog);
 }

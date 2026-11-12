@@ -20,6 +20,7 @@
 #include <Game/Network/Protocols/EntityPickRequest.h>
 #include <Game/Network/Protocols/EntityPicked.h>
 #include <Game/Network/Protocols/PlayerRespawned.h>
+#include <Game/Network/Protocols/TextChated.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -34,6 +35,8 @@
 #include <Game/PlayScene/DayController.h>
 #include <Game/PlayScene/HarvestableController.h>
 #include "OtherPlayerController.h"
+#include <Game/PlayScene/PlaySceneUIController.h>
+#include <Game/PlayScene/UI/ChatTextLog.h>
 
 using enum NetworkSessionManager::State;
 
@@ -299,6 +302,18 @@ void PlayNetworkController::Update()
 					    VCU_LOG("自分が生き返った！！");
 					    Get<Player>(objPlayer).Respawn(message.hp);
 				    }
+				    break;
+			    }
+			    case ProtocolType::TextChated:
+			    {
+				    Protocol::TextChated message{};
+				    converter.ToMessage(_event.data, message);
+
+				    PlaySceneUIController& playSceneUIController = Get<PlaySceneUIController>(objUIController);
+
+				    GameObject objChatTextLog = playSceneUIController.Data().objChatTextLog;
+				    Get<ChatTextLog>(objChatTextLog).AddLog(message.content);
+
 				    break;
 			    }
 			    default:
@@ -595,6 +610,18 @@ void PlayNetworkController::Update()
 
 			message.playerName = data.playerName;
 			message.hp         = data.hp;
+
+			networkSessionManager.Send(message);
+		}
+
+		PlaySceneUIController& playSceneUIController = Get<PlaySceneUIController>(objUIController);
+
+		std::vector<std::string> requestLogs =
+		    Get<ChatTextLog>(playSceneUIController.Data().objChatTextLog).TakeLogRequests();
+		for (auto& log : requestLogs)
+		{
+			Protocol::TextChated message{};
+			message.content = log;
 
 			networkSessionManager.Send(message);
 		}
