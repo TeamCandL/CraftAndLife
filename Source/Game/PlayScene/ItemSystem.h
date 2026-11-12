@@ -17,6 +17,7 @@ enum ItemType
 	Backpack,           ///<	バックパック
 	EnemyAttack,        ///<	敵の攻撃アイテム
 	PlayerAttackSword,  ///<	プレイヤーの剣攻撃アイテム
+	PlayerAttackArrow,  ///<	プレイヤーの弓攻撃アイテム
 	ItemTypeMax,        ///<	その他アイテム
 };
 
