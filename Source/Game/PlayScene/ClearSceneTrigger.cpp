@@ -168,10 +168,21 @@ void ClearSceneTrigger::Update()
 		}
 
 		// 45秒過ぎた時ボスを倒せなければゲームオーバー
-		if (CURRENT_TIME >= 46.0f && status.currentTimeSec >= 46.0f)
+		if (CURRENT_TIME > 45.0f && status.currentTimeSec > 45.0f)
 		{
 			fade.StartFade(ResultType::GameOver);
 			return;
 		}
+
+		// if (CURRENT_TIME > 45.0f && status.currentTimeSec > 45.0f && !hasDragonState && isDragonAlive)
+		//{
+		//	if (CURRENT_TIME >= 90.0f && status.currentTimeSec >= 90.0f && hasDragonState && !isDragonAlive)
+		//	{
+		//		//数秒後シーン遷移
+		//	}
+		//	//90秒超えたら
+		//	fade.StartFade(ResultType::GameOver);
+		//	return;
+		// }
 	}
 }
