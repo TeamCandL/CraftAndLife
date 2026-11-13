@@ -34,7 +34,8 @@ struct AudioManager : IManager
 
 	/// @brief 効果音を再生する
 	/// @param _resource 音声リソース
-	void Play(Resource<ResourceType::Audio>& _resource);
+	/// @param _volume 音量（0.0～1.0）
+	void Play(Resource<ResourceType::Audio>& _resource, float _volume = 1.0f);
 
 	// 2つの効果音を順番に再生する
 	void PlaySequence(Resource<ResourceType::Audio>& _first, Resource<ResourceType::Audio>& _next);
