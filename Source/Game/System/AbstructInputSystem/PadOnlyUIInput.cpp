@@ -7,27 +7,27 @@ PadOnlyUIInput::PadOnlyUIInput(
 {
 }
 
-bool PadOnlyUIInput::IsMovedUp() const
+bool PadOnlyUIInput::IsMovedUp()
 {
 	return abstructInputSystem_.GetPadInputSystem().IsFlickedUp(GamePadInputStick::Left) ||
 	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GameInputGamepadButtons::GameInputGamepadDPadUp);
 }
 
-bool PadOnlyUIInput::IsMovedDown() const
+bool PadOnlyUIInput::IsMovedDown()
 {
 	return abstructInputSystem_.GetPadInputSystem().IsFlickedDown(GamePadInputStick::Left) ||
 	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(
 	           GameInputGamepadButtons::GameInputGamepadDPadDown);
 }
 
-bool PadOnlyUIInput::IsMovedLeft() const
+bool PadOnlyUIInput::IsMovedLeft()
 {
 	return abstructInputSystem_.GetPadInputSystem().IsFlickedLeft(GamePadInputStick::Left) ||
 	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(
 	           GameInputGamepadButtons::GameInputGamepadDPadLeft);
 }
 
-bool PadOnlyUIInput::IsMovedRight() const
+bool PadOnlyUIInput::IsMovedRight()
 {
 	return abstructInputSystem_.GetPadInputSystem().IsFlickedRight(GamePadInputStick::Left) ||
 	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(
