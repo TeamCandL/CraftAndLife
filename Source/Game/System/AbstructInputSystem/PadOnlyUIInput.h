@@ -19,6 +19,9 @@ class PadOnlyUIInput : public IUIInput
 	bool IsSelected() const override;
 	bool IsChanneled() const override;
 
+	/// @brief 更新処理
+	virtual void Update() override {}
+
   private:
 	AbstructInputSystem& abstructInputSystem_;
 };

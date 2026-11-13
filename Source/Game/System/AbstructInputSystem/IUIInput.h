@@ -1,10 +1,11 @@
 #pragma once
 #include <Game/Game.h>
+#include "IInput.h"
 
 /// @brief UIの入力抽象化インタフェース
-class IUIInput
+class IUIInput : public IInput
 {
-public:
+  public:
 	/// @brief コンストラクタ
 	IUIInput() = default;
 	/// @brief デストラクタ

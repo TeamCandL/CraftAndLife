@@ -127,7 +127,6 @@ bool TutorialPlayerInput::IsMovedHotbarLeft() const
 	switch (tutorialSystem_.GetFocusType())
 	{
 	case TutorialForcusType_SelectBackpack:
-	case TutorialForcusType_OpenBackpack:
 	case TutorialForcusType_None_Max:
 		return __super::IsMovedHotbarLeft();
 	default:
@@ -140,7 +139,6 @@ bool TutorialPlayerInput::IsMovedHotbarRight() const
 	switch (tutorialSystem_.GetFocusType())
 	{
 	case TutorialForcusType_SelectBackpack:
-	case TutorialForcusType_OpenBackpack:
 	case TutorialForcusType_None_Max:
 		return __super::IsMovedHotbarRight();
 	default:

@@ -19,6 +19,9 @@ class NormalUIInput : public IUIInput
 	virtual bool IsSelected() const override;
 	virtual bool IsChanneled() const override;
 
+	/// @brief 更新処理
+	virtual void Update() override {}
+
   protected:
 	AbstructInputSystem& abstructInputSystem_;
 };
