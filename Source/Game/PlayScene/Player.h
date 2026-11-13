@@ -115,6 +115,9 @@ struct PlayerData
 	// 死亡時のSE
 	Resource<Audio> deathSE{ "BGM_SE/Death.mp3" };
 
+	// バッグを開けたとき（クラフト画面を開いた時）のSE
+	Resource<Audio> openBagSE{ "BGM_SE/OpenBag.mp3" };
+
 	// 足音の間隔（秒）
 	const float FOOTSTEP_INTERVAL{ 0.4f };
 

@@ -2,6 +2,7 @@
 #include "ItemActionBackpack.h"
 #include "../Player.h"
 #include "../PlayerHand.h"
+#include <Game/Manager/AudioManager.h>
 
 void ItemActionBackpack::Update(
     const ItemId _itemId,
@@ -18,6 +19,12 @@ void ItemActionBackpack::Update(
 
 	if (pPlayerInput->IsActionBegin())
 	{
+		// バッグを開くときだけSEを再生
+		if (!_playerData.isOpenCraftUI)
+		{
+			Get<AudioManager>().Play(_playerData.openBagSE);
+		}
+
 		_playerData.isOpenCraftUI = !_playerData.isOpenCraftUI;
 	}
 }
