@@ -15,15 +15,15 @@ void EnemyHpBar::Update()
 	// 敵から最新のHPと座標を同期
 	if (!ownerEnemy.IsEmpty())
 	{
-		Enemy& enemy    = Get<Enemy>(ownerEnemy);
-		m_worldPosition = enemy.GetPosition();
-		hp              = enemy.Data().hp;
+		Enemy& enemy = Get<Enemy>(ownerEnemy);
+		SetTargetPosition(enemy.GetPosition());
+		SetHp(enemy.Data().hp);
 
-		if (maxHp > 0)
-		{
-			hpRatio = static_cast<float>(hp) / static_cast<float>(maxHp);
-			hpRatio = std::clamp(hpRatio, 0.0f, 1.0f);
-		}
+		// if (maxHp > 0)
+		//{
+		//	hpRatio = static_cast<float>(hp) / static_cast<float>(maxHp);
+		//	hpRatio = std::clamp(hpRatio, 0.0f, 1.0f);
+		// }
 	}
 
 	// 1. 敵のワールド座標に頭上オフセットを加算
@@ -40,12 +40,15 @@ void EnemyHpBar::Update()
 	// 4. XMVector3Projectで2D画面座標に変換
 	DirectX::XMVECTOR projectedPosition = DirectX::XMVector3Project(
 	    DirectX::XMLoadFloat3(&worldPos),
+
 	    0.0f,
 	    0.0f,
 	    screenSize.x,
 	    screenSize.y,
+
 	    0.0f,
 	    1.0f,
+
 	    camera.projectionMatrix,
 	    camera.viewMatrix,
 	    DirectX::XMMatrixIdentity());
@@ -78,10 +81,15 @@ void EnemyHpBar::Update()
 	barTransform.position = Vec2{ barX, barY };
 	barTransform.scale    = Vec2{ barWidth * hpRatio, barHeight };  // HP割合に応じて横幅が縮む
 
-	ImGui::Begin("BarUIPos");
+	/*ImGui::Begin("BarUIPos");
 	ImGui::DragFloat2("barTransform : ", barTransform.position.v);
 	ImGui::DragFloat2("bgTransform : ", backgroundTransform.position.v);
-	ImGui::End();
+	ImGui::End();*/
+
+	if (hp <= 0)
+	{
+		DestroyMe();
+	}
 }
 
 void EnemyHpBar::SetTargetPosition(

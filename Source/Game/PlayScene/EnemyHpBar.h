@@ -35,7 +35,7 @@ struct EnemyHpBarData
 	Component<UIImage> backgroundImage{ bgTexture };*/
 
 	// --- 減るゲージ（バー）用（手前・レイヤー10000） ---
-	Resource<Texture> barTexture{ "Image/UI/Mygauge.png" };
+	Resource<Texture> barTexture{ "Image/UI/BossGauge.png" };
 	Component<UITransform> barTransform{ Vec2::Zero(), Vec2{ 200, 16 }, UILayerOrder{ 2 }.WithUser(10000) };
 	Component<UIImage> barImage{ barTexture };
 
