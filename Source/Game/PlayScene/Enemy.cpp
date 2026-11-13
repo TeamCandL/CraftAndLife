@@ -236,34 +236,34 @@ void Enemy::Sensor(
 		float playerDist = (objPlayer._pos - transform.position).Length();
 		if (playerDist <= visibilityDist)
 		{
-			if (objPlayer._attentionLevel >= targetAttentionLevel)
+			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
+			float visibilityDot = std::cosf(visibilityAngle);
+			if (dot <= visibilityDot)
 			{
-				if (objPlayer._attentionLevel > targetAttentionLevel)
+				if (objPlayer._attentionLevel >= targetAttentionLevel)
 				{
-					targetPos_           = objPlayer._pos;
-					targetDist           = playerDist;
-					targetAttentionLevel = objPlayer._attentionLevel;
-				}
-				else if (targetDist < 0.0f)
-				{
-					targetPos_           = objPlayer._pos;
-					targetDist           = playerDist;
-					targetAttentionLevel = objPlayer._attentionLevel;
-				}
-				else
-				{
-					if (targetDist > playerDist)
+					if (objPlayer._attentionLevel > targetAttentionLevel)
 					{
 						targetPos_           = objPlayer._pos;
 						targetDist           = playerDist;
 						targetAttentionLevel = objPlayer._attentionLevel;
 					}
+					else if (targetDist < 0.0f)
+					{
+						targetPos_           = objPlayer._pos;
+						targetDist           = playerDist;
+						targetAttentionLevel = objPlayer._attentionLevel;
+					}
+					else
+					{
+						if (targetDist > playerDist)
+						{
+							targetPos_           = objPlayer._pos;
+							targetDist           = playerDist;
+							targetAttentionLevel = objPlayer._attentionLevel;
+						}
+					}
 				}
-			}
-			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
-			float visibilityDot = std::cosf(visibilityAngle);
-			if (dot <= visibilityDot)
-			{
 			}
 		}
 
