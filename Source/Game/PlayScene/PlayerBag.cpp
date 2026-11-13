@@ -6,7 +6,7 @@
 
 PlayerBagData::PlayerBagData()
 {
-	items.resize(initialCapacity, BagItemStack::EmptyStack());
+	items.resize(initialCapacity);
 }
 
 void PlayerBag::Start() {}
@@ -81,7 +81,7 @@ void PlayerBag::ExpansionCapacity(
     const unsigned _capacity)
 {
 	// バッグの容量を拡張。新規スロットは空の状態で追加する
-	items.resize(items.size() + _capacity, BagItemStack::EmptyStack());
+	items.resize(items.size() + _capacity);
 }
 
 bool PlayerBag::CanCraft(
@@ -134,7 +134,7 @@ bool PlayerBag::CanAddItem(
 	}
 
 	// 空スロットを検索
-	auto emptySlot = std::find(items.begin(), items.end(), BagItemStack::EmptyStack());
+	auto emptySlot = std::find(items.begin(), items.end(), BagItemStack{});
 	if (emptySlot != items.end())
 	{
 		return true;
@@ -183,7 +183,7 @@ bool PlayerBag::TryCraft(
 
 		if (slot.count == 0)
 		{
-			slot = BagItemStack::EmptyStack();
+			slot.Reset();
 		}
 	}
 
@@ -250,8 +250,9 @@ void PlayerBag::AddItem(
 	// 追加するアイテムの残り個数がある場合は、空のスロットに追加する
 	if (remain > 0)
 	{
+		BagItemStack emptyStack{};
 		// 空スロットの位置を取得
-		auto emptySlotBegin = std::find(items.begin(), items.end(), BagItemStack::EmptyStack());
+		auto emptySlotBegin = std::find(items.begin(), items.end(), emptyStack);
 
 		// 先頭の空スロットから順に追加していく
 		for (auto itr = emptySlotBegin; itr != items.end(); itr++)
@@ -318,8 +319,19 @@ std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
 
 void PlayerBag::ClearItems()
 {
-	BagItemStack emptyStack = BagItemStack::EmptyStack();
-	std::fill(items.begin(), items.end(), emptyStack);
+	// BagItemStack emptyStack = BagItemStack::EmptyStack();
+	for (BagItemStack& stack : items)
+	{
+		ResetItemStack(stack);
+	}
+}
+
+void PlayerBag::UpdateUI()
+{
+	for (int i = 0; i < items.size(); i++)
+	{
+		const int offset = slotEmptyImageExtents * i;
+	}
 }
 
 void PlayerBag::Sort()
@@ -371,4 +383,30 @@ int PlayerBag::FindCraftMaterialSlot(
 
 	auto idx = std::distance(items.begin(), foundItemStack);
 	return static_cast<int>(idx);
+}
+
+void PlayerBag::ResetItemStack(
+    BagItemStack& _stack)
+{
+	_stack.id                                    = BagItemStack::EMPTY_STACK_ITEM_ID;
+	_stack.count                                 = 0;
+	_stack.maxStack                              = 64;
+	Get<UIImage>(_stack.backgroundImage).texture = stackBackgroundTexture;
+	Get<UIImage>(_stack.itemIconImage).texture   = emptyItemIconTexture;
+	Get<UIText>(_stack.itemCountText).content    = "";
+}
+
+void BagItemStack::Reset()
+{
+	id       = EMPTY_STACK_ITEM_ID;
+	count    = 0;
+	maxStack = 64;
+}
+
+void BagItemStack::CreateUI(
+    SceneBase& _sceneBase)
+{
+	backgroundImage = _sceneBase.Instantiate<ImageObject>();
+	itemIconImage   = _sceneBase.Instantiate<ImageObject>();
+	itemCountText   = _sceneBase.Instantiate<ImageObject>();
 }

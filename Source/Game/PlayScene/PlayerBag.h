@@ -1,6 +1,8 @@
 #pragma once
 #include <Game/Game.h>
 #include <Game/PlayScene/ItemSystem.h>
+#include <Game/UI/ImageObject.h>
+#include <Game/UI/TextObject.h>
 #include <limits>
 
 struct BagItemStack
@@ -12,17 +14,27 @@ struct BagItemStack
 	// アイテムの最大スタック数
 	int maxStack{ 64 };
 
+	// BagItemStack(SceneBase& _sceneBase);
 	/// @brief 空か否か
 	/// @return 空ならtrue
 	bool IsEmpty() const
 	{
 		return count <= 0 || id == EMPTY_STACK_ITEM_ID;
 	}
-	static BagItemStack EmptyStack()
+	// static BagItemStack EmptyStack()
+	//{
+	//	return BagItemStack{};
+	// }
+	void Reset();
+	bool operator==(
+	    const BagItemStack& _other) const
 	{
-		return BagItemStack{};
+		return id == _other.id && count == _other.count;
 	}
-	bool operator==(const BagItemStack& _other) const = default;
+	void CreateUI(SceneBase& _sceneBase);
+	GameObject backgroundImage{};
+	GameObject itemIconImage{};
+	GameObject itemCountText{};
 };
 
 // クラフト時の、素材の充足状況(足りているか、いくら入っているか)をまとめた構造体
@@ -47,6 +59,20 @@ struct PlayerBagData
 	// クラフト成功・失敗SE
 	Resource<Audio> craftingSE{ "BGM_SE/Crafting.mp3" };
 	Resource<Audio> mistakeSE{ "BGM_SE/Mistake.mp3" };
+
+	Vec2 begin{ 425, 624 };
+	Vec2 itemStackImageSize{ 90, 90 };
+	// スタックの中心座標(パネルとの相対座標)
+	Vec2 stackCenter{ 67, 64 };
+	// スタックのアイテム数の座標(パネルとの相対座標)
+	Vec2 leftSlotItemCountBegin{ 67, 58 };
+	// 非選択時のスロット画像のサイズ
+	int slotEmptyImageExtents{ 90 };
+	// 選択時のスロット画像のサイズ
+	int slotSelectedImageExtents{ 110 };
+	Resource<Texture> stackBackgroundTexture{ "Image/UI/slot_empty.png" };
+	Resource<Texture> stackSelectedBackgroundTexture{ "Image/UI/slot_selected.png" };
+	Resource<Texture> emptyItemIconTexture{ "Image/EmptyItem.png" };
 };
 
 struct PlayerBag : ObjectBase<PlayerBagData>
@@ -92,11 +118,13 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	void ClearItems();
 
   private:
+	void UpdateUI();
 	void Sort();
-
 	/// @brief
 	/// クラフトに必要な条件を満たしているアイテムのスロットを検索して、見つかればそのインデックスを返す。見つからなければ-1を返す
 	/// @param _craftInfo クラフトに必要なアイテムの情報
 	/// @return スロットへのインデックス。見つからなければ-1
 	int FindCraftMaterialSlot(const CraftInfo& _craftInfo) const;
+	void ResetItemStack(BagItemStack& _stack);
+	void CreateStackUI(BagItemStack& _stack);
 };
