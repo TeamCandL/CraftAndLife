@@ -12,9 +12,9 @@ void Name2::Update()
 	    {
 		    names.push_back(name);
 	    });
-	if (names.size() <= 1)
+	if (names.size() <= 2)
 	{
 		return;
 	}
-	text.content = names[1];
+	text.content = names[2];
 }
