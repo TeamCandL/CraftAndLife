@@ -6,9 +6,11 @@
 #include "UI/BossName.h"
 #include "UI/BossGauge.h"
 #include "UI/BossGaugeR.h"
-#include "EnemyHpBar.h"
+#include "OtherEnemyHpBar.h"
 #include "Enemy.h"
 #include "PlaySceneUIController.h"
+
+#include "../Manager/SessionManager/SessionStateReader.h"
 
 namespace
 {
@@ -51,6 +53,20 @@ void OtherEnemyController::Update()
 			    VCU_LOG("OtherEnemy生成開始: ID={}", enemyId);
 
 			    GameObject obj = GetScene().Instantiate<OtherEnemy>(enemyId, type);
+
+			    SessionManager& sessionManager = Get<SessionManager>();
+			    SessionStateReader reader(sessionManager);
+
+			    StateTarget target = StateTarget::Enemy(enemyId);
+			    int32_t _hp        = 0;
+			    if (!reader.TryGetState(target, "hp", _hp))
+			    {
+				    VCU_LOG("OtherEnemyのHP取得失敗: ID={}", enemyId);
+				    return;
+			    }
+			    InSessionStatus::EnemyStatus enemyStatus = sessionManager.RefEnemyStatus(enemyId);
+			    Vec3 _position                           = enemyStatus.position;
+			    objOtherEnemyHpBar.push_back(GetScene().Instantiate<OtherEnemyHpBar>(obj, _position, _hp, _hp));
 
 			    VCU_LOG("生成後のオブジェクトが空？ {}", obj.IsEmpty());
 

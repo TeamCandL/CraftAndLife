@@ -118,6 +118,9 @@ struct PlayerData
 	// バッグを開けたとき（クラフト画面を開いた時）のSE
 	Resource<Audio> openBagSE{ "BGM_SE/OpenBag.mp3" };
 
+	// 剣・大剣の攻撃音
+	Resource<Audio> swingMissSE{ "BGM_SE/Swing Miss.mp3" };
+
 	// 足音の間隔（秒）
 	const float FOOTSTEP_INTERVAL{ 0.4f };
 

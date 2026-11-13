@@ -24,6 +24,25 @@ void EntitySystem::Update()
 			continue;
 		}
 
+		if (Get<SessionManager>().RefStatus().imLobbyHost && entity.CanHitToHarvestable())
+		{
+			DynamicOBB* pDynamicOBB = TryGet<DynamicOBB>(obj);
+
+			if (pDynamicOBB)
+			{
+				for (auto& info : pDynamicOBB->hitGameObjects)
+				{
+					Name* pName = TryGet<Name>(info.gameObject);
+
+					if (pName && pName->content == "ハーベスタブル")
+					{
+						entity.SetUnderground(true);
+						break;
+					}
+				}
+			}
+		}
+
 		if (entity.IsThrowingItemEntity())
 		{
 			if (entity.IsUnderground())

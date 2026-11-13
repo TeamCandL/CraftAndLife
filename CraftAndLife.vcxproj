@@ -473,6 +473,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionShield.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemyHpBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
@@ -788,6 +789,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBar.h" />
     <ClInclude Include="Source\Game\PlayScene\Tutorial\ITutorialObserver.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRespawnedNetworkData.h" />
@@ -833,6 +835,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossName.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\ChatTextLog.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\ChatTextLogBack.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\DeathUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\CraftUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h" />

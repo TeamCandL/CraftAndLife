@@ -12,6 +12,8 @@ struct OtherEnemyControllerData
 
 	std::unordered_map<int, GameObject> idToObjOtherEnemy{};  ///< ほかの敵オブジェクト
 	GameObject objPlaySceneUIController{};                    ///< UIコントローラーのオブジェクト
+
+	std::vector<GameObject> objOtherEnemyHpBar;
 };
 
 /// @brief ほか敵オブジェクトを操作する
