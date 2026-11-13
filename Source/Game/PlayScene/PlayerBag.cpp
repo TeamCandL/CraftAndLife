@@ -4,17 +4,43 @@
 
 #include <numeric>
 
-PlayerBagData::PlayerBagData()
+namespace
+{
+	bool CannotStack(
+	    ItemType _type)
+	{
+		switch (_type)
+		{
+		case ItemType::Shield:
+		case ItemType::Weapons:
+		case ItemType::WeaponBow:
+		case ItemType::Tools:
+		case ItemType::Backpack:
+			return true;
+		default:
+			return false;
+		}
+		return false;
+	}
+}  // namespace
+PlayerBagData::PlayerBagData() {}
+
+PlayerBag::PlayerBag() {}
+
+void PlayerBag::Start()
 {
 	items.resize(initialCapacity);
+	for (int i = 0; i < items.size(); i++)
+	{
+		items[i].CreateUI(GetScene());
+	}
 }
-
-void PlayerBag::Start() {}
 
 void PlayerBag::Update()
 {
 	static ItemId id{ 0 };
 	auto& status = Get<SessionManager>().RefStatus();
+	UpdateUI();
 #ifdef USE_IMGUI
 	// デバッグ用のUI
 	ImGui::Begin(std::format("Bag:{}", status.name.c_str()).c_str());
@@ -80,8 +106,13 @@ std::vector<ItemStack> PlayerBag::GetItemStacks()
 void PlayerBag::ExpansionCapacity(
     const unsigned _capacity)
 {
+	size_t sizePrev = items.size();
 	// バッグの容量を拡張。新規スロットは空の状態で追加する
 	items.resize(items.size() + _capacity);
+	for (int i = sizePrev - 1; i < items.size(); i++)
+	{
+		ResetItemStack(items[i]);
+	}
 }
 
 bool PlayerBag::CanCraft(
@@ -330,7 +361,51 @@ void PlayerBag::UpdateUI()
 {
 	for (int i = 0; i < items.size(); i++)
 	{
-		const int offset = slotEmptyImageExtents * i;
+		const int offset  = slotEmptyImageExtents * i;
+		const Vec2 center = { begin.x + stackCenter.x + offset, begin.y + stackCenter.y };
+		// TODO: スロットが選択されているか
+
+		// 選択状態によって画像を変える
+		auto& item = items[i];
+		if (item.selected)
+		{
+			Get<UIImage>(item.backgroundImage).texture = stackSelectedBackgroundTexture;
+			UITransform& backgroundTransform           = Get<UITransform>(item.backgroundImage);
+			const int extentsHalf                      = slotSelectedImageExtents / 2;
+			backgroundTransform.position               = Vec2{ center.x - extentsHalf, center.y - extentsHalf };
+			backgroundTransform.scale                  = Vec2{ slotSelectedImageExtents, slotSelectedImageExtents };
+		}
+		else
+		{
+			Get<UIImage>(item.backgroundImage).texture = stackBackgroundTexture;
+			UITransform& backgroundTransform           = Get<UITransform>(item.backgroundImage);
+			const int extentsHalf                      = slotEmptyImageExtents / 2;
+			backgroundTransform.position               = Vec2{ center.x - extentsHalf, center.y - extentsHalf };
+			backgroundTransform.scale                  = Vec2{ slotEmptyImageExtents, slotEmptyImageExtents };
+		}
+
+		// NOTE: ゲームループによる更新順番の関係上、ここでワールド行列を計算する必要あり
+		CalculateUIWorld(item);
+		ItemId id                      = item.id == BagItemStack::EMPTY_STACK_ITEM_ID ? EMPTY_ITEM_ID : item.id;
+		Resource<Texture> itemImageRes = Get<ItemSystem>().GetInfo(id)._imageId;
+		Get<UIImage>(item.itemIconImage).texture = itemImageRes;
+
+		constexpr int itemSize{ 64 };
+		const int itemSizeHalf{ itemSize / 2 };
+		UITransform& transform = Get<UITransform>(item.itemIconImage);
+		transform.position     = Vec2{ center.x - itemSizeHalf, center.y - itemSizeHalf };
+		transform.scale        = Vec2{ itemSize, itemSize };
+
+		// スロットのアイテム数のテキスト
+		std::string itemCountStr = "";
+		ItemType type            = Get<ItemSystem>().GetInfo(id)._type;
+
+		if (CannotStack(type) == false && id != EMPTY_ITEM_ID)
+		{
+			itemCountStr = std::to_string(item.count);
+		}
+		Get<UITransform>(item.itemCountText).position = center;
+		Get<UIText>(item.itemCountText).content       = itemCountStr;
 	}
 }
 
@@ -396,6 +471,16 @@ void PlayerBag::ResetItemStack(
 	Get<UIText>(_stack.itemCountText).content    = "";
 }
 
+void PlayerBag::CalculateUIWorld(
+    BagItemStack& _stack)
+{
+	using namespace DirectX;
+	UITransform& transform = Get<UITransform>(_stack.backgroundImage);
+	transform.uiWorld      = transform.uiLocal =
+	    XMMatrixIdentity() * DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, 1.0f) *
+	    DirectX::XMMatrixTranslation(transform.position.x, transform.position.y, 0.0f);
+}
+
 void BagItemStack::Reset()
 {
 	id       = EMPTY_STACK_ITEM_ID;
@@ -408,5 +493,5 @@ void BagItemStack::CreateUI(
 {
 	backgroundImage = _sceneBase.Instantiate<ImageObject>();
 	itemIconImage   = _sceneBase.Instantiate<ImageObject>();
-	itemCountText   = _sceneBase.Instantiate<ImageObject>();
+	itemCountText   = _sceneBase.Instantiate<TextObject>();
 }

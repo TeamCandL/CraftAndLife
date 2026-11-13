@@ -13,7 +13,7 @@ struct BagItemStack
 	int count{ 0 };
 	// アイテムの最大スタック数
 	int maxStack{ 64 };
-
+	bool selected{ false };
 	// BagItemStack(SceneBase& _sceneBase);
 	/// @brief 空か否か
 	/// @return 空ならtrue
@@ -77,6 +77,7 @@ struct PlayerBagData
 
 struct PlayerBag : ObjectBase<PlayerBagData>
 {
+	PlayerBag();
 	void Start() override;
 	void Update() override;
 
@@ -127,4 +128,5 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	int FindCraftMaterialSlot(const CraftInfo& _craftInfo) const;
 	void ResetItemStack(BagItemStack& _stack);
 	void CreateStackUI(BagItemStack& _stack);
+	void CalculateUIWorld(BagItemStack& _stack);
 };

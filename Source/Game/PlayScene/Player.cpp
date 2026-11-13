@@ -23,6 +23,17 @@
 #include <Game/PlayScene/DebugPoint.h>
 #include <shigaLibrary/SgRandom.h>
 
+struct A
+{
+	void Ins(
+	    SceneBase& _sceneBase)
+	{
+		_sceneBase.Instantiate<ImageObject>();
+		_sceneBase.Instantiate<ImageObject>();
+		_sceneBase.Instantiate<TextObject>();
+	}
+};
+
 void Player::Start()
 {
 #ifdef _DEBUG
@@ -51,8 +62,12 @@ void Player::Start()
 
 	// バッグ作成
 	objPlayerBag = GetScene().Instantiate<PlayerBag>();
-
-	// ホットバー作成
+	// for (int i = 0; i < 20; i++)
+	//{
+	//	A a;
+	//	a.Ins(GetScene());
+	// }
+	//  ホットバー作成
 	objHotbar = GetScene().Instantiate<HotBar>();
 
 	// ホットバーが選択するアイテムが切り替わった際に呼ばれるコールバックをセット
@@ -97,6 +112,10 @@ void Player::Start()
 			}
 		}
 	}
+
+	// GetScene().Instantiate<ImageObject>();
+	// GetScene().Instantiate<ImageObject>();
+	// GetScene().Instantiate<TextObject>();
 }
 
 void Player::Update()
