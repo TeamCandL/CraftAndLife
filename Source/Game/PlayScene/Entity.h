@@ -35,6 +35,7 @@ struct EntityData
 	bool isDestroyedOnCollision{ false };  ///< 何かに触れると消されるか？ true / false
 	bool canHitToPlayer{ false };          ///< プレイヤーへ当たり判定があるか true / false
 	bool canHitToEnemy{ false };           ///< 敵への当たり判定はあるか true / false
+	bool canHitToHarvestable{ false };     ///< ハーベスタブルオブジェクトへ当たるか true / false
 	bool isThrowingItemEntity{ false };    ///< アイテムとして回収可能な投げ物であるか true / false
 	bool isUnderground{ false };           ///< 地面より下にいるか true / false
 
@@ -90,4 +91,15 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	/// @brief 地面の下にいるか取得
 	/// @return
 	bool IsUnderground() const override;
+
+	bool CanHitToHarvestable() const override
+	{
+		return canHitToHarvestable;
+	}
+
+	void SetUnderground(
+	    const bool _isUnderground) override
+	{
+		isUnderground = _isUnderground;
+	}
 };
