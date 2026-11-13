@@ -23,9 +23,11 @@ namespace EnemyParam
 	const std::vector<float> VisibilityDist{ 30.0f, 65.0f, 45.0f, 25.0f, 75.0f };        /// 視認距離
 	const std::vector<float> VisibilityAngle{ 120.0f, 200.0f, 300.0f, 240.0f, 360.0f };  /// 視認角度
 	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 2.5f, 1.0f, 3.0f };             /// 攻撃クールタイム
-	const std::vector<float> RotationAnglePerSec{ 15.5f, 13.0f, 30.0f, 27.5f, 15.5f };   /// 回転速度
+	const std::vector<float> RotationAnglePerSec{ 22.5f, 18.0f, 45.0f, 30.5f, 25.5f };   /// 回転速度
 	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };                      /// モデルの大きさ
 	const std::vector<int32_t> DropItemId{ 9, 9, 10, 11, 12 };                           /// ドロップアイテムID
+	const std::vector<int32_t> DropMinCount{ 1, 2, 1, 1, 2 };                            /// ドロップアイテム最小個数
+	const std::vector<int32_t> DropMaxCount{ 1, 4, 3, 2, 3 };                            /// ドロップアイテム最大個数
 }  // namespace EnemyParam
 
 struct StateRegistry;
@@ -57,7 +59,10 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[static_cast<int>(EnemyType::Skeleton)];
 		scale               = EnemyParam::Scale[static_cast<int>(EnemyType::Skeleton)];
 		dropItemID          = EnemyParam::DropItemId[static_cast<int>(EnemyType::Skeleton)];
-		transform.scale     = Vec3::One() * scale;
+		dropMinCount        = EnemyParam::DropMinCount[static_cast<int>(EnemyType::Skeleton)];
+		dropMaxCount        = EnemyParam::DropMaxCount[static_cast<int>(EnemyType::Skeleton)];
+
+		transform.scale = Vec3::One() * scale;
 	}
 	/// @brief 位置指定生成
 	/// @param position_ 位置
@@ -81,6 +86,8 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[static_cast<int>(EnemyType::Skeleton)];
 		scale               = EnemyParam::Scale[static_cast<int>(EnemyType::Skeleton)];
 		dropItemID          = EnemyParam::DropItemId[static_cast<int>(EnemyType::Skeleton)];
+		dropMinCount        = EnemyParam::DropMinCount[static_cast<int>(EnemyType::Skeleton)];
+		dropMaxCount        = EnemyParam::DropMaxCount[static_cast<int>(EnemyType::Skeleton)];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 種類指定生成
@@ -107,6 +114,8 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
 		dropItemID          = EnemyParam::DropItemId[enemyType_];
+		dropMinCount        = EnemyParam::DropMinCount[enemyType_];
+		dropMaxCount        = EnemyParam::DropMaxCount[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 位置、種類指定生成
@@ -134,6 +143,8 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
 		dropItemID          = EnemyParam::DropItemId[enemyType_];
+		dropMinCount        = EnemyParam::DropMinCount[enemyType_];
+		dropMaxCount        = EnemyParam::DropMaxCount[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief
@@ -165,6 +176,8 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
 		dropItemID          = EnemyParam::DropItemId[enemyType_];
+		dropMinCount        = EnemyParam::DropMinCount[enemyType_];
+		dropMaxCount        = EnemyParam::DropMaxCount[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 
@@ -254,7 +267,9 @@ struct EnemyData
 	float rotationAnglePerSec{};          ///< 回転速度
 	float torque{};                       ///< 回転力
 
-	int32_t dropItemID{};  ///< ドロップアイテムのID
+	int32_t dropItemID{};    ///< ドロップアイテムのID
+	int32_t dropMinCount{};  ///< ドロップアイテムの最小個数
+	int32_t dropMaxCount{};  ///< ドロップアイテムの最大個数
 
 	// 死亡演出関連
 	bool isDead{ false };                      // 死亡演出中かどうか

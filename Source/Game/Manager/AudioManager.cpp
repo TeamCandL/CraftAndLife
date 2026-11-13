@@ -8,7 +8,8 @@ void AudioManager::Start()
 }
 
 void AudioManager::Play(
-    Resource<ResourceType::Audio>& _resource)
+    Resource<ResourceType::Audio>& _resource,
+    float _volume)
 {
 	AudioResource& audio = _resource.Get();
 
@@ -24,6 +25,9 @@ void AudioManager::Play(
 	{
 		return;
 	}
+
+	// 音量を設定
+	pSourceVoice->SetVolume(std::clamp(_volume, 0.0f, 1.0f));
 
 	const XAUDIO2_BUFFER BUFFER{
 		.Flags      = XAUDIO2_END_OF_STREAM,

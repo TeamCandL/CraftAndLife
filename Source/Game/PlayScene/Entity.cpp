@@ -41,7 +41,10 @@ void Entity::Start()
 	switch (itemId)
 	{
 	case ITEM_ID_PLAYER_ATTACK_ARROW:
-		// case ITEM_ID_ENEMY_ATTACK_STRING:
+		isThrowingItemEntity = true;  // 投げ物
+		break;
+	case ITEM_ID_ENEMY_ATTACK_STRING:
+		canHitToHarvestable  = true;
 		isThrowingItemEntity = true;  // 投げ物
 		break;
 	default:
@@ -87,7 +90,7 @@ void Entity::Update()
 	const float HEIGHT = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 	if (HEIGHT >= transform.position.y + deltaY)
 	{
-		if (isThrowingItemEntity)
+		if (isThrowingItemEntity && itemId != ITEM_ID_ENEMY_ATTACK_STRING)
 		{
 			isUnderground = true;
 		}
@@ -108,7 +111,7 @@ void Entity::Update()
 
 	if (isDestroyedOnCollision)
 	{
-		transform.position.y = HEIGHT;
+		transform.position.y = HEIGHT + 1.0f;
 	}
 
 	// TODO: isDestroyedOnCollisionこれうそ
