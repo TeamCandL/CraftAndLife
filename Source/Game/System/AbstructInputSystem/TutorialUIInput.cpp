@@ -1,7 +1,7 @@
 #include "pch\pch.h"
 #include "TutorialUIInput.h"
 
-bool TutorialUIInput::IsMovedUp() const
+bool TutorialUIInput::IsMovedUp()
 {
 	switch (tutorialSystem_.GetFocusType())
 	{
@@ -12,7 +12,7 @@ bool TutorialUIInput::IsMovedUp() const
 	}
 }
 
-bool TutorialUIInput::IsMovedDown() const
+bool TutorialUIInput::IsMovedDown()
 {
 	switch (tutorialSystem_.GetFocusType())
 	{
@@ -23,7 +23,7 @@ bool TutorialUIInput::IsMovedDown() const
 	}
 }
 
-bool TutorialUIInput::IsMovedLeft() const
+bool TutorialUIInput::IsMovedLeft()
 {
 	switch (tutorialSystem_.GetFocusType())
 	{
@@ -34,7 +34,7 @@ bool TutorialUIInput::IsMovedLeft() const
 	}
 }
 
-bool TutorialUIInput::IsMovedRight() const
+bool TutorialUIInput::IsMovedRight()
 {
 	switch (tutorialSystem_.GetFocusType())
 	{
