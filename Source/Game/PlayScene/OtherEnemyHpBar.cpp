@@ -105,4 +105,13 @@ void OtherEnemyHpBar::SetHp(
     const int32_t _hp)
 {
 	hp = _hp;
+	if (maxHp > 0)
+	{
+		hpRatio = static_cast<float>(hp) / static_cast<float>(maxHp);
+	}
+	else
+	{
+		hpRatio = 1.0f;
+	}
+	hpRatio = std::clamp(hpRatio, 0.0f, 1.0f);
 }
