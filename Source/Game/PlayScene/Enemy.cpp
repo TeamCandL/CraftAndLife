@@ -31,9 +31,17 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
-	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	// テスト用コード
+	/*if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-		hp -= 100;
+	    hp -= 100;
+	}*/
+
+	if (isDead)
+	{
+		UpdateDeathAnimation();
+		VCU_LOG("死亡アニメーション中");
+		return;
 	}
 
 	if (!alive)
@@ -52,7 +60,7 @@ void Enemy::Update()
 	{
 		hp = 0;
 		SetAlive(false);
-		DropItem();
+		// DropItem();
 	}
 
 	//// ▼ HPバーの位置と割合の更新
@@ -148,7 +156,7 @@ void Enemy::Update()
 		const int32_t enemyId = GetID();
 		VCU_LOG("[Enemy] 死亡開始 ID={}", enemyId);
 
-		SetActive(false);
+		// SetActive(false);
 
 		EnemyController& controller = Get<EnemyController>(objEnemyController);
 
@@ -160,7 +168,8 @@ void Enemy::Update()
 		// 敵の管理スロットを空にする
 		controller.RemoveEnemy(enemyId);
 
-		DestroyMe();
+		StartDeathAnimation();
+		// DestroyMe();
 
 		VCU_LOG("[Enemy] DestroyMe 呼び出し完了 ID={}", enemyId);
 		return;
@@ -227,34 +236,34 @@ void Enemy::Sensor(
 		float playerDist = (objPlayer._pos - transform.position).Length();
 		if (playerDist <= visibilityDist)
 		{
-			if (objPlayer._attentionLevel >= targetAttentionLevel)
+			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
+			float visibilityDot = std::cosf(visibilityAngle);
+			if (dot <= visibilityDot)
 			{
-				if (objPlayer._attentionLevel > targetAttentionLevel)
+				if (objPlayer._attentionLevel >= targetAttentionLevel)
 				{
-					targetPos_           = objPlayer._pos;
-					targetDist           = playerDist;
-					targetAttentionLevel = objPlayer._attentionLevel;
-				}
-				else if (targetDist < 0.0f)
-				{
-					targetPos_           = objPlayer._pos;
-					targetDist           = playerDist;
-					targetAttentionLevel = objPlayer._attentionLevel;
-				}
-				else
-				{
-					if (targetDist > playerDist)
+					if (objPlayer._attentionLevel > targetAttentionLevel)
 					{
 						targetPos_           = objPlayer._pos;
 						targetDist           = playerDist;
 						targetAttentionLevel = objPlayer._attentionLevel;
 					}
+					else if (targetDist < 0.0f)
+					{
+						targetPos_           = objPlayer._pos;
+						targetDist           = playerDist;
+						targetAttentionLevel = objPlayer._attentionLevel;
+					}
+					else
+					{
+						if (targetDist > playerDist)
+						{
+							targetPos_           = objPlayer._pos;
+							targetDist           = playerDist;
+							targetAttentionLevel = objPlayer._attentionLevel;
+						}
+					}
 				}
-			}
-			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
-			float visibilityDot = std::cosf(visibilityAngle);
-			if (dot <= visibilityDot)
-			{
 			}
 		}
 
@@ -293,7 +302,7 @@ void Enemy::Sensor(
 
 void Enemy::Draw()
 {
-	if (!alive)
+	if (!alive && !isDead)
 		return;
 
 	// VCU_LOG("hostEnemy Position: ({}, {}, {})", transform.position.x, transform.position.y, transform.position.z);
@@ -460,4 +469,44 @@ void Enemy::RegisterStates(
 	// registry.Register("followed", followed);
 	registry.Register("alive", alive);
 	registry.Register("attacked", attacked);
+}
+
+void Enemy::StartDeathAnimation()
+{
+	VCU_LOG("StartDeathAnimation 呼び出し");
+	isDead          = true;
+	deathElapsedSec = 0.0f;
+
+	deathStartScale    = transform.scale;
+	deathStartRotation = transform.rotation;
+}
+
+void Enemy::UpdateDeathAnimation()
+{
+	VCU_LOG("deathanim呼び出し");
+	deathElapsedSec += Get<DeltaTime>();
+
+	// 前半：横たわる（0.6秒）
+	float fallProgress = std::clamp(deathElapsedSec / fallDurationSec, 0.0f, 1.0f);
+
+	if (fallProgress < 1.0f)
+	{
+		Quaternion fallRotation = Quaternion::FromEuler(Vec3{ 0.0f, 0.0f, DirectX::XM_PIDIV2 });
+
+		transform.rotation = Quaternion::Slerp(deathStartRotation, deathStartRotation * fallRotation, fallProgress);
+	}
+	else
+	{
+		// 後半：縮小する（0.8秒）
+		float shrinkProgress = std::clamp((deathElapsedSec - fallDurationSec) / shrinkDurationSec, 0.0f, 1.0f);
+
+		float scaleRate = 1.0f - shrinkProgress;
+		transform.scale = deathStartScale * scaleRate;
+
+		if (shrinkProgress >= 1.0f)
+		{
+			DropItem();
+			DestroyMe();
+		}
+	}
 }

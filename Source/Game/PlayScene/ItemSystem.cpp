@@ -394,7 +394,7 @@ ItemInfo ItemSystem::GetInfo(
 	info._craftInfo   = allItemList[id]._craftInfo;
 
 	info._imageId         = allItemList[id]._imageId;
-	info._coolTime        = allItemList[id]._coolTime;
+	info._coolTime        = allItemList[id]._damageLifeTime;
 	info._damageForEnemy  = allItemList[id]._damageForEnemy;
 	info._damageForObject = allItemList[id]._damageForObject;
 
