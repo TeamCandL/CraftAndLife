@@ -117,6 +117,7 @@ void Player::Update()
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::Separator();
 	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+	ImGui::Checkbox("無敵モード", &isInvincible);
 #endif
 
 	Vec3 angles = transform.rotation.ToEuler();
@@ -293,6 +294,9 @@ void Player::Damaged(
     int32_t damage,
     const Vec3 _worldPosition)
 {
+	if (isInvincible)
+		return;
+
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;

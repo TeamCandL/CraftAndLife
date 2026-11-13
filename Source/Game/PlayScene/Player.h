@@ -150,6 +150,7 @@ struct PlayerData
 	bool filterAddItemOnJob{ false };
 
 	float radius{ 0.5f };  ///< プレイヤーの半径
+	bool isInvincible{ false };
 };
 
 /// @brief プレイヤー
