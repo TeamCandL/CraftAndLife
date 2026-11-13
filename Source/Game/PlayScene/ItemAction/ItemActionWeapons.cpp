@@ -77,7 +77,7 @@ void ItemActionWeapons::Action(
 		Get<EntitySystem>().Spawn(
 		    _itemId == ITEM_ID_SWORD_BIG ? ITEM_ID_PLAYER_ATTACK_SWORD_BIG : ITEM_ID_PLAYER_ATTACK_SWORD,
 		    _playerData.transform.position + (_playerData.transform.Forward() * (ACTION_RANGE * 0.5f)),
-		    _playerData.transform.Forward());
+		    _playerData.transform.Forward() * 15.0f);
 		return;
 	}
 

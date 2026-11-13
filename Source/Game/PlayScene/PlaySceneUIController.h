@@ -44,6 +44,7 @@ struct PlaySceneUIControllerData
 	GameObject objOtherPlayerController{};
 
 	GameObject objChatTextLog{};  ///< チャットテキストログ
+	GameObject objTutorialUI{};   ///< チャットテキストログ
 };
 
 /// @brief プレイシーンのUI操作
