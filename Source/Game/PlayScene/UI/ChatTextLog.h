@@ -10,12 +10,16 @@ struct ChatTextLogData
 		                     .WithFontSize(32)
 		                     .WithFontAlignment(FontAlignment_BottomRight) };
 
-	Component<UITransform> transform{ Vec2{ 1288, 363 }, Vec2{ 632, 531 } };  ///< UIの座標系
-	Component<UIText> text{ font, Color::FromWebCode(0xFF0004) };             ///< UIのテキスト
+	Component<UITransform> transform{ Vec2{ 1288, 363 },
+		                              Vec2{ 632, 531 },
+		                              UILayerOrder{}.WithUser(105) };  ///< UIの座標系
+	Component<UIText> text{ font, Color::FromWebCode(0x000000) };      ///< UIのテキスト
 
 	std::vector<std::pair<float, std::string>> logs{};  ///< チャットのログ
 	std::vector<std::string> textChatRequests{};
 	const float SHOW_TIME{ 6.0f };
+
+	GameObject objChatTextLogBack{};  ///< 裏の文字オブジェクト
 };
 
 /// @brief チャットログのテキストUI

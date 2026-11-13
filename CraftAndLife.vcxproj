@@ -833,6 +833,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossName.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\ChatTextLog.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\ChatTextLogBack.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\DeathUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\CraftUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h" />
