@@ -300,15 +300,15 @@ void PlayNetworkController::Update()
 					    switch (message.itemId)
 					    {
 					    case ITEM_ID_PLAYER_ATTACK_SWORD:
-						    // 剣の音を鳴らす
-						    Get<AudioManager>().Play(swordDamagedSE);
+						    // 剣の音を鳴らす（音量50%）
+						    Get<AudioManager>().Play(swordDamagedSE, 0.5f);
 						    break;
 					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
-						    // 剣の音を鳴らす
-						    Get<AudioManager>().Play(greatswordDamagedSE);
+						    // 大剣の音を鳴らす（音量50%）
+						    Get<AudioManager>().Play(greatswordDamagedSE, 0.5f);
 						    break;
 					    case ITEM_ID_PLAYER_ATTACK_ARROW:
-						    // 剣の音を鳴らす
+						    // 矢の着弾の音を鳴らす
 						    Get<AudioManager>().Play(impactSE);
 						    break;
 					    default:
