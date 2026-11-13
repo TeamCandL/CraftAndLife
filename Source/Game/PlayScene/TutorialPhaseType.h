@@ -21,9 +21,11 @@ using TutorialElementFlags = std::bitset<TutorialElementType_Max>;
 using TutorialFocusType = int32_t;
 enum TutorialForcusType_ : TutorialFocusType
 {
-	TutorialForcusType_MoveCamera,    ///< カメラ移動
-	TutorialForcusType_MoveBody,      ///< ボディ移動
-	TutorialForcusType_JumpBody,      ///< ジャンプ移動
-	TutorialForcusType_OpenBackpack,  ///< バックパックを開けるように！
-	TutorialForcusType_None_Max,      ///< 特に何もない 集中タイプの最大数
+	TutorialForcusType_MoveCamera,      ///< カメラ移動
+	TutorialForcusType_MoveBody,        ///< ボディ移動
+	TutorialForcusType_JumpBody,        ///< ジャンプ移動
+	TutorialForcusType_SelectBackpack,  ///< バッグパックを選択
+	TutorialForcusType_OpenBackpack,    ///< バックパックを開けるように！
+	TutorialForcusType_CloseBackpack,   ///< バックパックを開けるように！
+	TutorialForcusType_None_Max,        ///< 特に何もない 集中タイプの最大数
 };

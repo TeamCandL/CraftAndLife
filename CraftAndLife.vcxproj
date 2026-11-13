@@ -855,6 +855,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\PlayerName.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\TutorialUI.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyUIInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialPlayerInput.h" />
