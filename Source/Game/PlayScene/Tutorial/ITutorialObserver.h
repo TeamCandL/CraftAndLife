@@ -9,7 +9,11 @@ class ITutorialObserver
 	ITutorialObserver()          = default;
 	virtual ~ITutorialObserver() = default;
 
+	virtual void FillterCheckCleardElement(TutorialElementFlags& _flags, const TutorialFocusType _type) = 0;
+
 	virtual bool CheckClearedTutorial(const TutorialElementType _type) = 0;
 
-	virtual GameObject GetNextObserverOnCleardElement(const TutorialElementFlags& _flags) = 0;
+	virtual GameObject GetNextObserverOnCleardElement(
+	    const TutorialElementType _cleardElement,
+	    const TutorialElementFlags& _allFlags) = 0;
 };

@@ -14,7 +14,7 @@ class TutorialUIInput : public NormalUIInput
 	{
 	}
 
-	//// IUIInput を介して継承されました
+	// IUIInput を介して継承されました
 	bool IsMovedUp() const override;
 	bool IsMovedDown() const override;
 	bool IsMovedLeft() const override;

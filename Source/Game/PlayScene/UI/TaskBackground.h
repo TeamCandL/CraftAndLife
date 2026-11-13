@@ -12,7 +12,7 @@ struct TaskBackgroundData
 	Resource<Font> font{ FontLoadConfig{}
 		                     .WithFile("Font/Stick/Stick-Regular.ttf")
 		                     .WithFamilyName(L"Stick")
-		                     .WithFontSize(32)
+		                     .WithFontSize(24)
 		                     .WithFontAlignment(FontAlignment_Center) };
 
 	Component<UITransform> transform{ Vec2{ 0, 0 }, Vec2{ 520, 130 } };

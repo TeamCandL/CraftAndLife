@@ -3,10 +3,7 @@
 #include <Game/Manager/SessionManager.h>
 #include "../DayController.h"
 
-void TaskBackground::Start()
-{
-	text.content = "-----";
-}
+void TaskBackground::Start() {}
 
 void TaskBackground::Update()
 {
