@@ -263,6 +263,69 @@ void AudioManager::PlayLanding(
 	}
 }
 
+// 弓を引き絞る音をループ再生
+void AudioManager::PlayBowPull(
+    Resource<ResourceType::Audio>& _resource)
+{
+	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// 初回だけSourceVoiceを作成
+	if (!pBowPullSourceVoice)
+	{
+		HRESULT hResult = pXAudio2->CreateSourceVoice(&pBowPullSourceVoice, &audio.waveFormatEx.Format);
+
+		if (FAILED(hResult) || pBowPullSourceVoice == nullptr)
+		{
+			return;
+		}
+	}
+
+	// 再生中なら停止してバッファをクリア
+	pBowPullSourceVoice->Stop();
+	pBowPullSourceVoice->FlushSourceBuffers();
+
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
+		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
+		.pAudioData = audio.buffer.data(),
+		.PlayBegin  = 0,
+		.PlayLength = 0,
+		.LoopBegin  = 0,
+		.LoopLength = 0,
+		.LoopCount  = 0,
+		.pContext   = 0,
+	};
+
+	HRESULT hResult = pBowPullSourceVoice->SubmitSourceBuffer(&BUFFER);
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+
+	hResult = pBowPullSourceVoice->Start();
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+}
+
+// 弓を引き絞る音を停止
+void AudioManager::StopBowPull()
+{
+	if (pBowPullSourceVoice)
+	{
+		pBowPullSourceVoice->Stop();
+		pBowPullSourceVoice->FlushSourceBuffers();
+	}
+}
+
 // 着地音を停止
 void AudioManager::StopLanding()
 {
@@ -494,6 +557,14 @@ void AudioManager::Release()
 		pJumpSourceVoice->Stop();
 		pJumpSourceVoice->DestroyVoice();
 		pJumpSourceVoice = nullptr;
+	}
+
+	// 弓を引き絞る音を停止・破棄
+	if (pBowPullSourceVoice)
+	{
+		pBowPullSourceVoice->Stop();
+		pBowPullSourceVoice->DestroyVoice();
+		pBowPullSourceVoice = nullptr;
 	}
 
 	// 着地音を停止・破棄

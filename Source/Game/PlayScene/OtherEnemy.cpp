@@ -3,6 +3,8 @@
 #include <Game/Network/NetworkSessionManager.h>
 #include <Game/Network/Protocols/UpdateEnemyDamage.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
+#include "EnemyHpBar.h"
+#include "Enemy.h"
 
 void OtherEnemy::Start()
 {
@@ -19,13 +21,48 @@ void OtherEnemy::Update()
 		const InSessionStatus::EnemyStatus& status = sessionManager.RefEnemyStatus(enemyId);
 
 		// 座標と角度の更新
-		transform.position = status.position;
-		transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
+		// transform.position = status.position;
+		// transform.rotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
 
-		// 死亡ステート確認
+		// 最新のネットワーク座標
+		targetPosition = status.position;
+
+		const Quaternion targetRotation = Quaternion::FromEuler(Vec3{ -DirectX::XM_PIDIV2, status.rotation.y, 0.0f });
+
+		// 初回は即座に合わせる
+		if (!isPositionInitialized)
+		{
+			transform.position = targetPosition;
+			transform.rotation = targetRotation;
+
+			previousPosition = targetPosition;
+			previousRotation = targetRotation;
+
+			isPositionInitialized = true;
+		}
+		else
+		{
+			// 位置を50%補間
+			transform.position = (previousPosition + targetPosition) * 0.5f;
+
+			// 回転を50%補間
+			transform.rotation = Quaternion::Slerp(previousRotation, targetRotation, 0.5f);
+
+			// 次回用に保存
+			previousPosition = targetPosition;
+			previousRotation = targetRotation;
+		}
+
 		bool alive = true;
+		int32_t hp = 0;
 
 		SessionStateReader reader{ sessionManager };
+
+		if (reader.TryGetState(StateTarget::Enemy(enemyId), "hp", hp))
+		{
+			VCU_LOG("OtherEnemy ID:{} HP取得成功: {}", enemyId, hp);
+		}
+
 		if (reader.TryGetState(StateTarget::Enemy(enemyId), "alive", alive))
 		{
 			if (!alive)

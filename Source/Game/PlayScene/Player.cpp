@@ -226,6 +226,9 @@ void Player::Update()
 				ItemId selectedItemId = hotbar.GetSelectedItemId();
 				hotbar.RemoveSelectedItem();
 				SpawnItem(selectedItemId);
+
+				// アイテムを捨てたときのSE
+				Get<AudioManager>().Play(lostWeaponSE);
 			}
 		}
 
@@ -279,7 +282,8 @@ void Player::AttackCollider()
 {
 	if (nowAttackCoolTime <= 0.0f)
 	{
-		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+		// 通常の剣による攻撃
+		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME, false);
 
 		nowAttackCoolTime = ATTACK_COOL_TIME;
 	}
@@ -372,6 +376,9 @@ void Player::SetHelthState(
 
 	case HelthState_Dead:
 	{
+		// 死亡時のSE
+		Get<AudioManager>().Play(deathSE);
+
 		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_Ghost);
 
 		// アイテムをふぁいやーする処理
@@ -444,6 +451,11 @@ void Player::MoveBody()
 	auto pPlayerInput                = inputSystem.GetPlayerInput();
 
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
+
+	if (isOpenCraftUI)
+	{
+		bodyMove = Vec2::Zero();
+	}
 
 	float moveSpeed = jobStatus.moveSpeed;
 
@@ -660,8 +672,14 @@ void Player::DeadAnim()
 void Player::Respawn(
     const int32_t _hp)
 {
+	// HPを回復
 	hp = _hp;
+
+	// 生存状態に変更
 	SetHelthState(HelthState_Live);
+
+	// 蘇生SEを再生
+	Get<AudioManager>().Play(resuscitationSE);
 }
 
 void Player::GiveItem(
@@ -723,7 +741,8 @@ void Player::TryAddItem(
 	/// 今のjobで、引数のアイテムを追加できるか確認
 	/// ----------------------------------------------
 
-	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
+	ItemInfo info = Get<ItemSystem>().GetInfo(_id);
+
 	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);
 
 	if (playerCanUse == false && filterAddItemOnJob)
@@ -735,11 +754,14 @@ void Player::TryAddItem(
 	/// ---------------------------
 	/// ホットバーに追加できるか確認
 	/// ---------------------------
+
 	ItemStack itemStack{};
 	HotBar& hotbar = Get<HotBar>(objHotbar);
 
 	if (hotbar.TrySetItem(_id))
 	{
+		// アイテム入手SE
+		Get<AudioManager>().Play(obtainItemSE);
 		return;
 	}
 	else if (hotbar.SwapItem(itemStack, _id))
@@ -752,17 +774,23 @@ void Player::TryAddItem(
 			}
 		}
 
+		// アイテム入手SE
+		Get<AudioManager>().Play(obtainItemSE);
 		return;
 	}
 
 	/// ---------------------------
 	/// バッグに追加できるか確認
 	/// ---------------------------
+
 	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
 
 	if (bag.CanAddItem(_id))
 	{
 		bag.AddItem(_id);
+
+		// アイテム入手SE
+		Get<AudioManager>().Play(obtainItemSE);
 	}
 	// 追加できないなら、エンティティとして前方に放り出す
 	else
@@ -794,4 +822,16 @@ void Player::ClearAllItem()
 {
 	Get<PlayerBag>(objPlayerBag).ClearItems();
 	Get<HotBar>(objHotbar).ClearAllSlotItem();
+}
+
+bool Player::CheckClearedTutorial(
+    const TutorialPhaseType _type)
+{
+	return false;
+}
+
+GameObject Player::GetNextObserverOnCleardPhase(
+    const TutorialPhaseFlags& _flags)
+{
+	return GameObject();
 }

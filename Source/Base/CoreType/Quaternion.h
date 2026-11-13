@@ -14,7 +14,8 @@ namespace cha
 
 		/// @brief XMVECTORからコピーしてくる
 		/// @param _v XMVECTOR
-		inline Quaternion(const DirectX::XMVECTOR& _v)
+		inline Quaternion(
+		    const DirectX::XMVECTOR& _v)
 		{
 			DirectX::XMStoreFloat4(this, _v);
 		}
@@ -42,12 +43,12 @@ namespace cha
 			// ジンバルロックしないなら
 			if (cosf(pitch) > GIMBAL_LOCK_THRESHOLD)
 			{
-				yaw = atan2f(matF44._31, matF44._33);
+				yaw  = atan2f(matF44._31, matF44._33);
 				roll = atan2f(matF44._12, matF44._22);
 			}
 			else
 			{
-				yaw = 0.0f;
+				yaw  = 0.0f;
 				roll = atan2f(-matF44._21, matF44._11);
 			}
 
@@ -57,12 +58,12 @@ namespace cha
 		/// @brief オイラー角からクォータニオンを生成する
 		/// @param _euler オイラー角
 		/// @return クォータニオン
-		static inline Quaternion FromEuler(const DirectX::XMVECTOR& _euler)
+		static inline Quaternion FromEuler(
+		    const DirectX::XMVECTOR& _euler)
 		{
 			DirectX::XMFLOAT3 eulerF3{};
 			DirectX::XMStoreFloat3(&eulerF3, _euler);
-			return DirectX::XMQuaternionRotationRollPitchYaw(
-				eulerF3.x, eulerF3.y, eulerF3.z);
+			return DirectX::XMQuaternionRotationRollPitchYaw(eulerF3.x, eulerF3.y, eulerF3.z);
 		}
 
 		/// @brief 単位クォータニオンを取得する
@@ -73,15 +74,12 @@ namespace cha
 		}
 
 		static Quaternion FromLookAtQuaternion(
-			const DirectX::XMVECTOR& _eyePosition,
-			const DirectX::XMVECTOR& _focusPosition,
-			const DirectX::XMVECTOR& _upDirection)
+		    const DirectX::XMVECTOR& _eyePosition,
+		    const DirectX::XMVECTOR& _focusPosition,
+		    const DirectX::XMVECTOR& _upDirection)
 		{
 			// ターゲットを見るためのLookAtビュー行列
-			DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(
-				_eyePosition,
-				_focusPosition,
-				_upDirection);
+			DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(_eyePosition, _focusPosition, _upDirection);
 
 			// 逆行列ビューtoワールド
 			DirectX::XMMATRIX worldRotationMatrix = XMMatrixInverse(nullptr, viewMatrix);
@@ -91,6 +89,18 @@ namespace cha
 
 			return rotation;
 		}
-	};
-}
 
+		/// @brief クォータニオンを球面線形補間する
+		/// @param _start 補間開始の回転
+		/// @param _end 補間終了の回転
+		/// @param _t 補間係数（0.0～1.0）
+		/// @return 補間後のクォータニオン
+		static inline Quaternion Slerp(
+		    const Quaternion& _start,
+		    const Quaternion& _end,
+		    float _t)
+		{
+			return DirectX::XMQuaternionSlerp(_start, _end, std::clamp(_t, 0.0f, 1.0f));
+		}
+	};
+}  // namespace cha

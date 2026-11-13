@@ -6,61 +6,51 @@ struct Enemy;
 struct PlayerAttackCollData
 {
 	PlayerAttackCollData() {}
+
 	PlayerAttackCollData(
 	    const Vec3 position_,
 	    const int32_t damage_,
-	    const float lifeTime_) :
+	    const float lifeTime_,
+	    const bool isGreatsword_) :
 	    transform{ position_ },
 	    damage{ damage_ },
-	    lifeTime{ lifeTime_ }
+	    lifeTime{ lifeTime_ },
+	    isGreatsword{ isGreatsword_ }
 	{
 	}
 
-	/*Resource<Shader> shaderFront  ///< モデル描画用シェーダー(表面)
-	{
-	    "Shader/Unlit.hlsl",
-	    RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};
-	Resource<Shader> shaderBack  ///< モデル描画用シェーダー(裏面)
-	{
-	    "Shader/Unlit.hlsl",
-	    RasterizerConfig{ .cullMode = D3D11_CULL_FRONT }
-	};*/
-	Resource<Shader> shader{ "Shader/Unlit.hlsl" };  ///< シェーダ
-	Resource<Model> model{
-		"Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx"
-	};  ///< モデル
+	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
+	Resource<Model> model{ "Model/kenny/kenney_mini-characters/Models/FBX format/aid-defibrillator-green.fbx" };
 
-	Component<Transform> transform{};  ///< 座標系
-	Component<RigidBody> rigidBody{};  ///< 剛体
-	Component<DynamicOBB> obb{};       ///< OBB当たり判定
+	Component<Transform> transform{};
+	Component<RigidBody> rigidBody{};
+	Component<DynamicOBB> obb{};
 
 	float angleX{};
 	float angleY{};
 
-	int animIndex{};  ///< アニメーションのインデクス
+	int animIndex{};
 
 	//-----------------------------------------//
-	// パラメータ//-----------------------------//
+	// パラメータ
 	//-----------------------------------------//
 	int32_t damage{};
-	float lifeTime{};  ///< 寿命
+	float lifeTime{};
+
+	// 大剣による攻撃かどうか
+	bool isGreatsword{};
 };
 
-/// @brief 敵の攻撃当たり判定
+/// @brief プレイヤーの攻撃当たり判定
 struct PlayerAttackColl : ObjectBase<PlayerAttackCollData>
 {
 	using ObjectBase<PlayerAttackCollData>::ObjectBase;
 
-	/// @brief 開始処理
 	void Start() override;
-
-	/// @brief 更新処理
 	void Update() override;
 
-	/// @brief 当たり判定の移動
 	void Move();
 
 	/// 対象へのダメージ付与
-	void SendDamage(Enemy& enemy, int32_t);
+	void SendDamage(Enemy& enemy, int32_t damage);
 };
