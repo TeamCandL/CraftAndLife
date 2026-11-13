@@ -57,5 +57,7 @@ class IEntity
 
 	/// @brief 地面の下にいるか
 	/// @return true / false
-	virtual bool IsUnderground() const = 0;
+	virtual bool IsUnderground() const                     = 0;
+	virtual bool CanHitToHarvestable() const               = 0;
+	virtual void SetUnderground(const bool _isUnderground) = 0;
 };

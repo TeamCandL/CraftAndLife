@@ -283,7 +283,7 @@ ItemSystemData::ItemSystemData()
 	                        PlayerJobType_Fighter });
 	craft.clear();
 	craft.push_back({ 10, 5 });
-	craft.push_back({ 14, 4 });
+	craft.push_back({ 14, 2 });
 	allItemList.push_back({ 18,
 	                        ItemType::Medicals,
 	                        "医療キット",
