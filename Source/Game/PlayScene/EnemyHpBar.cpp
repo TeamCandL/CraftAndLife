@@ -78,10 +78,10 @@ void EnemyHpBar::Update()
 	barTransform.position = Vec2{ barX, barY };
 	barTransform.scale    = Vec2{ barWidth * hpRatio, barHeight };  // HP割合に応じて横幅が縮む
 
-	ImGui::Begin("BarUIPos");
-	ImGui::DragFloat2("barTransform : ", barTransform.position.v);
-	ImGui::DragFloat2("bgTransform : ", backgroundTransform.position.v);
-	ImGui::End();
+	// ImGui::Begin("BarUIPos");
+	// ImGui::DragFloat2("barTransform : ", barTransform.position.v);
+	// ImGui::DragFloat2("bgTransform : ", backgroundTransform.position.v);
+	// ImGui::End();
 }
 
 void EnemyHpBar::SetTargetPosition(
