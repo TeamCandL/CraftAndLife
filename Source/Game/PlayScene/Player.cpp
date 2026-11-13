@@ -226,6 +226,9 @@ void Player::Update()
 				ItemId selectedItemId = hotbar.GetSelectedItemId();
 				hotbar.RemoveSelectedItem();
 				SpawnItem(selectedItemId);
+
+				// アイテムを捨てたときのSE
+				Get<AudioManager>().Play(lostWeaponSE);
 			}
 		}
 

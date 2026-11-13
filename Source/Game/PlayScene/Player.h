@@ -107,6 +107,9 @@ struct PlayerData
 	// アイテム入手時のSE
 	Resource<Audio> obtainItemSE{ "BGM_SE/Obtain Item.mp3" };
 
+	// アイテムを捨てたときのSE
+	Resource<Audio> lostWeaponSE{ "BGM_SE/LostWeapon.mp3" };
+
 	// 蘇生されたときのSE
 	Resource<Audio> resuscitationSE{ "BGM_SE/Resuscitation.mp3" };
 
