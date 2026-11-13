@@ -6,7 +6,7 @@
 #include "UI/BossName.h"
 #include "UI/BossGauge.h"
 #include "UI/BossGaugeR.h"
-#include "EnemyHpBar.h"
+#include "OtherEnemyHpBar.h"
 #include "Enemy.h"
 #include "PlaySceneUIController.h"
 
@@ -66,7 +66,7 @@ void OtherEnemyController::Update()
 			    }
 			    InSessionStatus::EnemyStatus enemyStatus = sessionManager.RefEnemyStatus(enemyId);
 			    Vec3 _position                           = enemyStatus.position;
-			    objEnemyHpBar.push_back(GetScene().Instantiate<EnemyHpBar>(obj, _position, _hp, _hp));
+			    objOtherEnemyHpBar.push_back(GetScene().Instantiate<OtherEnemyHpBar>(obj, _position, _hp, _hp));
 
 			    VCU_LOG("生成後のオブジェクトが空？ {}", obj.IsEmpty());
 

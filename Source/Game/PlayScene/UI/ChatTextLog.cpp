@@ -1,7 +1,11 @@
 #include "pch\pch.h"
 #include "ChatTextLog.h"
+#include "ChatTextLogBack.h"
 
-void ChatTextLog::Start() {}
+void ChatTextLog::Start()
+{
+	objChatTextLogBack = GetScene().Instantiate<ChatTextLogBack>();
+}
 
 void ChatTextLog::Update()
 {
@@ -23,6 +27,8 @@ void ChatTextLog::Update()
 	{
 		text.content += std::format("{} \n", content);
 	}
+
+	Get<ChatTextLogBack>(objChatTextLogBack).Data().text.content = text.content;
 }
 
 void ChatTextLog::AddLog(
