@@ -58,6 +58,10 @@ namespace UI
 		// リストボックスの背景画像用のコンポーネント
 		Component<UITransform> transform{};  // UI座標系
 		Component<UIImage> sprite{};         // UI画像
+
+		// スロット移動時のSE
+		Resource<Audio> moveSE{};
+
 	  protected:
 		std::vector<GameObject> elements;
 		int currentIndex{};

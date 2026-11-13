@@ -75,6 +75,9 @@ void CraftUI::Start()
 	objListBox           = GetScene().Instantiate<UI::ListBox>();
 	UI::ListBox& listBox = Get<UI::ListBox>(objListBox);
 
+	// クラフト画面のスロット移動SE
+	listBox.Data().moveSE = Resource<Audio>{ "BGM_SE/Craft Slot.mp3" };
+
 	/// ---------------
 	/// リストボックス
 	/// ---------------
