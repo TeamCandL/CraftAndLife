@@ -194,7 +194,7 @@ void Enemy::Move(
 	Vec3 ePos{ ex, 0.0f, ez };
 	float length = (tPos - ePos).Length();
 
-	if ((length > 1.0f && followed) || !followed)
+	if ((length > speed / 2.0f && followed) || !followed)
 	{
 		Vec3 crossed = Math::GetCrossProduct(Fwd_, tPos - ePos);
 
@@ -459,7 +459,11 @@ void Enemy::SetWanderingCheckPoint(
 
 void Enemy::DropItem()
 {
-	Get<EntitySystem>().Spawn(dropItemID, transform.position + Vec3::Up(), Vec3::Zero());
+	int32_t dropValue = Random::GetRandom(dropMinCount, dropMaxCount);
+	for (int32_t i = 0; i < dropValue; ++i)
+	{
+		Get<EntitySystem>().Spawn(dropItemID, transform.position + Vec3::Up(), Vec3::Zero());
+	}
 }
 
 void Enemy::RegisterStates(
