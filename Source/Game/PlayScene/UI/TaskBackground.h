@@ -15,7 +15,7 @@ struct TaskBackgroundData
 		                     .WithFontSize(24)
 		                     .WithFontAlignment(FontAlignment_Center) };
 
-	Component<UITransform> transform{ Vec2{ 0, 0 }, Vec2{ 520, 130 } };
+	Component<UITransform> transform{ Vec2{ 0, 0 }, Vec2{ 520, 130 }, UILayerOrder{}.WithUser(100010) };
 	Component<UIImage> image{ texture };
 	Component<UIText> text{ font, Color::WHITE };
 	GameObject objDayContloller{};

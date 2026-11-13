@@ -6,8 +6,10 @@
 #include <Game/System/AbstructInputSystem/TutorialUIInput.h>
 #include <Game/PlayScene/MainCamera.h>
 #include <Game/PlayScene/Player.h>
+#include <Game/PlayScene/PlayerHand.h>
 #include <Game/PlayScene/PlaySceneUIController.h>
 #include <Game/PlayScene/UI/TaskBackground.h>
+#include <Game/PlayScene/UI/TutorialUI.h>
 
 void TutorialFirstStep::Start()
 {
@@ -20,8 +22,12 @@ void TutorialFirstStep::Start()
 	previousCameraAngles   = Get<MainCamera>(objMainCamera).GetAngle();
 
 	objTaskBackground = Get<PlaySceneUIController>(objPlaySceneUIController).Data().objTaskBackground;
+	objTutorialUI     = Get<PlaySceneUIController>(objPlaySceneUIController).Data().objTutorialUI;
 	Get<TaskBackground>(objTaskBackground).SetTask("右(→)スティックで\n周りを見よう！");
 	Get<TutorialSystem>().SetFocusType(TutorialForcusType_MoveCamera);
+	Get<TutorialUI>(objTutorialUI).SetImage(TutorialUIData::TutorialImageType_Camera);
+
+	objPlayerHand = Get<Player>(objPlayer).Data().objPlayerHand;
 
 	SetTutorialInputEnable(true);
 }
@@ -45,6 +51,18 @@ void TutorialFirstStep::FillterCheckCleardElement(
 		_flags.set();
 		_flags.reset(TutorialElementType_CheckJumpMove);
 		break;
+	case TutorialForcusType_SelectBackpack:
+		_flags.set();
+		_flags.reset(TutorialElementType_CheckSelectBackpack);
+		break;
+	case TutorialForcusType_OpenBackpack:
+		_flags.set();
+		_flags.reset(TutorialElementType_CheckOpenBackpack);
+		break;
+	case TutorialForcusType_CloseBackpack:
+		_flags.set();
+		_flags.reset(TutorialElementType_CheckCloseBackpack);
+		break;
 	case TutorialForcusType_None_Max:
 	default:
 		break;
@@ -62,8 +80,12 @@ bool TutorialFirstStep::CheckClearedTutorial(
 		return (previousPlayerPosition - Get<Transform>(objPlayer).position).Length() >= 4.0f;
 	case TutorialElementType_CheckJumpMove:
 		return Get<Transform>(objPlayer).position.y - previousPlayerPosition.y >= 1.0f;
+	case TutorialElementType_CheckSelectBackpack:
+		return Get<PlayerHand>(objPlayerHand).Data().haveItemId == ITEM_ID_BACKPACK;
 	case TutorialElementType_CheckOpenBackpack:
 		return Get<Player>(objPlayer).Data().isOpenCraftUI;
+	case TutorialElementType_CheckCloseBackpack:
+		return !(Get<Player>(objPlayer).Data().isOpenCraftUI);
 	default:
 		break;
 	}
@@ -79,22 +101,38 @@ GameObject TutorialFirstStep::GetNextObserverOnCleardElement(
 	{
 		Get<TaskBackground>(objTaskBackground).SetTask("右(→)スティックで\n動き回ろう！");
 		Get<TutorialSystem>().SetFocusType(TutorialForcusType_MoveBody);
+		Get<TutorialUI>(objTutorialUI).SetImage(TutorialUIData::TutorialImageType_Body);
 	}
 	else if (_cleardElement == TutorialElementType_CheckBodyMove)
 	{
 		Get<TaskBackground>(objTaskBackground).SetTask("Aボタンで\n飛び回ろう！");
 		Get<TutorialSystem>().SetFocusType(TutorialForcusType_JumpBody);
+		Get<TutorialUI>(objTutorialUI).SetImage(TutorialUIData::TutorialImageType_Jump);
 	}
 	else if (_cleardElement == TutorialElementType_CheckJumpMove)
 	{
-		Get<TaskBackground>(objTaskBackground).SetTask("バックパックを開いてみよう！");
+		Get<TaskBackground>(objTaskBackground).SetTask("トリガー上の左右ボタンで\nバックパックを選ぼう！");
+		Get<TutorialSystem>().SetFocusType(TutorialForcusType_SelectBackpack);
+		Get<TutorialUI>(objTutorialUI).SetImage(TutorialUIData::TutorialImageType_Hotbar);
+	}
+	else if (_cleardElement == TutorialElementType_CheckSelectBackpack)
+	{
+		Get<TaskBackground>(objTaskBackground).SetTask("右トリガーボタンで\nバックパックを開いてみよう！");
 		Get<TutorialSystem>().SetFocusType(TutorialElementType_CheckOpenBackpack);
+		Get<TutorialUI>(objTutorialUI).SetImage(TutorialUIData::TutorialImageType_OpenBackpack);
 	}
 	else if (_cleardElement == TutorialElementType_CheckOpenBackpack)
+	{
+		Get<TaskBackground>(objTaskBackground).SetTask("もう一度右トリガーボタンで\nバックパックを閉じよう。");
+		Get<TutorialSystem>().SetFocusType(TutorialElementType_CheckCloseBackpack);
+		Get<TutorialUI>(objTutorialUI).SetImage(TutorialUIData::TutorialImageType_CloseBackpack);
+	}
+	else if (_cleardElement == TutorialElementType_CheckCloseBackpack)
 	{
 		Get<TaskBackground>(objTaskBackground).SetEnableDayTimer(true);
 		Get<TutorialSystem>().SetFocusType(TutorialForcusType_None_Max);
 		SetTutorialInputEnable(false);
+		Get<TutorialUI>(objTutorialUI).SetImage(TutorialUIData::TutorialImageType_Max);
 	}
 
 	return GameObject::Empty();

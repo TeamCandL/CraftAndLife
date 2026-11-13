@@ -1,6 +1,7 @@
 #pragma once
 #include <Game/Game.h>
 #include "ITutorialObserver.h"
+#include "../ItemId.h"
 
 struct TutorialFirstStepData
 {
@@ -15,13 +16,17 @@ struct TutorialFirstStepData
 	}
 
 	GameObject objTaskBackground{};
+	GameObject objTutorialUI{};
 	GameObject objPlayer{};
+	GameObject objPlayerHand{};
 	GameObject objMainCamera{};
 
 	GameObject objPlaySceneUIController{};
 
 	Vec3 previousPlayerPosition{};
 	Vec2 previousCameraAngles{};
+
+	const ItemId ITEM_ID_BACKPACK{ 19 };  ///< バックパックのアイテムId
 };
 
 struct TutorialFirstStep : ObjectBase<TutorialFirstStepData>, ITutorialObserver

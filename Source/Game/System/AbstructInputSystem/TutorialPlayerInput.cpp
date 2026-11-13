@@ -55,6 +55,7 @@ bool TutorialPlayerInput::IsActionBegin() const
 	switch (tutorialSystem_.GetFocusType())
 	{
 	case TutorialForcusType_OpenBackpack:
+	case TutorialForcusType_CloseBackpack:
 	case TutorialForcusType_None_Max:
 		return __super::IsActionBegin();
 	default:
@@ -67,6 +68,7 @@ bool TutorialPlayerInput::IsAction() const
 	switch (tutorialSystem_.GetFocusType())
 	{
 	case TutorialForcusType_OpenBackpack:
+	case TutorialForcusType_CloseBackpack:
 	case TutorialForcusType_None_Max:
 		return __super::IsAction();
 	default:
@@ -79,6 +81,7 @@ bool TutorialPlayerInput::IsActionEnd() const
 	switch (tutorialSystem_.GetFocusType())
 	{
 	case TutorialForcusType_OpenBackpack:
+	case TutorialForcusType_CloseBackpack:
 	case TutorialForcusType_None_Max:
 		return __super::IsActionEnd();
 	default:
@@ -123,6 +126,7 @@ bool TutorialPlayerInput::IsMovedHotbarLeft() const
 {
 	switch (tutorialSystem_.GetFocusType())
 	{
+	case TutorialForcusType_SelectBackpack:
 	case TutorialForcusType_OpenBackpack:
 	case TutorialForcusType_None_Max:
 		return __super::IsMovedHotbarLeft();
@@ -135,6 +139,7 @@ bool TutorialPlayerInput::IsMovedHotbarRight() const
 {
 	switch (tutorialSystem_.GetFocusType())
 	{
+	case TutorialForcusType_SelectBackpack:
 	case TutorialForcusType_OpenBackpack:
 	case TutorialForcusType_None_Max:
 		return __super::IsMovedHotbarRight();
