@@ -333,7 +333,7 @@ void Player::Damaged(
 			}
 			else
 			{
-				hp += jobStatus.maxHpBoost;
+				hp += static_cast<uint32_t>(jobStatus.maxHpBoost);
 			}
 		}
 		else
@@ -822,16 +822,4 @@ void Player::ClearAllItem()
 {
 	Get<PlayerBag>(objPlayerBag).ClearItems();
 	Get<HotBar>(objHotbar).ClearAllSlotItem();
-}
-
-bool Player::CheckClearedTutorial(
-    const TutorialPhaseType _type)
-{
-	return false;
-}
-
-GameObject Player::GetNextObserverOnCleardPhase(
-    const TutorialPhaseFlags& _flags)
-{
-	return GameObject();
 }
