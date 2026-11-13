@@ -14,17 +14,12 @@ struct BagItemStack
 	// アイテムの最大スタック数
 	int maxStack{ 64 };
 	bool selected{ false };
-	// BagItemStack(SceneBase& _sceneBase);
 	/// @brief 空か否か
 	/// @return 空ならtrue
 	bool IsEmpty() const
 	{
 		return count <= 0 || id == EMPTY_STACK_ITEM_ID;
 	}
-	// static BagItemStack EmptyStack()
-	//{
-	//	return BagItemStack{};
-	// }
 	void Reset();
 	bool operator==(
 	    const BagItemStack& _other) const
@@ -70,6 +65,8 @@ struct PlayerBagData
 	int slotEmptyImageExtents{ 90 };
 	// 選択時のスロット画像のサイズ
 	int slotSelectedImageExtents{ 110 };
+	// 1行に表示するアイテムのスタック数。それ以降は改行される
+	int oneLineStackCount{ 10 };
 	Resource<Texture> stackBackgroundTexture{ "Image/UI/slot_empty.png" };
 	Resource<Texture> stackSelectedBackgroundTexture{ "Image/UI/slot_selected.png" };
 	Resource<Texture> emptyItemIconTexture{ "Image/EmptyItem.png" };
@@ -129,4 +126,5 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	void ResetItemStack(BagItemStack& _stack);
 	void CreateStackUI(BagItemStack& _stack);
 	void CalculateUIWorld(BagItemStack& _stack);
+	void SetActiveAll(const bool _active);
 };

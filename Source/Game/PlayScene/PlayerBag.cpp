@@ -39,7 +39,14 @@ void PlayerBag::Start()
 void PlayerBag::Update()
 {
 	static ItemId id{ 0 };
+	static bool isOpen{ false };
 	auto& status = Get<SessionManager>().RefStatus();
+	// デバッグ用 バッグ開閉
+	if (Get<InputSystem>().GetKeyDown(KeyCode::U))
+	{
+		SetActiveAll(isOpen);
+		isOpen = !isOpen;
+	}
 	UpdateUI();
 #ifdef USE_IMGUI
 	// デバッグ用のUI
@@ -361,8 +368,9 @@ void PlayerBag::UpdateUI()
 {
 	for (int i = 0; i < items.size(); i++)
 	{
-		const int offset  = slotEmptyImageExtents * i;
-		const Vec2 center = { begin.x + stackCenter.x + offset, begin.y + stackCenter.y };
+		const Vec2 offset = { slotEmptyImageExtents * (i % oneLineStackCount),
+			                  slotEmptyImageExtents * (i / oneLineStackCount) };
+		const Vec2 center = { begin.x + stackCenter.x + offset.x, begin.y + stackCenter.y + offset.y };
 		// TODO: スロットが選択されているか
 
 		// 選択状態によって画像を変える
@@ -479,6 +487,17 @@ void PlayerBag::CalculateUIWorld(
 	transform.uiWorld      = transform.uiLocal =
 	    XMMatrixIdentity() * DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, 1.0f) *
 	    DirectX::XMMatrixTranslation(transform.position.x, transform.position.y, 0.0f);
+}
+
+void PlayerBag::SetActiveAll(
+    const bool _active)
+{
+	for (auto& item : items)
+	{
+		Get<ImageObject>(item.backgroundImage).SetActive(_active);
+		Get<ImageObject>(item.itemIconImage).SetActive(_active);
+		Get<TextObject>(item.itemCountText).SetActive(_active);
+	}
 }
 
 void BagItemStack::Reset()
