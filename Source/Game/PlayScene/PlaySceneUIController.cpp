@@ -24,6 +24,7 @@
 #include "UI/PlayerIcon3.h"
 #include "UI/PlayerIcon4.h"
 #include "UI/ChatTextLog.h"
+#include "UI/TutorialUI.h"
 
 void PlaySceneUIController::Start()
 {
@@ -48,4 +49,5 @@ void PlaySceneUIController::Start()
 	objBossGauge      = GetScene().Instantiate<BossGauge>(objBossInfo);
 	objChatTextLog    = GetScene().Instantiate<ChatTextLog>();
 	objCraftUI        = GetScene().Instantiate<CraftUI>(objPlayer, objChatTextLog);
+	objTutorialUI     = GetScene().Instantiate<TutorialUI>();
 }

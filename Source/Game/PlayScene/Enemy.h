@@ -255,6 +255,14 @@ struct EnemyData
 	float torque{};                       ///< 回転力
 
 	int32_t dropItemID{};  ///< ドロップアイテムのID
+
+	// 死亡演出関連
+	bool isDead{ false };                      // 死亡演出中かどうか
+	float deathElapsedSec{ 0.0f };             // 死亡演出の経過時間
+	float fallDurationSec{ 0.6f };             // 横たわるまでの時間
+	float shrinkDurationSec{ 0.8f };           // 縮小して消滅するまでの時間
+	Vec3 deathStartScale{ 1.0f, 1.0f, 1.0f };  // 死亡演出開始時にスケール
+	Quaternion deathStartRotation{};           // 死亡演出開始時の回転
 };
 
 /// @brief 敵
@@ -346,4 +354,8 @@ struct Enemy : ObjectBase<EnemyData>
 	void DropItem();
 
 	void RegisterStates(StateRegistry& registry) const;
+
+	void StartDeathAnimation();
+
+	void UpdateDeathAnimation();
 };

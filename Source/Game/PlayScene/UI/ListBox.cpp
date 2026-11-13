@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "ListBox.h"
 #include <Game/System/AbstructInputSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 void UI::ListBox::Start()
 {
@@ -12,13 +13,13 @@ void UI::ListBox::Start()
 void UI::ListBox::Update()
 {
 	// パッドからフォーカス操作
-	auto& padInput = Get<AbstructInputSystem>().GetPadInputSystem();
+	auto uiInput = Get<AbstructInputSystem>().GetUIInput();
 
-	if (padInput.IsFlickedDown(GamePadInputStick::Left) || Get<InputSystem>().GetKeyDown(KeyCode::S))
+	if (uiInput->IsMovedDown())
 	{
 		MoveFocus(1);
 	}
-	if (padInput.IsFlickedUp(GamePadInputStick::Left) || Get<InputSystem>().GetKeyDown(KeyCode::W))
+	if (uiInput->IsMovedUp())
 	{
 		MoveFocus(-1);
 	}
@@ -71,8 +72,17 @@ void UI::ListBox::SetActiveAll(
 void UI::ListBox::MoveFocus(
     int _dir)
 {
+	// 移動前の選択位置を保存
+	int previousIndex = currentIndex;
+
 	currentIndex += _dir;
 	currentIndex = (currentIndex + elements.size()) % elements.size();
+
+	// 選択位置が実際に変わった場合だけSEを再生
+	if (currentIndex != previousIndex && !Data().moveSE.IsNull())
+	{
+		Get<AudioManager>().Play(Data().moveSE);
+	}
 }
 
 void UI::ListBox::UpdateFocusForMouseCursor()

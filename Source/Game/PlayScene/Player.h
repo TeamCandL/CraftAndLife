@@ -8,7 +8,6 @@
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
 #include "OtherPlayerController.h"
-#include "ITutorialObserver.h"
 
 struct StateRegistry;
 
@@ -108,7 +107,7 @@ struct PlayerData
 	Resource<Audio> obtainItemSE{ "BGM_SE/Obtain Item.mp3" };
 
 	// アイテムを捨てたときのSE
-	Resource<Audio> lostWeaponSE{ "BGM_SE/LostWeapon.mp3" };
+	Resource<Audio> lostWeaponSE{ "BGM_SE/Lost Weapon.mp3" };
 
 	// 蘇生されたときのSE
 	Resource<Audio> resuscitationSE{ "BGM_SE/Resuscitation.mp3" };
@@ -153,7 +152,7 @@ struct PlayerData
 };
 
 /// @brief プレイヤー
-struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
+struct Player : ObjectBase<PlayerData>, IPlayer
 {
 	using ObjectBase<PlayerData>::ObjectBase;
 
@@ -212,8 +211,4 @@ struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
 	std::vector<ItemStack> GetHavingItem();
 	/// @brief バッグ、ホットバーが現在持っているアイテムを削除する。ホットバーが持つ「バッグ」は削除されない。
 	void ClearAllItem();
-
-	// ITutorialObserver を介して継承されました
-	bool CheckClearedTutorial(const TutorialPhaseType _type) override;
-	GameObject GetNextObserverOnCleardPhase(const TutorialPhaseFlags& _flags) override;
 };

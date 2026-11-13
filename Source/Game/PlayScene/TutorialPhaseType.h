@@ -2,16 +2,32 @@
 #include <Game/Game.h>
 
 /// @brief チュートリアルのフェーズ番号
-using TutorialPhaseType = int32_t;
+using TutorialElementType = int32_t;
 
 /// @brief チュートリアルのフェーズ番号
-enum TutorialPhaseType_ : TutorialPhaseType
+enum TutorialElementType_ : TutorialElementType
 {
-	TutorialPhaseType_CheckBodyMove,
-	TutorialPhaseType_CheckCameraMove,
-	TutorialPhaseType_CheckOpenBackpack,
+	TutorialElementType_CheckBodyMove,        ///< プレイヤーの移動があったか
+	TutorialElementType_CheckCameraMove,      ///< プレイヤーのカメラの移動があったか
+	TutorialElementType_CheckJumpMove,        ///< プレイヤーのジャンプ移動があったか
+	TutorialElementType_CheckSelectBackpack,  ///< バッグパックを選択したか
+	TutorialElementType_CheckOpenBackpack,    ///< バックパックを開いたことがあるか
+	TutorialElementType_CheckCloseBackpack,   ///< バックパックを閉じたことがあるか
 
-	TutorialPhaseType_Max,
+	TutorialElementType_Max,
 };
 
-using TutorialPhaseFlags = std::bitset<TutorialPhaseType_Max>;
+using TutorialElementFlags = std::bitset<TutorialElementType_Max>;
+
+/// @brief チュートリアルでフォーカスする必要がある種類
+using TutorialFocusType = int32_t;
+enum TutorialForcusType_ : TutorialFocusType
+{
+	TutorialForcusType_MoveCamera,      ///< カメラ移動
+	TutorialForcusType_MoveBody,        ///< ボディ移動
+	TutorialForcusType_JumpBody,        ///< ジャンプ移動
+	TutorialForcusType_SelectBackpack,  ///< バッグパックを選択
+	TutorialForcusType_OpenBackpack,    ///< バックパックを開けるように！
+	TutorialForcusType_CloseBackpack,   ///< バックパックを開けるように！
+	TutorialForcusType_None_Max,        ///< 特に何もない 集中タイプの最大数
+};
