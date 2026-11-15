@@ -8,28 +8,31 @@ namespace cha
 {
 	class ComponentPools;
 
-	template<typename T>	
-	template<typename... Args>
-		requires std::constructible_from<T, Args...>
-	inline Component<T>::Component(Args&&... _args)
-		: T{ std::forward<Args>(_args)...}
+	template <typename T>
+	template <typename... Args>
+	    requires std::constructible_from<T, Args...>
+	inline Component<T>::Component(
+	    Args&&... _args) :
+	    T{ std::forward<Args>(_args)... }
 	{
 		// 指定コンポーネントフラグを立てる
 		const uint64_t INDEX = ComponentRegistry::GetComponentIndex<T>();
-		PreviousComponentFlag::flag_[INDEX] = true;
+
+		VCU_ASSERT(
+		    !PreviousComponentFlag::flag_[INDEX] && "1オブジェクトに2つ以上の同種コンポーネントの所有はできません！");
+		PreviousComponentFlag::flag_.set(INDEX);
 
 		// 指定のコンポーネントとしてポインタを渡す
 		PreviousComponentRegister::registry_.back()[INDEX] =
-			[this](cha::ComponentPools& _pools, const size_t _registryIndex)
+		    [this](cha::ComponentPools& _pools, const size_t _registryIndex)
 		{
 			_pools.template Register<T>(_registryIndex, static_cast<T*>(this));
 		};
 	}
-	template<typename T>
-	inline Component<T>::~Component()
+	template <typename T> inline Component<T>::~Component()
 	{
 		// 指定コンポーネントフラグを降ろす
-		const uint64_t INDEX = ComponentRegistry::GetComponentIndex<T>();
+		const uint64_t INDEX                = ComponentRegistry::GetComponentIndex<T>();
 		PreviousComponentFlag::flag_[INDEX] = false;
 	}
-}
+}  // namespace cha
