@@ -6,6 +6,7 @@
 #include "../Component/UI/UIImage.h"
 #include "../Component/UI/UIText.h"
 #include "../Component/UI/UIRaycastTarget.h"
+#include "../Component/UI/UIWorldBinder.h"
 #include "UISystem/SpriteRendererMaterial.h"
 
 void UISystem::Start()
@@ -90,6 +91,8 @@ void UISystem::Update()
 	UpdateRenderer();
 	UpdateRaycast();
 }
+
+void UISystem::UpdateBindWorld() {}
 
 void UISystem::UpdateRenderer()
 {

@@ -4,12 +4,11 @@
 /// @brief UIのシステムのデータ
 struct UISystemData
 {
-	Resource<ResourceType::Shader> uiShader
-	{
+	Resource<ResourceType::Shader> uiShader{
 		"Shader/UI.hlsl",
 		RasterizerConfig{ .cullMode = D3D11_CULL_NONE, .fillMode = D3D11_FILL_SOLID, .frontCounterClockwise = false }
-	};  // UI用のシェーダ
-	Resource<ResourceType::Surface> surfaceQuad{};                // 四角の面
+	};                                              // UI用のシェーダ
+	Resource<ResourceType::Surface> surfaceQuad{};  // 四角の面
 	Resource<ResourceType::Material> material{ MaterialResource::InstanceEmpty<UITransformMaterialProperty>() };
 
 	bool isWantCaptureMouse{ false };  // マウス操作をUIが奪ったか
@@ -26,9 +25,15 @@ struct UISystem : SystemObjectBase<UISystem, UISystemData>
 
 	/// @brief マウスがUI上で操作されたか
 	/// @return UI上の操作があった true / false
-	inline bool WantCaptureMouse() const { return isWantCaptureMouse; }
+	inline bool WantCaptureMouse() const
+	{
+		return isWantCaptureMouse;
+	}
 
-private:
+  private:
+	/// @brief ワールド座標と紐づける処理の更新
+	void UpdateBindWorld();
+
 	/// @brief 描画するコンポーネントの更新
 	void UpdateRenderer();
 

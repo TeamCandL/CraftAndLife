@@ -563,6 +563,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\System\UIRaycasterSystem.cpp" />
     <ClCompile Include="Source\Game\System\UISystem.cpp" />
     <ClCompile Include="Source\Game\System\UITranslationSystem.cpp" />
+    <ClCompile Include="Source\Game\System\UIWorldBindSystem.cpp" />
     <ClCompile Include="Source\Game\Terrain\Terrain.cpp" />
     <ClCompile Include="Source\Game\TestScene\DestroyTesting.cpp" />
     <ClCompile Include="Source\Game\TestScene\LifeChecker.cpp" />
@@ -752,6 +753,7 @@ pre-commit install</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
+    <ClInclude Include="Source\Game\Component\UI\UIWorldBinder.h" />
     <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\StateTarget.h" />
@@ -866,6 +868,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialPlayerInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialUIInput.h" />
     <ClInclude Include="Source\Game\System\AnimationSystem.h" />
+    <ClInclude Include="Source\Game\System\UIWorldBindSystem.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />
     <ClInclude Include="Source\Game\Common\UI\Button.h" />
