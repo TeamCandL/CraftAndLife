@@ -5,7 +5,7 @@
 /// @brief 普通のプレイヤー入力
 class PadOnlyPlayerInput : public IPlayerInput
 {
-public:
+  public:
 	/// @brief コンストラクタ
 	/// @param _abstructInputSystem 抽象入力システムの参照ポインタ
 	PadOnlyPlayerInput(AbstructInputSystem& _abstructInputSystem);
@@ -32,6 +32,9 @@ public:
 	bool IsJump() const override;
 	bool IsJumpEnd() const override;
 
-private:
+	/// @brief 更新処理
+	virtual void Update() override {}
+
+  private:
 	AbstructInputSystem& abstructInputSystem_;
 };

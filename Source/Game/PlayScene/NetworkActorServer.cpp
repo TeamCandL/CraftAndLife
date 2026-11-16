@@ -53,13 +53,23 @@ void NetworkActorServer::Update()
 		DayController& dayController = Get<DayController>(Data().objDayController);
 		VCU_LOG("現在の日付: {}", dayController.GetCurrentDay());
 
+		if (dayController.IsDayChanged())
+		{
+			Data().isInitialized = false;
+		}
+		if (!IsInitialized())
+		{
+			Data().isSpawnEnemies = false;
+			Data().isInitialized  = true;
+		}
+
 		if (dayController.IsNight())
 		{
 			CreateEnemies();
 		}
 
 #elif 0
-		CreateEnemies();
+		// CreateEnemies();
 
 #endif
 
@@ -76,7 +86,7 @@ void NetworkActorServer::Update()
 		// ゲストなら他の敵を同期するコントローラーを生成
 		if (Data().objOtherEnemyController.IsEmpty())
 		{
-			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>();
+			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>(objPlaySceneUIController);
 		}
 	}
 }
@@ -91,7 +101,7 @@ void NetworkActorServer::CreateEnemy(
 	// Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
 
 	// 生成した敵のステートを登録
-	EnemyStateRegistries(objEnemy);
+	// EnemyStateRegistries(objEnemy);
 }
 
 void NetworkActorServer::CreateEnemy(
@@ -100,43 +110,63 @@ void NetworkActorServer::CreateEnemy(
 {
 	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, position, static_cast<int>(type));
 
-	EnemyStateRegistries(objEnemy);
+	// EnemyStateRegistries(objEnemy);
+}
+void NetworkActorServer::CreateBoss(
+    EnemyType type,
+    const Vec3& position)
+{
+	GameObject objEnemy =
+	    GetScene().Instantiate<Enemy>(Data().objEnemyController, position, static_cast<int>(type), true);
+
+	// EnemyStateRegistries(objEnemy);
 }
 
 void NetworkActorServer::CreateEnemies()
 {
-	if (IsInitialized())
+	if (IsSpawnEnemies())
 	{
 		return;
 	}
 
 	// 敵管理オブジェクトを生成
-	Data().objEnemyController = GetScene().Instantiate<EnemyController>();
+	Data().objEnemyController = GetScene().Instantiate<EnemyController>(objPlaySceneUIController);
 
 	// 自分自身のGameObjectをEnemyControllerに渡す
 	Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
 
 	// 敵を生成（同じ種類も複数生成可能）
-	// CreateEnemy(EnemyType::Skeleton);
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 1.0f, 7.0f, 2.0f });
-	// CreateEnemy(EnemyType::Spider, Vec3{ -1.0f, 7.0f, 2.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ 1.0f, 7.0f, -2.0f });
-	// CreateEnemy(EnemyType::BossSkeleton, Vec3{ 1.0f, 5.0f, 2.0f });
-	// CreateEnemy(EnemyType::Bat, Vec3{ 1.0f, 7.0f, 5.0f });
-	// CreateEnemy(EnemyType::Dragon, Vec3{ 3.0f, 7.0f, 2.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
+	CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
+	CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
+	if (Get<DayController>(objDayController).GetCurrentDay() == 2)
+	{
+		CreateEnemy(EnemyType::Bat, Vec3{ 30.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Bat, Vec3{ -30.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 20.0f, 0.0f, 25.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ -20.0f, 0.0f, 25.0f });
+		CreateEnemy(EnemyType::BossSkeleton, Vec3{ 00.0f, 0.0f, 40.0f });
+		CreateBoss(EnemyType::Dragon, Vec3{ 0.0f, 0.0f, 70.0f });
+	}
 
 	//  生成済みにする
-	Data().isInitialized = true;
+	Data().isSpawnEnemies = true;
 }
 
 void NetworkActorServer::EnemyStateRegistries(
     GameObject objEnemy)
 {
+	VCU_LOG("EnemyStateRegistries 呼び出し");
 	auto& enemy           = Get<Enemy>(objEnemy);
 	const int32_t enemyId = enemy.GetID();
 
+	VCU_LOG("Enemy ID取得: {}", enemyId);
+
 	if (enemyId < 0)
 	{
+		VCU_LOG("Enemy IDが不正");
 		return;
 	}
 
@@ -153,6 +183,8 @@ void NetworkActorServer::EnemyStateRegistries(
 		registries[index].emplace();
 		enemy.RegisterStates(*registries[index]);
 
+		VCU_LOG("Enemy State Registry 登録: ID={}, StateCount={}", enemyId, registries[index]->GetAllStates().size());
+
 		auto& queued = Data().enemyDeathQueued;
 
 		if (queued.size() <= index)
@@ -161,6 +193,10 @@ void NetworkActorServer::EnemyStateRegistries(
 		}
 
 		queued[index] = false;
+	}
+	else
+	{
+		VCU_LOG("既に登録済み: ID={}", enemyId);
 	}
 }
 
@@ -200,6 +236,7 @@ bool NetworkActorServer::IsDeathQueued(
 void NetworkActorServer::OnEnemyDeath(
     int32_t actorId)
 {
+	VCU_LOG("OnEnemyDeath 呼び出し: actorId={}", actorId);
 	// すでに死亡通知を登録済みなら何もしない
 	if (actorId < 0 || IsDeathQueued(actorId))
 	{
@@ -210,7 +247,10 @@ void NetworkActorServer::OnEnemyDeath(
 	// TODO: 死亡通知プロトコルの送信処理
 
 	// 敵のステート登録を解除
-	ReleaseActor(actorId);
+	// ReleaseActor(actorId);
+
+	// 死亡ステートを値として保存
+	Data().pendingEnemyDeaths.push_back({ actorId, false });
 
 	MarkDeathQueued(actorId);
 }

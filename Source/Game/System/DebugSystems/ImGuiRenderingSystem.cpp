@@ -6,21 +6,24 @@
 
 void ImGuiRenderingSystem::Update()
 {
+#ifdef USE_IMGUI
 	// Transform表示用のビュー
 	auto view = GetView<Transform, ImTransform, Name>();
 
-	view.ForEach([](IObject& _obj, Transform& _transform, ImTransform&, Name& _name)
-	{
-		ImGui::Begin(std::format("Transform{{{}}}", _name.content).c_str());
+	view.ForEach(
+	    [](IObject& _obj, Transform& _transform, ImTransform&, Name& _name)
+	    {
+		    ImGui::Begin(std::format("Transform{{{}}}", _name.content).c_str());
 
-		ImGui::DragFloat3("position", _transform.position.v);
+		    ImGui::DragFloat3("position", _transform.position.v);
 
-		Vec3 angles = _transform.rotation.ToEuler();
-		ImGui::DragFloat3("rotation", angles.v);
-		_transform.rotation = Quaternion::FromEuler(angles);
+		    Vec3 angles = _transform.rotation.ToEuler();
+		    ImGui::DragFloat3("rotation", angles.v);
+		    _transform.rotation = Quaternion::FromEuler(angles);
 
-		ImGui::DragFloat3("scale", _transform.scale.v);
+		    ImGui::DragFloat3("scale", _transform.scale.v);
 
-		ImGui::End();
-	});
+		    ImGui::End();
+	    });
+#endif
 }

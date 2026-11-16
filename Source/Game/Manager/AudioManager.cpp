@@ -1,4 +1,5 @@
 #include "AudioManager.h"
+#include <algorithm>
 
 void AudioManager::Start()
 {
@@ -7,7 +8,8 @@ void AudioManager::Start()
 }
 
 void AudioManager::Play(
-    Resource<ResourceType::Audio>& _resource)
+    Resource<ResourceType::Audio>& _resource,
+    float _volume)
 {
 	AudioResource& audio = _resource.Get();
 
@@ -23,6 +25,9 @@ void AudioManager::Play(
 	{
 		return;
 	}
+
+	// 音量を設定
+	pSourceVoice->SetVolume(std::clamp(_volume, 0.0f, 1.0f));
 
 	const XAUDIO2_BUFFER BUFFER{
 		.Flags      = XAUDIO2_END_OF_STREAM,
@@ -206,62 +211,147 @@ void AudioManager::StopJump()
 	}
 }
 
-void AudioManager::LateUpdate(
-    const float _deltaTime)
-{
-	// 連続再生の管理
-	if (pNextSequenceAudio)
-	{
-		sequenceTimeLeft -= _deltaTime;
-
-		// 1つ目の音声が終了したら2つ目を再生
-		if (sequenceTimeLeft <= 0.0f)
-		{
-			Resource<ResourceType::Audio>* pNext = pNextSequenceAudio;
-
-			// 再生前に解除
-			pNextSequenceAudio = nullptr;
-			sequenceTimeLeft   = 0.0f;
-
-			Play(*pNext);
-		}
-	}
-
-	// ここから下は既存の処理
-	for (size_t i = 0; i < players.size();)
-	{
-		players[i].timeLeftSec -= _deltaTime;
-
-		if (players[i].timeLeftSec <= 0.0f)
-		{
-			if (players[i].pSourceVoice)
-			{
-				players[i].pSourceVoice->Stop();
-				players[i].pSourceVoice->DestroyVoice();
-				players[i].pSourceVoice = nullptr;
-			}
-
-			if (i + 1 < players.size())
-			{
-				players[i] = std::move(players.back());
-			}
-
-			players.pop_back();
-		}
-		else
-		{
-			++i;
-		}
-	}
-}
-
-void AudioManager::Update() {}
-
-// BGMを再生
-void AudioManager::SetBGM(
+// 着地音を再生
+void AudioManager::PlayLanding(
     Resource<ResourceType::Audio>& _resource)
 {
 	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// 初回だけSourceVoiceを作成
+	if (!pLandingSourceVoice)
+	{
+		HRESULT hResult = pXAudio2->CreateSourceVoice(&pLandingSourceVoice, &audio.waveFormatEx.Format);
+
+		if (FAILED(hResult) || pLandingSourceVoice == nullptr)
+		{
+			return;
+		}
+	}
+
+	// 再生中なら停止してバッファをクリア
+	pLandingSourceVoice->Stop();
+	pLandingSourceVoice->FlushSourceBuffers();
+
+	// 着地音の音量を1.5倍に設定
+	pLandingSourceVoice->SetVolume(1.5f);
+
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
+		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
+		.pAudioData = audio.buffer.data(),
+		.PlayBegin  = 0,
+		.PlayLength = 0,
+		.LoopBegin  = 0,
+		.LoopLength = 0,
+		.LoopCount  = 0,
+		.pContext   = 0,
+	};
+
+	HRESULT hResult = pLandingSourceVoice->SubmitSourceBuffer(&BUFFER);
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+
+	hResult = pLandingSourceVoice->Start();
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+}
+
+// 弓を引き絞る音をループ再生
+void AudioManager::PlayBowPull(
+    Resource<ResourceType::Audio>& _resource)
+{
+	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// 初回だけSourceVoiceを作成
+	if (!pBowPullSourceVoice)
+	{
+		HRESULT hResult = pXAudio2->CreateSourceVoice(&pBowPullSourceVoice, &audio.waveFormatEx.Format);
+
+		if (FAILED(hResult) || pBowPullSourceVoice == nullptr)
+		{
+			return;
+		}
+	}
+
+	// 再生中なら停止してバッファをクリア
+	pBowPullSourceVoice->Stop();
+	pBowPullSourceVoice->FlushSourceBuffers();
+
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
+		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
+		.pAudioData = audio.buffer.data(),
+		.PlayBegin  = 0,
+		.PlayLength = 0,
+		.LoopBegin  = 0,
+		.LoopLength = 0,
+		.LoopCount  = 0,
+		.pContext   = 0,
+	};
+
+	HRESULT hResult = pBowPullSourceVoice->SubmitSourceBuffer(&BUFFER);
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+
+	hResult = pBowPullSourceVoice->Start();
+
+	if (FAILED(hResult))
+	{
+		return;
+	}
+}
+
+// 弓を引き絞る音を停止
+void AudioManager::StopBowPull()
+{
+	if (pBowPullSourceVoice)
+	{
+		pBowPullSourceVoice->Stop();
+		pBowPullSourceVoice->FlushSourceBuffers();
+	}
+}
+
+// 着地音を停止
+void AudioManager::StopLanding()
+{
+	if (pLandingSourceVoice)
+	{
+		pLandingSourceVoice->Stop();
+		pLandingSourceVoice->FlushSourceBuffers();
+	}
+}
+
+// BGMを再生
+void AudioManager::SetBGM(
+    Resource<ResourceType::Audio>& _resource,
+    bool _isLoop,
+    float _volume)
+{
+	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
 
 	if (pBGMSourceVoice)
 	{
@@ -281,6 +371,9 @@ void AudioManager::SetBGM(
 		return;
 	}
 
+	// 音量を設定
+	pBGMSourceVoice->SetVolume(std::clamp(_volume, 0.0f, 1.0f));
+
 	const XAUDIO2_BUFFER BUFFER{
 		.Flags      = XAUDIO2_END_OF_STREAM,
 		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
@@ -289,7 +382,7 @@ void AudioManager::SetBGM(
 		.PlayLength = 0,
 		.LoopBegin  = 0,
 		.LoopLength = 0,
-		.LoopCount  = XAUDIO2_LOOP_INFINITE,
+		.LoopCount  = static_cast<UINT32>(_isLoop ? XAUDIO2_LOOP_INFINITE : 0),
 		.pContext   = 0,
 	};
 
@@ -400,6 +493,59 @@ void AudioManager::SetBGMStart()
 	}
 }
 
+void AudioManager::LateUpdate(
+    const float _deltaTime)
+{
+	// 連続再生の管理
+	if (pNextSequenceAudio)
+	{
+		sequenceTimeLeft -= _deltaTime;
+
+		// 1つ目の音声が終了したら2つ目を再生
+		if (sequenceTimeLeft <= 0.0f)
+		{
+			Resource<ResourceType::Audio>* pNext = pNextSequenceAudio;
+
+			// 再生前に解除
+			pNextSequenceAudio = nullptr;
+			sequenceTimeLeft   = 0.0f;
+
+			Play(*pNext);
+		}
+	}
+
+	// ここから下は既存の処理
+	for (size_t i = 0; i < players.size();)
+	{
+		players[i].timeLeftSec -= _deltaTime;
+
+		if (players[i].timeLeftSec <= 0.0f)
+		{
+			if (players[i].pSourceVoice)
+			{
+				players[i].pSourceVoice->Stop();
+				players[i].pSourceVoice->DestroyVoice();
+				players[i].pSourceVoice = nullptr;
+			}
+
+			if (i + 1 < players.size())
+			{
+				players[i] = std::move(players.back());
+			}
+
+			players.pop_back();
+		}
+		else
+		{
+			++i;
+		}
+	}
+}
+
+void AudioManager::Update() {}
+
+// BGMを停止・再生する処理は上記の通り
+
 void AudioManager::Release()
 {
 	// 連続再生の情報をリセット
@@ -415,6 +561,22 @@ void AudioManager::Release()
 		pJumpSourceVoice->Stop();
 		pJumpSourceVoice->DestroyVoice();
 		pJumpSourceVoice = nullptr;
+	}
+
+	// 弓を引き絞る音を停止・破棄
+	if (pBowPullSourceVoice)
+	{
+		pBowPullSourceVoice->Stop();
+		pBowPullSourceVoice->DestroyVoice();
+		pBowPullSourceVoice = nullptr;
+	}
+
+	// 着地音を停止・破棄
+	if (pLandingSourceVoice)
+	{
+		pLandingSourceVoice->Stop();
+		pLandingSourceVoice->DestroyVoice();
+		pLandingSourceVoice = nullptr;
 	}
 
 	// 環境音を停止

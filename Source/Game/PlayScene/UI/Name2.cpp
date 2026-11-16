@@ -1,20 +1,36 @@
 #include "pch\pch.h"
 #include "Name2.h"
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/Player/PlayerJobType.h>
 
 void Name2::Start() {}
 
 void Name2::Update()
 {
-	std::vector<std::string> names;
-	Get<SessionManager>().ForeachPlayerStatus(
-	    [&names](const std::string& name, const InSessionStatus::PlayerStatus& status)
-	    {
-		    names.push_back(name);
-	    });
-	if (names.size() <= 1)
+	SessionManager& sessionManager = Get<SessionManager>();
+
+	// ヒーラーのプレイヤーIDを取得
+	int32_t playerId = -1;
+
+	for (const int32_t id : sessionManager.RefStatus().memberId)
 	{
-		return;
+		int32_t roleId = -1;
+
+		if (sessionManager.TryGetPlayerRole(id, roleId) && roleId == PlayerJobType_Tank)
+		{
+			playerId = id;
+			break;
+		}
 	}
-	text.content = names[1];
+
+	if (playerId == -1)
+		return;
+
+	// プレイヤーIDから名前を取得
+	std::string playerName;
+
+	if (!sessionManager.TryGetPlayerName(playerId, playerName))
+		return;
+
+	text.content = playerName;
 }

@@ -1,28 +1,24 @@
-
 #include "SceneManager.h"
 #include "../Core/IScene.h"
 #include "../Core/SceneBase.h"
 
+cha::SceneManager::SceneManager() {}
 
-cha::SceneManager::SceneManager()
-{
-}
-
-cha::SceneManager::~SceneManager()
-{
-}
+cha::SceneManager::~SceneManager() {}
 
 cha::SceneBase& cha::SceneManager::GetCurrentScene()
 {
 	return *static_cast<SceneBase*>(pCurrentScene_.get());
 }
 
-cha::GameObject cha::SceneManager::MakeGameObject(const uint64_t _id)
+cha::GameObject cha::SceneManager::MakeGameObject(
+    const uint64_t _id)
 {
 	return pCurrentScene_->RefGameObjectCollection().MakeGameObject(_id);
 }
 
-void cha::SceneManager::DestroyAt(const GameObject _gameObject)
+void cha::SceneManager::DestroyAt(
+    const GameObject _gameObject)
 {
 	pCurrentScene_->RefGameObjectCollection().DestroyAt(_gameObject);
 }
@@ -53,7 +49,8 @@ bool cha::SceneManager::LateUpdate()
 	return true;
 }
 
-bool cha::SceneManager::Draw(const bool _isShadowing)
+bool cha::SceneManager::Draw(
+    const bool _isShadowing)
 {
 	if (!pCurrentScene_)
 	{

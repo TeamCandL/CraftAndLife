@@ -424,6 +424,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\ClearScene\ClearBGM.cpp" />
     <ClCompile Include="Source\Game\ClearScene\ClearImage.cpp" />
     <ClCompile Include="Source\Game\ClearScene\ClearScene.cpp" />
+    <ClCompile Include="Source\Game\ClearScene\ClearSceneInput.cpp" />
     <ClCompile Include="Source\Game\Common\Canvas.cpp" />
     <ClCompile Include="Source\Game\Common\GameManager.cpp" />
     <ClCompile Include="Source\Game\Common\ScoreManager.cpp" />
@@ -433,11 +434,18 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Common\UI\Image.cpp" />
     <ClCompile Include="Source\Game\Common\VirtualInputManager.cpp" />
     <ClCompile Include="Source\Game\Component\SoundManager.cpp" />
+    <ClCompile Include="Source\Game\Component\Tag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\Game\Component\Transform.cpp" />
     <ClCompile Include="Source\Game\Component\TransformAnimator.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyNetworkController.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyReadyButton.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyScene.cpp" />
+    <ClCompile Include="Source\Game\LobbyScene\LobbyUI.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\MemberElement.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\MemberList.cpp" />
     <ClCompile Include="Source\Game\Manager\SessionManager.cpp" />
@@ -448,6 +456,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ClearFade.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ClearSceneTrigger.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DayController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DebugPoint.cpp" />
@@ -455,16 +464,19 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAiCheckPoint.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EnemyHpBar.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionMedicals.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionShield.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemyHpBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
-    <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Harvestable.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemSystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\MainCamera.cpp" />
@@ -491,12 +503,15 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\PlaySceneUIController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\TerrainSystem.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\TutorialSystem.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Tutorial\TutorialFirstStep.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossGaugeR.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossGauge.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossHp.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossInfoText.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\BossName.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\ChatTextLog.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\DeathUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\CraftUI.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge1.cpp" />
@@ -521,10 +536,14 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\Reticle.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\SelfInfo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\TaskBackground.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\TutorialUI.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalPlayerInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\NormalUIInput.cpp" />
     <ClCompile Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.cpp" />
+    <ClCompile Include="Source\Game\System\AbstructInputSystem\PadOnlyUIInput.cpp" />
+    <ClCompile Include="Source\Game\System\AbstructInputSystem\TutorialPlayerInput.cpp" />
+    <ClCompile Include="Source\Game\System\AbstructInputSystem\TutorialUIInput.cpp" />
     <ClCompile Include="Source\Game\System\AnimationSystem.cpp" />
     <ClCompile Include="Source\Game\Manager\AudioManager.cpp" />
     <ClCompile Include="Source\Game\Manager\AudioManager\AudioPlayer.cpp" />
@@ -570,6 +589,8 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\TitleScene\WordInputPanel.cpp" />
     <ClCompile Include="Source\Game\TitleScene\WordJoinButton.cpp" />
     <ClCompile Include="Source\Game\Tool\DebugCamera.cpp" />
+    <ClCompile Include="Source\Game\UI\ImageObject.cpp" />
+    <ClCompile Include="Source\Game\UI\TextObject.cpp" />
     <ClCompile Include="Source\Game\Utility\Algorithm\TopologicalSort.cpp" />
     <ClCompile Include="Source\Game\Utility\File\JsonLoader.cpp" />
     <ClCompile Include="Source\pch\pch.cpp">
@@ -712,6 +733,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\ClearScene\ClearBGM.h" />
     <ClInclude Include="Source\Game\ClearScene\ClearImage.h" />
     <ClInclude Include="Source\Game\ClearScene\ClearScene.h" />
+    <ClInclude Include="Source\Game\ClearScene\ClearSceneInput.h" />
+    <ClInclude Include="Source\Game\ClearScene\ResultType.h" />
     <ClInclude Include="Source\Game\Common\Canvas.h" />
     <ClInclude Include="Source\Game\Common\ChunkLoader\IWorldLoader.h" />
     <ClInclude Include="Source\Game\Common\GameManager.h" />
@@ -722,11 +745,24 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Common\Sky\SkyMaterial.h" />
     <ClInclude Include="Source\Game\Common\Stage\BlockType.h" />
     <ClInclude Include="Source\Game\Common\Stage\StageLoader.h" />
+    <ClInclude Include="Source\Game\Component\Tag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
+    <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\StateTarget.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
     <ClInclude Include="Source\Game\Network\Protocols\BreakHarvestable.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\EntityPicked.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\EntityPickRequest.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\EntitySpawned.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\EntitySpawnRequest.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\PlayerRespawned.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\TextChated.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
@@ -736,11 +772,15 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEntityRemove.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEntitySpawn.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemyDamage.h" />
+    <ClInclude Include="Source\Game\PlayScene\ClearFade.h" />
     <ClInclude Include="Source\Game\PlayScene\ClearSceneTrigger.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyHpBar.h" />
+    <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
+    <ClInclude Include="Source\Game\PlayScene\IEntitySystemNetwork.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.h" />
@@ -749,13 +789,15 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBar.h" />
+    <ClInclude Include="Source\Game\PlayScene\Tutorial\ITutorialObserver.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
+    <ClInclude Include="Source\Game\PlayScene\PlayerRespawnedNetworkData.h" />
     <ClInclude Include="Source\Game\PlayScene\StateRegistry.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyStatus.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyType.h" />
     <ClInclude Include="Source\Game\PlayScene\Entity.h" />
-    <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
     <ClInclude Include="Source\Game\PlayScene\Harvestable.h" />
     <ClInclude Include="Source\Game\PlayScene\IEntity.h" />
     <ClInclude Include="Source\Game\PlayScene\IMainCamera.h" />
@@ -783,12 +825,17 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\PlaySceneUIController.h" />
     <ClInclude Include="Source\Game\PlayScene\StateValueCode.h" />
     <ClInclude Include="Source\Game\PlayScene\TerrainSystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\TutorialSystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\TutorialPhaseType.h" />
+    <ClInclude Include="Source\Game\PlayScene\Tutorial\TutorialFirstStep.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossGaugeR.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossGauge.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossHp.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossInfoText.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\BossName.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\ChatTextLog.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\ChatTextLogBack.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\DeathUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\CraftUI.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge1.h" />
@@ -812,7 +859,12 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\PlayerName.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\SelfInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\TutorialUI.h" />
+    <ClInclude Include="Source\Game\System\AbstructInputSystem\IInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
+    <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyUIInput.h" />
+    <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialPlayerInput.h" />
+    <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialUIInput.h" />
     <ClInclude Include="Source\Game\System\AnimationSystem.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />
@@ -943,6 +995,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TitleScene\WordInputPanel.h" />
     <ClInclude Include="Source\Game\TitleScene\WordJoinButton.h" />
     <ClInclude Include="Source\Game\Tool\DebugCamera.h" />
+    <ClInclude Include="Source\Game\UI\ImageObject.h" />
+    <ClInclude Include="Source\Game\UI\TextObject.h" />
     <ClInclude Include="Source\Game\Utility\Algorithm\TopologicalSort.h" />
     <ClInclude Include="Source\Game\Utility\File\JsonLoader.h" />
     <ClInclude Include="Source\Library\Library.h" />
@@ -1001,6 +1055,8 @@ pre-commit install</Command>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resource\Shader\DebugLine.hlsl" />
+    <FxCompile Include="Resource\Shader\Entity.hlsl" />
+    <FxCompile Include="Resource\Shader\EntityEdge.hlsl" />
     <FxCompile Include="Resource\Shader\Toon.hlsl" />
     <FxCompile Include="Resource\Shader\ShadowMap.hlsl" />
     <FxCompile Include="Resource\Shader\SkyBox.hlsl" />

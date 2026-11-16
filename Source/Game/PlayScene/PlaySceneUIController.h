@@ -6,12 +6,15 @@ struct PlaySceneUIControllerData
 {
 	PlaySceneUIControllerData(
 	    GameObject objPlayer_,
-	    GameObject objOtherPlayerController_)
+	    GameObject objOtherPlayerController_,
+	    GameObject objDayContloller_)
 	{
+		objDayContloller         = objDayContloller_;
 		objPlayer                = objPlayer_;
 		objOtherPlayerController = objOtherPlayerController_;
 	};
 
+	GameObject objDayContloller{};   ///< 日付の管理をしているオブジェクト
 	GameObject objTaskBackground{};  ///< タスク情報の背景
 	GameObject objTaskText{};        ///< タスク情報のテキスト
 	GameObject objBossInfo{};        ///< ボスの体力ゲージUI
@@ -39,6 +42,9 @@ struct PlaySceneUIControllerData
 
 	GameObject objPlayer{};  ///< MyGaugeに渡すプレイヤー
 	GameObject objOtherPlayerController{};
+
+	GameObject objChatTextLog{};  ///< チャットテキストログ
+	GameObject objTutorialUI{};   ///< チャットテキストログ
 };
 
 /// @brief プレイシーンのUI操作
@@ -48,4 +54,9 @@ struct PlaySceneUIController : ObjectBase<PlaySceneUIControllerData>
 
 	/// @brief 開始処理
 	void Start() override;
+
+	void Update() override
+	{
+		// UIの更新処理は各UIオブジェクトに任せるため、ここでは特に何もしない
+	}
 };

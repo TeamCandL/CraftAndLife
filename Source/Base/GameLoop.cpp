@@ -1,4 +1,3 @@
-
 #include "GameLoop.h"
 
 #include "Core/ResourceManagerInstance.h"

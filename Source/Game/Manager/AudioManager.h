@@ -13,7 +13,9 @@ struct AudioManager : IManager
 
 	/// @brief BGMを設定する
 	/// @param _resource 音声リソース
-	void SetBGM(Resource<ResourceType::Audio>& _resource);
+	/// @param _isLoop ループ再生するか
+	/// @param _volume 音量（0.0～1.0）
+	void SetBGM(Resource<ResourceType::Audio>& _resource, bool _isLoop = true, float _volume = 1.0f);
 
 	/// @brief 再生終了時にループを離脱する
 	void SetBGMExitLoop();
@@ -32,7 +34,8 @@ struct AudioManager : IManager
 
 	/// @brief 効果音を再生する
 	/// @param _resource 音声リソース
-	void Play(Resource<ResourceType::Audio>& _resource);
+	/// @param _volume 音量（0.0～1.0）
+	void Play(Resource<ResourceType::Audio>& _resource, float _volume = 1.0f);
 
 	// 2つの効果音を順番に再生する
 	void PlaySequence(Resource<ResourceType::Audio>& _first, Resource<ResourceType::Audio>& _next);
@@ -55,21 +58,39 @@ struct AudioManager : IManager
 	// ジャンプ音を停止する
 	void StopJump();
 
+	// 着地音を再生する
+	void PlayLanding(Resource<ResourceType::Audio>& _resource);
+
+	// 弓を引き絞る音を再生
+	void PlayBowPull(Resource<ResourceType::Audio>& _resource);
+
+	// 弓を引き絞る音を停止
+	void StopBowPull();
+
+	// 着地音を停止する
+	void StopLanding();
+
   private:
 	ComPtr<IXAudio2> pXAudio2{};
 	IXAudio2MasteringVoice* pMasterVoice{ nullptr };
 
-	IXAudio2SourceVoice* pBGMSourceVoice{ nullptr };  // BGM用の音声ソース
+	IXAudio2SourceVoice* pBGMSourceVoice{ nullptr };
 
-	IXAudio2SourceVoice* pAmbientSourceVoice{ nullptr };  // 環境音用
+	IXAudio2SourceVoice* pAmbientSourceVoice{ nullptr };
 
-	IXAudio2SourceVoice* pFootstepSourceVoice{ nullptr };  // 足音用
+	IXAudio2SourceVoice* pFootstepSourceVoice{ nullptr };
 
-	IXAudio2SourceVoice* pJumpSourceVoice{ nullptr };  // ジャンプ音用
+	IXAudio2SourceVoice* pJumpSourceVoice{ nullptr };
 
-	std::vector<AudioPlayer> players{};  // 再生中の音声プレイヤー
+	// 着地音用
+	IXAudio2SourceVoice* pLandingSourceVoice{ nullptr };
+
+	std::vector<AudioPlayer> players{};
 
 	// 連続再生用
 	float sequenceTimeLeft{ 0.0f };
 	Resource<ResourceType::Audio>* pNextSequenceAudio{ nullptr };
+
+	// 弓を引き絞る音用
+	IXAudio2SourceVoice* pBowPullSourceVoice{ nullptr };
 };

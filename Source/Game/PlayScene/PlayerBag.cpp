@@ -1,4 +1,7 @@
 #include "PlayerBag.h"
+#include <Game/Manager/SessionManager.h>
+#include <Game/Manager/AudioManager.h>
+
 #include <numeric>
 
 PlayerBagData::PlayerBagData()
@@ -11,9 +14,10 @@ void PlayerBag::Start() {}
 void PlayerBag::Update()
 {
 	static ItemId id{ 0 };
-
+	auto& status = Get<SessionManager>().RefStatus();
+#ifdef USE_IMGUI
 	// デバッグ用のUI
-	ImGui::Begin("Bag");
+	ImGui::Begin(std::format("Bag:{}", status.name.c_str()).c_str());
 	if (ImGui::Button("ExpansiionCapa"))
 	{
 		ExpansionCapacity(10);
@@ -39,6 +43,38 @@ void PlayerBag::Update()
 		}
 	}
 	ImGui::End();
+#endif
+}
+
+std::vector<ItemStack> PlayerBag::GetItemStacks()
+{
+	std::vector<ItemStack> itemStacks;
+	for (auto& item : items)
+	{
+		if (item.IsEmpty() == false)
+		{
+			ItemId id = item.id;
+			auto itr  = std::find_if(
+                itemStacks.begin(),
+                itemStacks.end(),
+                [id](const ItemStack& _stack)
+                {
+                    return _stack.id == id;
+                });
+
+			// 既に同じアイテムが入っているなら加算
+			if (itr != itemStacks.end())
+			{
+				itr->count += item.count;
+			}
+			// 無いなら新たに追加
+			else
+			{
+				itemStacks.emplace_back(id, item.count);
+			}
+		}
+	}
+	return itemStacks;
 }
 
 void PlayerBag::ExpansionCapacity(
@@ -126,6 +162,8 @@ bool PlayerBag::TryCraft(
 		int idx = FindCraftMaterialSlot(craftInfo);
 		if (idx == -1)
 		{
+			// 素材不足：失敗音
+			Get<AudioManager>().Play(mistakeSE);
 			return false;
 		}
 		stackUsedCraftTmps.push_back(ItemConsumption{ .slotIndex = idx, .useItemCount = craftInfo._value });
@@ -139,6 +177,7 @@ bool PlayerBag::TryCraft(
 			assert(false);
 			return false;
 		}
+
 		BagItemStack& slot = items[reservation.slotIndex];
 		slot.count -= reservation.useItemCount;
 
@@ -147,7 +186,12 @@ bool PlayerBag::TryCraft(
 			slot = BagItemStack::EmptyStack();
 		}
 	}
+
 	Sort();
+
+	// クラフト成功音
+	Get<AudioManager>().Play(craftingSE);
+
 	return true;
 }
 
@@ -157,6 +201,7 @@ void PlayerBag::AddItem(
 	ItemType itemType = Get<ItemSystem>().GetInfo(_id)._type;
 	if (itemType == ItemType::Weapons)
 		return;
+
 	// 既に同じIDのアイテムが存在する場合は、スタック可能なスロットに追加する
 
 	// 同じIDのアイテムの範囲を取得
@@ -215,6 +260,7 @@ void PlayerBag::AddItem(
 				break;
 
 			itr->id = _id;
+
 			// スロットの最大スタック数を超える場合は、最大数まで追加して残りは次スロットに追加
 			if (remain > itr->maxStack)
 			{
@@ -270,6 +316,12 @@ std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
 	return craftMaterials;
 }
 
+void PlayerBag::ClearItems()
+{
+	BagItemStack emptyStack = BagItemStack::EmptyStack();
+	std::fill(items.begin(), items.end(), emptyStack);
+}
+
 void PlayerBag::Sort()
 {
 	// アイテムIDの昇順でソート、同じIDの場合は個数の降順でソート
@@ -316,6 +368,7 @@ int PlayerBag::FindCraftMaterialSlot(
 	{
 		return -1;
 	}
+
 	auto idx = std::distance(items.begin(), foundItemStack);
 	return static_cast<int>(idx);
 }

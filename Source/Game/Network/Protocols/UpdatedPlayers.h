@@ -22,6 +22,7 @@ namespace Protocol
 			    .AddMember(positions)
 			    .AddMember(rotations)
 			    .AddMember(haveItemIds)
+			    .AddMember(attentionLevels)
 			    .AddMember(flag);
 		}
 
@@ -40,6 +41,7 @@ namespace Protocol
 		SizedBuffer<float> positions{};
 		SizedBuffer<float> rotations{};
 		SizedBuffer<int32_t> haveItemIds{};
+		SizedBuffer<int32_t> attentionLevels{};
 
 		int32_t flag{};
 	};

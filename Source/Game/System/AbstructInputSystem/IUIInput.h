@@ -1,10 +1,11 @@
 #pragma once
 #include <Game/Game.h>
+#include "IInput.h"
 
 /// @brief UIの入力抽象化インタフェース
-class IUIInput
+class IUIInput : public IInput
 {
-public:
+  public:
 	/// @brief コンストラクタ
 	IUIInput() = default;
 	/// @brief デストラクタ
@@ -12,16 +13,16 @@ public:
 
 	/// @brief 上方向への移動があったか
 	/// @return あった true / false
-	virtual bool IsMovedUp() const = 0;
+	virtual bool IsMovedUp() = 0;
 	/// @brief 下方向への移動があったか
 	/// @return あった true / false
-	virtual bool IsMovedDown() const = 0;
+	virtual bool IsMovedDown() = 0;
 	/// @brief 左方向への移動があったか
 	/// @return あった true / false
-	virtual bool IsMovedLeft() const = 0;
+	virtual bool IsMovedLeft() = 0;
 	/// @brief 右方向への移動があったか
 	/// @return あった true / false
-	virtual bool IsMovedRight() const = 0;
+	virtual bool IsMovedRight() = 0;
 	/// @brief 選択されたか
 	/// @return 選択された true / false
 	virtual bool IsSelected() const = 0;

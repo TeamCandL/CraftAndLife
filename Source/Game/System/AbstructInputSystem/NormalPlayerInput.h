@@ -5,33 +5,36 @@
 /// @brief 普通のプレイヤー入力
 class NormalPlayerInput : public IPlayerInput
 {
-public:
+  public:
 	/// @brief コンストラクタ
 	/// @param _abstructInputSystem 抽象入力システムの参照ポインタ
 	NormalPlayerInput(AbstructInputSystem& _abstructInputSystem);
 	/// @brief デストラクタ
-	~NormalPlayerInput() = default;
+	virtual ~NormalPlayerInput() = default;
 
 	// IPlayerInput を介して継承されました
-	Vec2 GetMoveBody() const override;
-	Vec2 GetMoveCamera() const override;
-	float GetActionTrigger() const override;
-	float GetSubActionTrigger() const override;
-	bool IsActionBegin() const override;
-	bool IsAction() const override;
-	bool IsActionEnd() const override;
-	bool IsSubActionBegin() const override;
-	bool IsSubAction() const override;
-	bool IsSubActionEnd() const override;
-	bool IsMovedHotbarLeft() const override;
-	bool IsMovedHotbarRight() const override;
-	bool IsInteractBegin() const override;
-	bool IsInteract() const override;
-	bool IsInteractEnd() const override;
-	bool IsJumpBegin() const override;
-	bool IsJump() const override;
-	bool IsJumpEnd() const override;
+	virtual Vec2 GetMoveBody() const override;
+	virtual Vec2 GetMoveCamera() const override;
+	virtual float GetActionTrigger() const override;
+	virtual float GetSubActionTrigger() const override;
+	virtual bool IsActionBegin() const override;
+	virtual bool IsAction() const override;
+	virtual bool IsActionEnd() const override;
+	virtual bool IsSubActionBegin() const override;
+	virtual bool IsSubAction() const override;
+	virtual bool IsSubActionEnd() const override;
+	virtual bool IsMovedHotbarLeft() const override;
+	virtual bool IsMovedHotbarRight() const override;
+	virtual bool IsInteractBegin() const override;
+	virtual bool IsInteract() const override;
+	virtual bool IsInteractEnd() const override;
+	virtual bool IsJumpBegin() const override;
+	virtual bool IsJump() const override;
+	virtual bool IsJumpEnd() const override;
 
-private:
+	/// @brief 更新処理
+	virtual void Update() override {}
+
+  protected:
 	AbstructInputSystem& abstructInputSystem_;
 };

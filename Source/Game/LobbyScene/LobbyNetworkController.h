@@ -3,11 +3,13 @@
 
 struct LobbyNetworkControllerData
 {
-	LobbyNetworkControllerData(const GameObject _objMemberList) :
-		objMemberList{ _objMemberList }
-	{}
+	// LobbyNetworkControllerData(
+	//     const GameObject _objMemberList) :
+	//     objMemberList{ _objMemberList }
+	//{
+	// }
 
-	GameObject objMemberList{};
+	// GameObject objMemberList{};
 };
 
 struct LobbyNetworkController : ObjectBase<LobbyNetworkControllerData>

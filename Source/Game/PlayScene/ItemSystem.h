@@ -6,16 +6,19 @@
 
 enum ItemType
 {
-	Weapons = 0,  ///<	武器
-	Tools,        ///<	道具
-	WeaponBow,    ///<	弓
-	Shield,       ///<	盾
-	Arrow,        ///<	矢
-	Consumables,  ///<	消費アイテム
-	Materials,    ///<	素材アイテム
-	Medicals,     ///<	蘇生アイテム
-	Backpack,     ///<	バックパック
-	ItemTypeMax,  ///<	その他アイテム
+	Weapons = 0,        ///<	武器
+	Tools,              ///<	道具
+	WeaponBow,          ///<	弓
+	Shield,             ///<	盾
+	Arrow,              ///<	矢
+	Consumables,        ///<	消費アイテム
+	Materials,          ///<	素材アイテム
+	Medicals,           ///<	蘇生アイテム
+	Backpack,           ///<	バックパック
+	EnemyAttack,        ///<	敵の攻撃アイテム
+	PlayerAttackSword,  ///<	プレイヤーの剣攻撃アイテム
+	PlayerAttackArrow,  ///<	プレイヤーの弓攻撃アイテム
+	ItemTypeMax,        ///<	その他アイテム
 };
 
 struct CraftInfo
@@ -36,8 +39,11 @@ struct ItemInfo
 	float _coolTime{};
 	int32_t _damageForEnemy{};
 	int32_t _damageForObject{};
+	int32_t _damageForMob{};
 
 	PlayerJobType canUseJobType{};
+
+	Vec3 colliderSize{};  ///< コライダーの大きさ
 };
 
 struct ItemAllInfo
@@ -51,11 +57,14 @@ struct ItemAllInfo
 	const bool _isCraftable{};                  ///<	クラフト可能か
 	const std::vector<CraftInfo> _craftInfo{};  ///<	クラフトに必要なアイテムの情報
 
-	const float _coolTime{};           ///<	クールタイム
+	const float _damageLifeTime{};     ///<	攻撃判定の持続時間
 	const int32_t _damageForEnemy{};   ///<	敵への攻撃力
 	const int32_t _damageForObject{};  ///<	オブジェクトへの攻撃力
+	const int32_t _damageForMob{};     ///<	モブへの攻撃力
 
 	PlayerJobType canUseJobType{ PlayerJobType_Max };  ///<	使用可能な職業タイプ
+
+	Vec3 colliderSize{};  ///< コライダーの大きさ
 };
 
 struct ItemStack
@@ -95,4 +104,9 @@ struct ItemSystem : SystemObjectBase<ItemSystem, ItemSystemData>
 	/// @param _id
 	/// @return
 	Resource<Model> GetModel(const ItemId _id);
+
+	/// @brief 攻撃用アイテムIdをプレイヤーが取得可能なアイテムIdへ変換する
+	/// @param _attackItemId 攻撃用ItemId
+	/// @return アタック用アイテムId
+	ItemId ConvertAttackItemToCollectibleItem(const ItemId _attackItemId);
 };

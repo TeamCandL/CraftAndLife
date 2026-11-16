@@ -15,6 +15,12 @@
 #include <Game/Network/Protocols/UpdateDayTime.h>
 #include <Game/Network/Protocols/UpdatedDayTime.h>
 #include <Game/Network/Protocols/BreakHarvestable.h>
+#include <Game/Network/Protocols/EntitySpawnRequest.h>
+#include <Game/Network/Protocols/EntitySpawned.h>
+#include <Game/Network/Protocols/EntityPickRequest.h>
+#include <Game/Network/Protocols/EntityPicked.h>
+#include <Game/Network/Protocols/PlayerRespawned.h>
+#include <Game/Network/Protocols/TextChated.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
@@ -22,10 +28,16 @@
 #include <Game/PlayScene/EnemyController.h>
 #include <Game/PlayScene/StateValueCode.h>
 #include <Game/PlayScene/EntitySystem.h>
+#include <Game/PlayScene/IEntitySystemNetwork.h>
 #include <Game/PlayScene/PlayerHand.h>
+#include <Game/PlayScene/PlayerRespawnedNetworkData.h>
 #include <unordered_set>
 #include <Game/PlayScene/DayController.h>
 #include <Game/PlayScene/HarvestableController.h>
+#include "OtherPlayerController.h"
+#include <Game/PlayScene/PlaySceneUIController.h>
+#include <Game/PlayScene/UI/ChatTextLog.h>
+#include <Game/Manager/AudioManager.h>
 
 using enum NetworkSessionManager::State;
 
@@ -38,7 +50,7 @@ void PlayNetworkController::Update()
 {
 	static int testing{};
 	testing++;
-	if (testing % 20 != 0)
+	if (testing % 6 != 0)
 	{
 		return;
 	}
@@ -47,7 +59,7 @@ void PlayNetworkController::Update()
 
 	NetworkActorServer& actorServer = Get<NetworkActorServer>(objNetworkActorServer);
 
-	EntitySystem& entitySystem = Get<EntitySystem>();
+	IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
 
 	// ホスト情報を更新
 	entitySystem.SetHost(actorServer.IsHost());
@@ -84,8 +96,12 @@ void PlayNetworkController::Update()
 				        message.rotations.Size(),
 				        message.haveItemIds.Size());
 
-				    Get<SessionManager>()
-				        .UpdatePlayers(message.playerNames, message.positions, message.rotations, message.haveItemIds);
+				    Get<SessionManager>().UpdatePlayers(
+				        message.playerNames,
+				        message.positions,
+				        message.rotations,
+				        message.haveItemIds,
+				        message.attentionLevels);
 
 				    break;
 			    }
@@ -215,8 +231,8 @@ void PlayNetworkController::Update()
 
 				    break;
 			    }
-			    case ProtocolType::UpdateEntityRemove:
-			    {
+				/*case ProtocolType::UpdateEntityRemove:
+				{
 				    Protocol::UpdateEntityRemove message{};
 				    converter.ToMessage(_event.data, message);
 
@@ -225,13 +241,16 @@ void PlayNetworkController::Update()
 				    VCU_LOG("エンティティ削除情報受信 ID={}", message.entityId);
 
 				    break;
-			    }
+				}*/
 			    case ProtocolType::UpdatedDayTime:
 			    {
 				    Protocol::UpdatedDayTime dayTimeMessage{};
 				    converter.ToMessage(_event.data, dayTimeMessage);
 				    Get<SessionManager>().UpdateDayTime(dayTimeMessage.currentTimeSec, dayTimeMessage.dayCount);
-
+				    VCU_LOG(
+				        "UpdatedDayTime受信: currentTimeSec={}, dayCount={}",
+				        dayTimeMessage.currentTimeSec,
+				        dayTimeMessage.dayCount);
 				    break;
 			    }
 			    case ProtocolType::BreakHarvestable:
@@ -240,6 +259,89 @@ void PlayNetworkController::Update()
 				    converter.ToMessage(_event.data, breakHarvestableMessage);
 				    Get<HarvestableController>(objHarvestableController)
 				        .BreakAt(breakHarvestableMessage.breakHarvestableId);
+
+				    break;
+			    }
+			    case ProtocolType::EntitySpawned:
+			    {
+				    Protocol::EntitySpawned message{};
+				    converter.ToMessage(_event.data, message);
+
+				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
+				    entitySystem.SpawnFromNetwork(
+				        message.entityId,
+				        message.itemId,
+				        Vec3{ message.positionX, message.positionY, message.positionZ },
+				        Vec3{
+				            message.velocityX,
+				            message.velocityY,
+				            message.velocityZ,
+				        });
+				    break;
+			    }
+			    case ProtocolType::EntityPicked:
+			    {
+				    Protocol::EntityPicked message{};
+				    converter.ToMessage(_event.data, message);
+
+				    Vec3 position = Vec3{ message.positionX, message.positionY, message.positionZ };
+
+				    if (Get<SessionManager>().RefStatus().name == message.pickerName)
+				    {
+					    VCU_LOG("自分が拾った！！");
+					    Get<Player>(objPlayer).GiveItem(message.itemId, position);
+				    }
+				    else
+					    VCU_LOG("他人が拾った！！");
+
+				    // エンティティ拾ったときの座標が音聞こえる範囲なら
+				    if (true)  // (Get<Transform>(objPlayer).position - position).Length() <= CanListenDistance
+				    {
+					    switch (message.itemId)
+					    {
+					    case ITEM_ID_PLAYER_ATTACK_SWORD:
+						    // 剣の音を鳴らす（音量50%）
+						    Get<AudioManager>().Play(swordDamagedSE, 0.5f);
+						    break;
+					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
+						    // 大剣の音を鳴らす（音量50%）
+						    Get<AudioManager>().Play(greatswordDamagedSE, 0.5f);
+						    break;
+					    case ITEM_ID_PLAYER_ATTACK_ARROW:
+						    // 矢の着弾の音を鳴らす
+						    Get<AudioManager>().Play(impactSE);
+						    break;
+					    default:
+						    // それ以外は音なし 他の人がアイテム拾ったときの音とかもできるよ
+						    break;
+					    }
+				    }
+
+				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
+				    entitySystem.RemoveFromNetwork(message.entityId);
+				    break;
+			    }
+			    case ProtocolType::PlayerRespawned:
+			    {
+				    Protocol::PlayerRespawned message{};
+				    converter.ToMessage(_event.data, message);
+
+				    if (Get<SessionManager>().RefStatus().name == message.playerName)
+				    {
+					    VCU_LOG("自分が生き返った！！");
+					    Get<Player>(objPlayer).Respawn(message.hp);
+				    }
+				    break;
+			    }
+			    case ProtocolType::TextChated:
+			    {
+				    Protocol::TextChated message{};
+				    converter.ToMessage(_event.data, message);
+
+				    PlaySceneUIController& playSceneUIController = Get<PlaySceneUIController>(objUIController);
+
+				    GameObject objChatTextLog = playSceneUIController.Data().objChatTextLog;
+				    Get<ChatTextLog>(objChatTextLog).AddLog(message.content);
 
 				    break;
 			    }
@@ -264,7 +366,9 @@ void PlayNetworkController::Update()
 		static int32_t counter{};
 		message.flag = counter++;
 
-		message.haveItemId = Get<PlayerHand>(Get<Player>(objPlayer).Data().objPlayerHand).Data().haveItemId;
+		message.haveItemId     = Get<PlayerHand>(Get<Player>(objPlayer).Data().objPlayerHand).Data().haveItemId;
+		message.attentionLevel = Get<Player>(objPlayer).Data().attentionLevel;
+		VCU_LOG("送信する注目度: {}", message.attentionLevel);
 
 		// VCU_LOG("更新処理送信: {}", counter);
 
@@ -347,114 +451,215 @@ void PlayNetworkController::Update()
 		}
 
 		// 敵情報更新
-
 		if (actorServer.IsHost() && actorServer.IsInitialized())
 		{
 			GameObject objEnemyController = actorServer.GetEnemyController();
-			auto enemyStatuses            = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
-
-			// 送信済みの敵IDを記録する
-			std::unordered_set<int> enemyIds;
-
-			for (const EnemyStatus& enemy : enemyStatuses)
+			if (!objEnemyController.IsEmpty())
 			{
-				// 同じIDがすでに登録されていたら送信しない
-				if (!enemyIds.insert(enemy.enemyId).second)
+				auto enemyStatuses = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
+
+				// 送信済みの敵IDを記録する
+				std::unordered_set<int> enemyIds;
+
+				for (const EnemyStatus& enemy : enemyStatuses)
 				{
-					// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
-					continue;
+					// 同じIDがすでに登録されていたら送信しない
+					if (!enemyIds.insert(enemy.enemyId).second)
+					{
+						// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
+						continue;
+					}
+
+					Protocol::UpdateEnemy enemyMessage{};
+
+					enemyMessage.enemyId   = enemy.enemyId;
+					enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
+
+					enemyMessage.positionX = enemy.enemyPosition.x;
+					enemyMessage.positionY = enemy.enemyPosition.y;
+					enemyMessage.positionZ = enemy.enemyPosition.z;
+
+					enemyMessage.rotationX = 0.0f;
+					enemyMessage.rotationY = enemy.enemyAngleY;
+
+					VCU_LOG(
+					    "送信前の敵座標 ID={}: ({}, {}, {})",
+					    enemy.enemyId,
+					    enemy.enemyPosition.x,
+					    enemy.enemyPosition.y,
+					    enemy.enemyPosition.z);
+
+					networkSessionManager.Send(enemyMessage);
 				}
 
-				Protocol::UpdateEnemy enemyMessage{};
+				// 敵ステート送信処理
+				const bool fullSync = actorServer.IsFullSync();
+				auto& registries    = actorServer.GetEnemyStateRegistries();
 
-				enemyMessage.enemyId   = enemy.enemyId;
-				enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
+				const auto& pendingDeaths = actorServer.GetPendingEnemyDeaths();
 
-				enemyMessage.positionX = enemy.enemyPosition.x;
-				enemyMessage.positionY = enemy.enemyPosition.y;
-				enemyMessage.positionZ = enemy.enemyPosition.z;
+				Protocol::UpdatedEnemyStates enemyStateMessage{};
+				enemyStateMessage.isFullSync = fullSync;
 
-				enemyMessage.rotationX = 0.0f;
-				enemyMessage.rotationY = enemy.enemyAngleY;
+				std::vector<int32_t> enemyStateIds;
+				std::vector<uint8_t> values;
 
-				VCU_LOG(
-				    "送信前の敵座標 ID={}: ({}, {}, {})",
-				    enemy.enemyId,
-				    enemy.enemyPosition.x,
-				    enemy.enemyPosition.y,
-				    enemy.enemyPosition.z);
+				std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
 
-				networkSessionManager.Send(enemyMessage);
-			}
+				VCU_LOG("敵ステート送信 FullSync={}", fullSync);
+				VCU_LOG("敵ステート登録数={}", registries.size());
 
-			// 敵ステート送信処理
-			const bool fullSync = actorServer.IsFullSync();
-			auto& registries    = actorServer.GetEnemyStateRegistries();
-
-			Protocol::UpdatedEnemyStates enemyStateMessage{};
-			enemyStateMessage.isFullSync = fullSync;
-
-			std::vector<int32_t> enemyStateIds;
-			std::vector<uint8_t> values;
-
-			std::vector<std::pair<size_t, std::vector<StateChange>>> pendingChanges;
-
-			VCU_LOG("敵ステート送信 FullSync={}", fullSync);
-			VCU_LOG("敵ステート登録数={}", registries.size());
-
-			for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
-			{
-				if (!registries[enemyId].has_value())
-					continue;
-
-				auto& registry = *registries[enemyId];
-
-				// 初回は全ステート、それ以降は変更分だけ取得
-				const auto changes = registry.GetStates(fullSync);
-				VCU_LOG("敵 ID={} 取得ステート数={}", enemyId, changes.size());
-				for (const auto& change : changes)
+				// ステート名を改行区切りで追加
+				auto AddStateName = [&enemyStateMessage](const std::string& name)
 				{
-					VCU_LOG("送信対象 ID={} Name={}", enemyId, change.name);
-					enemyStateIds.push_back(static_cast<int32_t>(enemyId));
-
-					// 値をエンコード
-					StateValueCode::Encode(change.value, values);
-
 					if (!enemyStateMessage.stateName.empty())
+					{
 						enemyStateMessage.stateName += '\n';
+					}
 
-					enemyStateMessage.stateName += change.name;
-				}
+					enemyStateMessage.stateName += name;
+				};
 
-				if (!changes.empty())
-					pendingChanges.emplace_back(enemyId, changes);
-			}
-
-			// 送信するステートがある場合のみ送信
-			if (!enemyStateIds.empty())
-			{
-				enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
-
-				enemyStateMessage.values.Resize(values.size());
-
-				for (size_t i = 0; i < values.size(); ++i)
-					enemyStateMessage.values[i] = values[i];
-
-				networkSessionManager.Send(enemyStateMessage);
-
-				// 送信後に変更を確定
-				for (const auto& [enemyId, changes] : pendingChanges)
+				for (size_t enemyId = 0; enemyId < registries.size(); ++enemyId)
 				{
-					if (enemyId < registries.size() && registries[enemyId].has_value())
-						registries[enemyId]->CommitChanges(changes);
+					if (!registries[enemyId].has_value())
+						continue;
+
+					// 死亡済みの敵はレジストリのポインタを参照しない
+					if (actorServer.IsDeathQueued(static_cast<int32_t>(enemyId)))
+					{
+						continue;
+					}
+
+					// 初回は全ステート、それ以降は変更分だけ取得
+					auto& registry     = *registries[enemyId];
+					const auto changes = registry.GetStates(fullSync);
+
+					VCU_LOG("敵 ID={} 取得ステート数={}", enemyId, changes.size());
+
+					for (const auto& change : changes)
+					{
+						VCU_LOG("送信対象 ID={} Name={}", enemyId, change.name);
+						enemyStateIds.push_back(static_cast<int32_t>(enemyId));
+
+						// 値をエンコード
+						StateValueCode::Encode(change.value, values);
+
+						AddStateName(change.name);
+					}
+
+					if (!changes.empty())
+						pendingChanges.emplace_back(enemyId, changes);
 				}
 
-				// 初回同期完了
-				if (fullSync)
-					actorServer.ResetFullSync();
+				// 死亡通知の送信
+				for (const auto& death : pendingDeaths)
+				{
+					enemyStateIds.push_back(death.enemyId);
+					StateValueCode::Encode(StateValue{ int32_t{ 0 } }, values);
+					AddStateName("hp");
+
+					enemyStateIds.push_back(death.enemyId);
+
+					// 死亡通知は alive = false
+					StateValueCode::Encode(StateValue{ death.alive }, values);
+					AddStateName("alive");
+				}
+
+				// 送信するステートがある場合のみ送信
+				if (!enemyStateIds.empty())
+				{
+					enemyStateMessage.enemyStateIds = SizedBuffer<int32_t>(enemyStateIds.begin(), enemyStateIds.end());
+
+					enemyStateMessage.values.Resize(values.size());
+
+					for (size_t i = 0; i < values.size(); ++i)
+						enemyStateMessage.values[i] = values[i];
+
+					networkSessionManager.Send(enemyStateMessage);
+
+					// 送信後に変更を確定
+					for (const auto& [enemyId, changes] : pendingChanges)
+					{
+						if (enemyId < registries.size() && registries[enemyId].has_value())
+							registries[enemyId]->CommitChanges(changes);
+					}
+
+					// 死亡通知を送信した敵のレジストリを解除
+					for (const auto& death : pendingDeaths)
+					{
+						actorServer.ReleaseActor(death.enemyId);
+					}
+
+					// 死亡通知キューをクリア
+					if (!pendingDeaths.empty())
+					{
+						actorServer.ClearPendingEnemyDeaths();
+					}
+
+					// 初回同期完了
+					if (fullSync)
+						actorServer.ResetFullSync();
+				}
 			}
 		}
 
+		IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
+
+		// エンティティスポーンしたリクエストを処理
+		std::vector<EntitySpawnData> entitySpawnsData = entitySystem.TakeSpawnsData();
+		for (const auto& data : entitySpawnsData)
+		{
+			Protocol::EntitySpawnRequest message{};
+			message.itemId    = data.itemId;
+			message.positionX = data.position.x;
+			message.positionY = data.position.y;
+			message.positionZ = data.position.z;
+			message.velocityX = data.velocity.x;
+			message.velocityY = data.velocity.y;
+			message.velocityZ = data.velocity.z;
+
+			networkSessionManager.Send(message);
+		}
+
+		// エンティティを拾ったリクエストを処理
+		std::vector<EntityPickData> entityPicksData = entitySystem.TakePicksData();
+		for (const auto& data : entityPicksData)
+		{
+			Protocol::EntityPickRequest message{};
+			message.entityId  = data.entityId;
+			message.positionX = data.position.x;
+			message.positionY = data.position.y;
+			message.positionZ = data.position.z;
+
+			networkSessionManager.Send(message);
+		}
+
+		OtherPlayerController& otherPlayerController          = Get<OtherPlayerController>(objOtherPlayerController);
+		std::vector<PlayerRespawnedData> playerRespawnedsData = otherPlayerController.TakeRespawn();
+		for (auto& data : playerRespawnedsData)
+		{
+			Protocol::PlayerRespawned message{};
+
+			message.playerName = data.playerName;
+			message.hp         = data.hp;
+
+			networkSessionManager.Send(message);
+		}
+
+		PlaySceneUIController& playSceneUIController = Get<PlaySceneUIController>(objUIController);
+
+		std::vector<std::string> requestLogs =
+		    Get<ChatTextLog>(playSceneUIController.Data().objChatTextLog).TakeLogRequests();
+		for (auto& log : requestLogs)
+		{
+			Protocol::TextChated message{};
+			message.content = log;
+
+			networkSessionManager.Send(message);
+		}
+
+		/*  // エンティティシステムを変更したため無視
 		// エンティティ生成情報送信
 		EntitySystem& entitySystem = Get<EntitySystem>();
 
@@ -462,35 +667,35 @@ void PlayNetworkController::Update()
 
 		for (const EntitySpawnData& spawnData : spawnDataList)
 		{
-			Protocol::UpdateEntitySpawn entityMessage{};
+		    Protocol::UpdateEntitySpawn entityMessage{};
 
-			entityMessage.entityId   = spawnData.entityId;
-			entityMessage.itemId     = spawnData.itemId;
-			entityMessage.sourceType = static_cast<uint8_t>(spawnData.sourceType);
-			entityMessage.sourceId   = spawnData.sourceId;
+		    entityMessage.entityId   = spawnData.entityId;
+		    entityMessage.itemId     = spawnData.itemId;
+		    entityMessage.sourceType = static_cast<uint8_t>(spawnData.sourceType);
+		    entityMessage.sourceId   = spawnData.sourceId;
 
-			entityMessage.positionX = spawnData.position.x;
-			entityMessage.positionY = spawnData.position.y;
-			entityMessage.positionZ = spawnData.position.z;
+		    entityMessage.positionX = spawnData.position.x;
+		    entityMessage.positionY = spawnData.position.y;
+		    entityMessage.positionZ = spawnData.position.z;
 
-			entityMessage.velocityX = spawnData.velocity.x;
-			entityMessage.velocityY = spawnData.velocity.y;
-			entityMessage.velocityZ = spawnData.velocity.z;
+		    entityMessage.velocityX = spawnData.velocity.x;
+		    entityMessage.velocityY = spawnData.velocity.y;
+		    entityMessage.velocityZ = spawnData.velocity.z;
 
-			networkSessionManager.Send(entityMessage);
-			VCU_LOG(
-			    "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
-			    entityMessage.entityId,
-			    entityMessage.itemId,
-			    entityMessage.sourceType,
-			    entityMessage.positionX,
-			    entityMessage.velocityX);
+		    networkSessionManager.Send(entityMessage);
+		    VCU_LOG(
+		        "エンティティの情報送信: ID={},itemID={},Type={},posX={},velX={}",
+		        entityMessage.entityId,
+		        entityMessage.itemId,
+		        entityMessage.sourceType,
+		        entityMessage.positionX,
+		        entityMessage.velocityX);
 		}
 
 		// 送信後に送信待ちデータをクリア
 		if (!spawnDataList.empty())
 		{
-			entitySystem.ClearPendingSpawnData();
+		    entitySystem.ClearPendingSpawnData();
 		}
 
 		// エンティティ削除情報送信
@@ -498,20 +703,21 @@ void PlayNetworkController::Update()
 
 		for (const EntityRemoveData& removeData : removeDataList)
 		{
-			Protocol::UpdateEntityRemove removeMessage{};
+		    Protocol::UpdateEntityRemove removeMessage{};
 
-			removeMessage.entityId = removeData.entityId;
+		    removeMessage.entityId = removeData.entityId;
 
-			networkSessionManager.Send(removeMessage);
+		    networkSessionManager.Send(removeMessage);
 
-			VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
+		    VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
 		}
 
 		// 送信後に送信待ちデータをクリア
 		if (!removeDataList.empty())
 		{
-			entitySystem.ClearPendingRemoveData();
+		    entitySystem.ClearPendingRemoveData();
 		}
+		*/
 
 		// 昼夜サイクルの同期
 		// DayControllerを取得

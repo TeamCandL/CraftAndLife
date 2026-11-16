@@ -10,6 +10,7 @@ void BossName::Start()
 
 void BossName::Update()
 {
-	SetActive(Get<BossInfo>(objBossInfo).IsBossActive());
-	text.content = "BossName";
+	SetActive(Get<BossInfo>(objBossInfo).IsActive());
+
+	text.content = "きょーてき";
 }

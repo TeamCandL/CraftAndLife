@@ -5,11 +5,22 @@
 
 struct EnemyControllerData
 {
+	EnemyControllerData(
+	    GameObject _objPlaySceneUIController) :
+	    objPlaySceneUIController{ _objPlaySceneUIController }
+	{
+	}
+
 	std::vector<GameObject> allEnemys;  ///< 全ての敵の情報を格納する
 	int32_t nextEnemyId = 0;
 
-	GameObject objBossInfo{};  ///< ボスのHPUIのオブジェクト
-	GameObject objNetworkActorServer{};
+	GameObject objBossInfo{};               ///< ボスのHPUIのオブジェクト
+	GameObject objPlaySceneUIController{};  ///< UIコントローラーのオブジェクト
+	GameObject objNetworkActorServer{};     ///< ネットワークアクターサーバーのオブジェクト
+
+	GameObject objEnemiesInfo{};  // 配列にする必要あるかもね
+
+	std::vector<GameObject> objEnemyHpBar;
 };
 
 struct EnemyController : ObjectBase<EnemyControllerData>

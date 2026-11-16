@@ -20,9 +20,17 @@
 #include "StateRegistry.h"
 #include <Game/Manager/AudioManager.h>
 #include <Game/Manager/SessionManager/SessionStateReader.h>
+#include <Game/PlayScene/DebugPoint.h>
+#include <shigaLibrary/SgRandom.h>
 
 void Player::Start()
 {
+#ifdef _DEBUG
+	filterAddItemOnJob = false;
+#else
+	filterAddItemOnJob = true;
+#endif  // _DEBUG
+
 	obb.isTrigger = true;
 
 	transform.scale = Vec3::One() * 200.0f;
@@ -57,15 +65,50 @@ void Player::Start()
 		    VCU_LOG("change selected item");
 	    });
 
-	SetJob(PlayerJobType_Archer);
+	// ジョブ割り振り
+	if (!isJobAssigned)
+	{
+		const auto& status = Get<SessionManager>().RefStatus();
+
+		// 自分のプレイヤーIDを取得
+		auto nameIt = std::ranges::find(status.memberNames, status.name);
+
+		if (nameIt != status.memberNames.end())
+		{
+			const size_t index = std::distance(status.memberNames.begin(), nameIt);
+
+			if (index < status.memberId.size())
+			{
+				const int32_t playerId = status.memberId[index];
+
+				// 自分のロールIDを取得
+				auto roleIt = status.memberRoles.find(playerId);
+
+				if (roleIt != status.memberRoles.end())
+				{
+					const int32_t roleId = roleIt->second;
+
+					if (roleId >= 0 && roleId < PlayerJobType_Max)
+					{
+						SetJob(static_cast<PlayerJobType>(roleId));
+						isJobAssigned = true;
+					}
+				}
+			}
+		}
+	}
 }
 
 void Player::Update()
 {
 	SessionManager& sessionManager = Get<SessionManager>();
 	std::string playerName         = sessionManager.RefStatus().name;
-
+#ifdef USE_IMGUI
 	ImGui::Begin("Player");
+	if (ImGui::Button("ClearItem"))
+	{
+		ClearAllItem();
+	}
 	ImGui::DragInt("anim", &animIndex, 1, 0);
 	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
 	ImGui::DragFloat("animSpeed", &animSpeed, 1.0f, 0.0f);
@@ -74,10 +117,14 @@ void Player::Update()
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::Separator();
 	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+#endif
 
 	Vec3 angles = transform.rotation.ToEuler();
+#ifdef USE_IMGUI
 	ImGui::DragFloat3("angles", angles.v, DirectX::XM_PI / 180.0f);
+#endif
 	transform.rotation = Quaternion::FromEuler(angles);
+#ifdef USE_IMGUI
 
 	if (ImGui::Button("出力"))
 	{
@@ -122,7 +169,7 @@ void Player::Update()
 	}
 
 	ImGui::End();
-
+#endif
 	if (isAnimPreviewingDebug)
 
 	{
@@ -151,18 +198,19 @@ void Player::Update()
 	else if (helthState == HelthState_Dead)
 	{
 		DeadAnim();
+		Dead();
 	}
 
-	// お試しで出してるエンティティ
-	if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
-	{
-		SpawnItem(9);
-	}
+	//// お試しで出してるエンティティ 辞めました。
+	// if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
+	//{
+	//	SpawnItem(9);
+	// }
 
-	if (Get<InputSystem>().GetKeyDown(KeyCode::T))
+	/*if (Get<InputSystem>().GetKeyDown(KeyCode::T))
 	{
-		SpawnItem(8);
-	}
+	    SpawnItem(8);
+	}*/
 
 	// 近くのアイテムを拾う
 	UpdatePickNearestItem();
@@ -173,12 +221,14 @@ void Player::Update()
 		// 選択スロットのアイテムを投げ捨てる
 		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
 		{
-
 			if (hotbar.CanRemoveSelectedItem())
 			{
 				ItemId selectedItemId = hotbar.GetSelectedItemId();
 				hotbar.RemoveSelectedItem();
 				SpawnItem(selectedItemId);
+
+				// アイテムを捨てたときのSE
+				Get<AudioManager>().Play(lostWeaponSE);
 			}
 		}
 
@@ -201,6 +251,10 @@ void Player::Update()
 	if (Get<InputSystem>().GetKeyDown(KeyCode::K))
 	{
 		Damaged(10, transform.position);
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::L))
+	{
+		Respawn(maxHP);
 	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
@@ -228,7 +282,8 @@ void Player::AttackCollider()
 {
 	if (nowAttackCoolTime <= 0.0f)
 	{
-		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME);
+		// 通常の剣による攻撃
+		GetScene().Instantiate<PlayerAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME, false);
 
 		nowAttackCoolTime = ATTACK_COOL_TIME;
 	}
@@ -255,14 +310,18 @@ void Player::Damaged(
 			{
 				VCU_LOG("防いだ!");
 
-				// 盾で防いだ音を再生
+				// 盾で防いだときのSE
 				Get<AudioManager>().Play(shieldGuardSE);
 
-				return;  // 防いだ判定
+				// 盾で防いだ場合はHPを減らさない
+				return;
 			}
 
 			VCU_LOG("防いでいない!");
 		}
+
+		// ダメージ適用前のHPを保存
+		int32_t beforeHP = hp;
 
 		if (jobStatus.maxHpBoost > 0.0f)
 		{
@@ -274,7 +333,7 @@ void Player::Damaged(
 			}
 			else
 			{
-				hp += jobStatus.maxHpBoost;
+				hp += static_cast<uint32_t>(jobStatus.maxHpBoost);
 			}
 		}
 		else
@@ -282,6 +341,13 @@ void Player::Damaged(
 			hp -= damage;
 		}
 
+		// HPが実際に減った場合だけSEを再生
+		if (hp < beforeHP)
+		{
+			Get<AudioManager>().Play(enemyHitSE);
+		}
+
+		// HPが0未満にならないようにする
 		if (hp < 0)
 		{
 			hp = 0;
@@ -309,8 +375,26 @@ void Player::SetHelthState(
 		break;
 
 	case HelthState_Dead:
+	{
+		// 死亡時のSE
+		Get<AudioManager>().Play(deathSE);
+
 		Get<IMainCamera>(objMainCamera).SetCameraType(MainCameraType_Ghost);
+
+		// アイテムをふぁいやーする処理
+		std::vector<ItemStack> itemStacks = GetHavingItem();
+		for (auto& itemStack : itemStacks)
+		{
+			int r      = Random::GetRandom(1, 360);
+			float rRad = DirectX::XM_PI / 180.0f * static_cast<float>(r);
+			Get<EntitySystem>().Spawn(
+			    itemStack.id,
+			    transform.position + Vec3::Up(),
+			    Vec3{ std::cosf(rRad), 2.0f, std::sinf(rRad) } * 5.0f);
+		}
+		ClearAllItem();
 		break;
+	}
 
 	default:
 		VCU_ASSERT("不正な生存ステータスですよ。");
@@ -368,6 +452,11 @@ void Player::MoveBody()
 
 	Vec2 bodyMove = pPlayerInput->GetMoveBody();
 
+	if (isOpenCraftUI)
+	{
+		bodyMove = Vec2::Zero();
+	}
+
 	float moveSpeed = jobStatus.moveSpeed;
 
 	// カメラの向きを取得
@@ -385,6 +474,8 @@ void Player::MoveBody()
 	// 地形に沿った移動
 	Vec3 nextPosition = transform.position;
 	nextPosition += moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>());
+
+	nextPosition = Get<TerrainSystem>().ToSafePosition(nextPosition, Vec3::One() * radius);
 
 	animSpeed = (moveDirection * moveSpeed + (jobStatus.moveVelocity * Get<DeltaTime>())).Length() / 0.1f;
 
@@ -528,6 +619,8 @@ void Player::MoveBody()
 			transform.position.y = groundHeight;
 			jumpVelocity         = 0.0f;
 			isJumping            = false;
+
+			Get<AudioManager>().PlayLanding(landingSE);
 		}
 
 		if (jumpVelocity < 0.0f)
@@ -576,6 +669,42 @@ void Player::DeadAnim()
 	}
 }
 
+void Player::Respawn(
+    const int32_t _hp)
+{
+	// HPを回復
+	hp = _hp;
+
+	// 生存状態に変更
+	SetHelthState(HelthState_Live);
+
+	// 蘇生SEを再生
+	Get<AudioManager>().Play(resuscitationSE);
+}
+
+void Player::GiveItem(
+    const ItemId _itemId,
+    const Vec3 _fromPosition)
+{
+	// 本当に取得可能な距離かを計測する
+	if ((_fromPosition - transform.position).Length() > entityPickupRadiusOnNetwork)
+	{
+		// 取得できない距離なら無視する
+		return;
+	}
+
+	const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(_itemId);
+	if (ITEM_INFO._type == ItemType::EnemyAttack)  // 敵の攻撃ならダメージを
+	{
+		GetScene().Instantiate<DebugPoint>(_fromPosition);
+		Damaged(ITEM_INFO._damageForEnemy, _fromPosition);
+	}
+	else  // それ以外なら基本的にホットバーかバックパックへ
+	{
+		TryAddItem(_itemId);
+	}
+}
+
 void Player::RegisterStates(
     StateRegistry& registry) const
 {
@@ -598,14 +727,11 @@ float Player::GetAngleY() const
 
 void Player::UpdatePickNearestItem()
 {
-	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, 3.0f);
-
-	// エンティティを拾うことができた場合
-	if (objPick)
+	if (helthState != HelthState_Live)
 	{
-		ItemId pickedItemId = Get<IEntity>(objPick).GetItemId();
-		TryAddItem(pickedItemId);
+		return;  // 生きていないなら取れないよ！！！
 	}
+	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, entityPickupRadius);
 }
 
 void Player::TryAddItem(
@@ -615,10 +741,8 @@ void Player::TryAddItem(
 	/// 今のjobで、引数のアイテムを追加できるか確認
 	/// ----------------------------------------------
 
-	// ジョブによって追加可能か切り替えるかどうか。falseにすれば、どのジョブも弓拾ったりできる。デバッグ用。
-	bool filterAddItemOnJob{ false };
+	ItemInfo info = Get<ItemSystem>().GetInfo(_id);
 
-	ItemInfo info     = Get<ItemSystem>().GetInfo(_id);
 	bool playerCanUse = (info.canUseJobType == PlayerJobType_Max || info.canUseJobType == jobType);
 
 	if (playerCanUse == false && filterAddItemOnJob)
@@ -630,11 +754,14 @@ void Player::TryAddItem(
 	/// ---------------------------
 	/// ホットバーに追加できるか確認
 	/// ---------------------------
+
 	ItemStack itemStack{};
 	HotBar& hotbar = Get<HotBar>(objHotbar);
 
 	if (hotbar.TrySetItem(_id))
 	{
+		// アイテム入手SE
+		Get<AudioManager>().Play(obtainItemSE);
 		return;
 	}
 	else if (hotbar.SwapItem(itemStack, _id))
@@ -647,17 +774,23 @@ void Player::TryAddItem(
 			}
 		}
 
+		// アイテム入手SE
+		Get<AudioManager>().Play(obtainItemSE);
 		return;
 	}
 
 	/// ---------------------------
 	/// バッグに追加できるか確認
 	/// ---------------------------
+
 	PlayerBag& bag = Get<PlayerBag>(objPlayerBag);
 
 	if (bag.CanAddItem(_id))
 	{
 		bag.AddItem(_id);
+
+		// アイテム入手SE
+		Get<AudioManager>().Play(obtainItemSE);
 	}
 	// 追加できないなら、エンティティとして前方に放り出す
 	else
@@ -675,4 +808,18 @@ void Player::SpawnItem(
 	    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 
 	VCU_LOG("objPawn");
+}
+
+std::vector<ItemStack> Player::GetHavingItem()
+{
+	auto bagItems    = Get<PlayerBag>(objPlayerBag).GetItemStacks();
+	auto hotBarItems = Get<HotBar>(objHotbar).GetAllSlotItem();
+	bagItems.insert(bagItems.end(), hotBarItems.begin(), hotBarItems.end());
+	return bagItems;
+}
+
+void Player::ClearAllItem()
+{
+	Get<PlayerBag>(objPlayerBag).ClearItems();
+	Get<HotBar>(objHotbar).ClearAllSlotItem();
 }

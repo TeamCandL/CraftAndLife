@@ -6,16 +6,23 @@
 
 struct OtherPlayerData
 {
+	const Vec3 OBB_OFFSET{ 0.0f, 0.003f, 0.0f };  ///< OBBのオフセット(位置)
+	const float OBB_SCALE{ 0.005f };              ///< OBBのスケール
+
 	OtherPlayerData(
 	    const std::string& _name) :
 	    name{ _name }
 	{
+		tag.Add("OtherPlayer");
 	}
 
 	Resource<Shader> shader{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
 
 	Component<Name> name{};
+	Component<Tag> tag{};
 	Component<Transform> transform{ Vec3::Zero(), Vec3::One() * 200.0f };
+	Component<StaticOBB> obb{};
+	Component<OBBRenderer> obbRenderer{};
 
 	std::array<Resource<Model>, PlayerRoleType_Max> models{
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",
@@ -25,6 +32,15 @@ struct OtherPlayerData
 	};
 
 	PlayerRoleType role{ PlayerRoleType_Healer };
+
+	// ネットワークから受信した目標座標
+	Vec3 targetPosition{};
+
+	// 補間用
+	float positionInterpolationSpeed = 20.0f;
+
+	// 初回座標受信フラグ
+	bool isPositionInitialized = false;
 
 	int32_t animIndex{};
 	float animSpeed{ 1.0f };
@@ -37,7 +53,7 @@ struct OtherPlayerData
 	int32_t maxHP{ 100 };
 
 	// 死亡アニメーション再生時間
-	inline static constexpr float DIE_ANIM_TIME_SEC_MAX{ 20.0f / 60.0f };
+	inline static constexpr float DIE_ANIM_TIME_SEC_MAX{ 19.0f / 60.0f };
 	float dieAnimTimeSec{ DIE_ANIM_TIME_SEC_MAX };
 };
 

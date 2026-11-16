@@ -55,6 +55,9 @@ struct HotBarData
 	// 選択時のスロット画像
 	Resource<Texture> slotSelectedTexture{ "Image/UI/slot_selected.png" };
 
+	// ホットスロット移動音
+	Resource<Audio> moveHotbarSlotSE{ "BGM_SE/Move Hotbar Slot.mp3" };
+
 	// パネルのトランスフォーム
 	Component<UITransform> transform{ Vec2{ 1417, 908 }, Vec2{ 461, 128 } };
 	// パネルの画像
@@ -122,6 +125,8 @@ struct HotBar : ObjectBase<HotBarData>
 	bool SwapConsumableItem(ItemStack& _oldItemStack, ItemId _newItemId);
 	bool SwapItem(ItemStack& _oldItemStack, ItemId _newItemId);
 
+	std::vector<ItemStack> GetAllSlotItem();
+	void ClearAllSlotItem();
 	template <typename T> void SetOnChangedSelectedItemCallback(T&& _func);
 
   private:

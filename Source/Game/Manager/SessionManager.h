@@ -19,9 +19,20 @@ class SessionManager : public IManager
 	/// @param _name 名前
 	void SetPlayerName(const std::string_view _name);
 
+	/// @brief プレイヤーの役割を設定する
+	/// @param _playerId プレイヤーID
+	/// @param _roleId 役割ID
+	void SetPlayerRole(int32_t _playerId, int32_t _roleId);
+
+	/// @brief プレイヤーの役割を取得する
+	/// @param _playerId プレイヤーID
+	/// @param _outRoleId 取得した役割ID
+	/// @return 取得成功 true / false
+	bool TryGetPlayerRole(int32_t _playerId, int32_t& _outRoleId) const;
+
 	/// @brief ほかメンバーの名前一覧をセットする
 	/// @param _names ほかプレイヤーの名前一覧
-	void SetMemberNames(const std::string_view _names);
+	void SetMemberInfo(const std::string_view _members);
 
 	/// @brief 参加する部屋名をセットする
 	/// @param _name 部屋名
@@ -39,7 +50,8 @@ class SessionManager : public IManager
 	    const std::string_view _names,
 	    SizedBuffer<float>& _positions,
 	    SizedBuffer<float>& _rotations,
-	    SizedBuffer<int32_t>& _haveItemIds);
+	    SizedBuffer<int32_t>& _haveItemIds,
+	    SizedBuffer<int32_t>& _attentionLevel);
 
 	/// @brief プレイヤーステータスを参照する
 	/// @param _playerName プレイヤー名
@@ -105,6 +117,8 @@ class SessionManager : public IManager
 	    SizedBuffer<int32_t>& _enemyIds,
 	    std::string_view _stateNames,
 	    SizedBuffer<uint8_t>& _values);
+
+	bool TryGetEnemyAlive(int32_t _enemyID, bool& _outAlive) const;
 
 	/// @brief 各敵を周回する
 	/// @tparam Func コールバック [](int, const InSessionStatus::EnemyStatus&){}
