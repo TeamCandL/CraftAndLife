@@ -703,13 +703,12 @@ void Player::GiveItem(
 		GetScene().Instantiate<DebugPoint>(_fromPosition);
 		Damaged(ITEM_INFO._damageForEnemy, _fromPosition);
 	}
-	else if (
-	    ITEM_INFO._type == ItemType::PlayerAttackArrow ||
-	    ITEM_INFO._type == ItemType::PlayerAttackSword)  // それ以外なら基本的にホットバーかバックパックへ
+	else if (ITEM_INFO._type == ItemType::PlayerAttackArrow || ITEM_INFO._type == ItemType::PlayerAttackSword)
 	{
 	}
 	else
 	{
+		// それ以外なら基本的にホットバーかバックパックへ
 		TryAddItem(_itemId);
 	}
 }

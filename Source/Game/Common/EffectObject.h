@@ -5,6 +5,7 @@ struct EffectObjectData
 {
 	EffectObjectData(const fs::path& _effectFilePath);
 	EffectObjectData(const fs::path& _effectFilePath, const Vec3& _position);
+	EffectObjectData(const fs::path& _effectFilePath, const Vec3& _position, const Quaternion& _rotate);
 	EffectObjectData(const fs::path& _effectFilePath, const GameObject& _parent);
 
 	Resource<Effect> effect{};

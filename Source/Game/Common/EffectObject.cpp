@@ -15,6 +15,16 @@ EffectObjectData::EffectObjectData(
 
 EffectObjectData::EffectObjectData(
     const fs::path& _effectFilePath,
+    const Vec3& _position,
+    const Quaternion& _rotate) :
+    EffectObjectData(_effectFilePath)
+{
+	transform.position = _position;
+	transform.rotation = _rotate;
+}
+
+EffectObjectData::EffectObjectData(
+    const fs::path& _effectFilePath,
     const GameObject& _parent) :
     EffectObjectData(_effectFilePath)
 {
