@@ -7,6 +7,7 @@
 #include "../OtherPlayer.h"
 #include "../UI/HotBar.h"
 #include "../OtherPlayerController.h"
+#include <Game/Manager/AudioManager.h>
 
 void ItemActionMedicals::Action(
     const ItemId _itemId,
@@ -51,8 +52,15 @@ void ItemActionMedicals::Action(
 				{
 					if (Get<OtherPlayer>(objHit).Data().hp <= 0)
 					{
-						objHealTargetOtherPlayer = objHit;
-						healTimeLeftSec          = HEAL_TIME;
+						// 新しい蘇生対象を見つけたときだけ処理
+						if (objHealTargetOtherPlayer != objHit)
+						{
+							objHealTargetOtherPlayer = objHit;
+							healTimeLeftSec          = HEAL_TIME;
+
+							// 蘇生開始SEを1回再生
+							Get<AudioManager>().Play(resuscitationSE);
+						}
 					}
 				}
 			}
@@ -90,8 +98,11 @@ void ItemActionMedicals::Update(
 		if (_playerHandData.isActing)
 		{
 			_playerHandData.isActing = false;
-			// transformAnimator.playingTimeSec = 0.0f;
-			// transformAnimator.playAnimation  = "idle";
+
+			// 蘇生対象をリセット
+			objHealTargetOtherPlayer = {};
+			healTimeLeftSec          = HEAL_TIME;
+
 			_playerHandData.transformAnimator.playToLoop = false;
 		}
 	}
