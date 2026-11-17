@@ -123,14 +123,14 @@ void ItemActionWeapons::Action(
 						if (_itemId == ITEM_ID_AXE)
 						{
 							harvestable.TakeDamage(ITEM_INFO._damageForObject);
-							GetScene().Instantiate<OnceEffectObject>("Effect/ScoreItem.efkefc", hitInfo.hitPosition);
+							GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", hitInfo.hitPosition);
 						}
 						break;
 					case HarvestableType::Rock:
 						if (_itemId == ITEM_ID_HAMMER)
 						{
 							harvestable.TakeDamage(ITEM_INFO._damageForObject);
-							GetScene().Instantiate<OnceEffectObject>("Effect/ScoreItem.efkefc", hitInfo.hitPosition);
+							GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", hitInfo.hitPosition);
 						}
 						break;
 					default:

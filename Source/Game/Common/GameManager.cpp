@@ -34,7 +34,7 @@ void GameManager::Start()
 	GetScene().Instantiate<PadInputSystem>();
 	GetScene().Instantiate<AbstructInputSystem>();
 	GetScene().Instantiate<CursorSystem>();
-	GetScene().Instantiate<AudioSystem>();
+	// GetScene().Instantiate<AudioSystem>();
 	GetScene().Instantiate<EffectSystem>();
 	// GetScene().Instantiate<DiscordSystem>();
 	GetScene().Instantiate<AnimationSystem>();
