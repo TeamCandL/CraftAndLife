@@ -39,8 +39,8 @@ void BossInfo::Update()
 		{
 			isBossActive = false;
 
-			// BOSS撃破時にBGMを停止
-			Get<AudioManager>().SetBGMStop();
+			// BOSS撃破時に撃破BGMを再生（ループなし）
+			Get<AudioManager>().SetBGM(bossDefeatBGM, false);
 		}
 	}
 	else

@@ -32,10 +32,10 @@ void Enemy::Start()
 void Enemy::Update()
 {
 	// テスト用コード
-	/*if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-	    hp -= 100;
-	}*/
+		hp -= 100;
+	}
 
 	if (isDead)
 	{

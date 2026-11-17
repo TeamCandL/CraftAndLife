@@ -493,6 +493,20 @@ void AudioManager::SetBGMStart()
 	}
 }
 
+// BGMが再生中か確認
+bool AudioManager::IsBGMPlaying() const
+{
+	if (!pBGMSourceVoice)
+	{
+		return false;
+	}
+
+	XAUDIO2_VOICE_STATE state{};
+	pBGMSourceVoice->GetState(&state);
+
+	return state.BuffersQueued > 0;
+}
+
 void AudioManager::LateUpdate(
     const float _deltaTime)
 {

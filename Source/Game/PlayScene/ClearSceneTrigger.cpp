@@ -95,9 +95,14 @@ void ClearSceneTrigger::Update()
 	// フェードオブジェクトを取得
 	ClearFade& fade = Get<ClearFade>(Data().objClearFade);
 
-	// フェード中なら何もしない
-	if (fade.Data().isFading)
+	// セッション情報を取得
+	SessionManager& sessionManager = Get<SessionManager>();
+
+	// 全プレイヤーが死亡したらゲームオーバー
+	// クリアフェード中でも優先する
+	if (AreAllPlayersDead(sessionManager))
 	{
+		fade.StartFade(ResultType::GameOver);
 		return;
 	}
 
@@ -108,12 +113,9 @@ void ClearSceneTrigger::Update()
 		return;
 	}
 
-	// 全プレイヤーが死亡したらゲームオーバー
-	SessionManager& sessionManager = Get<SessionManager>();
-
-	if (AreAllPlayersDead(sessionManager))
+	// フェード中なら何もしない
+	if (fade.Data().isFading)
 	{
-		fade.StartFade(ResultType::GameOver);
 		return;
 	}
 
@@ -158,6 +160,7 @@ void ClearSceneTrigger::Update()
 	}
 
 	const InSessionStatus& status = sessionManager.RefStatus();
+
 	if (CURRENT_DAY >= 3 && CURRENT_TIME >= 45.0f && status.currentTimeSec >= 45.0f)
 	{
 		// ドラゴン撃破でクリア

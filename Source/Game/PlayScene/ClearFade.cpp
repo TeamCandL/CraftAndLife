@@ -1,9 +1,13 @@
 #include "ClearFade.h"
 #include <Game/ClearScene/ClearScene.h>
 #include <Base/Manager/ScreenSize.h>
+#include <Game/Manager/AudioManager.h>
 
 void ClearFade::Start()
 {
+	// クリアフェード開始状態をリセット
+	isClearFadeStarted = false;
+
 	// 結果の種類に応じてフェードの色を設定
 	if (resultType == ResultType::Clear)
 	{
@@ -43,6 +47,15 @@ void ClearFade::Update()
 	// フェード完了
 	if (RATIO >= 1.0f)
 	{
+		// クリアの場合は撃破BGMが終わるまで待つ
+		if (resultType == ResultType::Clear)
+		{
+			if (Get<AudioManager>().IsBGMPlaying())
+			{
+				return;
+			}
+		}
+
 		Get<SceneManager>().Move<ClearScene>(resultType);
 	}
 }
@@ -50,10 +63,24 @@ void ClearFade::Update()
 void ClearFade::StartFade(
     ResultType _resultType)
 {
+	// すでにフェード中の場合
 	if (isFading)
 	{
-		return;
+		// ゲームオーバー以外への変更は受け付けない
+		if (_resultType != ResultType::GameOver)
+		{
+			return;
+		}
+
+		// すでにゲームオーバーなら何もしない
+		if (resultType == ResultType::GameOver)
+		{
+			return;
+		}
 	}
+
+	// クリアフェード中かどうかを設定
+	isClearFadeStarted = (_resultType == ResultType::Clear);
 
 	// 結果の種類を保存
 	resultType = _resultType;
