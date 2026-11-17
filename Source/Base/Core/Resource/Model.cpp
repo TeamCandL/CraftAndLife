@@ -708,3 +708,9 @@ void cha::ModelResource::UpdateAnim(
 	// 評価用の一時的なシーンを必ず解放（メモリリーク防止）
 	ufbx_free_scene(pEvaluatedScene);
 }
+
+void cha::ModelResource::SetCurrentAnimTime(
+    const float _time)
+{
+	currentAnimTime = _time;
+}

@@ -96,6 +96,10 @@ namespace cha
 		/// @param _animIndex アニメーションインデックス
 		void UpdateAnim(const float _deltaTime, const int _animIndex);
 
+		/// @brief 現在のアニメーション時間を設定する
+		/// @param _time 現在のアニメーション時間
+		void SetCurrentAnimTime(const float _time);
+
 		fs::path file{};  ///< モデルファイル
 
 		std::vector<ModelParts> subParts{};

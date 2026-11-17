@@ -266,7 +266,13 @@ void Player::Draw()
 	Get<Dx11Manager>().SetShader(shaderFront);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed * 0.0001f, animIndex);
+	ImGui::Begin("PlayerDraw");
+	float animTime = models[jobType].Get().currentAnimTime;
+	ImGui::DragFloat("currentAnimTime", &animTime, 0.0001f);
+	models[jobType].Get().SetCurrentAnimTime(animTime);
+	ImGui::End();
+	// Get<DeltaTime>() * animSpeed * 0.0001f
+	models[jobType].Get().Draw(0.0f, animIndex);
 
 	const auto& subParts{ models[jobType].Get().subParts };
 
