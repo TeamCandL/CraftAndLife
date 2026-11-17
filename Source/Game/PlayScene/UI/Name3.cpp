@@ -1,20 +1,36 @@
 #include "pch\pch.h"
 #include "Name3.h"
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/Player/PlayerJobType.h>
 
 void Name3::Start() {}
 
 void Name3::Update()
 {
-	std::vector<std::string> names;
-	Get<SessionManager>().ForeachPlayerStatus(
-	    [&names](const std::string& name, const InSessionStatus::PlayerStatus& status)
-	    {
-		    names.push_back(name);
-	    });
-	if (names.size() <= 1)
+	SessionManager& sessionManager = Get<SessionManager>();
+
+	// ヒーラーのプレイヤーIDを取得
+	int32_t playerId = -1;
+
+	for (const int32_t id : sessionManager.RefStatus().memberId)
 	{
-		return;
+		int32_t roleId = -1;
+
+		if (sessionManager.TryGetPlayerRole(id, roleId) && roleId == PlayerJobType_Fighter)
+		{
+			playerId = id;
+			break;
+		}
 	}
-	text.content = names[1];
+
+	if (playerId == -1)
+		return;
+
+	// プレイヤーIDから名前を取得
+	std::string playerName;
+
+	if (!sessionManager.TryGetPlayerName(playerId, playerName))
+		return;
+
+	text.content = playerName;
 }
