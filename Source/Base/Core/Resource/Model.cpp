@@ -76,8 +76,6 @@ bool cha::ModelRegistry::TryLoadFbx(
 
 	for (ufbx_node* pNode : pScene->nodes)
 	{
-		VCU_LOG("{}", pNode->name.data);
-
 		if (ufbx_mesh * pMesh{ pNode->mesh }; pMesh)
 		{
 			for (auto& part : pMesh->material_parts)
@@ -452,22 +450,23 @@ void cha::ModelResource::Draw(
 	// fmod を直接使うと currentAnimTime が大きくなると丸め誤差や大きなジャンプの原因になるため
 	// 細かく時間をラップしておく（ループ時の不連続なジャンプを緩和する）
 	_model.currentAnimTime += _deltaTime;
-	double duration = stack->time_end - stack->time_begin;  // 総再生時間
+	double duration = (stack->time_end) - (stack->time_begin);  // 総再生時間
 	double evalTime = stack->time_begin;
 	if (duration > 0.0)
 	{
-		// currentAnimTime を [0, duration) の範囲に保つ
-		while (_model.currentAnimTime >= duration)
-		{
-			_model.currentAnimTime -= static_cast<float>(duration);
-		}
-		while (_model.currentAnimTime < 0.0)
-		{
-			_model.currentAnimTime += static_cast<float>(duration);
-		}
+		evalTime += std::fmod(_model.currentAnimTime, duration);
+		//// currentAnimTime を [0, duration) の範囲に保つ
+		// while (_model.currentAnimTime >= duration)
+		//{
+		//	_model.currentAnimTime -= static_cast<float>(duration);
+		// }
+		// while (_model.currentAnimTime < 0.0)
+		//{
+		//	_model.currentAnimTime += static_cast<float>(duration);
+		// }
 
-		// 評価時間を決定
-		evalTime = _model.currentAnimTime + stack->time_begin;
+		//// 評価時間を決定
+		// evalTime = _model.currentAnimTime + stack->time_begin;
 	}
 
 	ufbx_anim* anim = stack->anim;
@@ -478,8 +477,9 @@ void cha::ModelResource::Draw(
 	// 階層順にノードのワールド行列を計算
 	for (size_t i = 0; i < scene->nodes.count; ++i)
 	{
-		ufbx_node* node         = scene->nodes.data[i];
-		ufbx_transform localTRS = ufbx_evaluate_transform(anim, node, evalTime);
+		ufbx_node* node = scene->nodes.data[i];
+		ufbx_transform localTRS =
+		    ufbx_evaluate_transform_flags(anim, node, evalTime, UFBX_TRANSFORM_FLAG_NO_EXTRAPOLATION);
 
 		// DirectXMathの型に変換してローカル行列を作成
 		DirectX::XMVECTOR t = DirectX::XMVectorSet(
