@@ -22,6 +22,7 @@
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include <Game/PlayScene/DebugPoint.h>
 #include <shigaLibrary/SgRandom.h>
+#include <Game/PlayScene/ClearFade.h>
 
 void Player::Start()
 {
@@ -293,6 +294,12 @@ void Player::Damaged(
     int32_t damage,
     const Vec3 _worldPosition)
 {
+	// クリアフェード中はダメージを受けない
+	if (ClearFade::IsClearFadeStarted())
+	{
+		return;
+	}
+
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
