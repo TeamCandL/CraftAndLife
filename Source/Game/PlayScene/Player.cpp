@@ -22,6 +22,7 @@
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include <Game/PlayScene/DebugPoint.h>
 #include <shigaLibrary/SgRandom.h>
+#include <Game/Common/EffectObject.h>
 
 void Player::Start()
 {
@@ -680,6 +681,9 @@ void Player::Respawn(
 
 	// 蘇生SEを再生
 	Get<AudioManager>().Play(resuscitationSE);
+
+	// 蘇生エフェクトを再生
+	GetScene().Instantiate<OnceEffectObject>("Effect/Heal.efkefc", transform.position);
 }
 
 void Player::GiveItem(
