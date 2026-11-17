@@ -476,8 +476,8 @@ bool SessionManager::UpdatePlayerStates(
 }
 
 void SessionManager::UpdateEnemies(
-    SizedBuffer<int>& _enemyIds,
-    SizedBuffer<int>& _enemyTypes,
+    SizedBuffer<int32_t>& _enemyIds,
+    SizedBuffer<int32_t>& _enemyTypes,
     SizedBuffer<float>& _positions,
     SizedBuffer<float>& _rotations)
 {
@@ -518,12 +518,12 @@ void SessionManager::UpdateEnemies(
 
 		enemyStatus.updatedFlag = inSessionStatus_.updatedFlag;
 
-		VCU_LOG(
-		    "SessionManager保存 ID={}, 座標=({}, {}, {})",
-		    enemyId,
-		    enemyStatus.position.x,
-		    enemyStatus.position.y,
-		    enemyStatus.position.z);
+		// VCU_LOG(
+		//     "SessionManager保存 ID={}, 座標=({}, {}, {})",
+		//     enemyId,
+		//     enemyStatus.position.x,
+		//     enemyStatus.position.y,
+		//     enemyStatus.position.z);
 	}
 
 	// 今回受信しなかった敵を削除

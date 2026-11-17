@@ -66,7 +66,7 @@ void OtherEnemyController::Update()
 			    }
 			    InSessionStatus::EnemyStatus enemyStatus = sessionManager.RefEnemyStatus(enemyId);
 			    Vec3 _position                           = enemyStatus.position;
-			    objOtherEnemyHpBar.push_back(GetScene().Instantiate<OtherEnemyHpBar>(obj, _position, _hp, _hp));
+			    // objOtherEnemyHpBar.push_back(GetScene().Instantiate<OtherEnemyHpBar>(obj, _position, _hp, _hp));
 
 			    VCU_LOG("生成後のオブジェクトが空？ {}", obj.IsEmpty());
 

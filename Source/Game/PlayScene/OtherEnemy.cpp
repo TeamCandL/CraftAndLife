@@ -64,10 +64,10 @@ void OtherEnemy::Update()
 
 		SessionStateReader reader{ sessionManager };
 
-		if (reader.TryGetState(StateTarget::Enemy(enemyId), "hp", hp))
+		/*if (reader.TryGetState(StateTarget::Enemy(enemyId), "hp", hp))
 		{
-			VCU_LOG("OtherEnemy ID:{} HP取得成功: {}", enemyId, hp);
-		}
+		    VCU_LOG("OtherEnemy ID:{} HP取得成功: {}", enemyId, hp);
+		}*/
 
 		if (reader.TryGetState(StateTarget::Enemy(enemyId), "alive", alive))
 		{
@@ -81,10 +81,10 @@ void OtherEnemy::Update()
 			}
 		}
 
-		for (const auto& [name, value] : status.states)
+		/*for (const auto& [name, value] : status.states)
 		{
-			VCU_LOG("Enemy ID:{} State:{}", enemyId, name);
-		}
+		    VCU_LOG("Enemy ID:{} State:{}", enemyId, name);
+		}*/
 
 		// 被弾確認
 		if (damagedFlag)
@@ -106,24 +106,25 @@ void OtherEnemy::Update()
 
 void OtherEnemy::Draw()
 {
+	// return;
 	transform.UpdateFamily();
 
 	SessionManager& sessionManager = Get<SessionManager>();
 
-	if (sessionManager.IsExistEnemy(enemyId))
-	{
-		const auto& status = sessionManager.RefEnemyStatus(enemyId);
+	// if (sessionManager.IsExistEnemy(enemyId))
+	//{
+	//	const auto& status = sessionManager.RefEnemyStatus(enemyId);
 
-		VCU_LOG(
-		    "OtherEnemy ID:{} Sync: ({}, {}, {}) Draw: ({}, {}, {})",
-		    enemyId,
-		    status.position.x,
-		    status.position.y,
-		    status.position.z,
-		    transform.position.x,
-		    transform.position.y,
-		    transform.position.z);
-	}
+	//	VCU_LOG(
+	//	    "OtherEnemy ID:{} Sync: ({}, {}, {}) Draw: ({}, {}, {})",
+	//	    enemyId,
+	//	    status.position.x,
+	//	    status.position.y,
+	//	    status.position.z,
+	//	    transform.position.x,
+	//	    transform.position.y,
+	//	    transform.position.z);
+	//}
 
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
