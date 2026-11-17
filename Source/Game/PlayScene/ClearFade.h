@@ -23,6 +23,15 @@ struct ClearFadeData
 
 struct ClearFade : ObjectBase<ClearFadeData>
 {
+	// クリアフェードが始まっているか
+	inline static bool isClearFadeStarted{ false };
+
+	// クリアフェード開始状態を取得
+	static bool IsClearFadeStarted()
+	{
+		return isClearFadeStarted;
+	}
+
 	void Start() override;
 	void Update() override;
 
