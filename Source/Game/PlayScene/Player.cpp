@@ -265,7 +265,7 @@ void Player::Draw()
 	Get<Dx11Manager>().SetShader(shaderFront);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed * 0.0001f, animIndex);
 
 	const auto& subParts{ models[jobType].Get().subParts };
 
