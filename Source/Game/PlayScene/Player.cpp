@@ -702,6 +702,15 @@ void Player::GiveItem(
 	{
 		GetScene().Instantiate<DebugPoint>(_fromPosition);
 		Damaged(ITEM_INFO._damageForEnemy, _fromPosition);
+		// エフェクト再生していく
+		// ダメージエンティティからプレイヤーへの方向を取得。Y成分を除いた水平方向。
+		Vec3 horizontalMask{ 1, 0, 1 };
+		Quaternion toPlayer = Quaternion::FromLookAtQuaternion(
+		    DirectX::XMVectorMultiply(_fromPosition, horizontalMask),
+		    DirectX::XMVectorMultiply(transform.position, horizontalMask),
+		    Vec3::Up());
+		// エフェクトに座標、向きを指定して再生
+		GetScene().Instantiate<OnceEffectObject>("Effect/PlayerDamaged.efkefc", transform.position, toPlayer);
 	}
 	else if (ITEM_INFO._type == ItemType::PlayerAttackArrow || ITEM_INFO._type == ItemType::PlayerAttackSword)
 	{
