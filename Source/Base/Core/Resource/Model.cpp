@@ -451,34 +451,6 @@ void cha::ModelResource::Draw(
 	// 細かく時間をラップしておく（ループ時の不連続なジャンプを緩和する）
 	_model.currentAnimTime += _deltaTime;
 
-	double firstKeyTime = std::numeric_limits<double>::max();
-
-	for (size_t i = 0; i < stack->layers.count; ++i)
-	{
-		ufbx_anim_layer* layer = stack->layers.data[i];
-
-		for (size_t j = 0; j < layer->anim_values.count; ++j)
-		{
-			ufbx_anim_value* value = layer->anim_values.data[j];
-
-			for (size_t k = 0; k < 3; ++k)
-			{
-				ufbx_anim_curve* curve = value->curves[k];
-
-				if (!curve || curve->keyframes.count == 0)
-					continue;
-
-				double keyTime = curve->keyframes.data[0].time;
-				firstKeyTime   = std::min(firstKeyTime, keyTime);
-			}
-		}
-	}
-
-	if (firstKeyTime != std::numeric_limits<double>::max())
-	{
-		VCU_LOG("全カーブの最初のキー時刻: {:.6f}", firstKeyTime);
-	}
-
 	const double begin    = stack->time_begin;
 	const double end      = stack->time_end;
 	const double duration = end - begin;
@@ -499,7 +471,7 @@ void cha::ModelResource::Draw(
 	}
 
 	// 評価時間
-	double evalTime = std::max(begin + elapsed, firstKeyTime);
+	double evalTime = begin + elapsed;
 
 	// 念のため、浮動小数点誤差だけを補正
 	if (evalTime >= end)
@@ -518,8 +490,9 @@ void cha::ModelResource::Draw(
 	// 階層順にノードのワールド行列を計算
 	for (size_t i = 0; i < scene->nodes.count; i++)
 	{
-		ufbx_node* node         = scene->nodes.data[i];
-		ufbx_transform localTRS = ufbx_evaluate_transform_flags(anim, node, evalTime, 0);
+		ufbx_node* node = scene->nodes.data[i];
+		const ufbx_transform localTRS =
+		    ufbx_evaluate_transform_flags(anim, node, evalTime, UFBX_TRANSFORM_FLAG_NO_EXTRAPOLATION);
 
 		// DirectXMathの型に変換してローカル行列を作成
 		DirectX::XMVECTOR t = DirectX::XMVectorSet(
