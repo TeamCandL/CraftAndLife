@@ -283,7 +283,7 @@ ItemSystemData::ItemSystemData()
 	                        PlayerJobType_Fighter });
 	craft.clear();
 	craft.push_back({ 10, 5 });
-	craft.push_back({ 14, 4 });
+	craft.push_back({ 14, 2 });
 	allItemList.push_back({ 18,
 	                        ItemType::Medicals,
 	                        "医療キット",
@@ -328,7 +328,19 @@ ItemSystemData::ItemSystemData()
 	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 1 } });
-	allItemList.push_back({ 21, ItemType::EnemyAttack, "近距離攻撃", {}, {}, false, craft, 10.0f, 15, 0, 15 });
+	allItemList.push_back({ 21,
+	                        ItemType::EnemyAttack,
+	                        "近距離攻撃",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        1.0f,
+	                        15,
+	                        0,
+	                        15,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
 	allItemList.push_back({ 22,
 	                        ItemType::PlayerAttackSword,
 	                        "プレイヤー剣の攻撃",
@@ -355,6 +367,19 @@ ItemSystemData::ItemSystemData()
 	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 5 } });
+	allItemList.push_back({ 24,
+	                        ItemType::PlayerAttackArrow,
+	                        "プレイヤー矢の攻撃",
+	                        {},
+	                        "Model/HandWeapon/Arrow.fbx",
+	                        false,
+	                        craft,
+	                        1.0f,
+	                        5,
+	                        0,
+	                        5,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 5 } });
 }
 
 ItemInfo ItemSystem::GetInfo(
@@ -369,7 +394,7 @@ ItemInfo ItemSystem::GetInfo(
 	info._craftInfo   = allItemList[id]._craftInfo;
 
 	info._imageId         = allItemList[id]._imageId;
-	info._coolTime        = allItemList[id]._coolTime;
+	info._coolTime        = allItemList[id]._damageLifeTime;
 	info._damageForEnemy  = allItemList[id]._damageForEnemy;
 	info._damageForObject = allItemList[id]._damageForObject;
 
@@ -382,6 +407,21 @@ Resource<Model> ItemSystem::GetModel(
     const ItemId _id)
 {
 	return allItemList[_id]._model;
+}
+
+ItemId ItemSystem::ConvertAttackItemToCollectibleItem(
+    const ItemId _attackItemId)
+{
+	switch (_attackItemId)
+	{
+	case 20:  // 蜘蛛の糸
+		return 10;
+	case 24:  // 矢
+		return 15;
+	default:  // 他しらん！
+		VCU_ASSERT(false && "指定のアイテムIdは変換できない！");
+		return 0;
+	}
 }
 
 bool JobCanCraftOrAddItem(

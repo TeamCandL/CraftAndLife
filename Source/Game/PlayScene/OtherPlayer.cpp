@@ -149,7 +149,31 @@ void OtherPlayer::Update()
 	// =====================================
 	// 座標と角度を更新
 	// =====================================
-	transform.position = status.position;
+
+	// 最新のネットワーク座標
+	targetPosition = status.position;
+
+	// 初回は即座に位置を合わせる
+	if (!isPositionInitialized)
+	{
+		transform.position    = targetPosition;
+		isPositionInitialized = true;
+	}
+	else
+	{
+		const float dt = Get<DeltaTime>();
+		const float t  = std::clamp(positionInterpolationSpeed * dt, 0.0f, 1.0f);
+
+		// 位置を補間
+		transform.position += (targetPosition - transform.position) * t;
+
+		// 回転を補間
+		const Quaternion targetRotation = Quaternion::FromEuler(Vec3{ 0.0f, status.rotation.y, 0.0f });
+
+		transform.rotation = Quaternion::Slerp(transform.rotation, targetRotation, t);
+	}
+
+	/*transform.position = status.position;
 	transform.rotation = Quaternion::FromEuler(Vec3{ 0.0f, status.rotation.y, 0.0f });
 	VCU_LOG(
 	    "{}の更新！座標:({}, {}, {}) 回転y:{}",
@@ -157,7 +181,7 @@ void OtherPlayer::Update()
 	    transform.position.x,
 	    transform.position.y,
 	    transform.position.z,
-	    transform.rotation.y);
+	    transform.rotation.y);*/
 
 	if (!isDead)
 	{

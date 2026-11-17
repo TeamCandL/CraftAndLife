@@ -8,12 +8,14 @@
 #include <Game/Common/EffectObject.h>
 #include "../Enemy.h"
 #include "../EntitySystem.h"
+#include <Game/Manager/AudioManager.h>
 
 void ItemActionWeapons::Update(
     const ItemId _itemId,
     PlayerData& _playerData,
     PlayerHandData& _playerHandData)
 {
+
 	// 入力取得
 	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
 	auto pPlayerInput                = inputSystem.GetPlayerInput();
@@ -75,11 +77,20 @@ void ItemActionWeapons::Action(
 	const ItemInfo ITEM_INFO{ Get<ItemSystem>().GetInfo(_itemId) };
 	if (ITEM_INFO._type == ItemType::Weapons)
 	{
+		// 剣・大剣の攻撃音
+		Get<AudioManager>().Play(_playerData.swingMissSE);
+
 		Get<EntitySystem>().Spawn(
 		    _itemId == ITEM_ID_SWORD_BIG ? ITEM_ID_PLAYER_ATTACK_SWORD_BIG : ITEM_ID_PLAYER_ATTACK_SWORD,
 		    _playerData.transform.position + (_playerData.transform.Forward() * (ACTION_RANGE * 0.5f)),
-		    _playerData.transform.Forward());
+		    _playerData.transform.Forward() * 20.0f);
 		return;
+	}
+
+	// 斧・ハンマーの攻撃音
+	if (_itemId == ITEM_ID_AXE || _itemId == ITEM_ID_HAMMER)
+	{
+		Get<AudioManager>().Play(_playerData.swingMissSE);
 	}
 
 	Vec3 positionFrom = _playerData.transform.position + Vec3::Up() * 1.0f;

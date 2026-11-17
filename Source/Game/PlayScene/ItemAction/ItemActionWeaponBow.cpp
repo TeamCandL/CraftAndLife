@@ -29,7 +29,7 @@ void ItemActionWeaponBow::Action(
 
 		// 中央の矢
 		entitySystem.Spawn(
-		    ARROW_ITEM_ID,
+		    ITEM_ID_PLAYER_ATTACK_ARROW,
 		    firePositionFrom,
 		    (firePositionTo - firePositionFrom).Normalize() * FIRE_SPEED_PER_SEC);
 
@@ -42,7 +42,7 @@ void ItemActionWeaponBow::Action(
 		hotBar.RemoveConsumableItem();
 
 		entitySystem.Spawn(
-		    ARROW_ITEM_ID,
+		    ITEM_ID_PLAYER_ATTACK_ARROW,
 		    firePositionFrom,
 		    (firePositionTo - firePositionFrom + right * -TRIPLE_FIRE_DISTANCEX).Normalize() * FIRE_SPEED_PER_SEC);
 
@@ -52,7 +52,7 @@ void ItemActionWeaponBow::Action(
 		hotBar.RemoveConsumableItem();
 
 		entitySystem.Spawn(
-		    ARROW_ITEM_ID,
+		    ITEM_ID_PLAYER_ATTACK_ARROW,
 		    firePositionFrom,
 		    (firePositionTo - firePositionFrom + right * TRIPLE_FIRE_DISTANCEX).Normalize() * FIRE_SPEED_PER_SEC);
 
@@ -67,7 +67,7 @@ void ItemActionWeaponBow::Action(
 		VCU_LOG("1本");
 
 		entitySystem.Spawn(
-		    ARROW_ITEM_ID,
+		    ITEM_ID_PLAYER_ATTACK_ARROW,
 		    firePositionFrom,
 		    (firePositionTo - firePositionFrom).Normalize() * FIRE_SPEED_PER_SEC);
 

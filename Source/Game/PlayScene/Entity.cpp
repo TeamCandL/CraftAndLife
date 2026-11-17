@@ -28,7 +28,7 @@ void Entity::Start()
 	{
 		canHitToEnemy = true;
 	}
-	else if (ITEM_INFO._type == ItemType::PlayerAttackSword)
+	else if (ITEM_INFO._type == ItemType::PlayerAttackSword || ITEM_INFO._type == ItemType::PlayerAttackArrow)
 	{
 		pickupCooldownSec = 99999999.0f;  // 絶対に取得できない
 		canHitToEnemy     = true;
@@ -36,6 +36,19 @@ void Entity::Start()
 		{
 			despawnTimeLeftSec = ITEM_INFO._coolTime;
 		}
+	}
+
+	switch (itemId)
+	{
+	case ITEM_ID_PLAYER_ATTACK_ARROW:
+		isThrowingItemEntity = true;  // 投げ物
+		break;
+	case ITEM_ID_ENEMY_ATTACK_STRING:
+		canHitToHarvestable  = true;
+		isThrowingItemEntity = true;  // 投げ物
+		break;
+	default:
+		break;
 	}
 }
 
@@ -75,12 +88,18 @@ void Entity::Update()
 	float deltaY = velocity.y * DELTA_TIME;
 
 	const float HEIGHT = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
-
 	if (HEIGHT >= transform.position.y + deltaY)
 	{
-		velocity.y           = 0.0f;
-		transform.position.y = HEIGHT;
-		isHitCollider        = true;
+		if (isThrowingItemEntity && itemId != ITEM_ID_ENEMY_ATTACK_STRING)
+		{
+			isUnderground = true;
+		}
+		else
+		{
+			velocity.y           = 0.0f;
+			transform.position.y = HEIGHT;
+			isHitCollider        = true;
+		}
 	}
 	else
 	{
@@ -92,7 +111,7 @@ void Entity::Update()
 
 	if (isDestroyedOnCollision)
 	{
-		transform.position.y = HEIGHT;
+		transform.position.y = HEIGHT + 1.0f;
 	}
 
 	// TODO: isDestroyedOnCollisionこれうそ
@@ -226,4 +245,14 @@ bool Entity::CanHitToEnemy() const
 Vec3 Entity::GetPosition() const
 {
 	return transform.position;
+}
+
+bool Entity::IsThrowingItemEntity() const
+{
+	return isThrowingItemEntity;
+}
+
+bool Entity::IsUnderground() const
+{
+	return isUnderground;
 }

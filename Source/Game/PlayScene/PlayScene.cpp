@@ -27,6 +27,7 @@
 #include <Game/Manager/AudioManager.h>
 #include "ClearSceneTrigger.h"
 #include "ClearFade.h"
+#include "Tutorial/TutorialFirstStep.h"
 
 void PlayScene::Start()
 {
@@ -71,11 +72,15 @@ void PlayScene::Start()
 	    objNetworkActorServer,
 	    objDayController,
 	    objHarvestableController,
-	    objOtherPlayerController);
+	    objOtherPlayerController,
+	    objPlaySceneUIController);
 
 	// クリア・ゲームオーバー共通フェード
 	GameObject objClearFade = Instantiate<ClearFade>();
 
 	// クリア・ゲームオーバー切り替え判定
-	Instantiate<ClearSceneTrigger>(objDayController, objClearFade);
+	Instantiate<ClearSceneTrigger>(objDayController, objClearFade, objNetworkActorServer);
+
+	// チュートリアル最初のステップ
+	Instantiate<TutorialFirstStep>(objPlaySceneUIController, objPlayer, objMainCamera);
 }

@@ -101,6 +101,23 @@ struct PadInputSystem : SystemObjectBase<PadInputSystem, PadInputSystemData>
 	/// @return 入力があった true / false
 	bool IsFlickedDown(const GamePadInputStick _stick);
 
+	/// @brief スティックの入力右があるか
+	/// @param _stick スティック
+	/// @return 入力があった true / false
+	bool IsOnRight(const GamePadInputStick _stick);
+	/// @brief スティックの入力左があるか
+	/// @param _stick スティック
+	/// @return 入力があった true / false
+	bool IsOnLeft(const GamePadInputStick _stick);
+	/// @brief スティックの入力上があるか
+	/// @param _stick スティック
+	/// @return 入力があった true / false
+	bool IsOnUp(const GamePadInputStick _stick);
+	/// @brief スティックの入力下があるか
+	/// @param _stick スティック
+	/// @return 入力があった true / false
+	bool IsOnDown(const GamePadInputStick _stick);
+
 	/// @brief 左スティックの入力を取得
 	/// @return 入力Vec2
 	Vec2 GetLeftStickXY() const;
