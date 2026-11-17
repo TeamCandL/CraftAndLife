@@ -24,6 +24,11 @@
 #include <shigaLibrary/SgRandom.h>
 #include <Game/Common/EffectObject.h>
 
+namespace
+{
+	GameObject objHealingEffect{};  ///< 治療中エフェクトのオブジェクト
+
+}
 void Player::Start()
 {
 #ifdef _DEBUG
@@ -31,6 +36,7 @@ void Player::Start()
 #else
 	filterAddItemOnJob = true;
 #endif  // _DEBUG
+	objHealingEffect = GetScene().Instantiate<EffectObject>("Effect/Resurrecting.efkefc");
 
 	obb.isTrigger = true;
 
@@ -118,6 +124,7 @@ void Player::Update()
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::Separator();
 	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+	ImGui::Checkbox("無敵", &isInvincible);
 #endif
 
 	Vec3 angles = transform.rotation.ToEuler();
@@ -257,6 +264,19 @@ void Player::Update()
 	{
 		Respawn(maxHP);
 	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::M))
+
+	{
+		// 治療エフェクトの再生開始
+		EffectObject& effect = Get<EffectObject>(objHealingEffect);
+		effect.Play();
+		// エフェクトの座標を治療中のプレイヤーの座標にする
+		effect.Data().transform.position = transform.position;
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::N))
+	{
+		Get<EffectObject>(objHealingEffect).Stop();
+	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
 }
@@ -294,6 +314,11 @@ void Player::Damaged(
     int32_t damage,
     const Vec3 _worldPosition)
 {
+	// デバッグ用。無敵状態ならダメージ判定をスキップ
+	if (isInvincible)
+	{
+		return;
+	}
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;

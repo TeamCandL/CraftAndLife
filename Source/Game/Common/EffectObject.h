@@ -20,6 +20,7 @@ struct EffectObject : ObjectBase<EffectObjectData>
 	void Start() override;
 	void Play();
 	void OnDestroy() override;
+	void Stop();
 };
 
 struct OnceEffectObject : EffectObject

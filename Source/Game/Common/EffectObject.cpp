@@ -37,10 +37,16 @@ void EffectObject::Start() {}
 
 void EffectObject::Play()
 {
-	effectPlayer.ref = Get<EffectSystem>().Play(effect);
+	effectPlayer.ref       = Get<EffectSystem>().Play(effect);
+	effectPlayer.destroyMe = false;
 }
 
 void EffectObject::OnDestroy()
+{
+	Stop();
+}
+
+void EffectObject::Stop()
 {
 	effectPlayer.destroyMe = true;
 }
