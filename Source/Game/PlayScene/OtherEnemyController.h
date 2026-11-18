@@ -2,6 +2,21 @@
 #include <Game/Game.h>
 #include "EnemyType.h"
 
+struct EnemySpawnState
+{
+	int32_t _id;
+	bool _spawned{ false };
+
+	bool IsSpawned()
+	{
+		return _spawned;
+	}
+	void Spawned()
+	{
+		_spawned = true;
+	}
+};
+
 struct OtherEnemyControllerData
 {
 	OtherEnemyControllerData(
@@ -11,6 +26,7 @@ struct OtherEnemyControllerData
 	}
 
 	std::unordered_map<int, GameObject> idToObjOtherEnemy{};  ///< ほかの敵オブジェクト
+	std::vector<EnemySpawnState> enemySpawnList{};            ///< OtherEnemyが生成済みかの一覧
 	GameObject objPlaySceneUIController{};                    ///< UIコントローラーのオブジェクト
 
 	std::vector<GameObject> objOtherEnemyHpBar;

@@ -40,7 +40,7 @@ void LobbyReadyButton::Update()
 	{
 		Get<UIText>(objButton).content = "待機中...";
 	}
-	if (Get<UI::Button>(objButton).IsPushed())
+	if (Get<UI::Button>(objButton).IsPushed() || Get<InputSystem>().GetKeyDown(KeyCode::S))
 	{
 		isStatable                                   = true;
 		NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
