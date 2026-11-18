@@ -27,7 +27,7 @@ struct PlayerData
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
 
 	std::array<Resource<Model>, PlayerJobType_Max> models{
-		"Model/Player/Healer.fbx",                                                      // Healer
+		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",    // Tank
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",    // Fighter
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-f.fbx",  // Archer
