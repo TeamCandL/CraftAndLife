@@ -92,6 +92,15 @@ struct Harvestable : ObjectBase<HarvestableData>
 	/// @brief 採取済みかどうかを取得する
 	bool IsHarvested() const;
 
+	// ワールド座標を取得
+	Vec3 GetPosition() const;
+
+	// 最大耐久値を取得
+	int32_t GetMaxDurability() const;
+
+	// 現在の耐久値を取得
+	int32_t GetDurability() const;
+
 	/// @brief ハーベスタブルオブジェクトを破壊する
 	void Break();
 

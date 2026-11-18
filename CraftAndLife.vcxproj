@@ -520,6 +520,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge2.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge3.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\Gauge4.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\UI\HarvestableGauge.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\HotBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\ListBox.cpp" />
     <ClCompile Include="Source\Game\PlayScene\UI\MiniMap.cpp" />
@@ -846,6 +847,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge2.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge3.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\Gauge4.h" />
+    <ClInclude Include="Source\Game\PlayScene\UI\HarvestableGauge.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\HotBar.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\ListBox.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\MiniMap.h" />

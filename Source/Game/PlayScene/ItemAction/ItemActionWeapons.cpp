@@ -5,6 +5,7 @@
 #include "../MainCamera.h"
 #include <Game/System/RaycastSystem.h>
 #include "../Harvestable.h"
+#include "../UI/HarvestableGauge.h"
 #include <Game/Common/EffectObject.h>
 #include "../Enemy.h"
 #include "../EntitySystem.h"
@@ -15,7 +16,6 @@ void ItemActionWeapons::Update(
     PlayerData& _playerData,
     PlayerHandData& _playerHandData)
 {
-
 	// 入力取得
 	AbstructInputSystem& inputSystem = Get<AbstructInputSystem>();
 	auto pPlayerInput                = inputSystem.GetPlayerInput();
@@ -124,19 +124,44 @@ void ItemActionWeapons::Action(
 						{
 							harvestable.TakeDamage(ITEM_INFO._damageForObject);
 							GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", hitInfo.hitPosition);
+
+							// ゲージがまだ生成されていなければ生成
+							if (harvestableGauge.IsEmpty())
+							{
+								harvestableGauge = GetScene().Instantiate<HarvestableGauge>(objHit);
+							}
+							else
+							{
+								// 既存のゲージの表示対象を変更
+								Get<HarvestableGauge>(harvestableGauge).SetTarget(objHit);
+							}
 						}
 						break;
+
 					case HarvestableType::Rock:
 						if (_itemId == ITEM_ID_HAMMER)
 						{
 							harvestable.TakeDamage(ITEM_INFO._damageForObject);
 							GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", hitInfo.hitPosition);
+
+							// ゲージがまだ生成されていなければ生成
+							if (harvestableGauge.IsEmpty())
+							{
+								harvestableGauge = GetScene().Instantiate<HarvestableGauge>(objHit);
+							}
+							else
+							{
+								// 既存のゲージの表示対象を変更
+								Get<HarvestableGauge>(harvestableGauge).SetTarget(objHit);
+							}
 						}
 						break;
+
 					default:
 						break;
 					}
 				}
+
 				// プレイヤーの攻撃エンティティとして出します
 				// else if (pName->content == "Enemy")
 				//{

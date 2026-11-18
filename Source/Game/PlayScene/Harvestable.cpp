@@ -184,3 +184,18 @@ void Harvestable::OnBroken()
 		break;
 	}
 }
+
+Vec3 Harvestable::GetPosition() const
+{
+	return transform.position;
+}
+
+int32_t Harvestable::GetMaxDurability() const
+{
+	return maxDurability;
+}
+
+int32_t Harvestable::GetDurability() const
+{
+	return durability;
+}
