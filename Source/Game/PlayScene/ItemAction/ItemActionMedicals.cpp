@@ -105,6 +105,8 @@ void ItemActionMedicals::Update(
 			_playerHandData.isActing = false;
 			// transformAnimator.playingTimeSec = 0.0f;
 			// transformAnimator.playAnimation  = "idle";
+			// 治療中のオブジェクトを空にする
+			objHealTargetOtherPlayer                     = GameObject::Empty();
 			_playerHandData.transformAnimator.playToLoop = false;
 			Get<EffectObject>(objHealingEffect).Stop();
 		}
