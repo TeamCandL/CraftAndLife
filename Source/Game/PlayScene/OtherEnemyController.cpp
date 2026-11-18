@@ -36,6 +36,14 @@ void OtherEnemyController::Update()
 		}
 	}
 
+	int enemyStateSize = sessionManager.GetEnemyStateSize();
+	while (enemySpawnList.size() < enemyStateSize)
+	{
+		int listSize = enemySpawnList.size();
+		enemySpawnList.push_back({ listSize });
+		VCU_LOG("呼ばれたぜよ");
+	}
+
 	std::erase_if(
 	    idToObjOtherEnemy,
 	    [](const auto& idAndObj)
@@ -52,41 +60,46 @@ void OtherEnemyController::Update()
 
 			    VCU_LOG("OtherEnemy生成開始: ID={}", enemyId);
 
-			    GameObject obj = GetScene().Instantiate<OtherEnemy>(enemyId, type);
-
-			    SessionManager& sessionManager = Get<SessionManager>();
-			    SessionStateReader reader(sessionManager);
-
-			    StateTarget target = StateTarget::Enemy(enemyId);
-			    int32_t _hp        = 0;
-			    if (!reader.TryGetState(target, "hp", _hp))
+			    if (!enemySpawnList[enemyId].IsSpawned())
 			    {
-				    VCU_LOG("OtherEnemyのHP取得失敗: ID={}", enemyId);
-				    return;
-			    }
-			    InSessionStatus::EnemyStatus enemyStatus = sessionManager.RefEnemyStatus(enemyId);
-			    Vec3 _position                           = enemyStatus.position;
-			    objOtherEnemyHpBar.push_back(GetScene().Instantiate<OtherEnemyHpBar>(obj, _position, _hp, _hp));
+				    GameObject obj = GetScene().Instantiate<OtherEnemy>(enemyId, type);
+				    enemySpawnList[enemyId].Spawned();
 
-			    VCU_LOG("生成後のオブジェクトが空？ {}", obj.IsEmpty());
+				    SessionManager& sessionManager = Get<SessionManager>();
+				    SessionStateReader reader(sessionManager);
 
-			    idToObjOtherEnemy[enemyId] = obj;
+				    StateTarget target = StateTarget::Enemy(enemyId);
+				    int32_t _hp        = 0;
+				    if (!reader.TryGetState(target, "hp", _hp))
+				    {
+					    VCU_LOG("OtherEnemyのHP取得失敗: ID={}", enemyId);
+					    return;
+				    }
+				    InSessionStatus::EnemyStatus enemyStatus = sessionManager.RefEnemyStatus(enemyId);
+				    Vec3 _position                           = enemyStatus.position;
+				    objOtherEnemyHpBar.push_back(GetScene().Instantiate<OtherEnemyHpBar>(obj, _position, _hp, _hp));
 
-			    // ボスなら、ここでBossInfoに対象の敵IDを設定する
-			    if (IsBossEnemy(type))
-			    {
-				    VCU_LOG("ボスOtherEnemy生成: ID={}", enemyId);
+				    VCU_LOG("生成後のオブジェクトが空？ {}", obj.IsEmpty());
 
-				    int32_t maxHP = EnemyParam::Hp[static_cast<int>(type)];
+				    idToObjOtherEnemy[enemyId] = obj;
 
-				    PlaySceneUIController& uiController = Get<PlaySceneUIController>(Data().objPlaySceneUIController);
+				    // ボスなら、ここでBossInfoに対象の敵IDを設定する
+				    if (IsBossEnemy(type))
+				    {
+					    VCU_LOG("ボスOtherEnemy生成: ID={}", enemyId);
 
-				    Get<BossInfo>(uiController.Data().objBossInfo).SetBoss(enemyId, maxHP);
+					    int32_t maxHP = EnemyParam::Hp[static_cast<int>(type)];
 
-				    Get<BossHp>(uiController.Data().objBossHp).SetActive(true);
-				    Get<BossName>(uiController.Data().objBossName).SetActive(true);
-				    Get<BossGauge>(uiController.Data().objBossGauge).SetActive(true);
-				    Get<BossGaugeR>(uiController.Data().objBossGaugeR).SetActive(true);
+					    PlaySceneUIController& uiController =
+					        Get<PlaySceneUIController>(Data().objPlaySceneUIController);
+
+					    Get<BossInfo>(uiController.Data().objBossInfo).SetBoss(enemyId, maxHP);
+
+					    Get<BossHp>(uiController.Data().objBossHp).SetActive(true);
+					    Get<BossName>(uiController.Data().objBossName).SetActive(true);
+					    Get<BossGauge>(uiController.Data().objBossGauge).SetActive(true);
+					    Get<BossGaugeR>(uiController.Data().objBossGaugeR).SetActive(true);
+				    }
 			    }
 		    }
 	    });
