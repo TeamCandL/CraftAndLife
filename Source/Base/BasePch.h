@@ -124,7 +124,7 @@ namespace fs = std::filesystem;
 using Microsoft::WRL::ComPtr;
 
 /// @brief static_assertをelse節で正しく動作させるためのヘルパー
-/// @tparam ... 
+/// @tparam ...
 template <class...> constexpr std::false_type dependent_false{};
 
 #include <nlohmann-json/json.hpp>
@@ -136,3 +136,7 @@ using json = nlohmann::json;
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_win32.h>
 #include <imgui/imgui_impl_dx11.h>
+
+// Effekseer
+#include <Effekseer/Effekseer.h>
+#include <Effekseer/EffekseerRendererDX11.h>

@@ -137,6 +137,95 @@ void AudioManager::PlayFootstep(
 	}
 }
 
+// 蘇生開始SEを再生
+void AudioManager::PlayResuscitation(
+    Resource<ResourceType::Audio>& _resource)
+{
+	AudioResource& audio = _resource.Get();
+
+	if (!pXAudio2)
+	{
+		return;
+	}
+
+	// すでに再生中の蘇生SEがあれば停止
+	if (pResuscitationSourceVoice)
+	{
+		pResuscitationSourceVoice->Stop();
+		pResuscitationSourceVoice->DestroyVoice();
+		pResuscitationSourceVoice = nullptr;
+	}
+
+	isResuscitationFading    = false;
+	resuscitationFadeElapsed = 0.0f;
+
+	HRESULT hResult = pXAudio2->CreateSourceVoice(&pResuscitationSourceVoice, &audio.waveFormatEx.Format);
+
+	if (FAILED(hResult) || pResuscitationSourceVoice == nullptr)
+	{
+		return;
+	}
+
+	// 通常の音量で再生
+	pResuscitationSourceVoice->SetVolume(1.0f);
+
+	const XAUDIO2_BUFFER BUFFER{
+		.Flags      = XAUDIO2_END_OF_STREAM,
+		.AudioBytes = static_cast<UINT32>(audio.buffer.size()),
+		.pAudioData = audio.buffer.data(),
+		.PlayBegin  = 0,
+		.PlayLength = 0,
+		.LoopBegin  = 0,
+		.LoopLength = 0,
+		.LoopCount  = 0,
+		.pContext   = 0,
+	};
+
+	hResult = pResuscitationSourceVoice->SubmitSourceBuffer(&BUFFER);
+
+	if (FAILED(hResult))
+	{
+		pResuscitationSourceVoice->DestroyVoice();
+		pResuscitationSourceVoice = nullptr;
+		return;
+	}
+
+	hResult = pResuscitationSourceVoice->Start();
+
+	if (FAILED(hResult))
+	{
+		pResuscitationSourceVoice->DestroyVoice();
+		pResuscitationSourceVoice = nullptr;
+		return;
+	}
+}
+
+// 蘇生開始SEをフェードアウト
+void AudioManager::FadeOutResuscitation()
+{
+	if (!pResuscitationSourceVoice)
+	{
+		return;
+	}
+
+	// すでに自然に再生終了している場合は何もしない
+	XAUDIO2_VOICE_STATE state{};
+	pResuscitationSourceVoice->GetState(&state);
+
+	if (state.BuffersQueued == 0)
+	{
+		pResuscitationSourceVoice->DestroyVoice();
+		pResuscitationSourceVoice = nullptr;
+		isResuscitationFading     = false;
+		resuscitationFadeElapsed  = 0.0f;
+		return;
+	}
+
+	// フェードアウト開始
+	isResuscitationFading    = true;
+	resuscitationFadeElapsed = 0.0f;
+}
+
 // 足音を停止
 void AudioManager::StopFootstep()
 {
@@ -554,6 +643,45 @@ void AudioManager::LateUpdate(
 			++i;
 		}
 	}
+
+	// 蘇生SEのフェードアウト管理
+	if (pResuscitationSourceVoice)
+	{
+		XAUDIO2_VOICE_STATE state{};
+		pResuscitationSourceVoice->GetState(&state);
+
+		// 自然に再生が終了した場合
+		if (state.BuffersQueued == 0)
+		{
+			pResuscitationSourceVoice->DestroyVoice();
+			pResuscitationSourceVoice = nullptr;
+
+			isResuscitationFading    = false;
+			resuscitationFadeElapsed = 0.0f;
+		}
+		// ボタンを離してフェードアウト中の場合
+		else if (isResuscitationFading)
+		{
+			resuscitationFadeElapsed += _deltaTime;
+
+			float rate = 1.0f - (resuscitationFadeElapsed / RESUSCITATION_FADE_TIME);
+
+			rate = std::clamp(rate, 0.0f, 1.0f);
+
+			pResuscitationSourceVoice->SetVolume(rate);
+
+			// 0.5秒経過したら停止・破棄
+			if (resuscitationFadeElapsed >= RESUSCITATION_FADE_TIME)
+			{
+				pResuscitationSourceVoice->Stop();
+				pResuscitationSourceVoice->DestroyVoice();
+				pResuscitationSourceVoice = nullptr;
+
+				isResuscitationFading    = false;
+				resuscitationFadeElapsed = 0.0f;
+			}
+		}
+	}
 }
 
 void AudioManager::Update() {}
@@ -620,6 +748,17 @@ void AudioManager::Release()
 			player.pSourceVoice = nullptr;
 		}
 	}
+
+	// 蘇生SEを停止・破棄
+	if (pResuscitationSourceVoice)
+	{
+		pResuscitationSourceVoice->Stop();
+		pResuscitationSourceVoice->DestroyVoice();
+		pResuscitationSourceVoice = nullptr;
+	}
+
+	isResuscitationFading    = false;
+	resuscitationFadeElapsed = 0.0f;
 
 	players.clear();
 }
