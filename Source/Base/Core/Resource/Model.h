@@ -41,10 +41,16 @@ namespace cha
 		    isSkinnedModel{ _other.isSkinnedModel },
 		    bones{ std::move(_other.bones) },
 		    animations{ std::move(_other.animations) },
+		    playingAnimIndex{ _other.playingAnimIndex },
+		    currentAnimTime{ _other.currentAnimTime },
+		    bakedAnimations{ std::move(_other.bakedAnimations) },
 		    pRawScene{ _other.pRawScene },  // ufbxのシーンポインタは引き継ぐ
 		    pBoneConstantBuffer{ std::move(_other.pBoneConstantBuffer) }
 		{
-			_other.pRawScene = nullptr;  // 移動させた元が二重解放しないようnullptrに
+			_other.bakedAnimations.clear();
+			_other.pRawScene        = nullptr;  // 移動させた元が二重解放しないようnullptrに
+			_other.playingAnimIndex = 0;
+			_other.currentAnimTime  = 0.0;
 		}
 
 		// ムーブを許可
@@ -53,25 +59,41 @@ namespace cha
 		{
 			if (this != &_other)
 			{
-				// 自身の持つ古いシーンがあれば先に解放しておく
+				// ベイク済みデータを先に解放してから元シーンを解放する。
+				for (ufbx_baked_anim* baked : bakedAnimations)
+					if (baked)
+						ufbx_free_baked_anim(baked);
+				bakedAnimations.clear();
 				if (pRawScene)
 					ufbx_free_scene(pRawScene);
+				pRawScene = nullptr;
 
 				file                = std::move(_other.file);
 				subParts            = std::move(_other.subParts);
 				isSkinnedModel      = _other.isSkinnedModel;
 				bones               = std::move(_other.bones);
 				animations          = std::move(_other.animations);
+				playingAnimIndex    = _other.playingAnimIndex;
+				currentAnimTime     = _other.currentAnimTime;
+				bakedAnimations     = std::move(_other.bakedAnimations);
 				pRawScene           = _other.pRawScene;
 				pBoneConstantBuffer = std::move(_other.pBoneConstantBuffer);
 
-				_other.pRawScene = nullptr;
+				_other.bakedAnimations.clear();
+				_other.pRawScene        = nullptr;
+				_other.playingAnimIndex = 0;
+				_other.currentAnimTime  = 0.0;
 			}
 			return *this;
 		}
 
 		~ModelResource()
 		{
+			for (ufbx_baked_anim* baked : bakedAnimations)
+				if (baked)
+					ufbx_free_baked_anim(baked);
+			bakedAnimations.clear();
+
 			if (pRawScene)  // ちゃんと解放
 			{
 				ufbx_free_scene(pRawScene);
@@ -109,8 +131,9 @@ namespace cha
 		std::vector<BoneInfo> bones{};
 		std::vector<AnimationClip> animations{};
 
-		size_t playingAnimIndex{ 0 };   // 再生中のアニメーションインデックス
-		double currentAnimTime{ 0.0 };  // アニメーションの再生時間
+		size_t playingAnimIndex{ 0 };                     // 再生中のアニメーションインデックス
+		double currentAnimTime{ 0.0 };                    // アニメーションの再生時間
+		std::vector<ufbx_baked_anim*> bakedAnimations{};  // クォータニオン補間用のベイク済みアニメーション
 
 		ufbx_scene* pRawScene{ nullptr };  // シーンの情報をそのままもっちゃう
 

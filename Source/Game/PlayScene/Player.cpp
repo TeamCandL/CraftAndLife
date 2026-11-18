@@ -272,7 +272,7 @@ void Player::Draw()
 	models[jobType].Get().SetCurrentAnimTime(animTime);
 	ImGui::End();
 	// Get<DeltaTime>() * animSpeed * 0.0001f
-	models[jobType].Get().Draw(0.0f, animIndex);
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed * 0.001f, animIndex);
 
 	const auto& subParts{ models[jobType].Get().subParts };
 
