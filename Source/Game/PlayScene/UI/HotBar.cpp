@@ -37,8 +37,9 @@ void HotBar::Start()
 	// ツール(斧やハンマー)
 	slots[TOOL_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
 	// 消費アイテム
-	slots[CONSUMABLE_SLOT_INDEX]        = GetScene().Instantiate<Slot>(slotEmptyTexture);
-	slots[CONSUMABLE_SLOT_SECOND_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
+	slots[CONSUMABLE_SLOT_INDEX]                                   = GetScene().Instantiate<Slot>(slotEmptyTexture);
+	slots[CONSUMABLE_SLOT_SECOND_INDEX]                            = GetScene().Instantiate<Slot>(slotEmptyTexture);
+	Get<Slot>(slots[CONSUMABLE_SLOT_SECOND_INDEX]).Data().unusable = true;
 	// バッグ
 	slots[BAG_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
 
@@ -95,6 +96,11 @@ void HotBar::Update()
 			const int extentsHalf             = slotEmptyImageExtents / 2;
 			slotData.transform.position       = Vec2{ center.x - extentsHalf, center.y - extentsHalf };
 			slotData.transform.scale          = Vec2{ slotEmptyImageExtents, slotEmptyImageExtents };
+			// 使用不可の場合のテクスチャを設定
+			if (slotData.unusable)
+			{
+				Get<UIImage>(slotGameObj).texture = slotUnusableTexture;
+			}
 		}
 
 		// NOTE: ゲームループによる更新順番の関係上、ここでワールド行列を計算する必要あり
@@ -128,23 +134,28 @@ void HotBar::UpdateSlot()
 	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
 	{
 		MoveFocusToLeft();
+		// SEを再生
+		Get<AudioManager>().Play(moveHotbarSlotSE);
+
 		OnChangedSelectedItem();
 	}
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
 	{
 		MoveFocusToRight();
+		// SEを再生
+		Get<AudioManager>().Play(moveHotbarSlotSE);
 		OnChangedSelectedItem();
 	}
 }
 
 void HotBar::MoveFocusToRight()
 {
-	MoveFocusImpl(1);
+	MoveFocusToUsableSlot(1);
 }
 
 void HotBar::MoveFocusToLeft()
 {
-	MoveFocusImpl(-1);
+	MoveFocusToUsableSlot(-1);
 }
 
 ItemId HotBar::GetSelectedItemId()
@@ -317,6 +328,11 @@ void HotBar::ClearAllSlotItem()
 	}
 }
 
+void HotBar::ExpansionConsumableSlot()
+{
+	Get<Slot>(slots[CONSUMABLE_SLOT_SECOND_INDEX]).Data().unusable = false;
+}
+
 bool HotBar::CanRemoveItem(
     ItemType _itemType,
     int _count)
@@ -385,18 +401,14 @@ bool HotBar::SwapItemImpl(
 void HotBar::MoveFocusImpl(
     int _dir)
 {
+	if (_dir == 0)
+		return;
 	// 移動前の選択スロットを保存
 	int previousSlotIdx = currentSlotIdx;
 
 	// 選択スロットを移動
 	currentSlotIdx += _dir;
 	currentSlotIdx = (currentSlotIdx + slots.size()) % slots.size();
-
-	// 選択スロットが変わった場合のみSEを再生
-	if (currentSlotIdx != previousSlotIdx)
-	{
-		Get<AudioManager>().Play(moveHotbarSlotSE);
-	}
 }
 
 SlotItemData& HotBar::GetSlotItemData(
@@ -437,6 +449,20 @@ void HotBar::OnChangedSelectedItem()
 {
 	if (onChangeSelectedItem)
 		onChangeSelectedItem();
+}
+
+void HotBar::MoveFocusToUsableSlot(
+    int _dir)
+{
+	for (int i = 0; i < slots.size(); i++)
+	{
+		MoveFocusImpl(_dir);
+		SlotData& slotData = Get<Slot>(slots[currentSlotIdx]).Data();
+		if (slotData.unusable == false)
+		{
+			return;
+		}
+	}
 }
 
 void Slot::CalculateUIWorld()

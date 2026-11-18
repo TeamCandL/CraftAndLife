@@ -39,6 +39,7 @@ struct SlotData
 	Component<UIImage> image{};
 	GameObject slotItem{};
 	bool selected{ false };
+	bool unusable{ false };
 };
 struct Slot : ObjectBase<SlotData>
 {
@@ -54,6 +55,8 @@ struct HotBarData
 	Resource<Texture> slotEmptyTexture{ "Image/UI/slot_empty.png" };
 	// 選択時のスロット画像
 	Resource<Texture> slotSelectedTexture{ "Image/UI/slot_selected.png" };
+	// 選択不可時のスロット画像
+	Resource<Texture> slotUnusableTexture{ "Image/UI/slot_empty_unusable.png" };
 
 	// ホットスロット移動音
 	Resource<Audio> moveHotbarSlotSE{ "BGM_SE/Move Hotbar Slot.mp3" };
@@ -129,6 +132,8 @@ struct HotBar : ObjectBase<HotBarData>
 	void ClearAllSlotItem();
 	template <typename T> void SetOnChangedSelectedItemCallback(T&& _func);
 
+	void ExpansionConsumableSlot();
+
   private:
 	bool CanRemoveItem(ItemType _itemType, int _count = 0);
 	void RemoveItem(ItemType _itemType, int _count = 0);
@@ -140,6 +145,9 @@ struct HotBar : ObjectBase<HotBarData>
 	SlotItemData& GetSlotItemData(int _idx);
 	size_t GetSlotIndexFrom(ItemType _itemType);
 	void OnChangedSelectedItem();
+	/// @brief 指定された方向に、使用可能なスロットが見つかるまでフォーカスを移動
+	/// @param _dir
+	void MoveFocusToUsableSlot(int _dir);
 };
 
 template <typename T>

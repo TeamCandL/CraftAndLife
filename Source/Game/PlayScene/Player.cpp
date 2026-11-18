@@ -62,11 +62,7 @@ void Player::Start()
 
 	// バッグ作成
 	objPlayerBag = GetScene().Instantiate<PlayerBag>();
-	// for (int i = 0; i < 20; i++)
-	//{
-	//	A a;
-	//	a.Ins(GetScene());
-	// }
+
 	//  ホットバー作成
 	objHotbar = GetScene().Instantiate<HotBar>();
 
@@ -112,10 +108,6 @@ void Player::Start()
 			}
 		}
 	}
-
-	// GetScene().Instantiate<ImageObject>();
-	// GetScene().Instantiate<ImageObject>();
-	// GetScene().Instantiate<TextObject>();
 }
 
 void Player::Update()
@@ -127,6 +119,10 @@ void Player::Update()
 	if (ImGui::Button("ClearItem"))
 	{
 		ClearAllItem();
+	}
+	if (ImGui::Button("Expansion Consumable"))
+	{
+		Get<HotBar>(objHotbar).ExpansionConsumableSlot();
 	}
 	ImGui::DragInt("anim", &animIndex, 1, 0);
 	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
