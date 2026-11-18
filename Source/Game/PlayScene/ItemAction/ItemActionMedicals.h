@@ -10,14 +10,19 @@ struct ItemActionMedicalsData
 	float healTimeLeftSec{};                ///< ヒール完了までの時間(秒)
 	const float RESPAWN_HEALTH{ 100 };      ///< 復活したときの体力値
 
+	bool isResuscitationSEPlayed{ false };  // 蘇生SEを再生済みか
+
 	// 蘇生中のSE
 	Resource<ResourceType::Audio> resuscitationSE{ "BGM_SE/Process Of Resuscitation.mp3" };
+	GameObject objHealingEffect{};  ///< 治療中エフェクトのオブジェクト
 };
 
 struct ItemActionMedicals : ObjectBase<ItemActionMedicalsData>, IItemAction
 {
+	void Start() override;
 	// IItemAction を介して継承されました
 	void Action(const ItemId _itemId, PlayerData& _playerData, PlayerHandData& _playerHandData) override;
 	// IItemAction を介して継承されました
 	void Update(const ItemId _itemId, PlayerData& _playerData, PlayerHandData& _playerHandData) override;
+	void OnDestroy() override;
 };

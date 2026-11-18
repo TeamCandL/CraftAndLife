@@ -38,6 +38,7 @@
 #include <Game/PlayScene/PlaySceneUIController.h>
 #include <Game/PlayScene/UI/ChatTextLog.h>
 #include <Game/Manager/AudioManager.h>
+#include <Game/Common/EffectObject.h>
 
 using enum NetworkSessionManager::State;
 
@@ -313,6 +314,19 @@ void PlayNetworkController::Update()
 						    break;
 					    default:
 						    // それ以外は音なし 他の人がアイテム拾ったときの音とかもできるよ
+						    break;
+					    }
+
+					    // ヒットエフェクト
+					    switch (message.itemId)
+					    {
+					    case ITEM_ID_PLAYER_ATTACK_SWORD:
+					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
+					    case ITEM_ID_PLAYER_ATTACK_ARROW:
+						    GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", position);
+						    break;
+					    default:
+						    // それ以外はエフェクトなし
 						    break;
 					    }
 				    }

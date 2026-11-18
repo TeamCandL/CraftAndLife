@@ -70,6 +70,12 @@ struct AudioManager : IManager
 	// 弓を引き絞る音を停止
 	void StopBowPull();
 
+	// 蘇生開始SEを再生
+	void PlayResuscitation(Resource<ResourceType::Audio>& _resource);
+
+	// 蘇生開始SEをフェードアウト
+	void FadeOutResuscitation();
+
 	// 着地音を停止する
 	void StopLanding();
 
@@ -96,4 +102,12 @@ struct AudioManager : IManager
 
 	// 弓を引き絞る音用
 	IXAudio2SourceVoice* pBowPullSourceVoice{ nullptr };
+
+	// 蘇生SE専用
+	IXAudio2SourceVoice* pResuscitationSourceVoice{ nullptr };
+
+	// 蘇生SEのフェードアウト管理
+	bool isResuscitationFading{ false };
+	float resuscitationFadeElapsed{ 0.0f };
+	const float RESUSCITATION_FADE_TIME{ 0.5f };
 };
