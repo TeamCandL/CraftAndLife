@@ -9,7 +9,8 @@ namespace
 	constexpr size_t WEAPON_SLOT_INDEX{ 0 };
 	constexpr size_t TOOL_SLOT_INDEX{ 1 };
 	constexpr size_t CONSUMABLE_SLOT_INDEX{ 2 };
-	constexpr size_t BAG_SLOT_INDEX{ 3 };
+	constexpr size_t CONSUMABLE_SLOT_SECOND_INDEX{ 3 };
+	constexpr size_t BAG_SLOT_INDEX{ 4 };
 	constexpr ItemId BAG_ITEM_ID{ 19 };
 	bool CannotStack(
 	    ItemType _type)
@@ -36,7 +37,8 @@ void HotBar::Start()
 	// ツール(斧やハンマー)
 	slots[TOOL_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
 	// 消費アイテム
-	slots[CONSUMABLE_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
+	slots[CONSUMABLE_SLOT_INDEX]        = GetScene().Instantiate<Slot>(slotEmptyTexture);
+	slots[CONSUMABLE_SLOT_SECOND_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
 	// バッグ
 	slots[BAG_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
 

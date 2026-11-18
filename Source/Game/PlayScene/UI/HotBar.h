@@ -59,13 +59,13 @@ struct HotBarData
 	Resource<Audio> moveHotbarSlotSE{ "BGM_SE/Move Hotbar Slot.mp3" };
 
 	// パネルのトランスフォーム
-	Component<UITransform> transform{ Vec2{ 1417, 908 }, Vec2{ 461, 128 } };
+	Component<UITransform> transform{ Vec2{ 1309, 908 }, Vec2{ 569, 128 } };
 	// パネルの画像
 	Component<UIImage> image{ panelTexture };
 
 	// スロット数
-	static constexpr int SLOT_COUNT{ 4 };
-	std::array<GameObject, 4> slots{};
+	static constexpr int SLOT_COUNT{ 5 };
+	std::array<GameObject, SLOT_COUNT> slots{};
 	// 現在選択されているスロットのインデックス
 	int currentSlotIdx{ 0 };
 
