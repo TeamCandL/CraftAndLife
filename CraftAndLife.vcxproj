@@ -426,6 +426,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\ClearScene\ClearScene.cpp" />
     <ClCompile Include="Source\Game\ClearScene\ClearSceneInput.cpp" />
     <ClCompile Include="Source\Game\Common\Canvas.cpp" />
+    <ClCompile Include="Source\Game\Common\EffectObject.cpp" />
     <ClCompile Include="Source\Game\Common\GameManager.cpp" />
     <ClCompile Include="Source\Game\Common\ScoreManager.cpp" />
     <ClCompile Include="Source\Game\Common\Sky.cpp" />
@@ -433,6 +434,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Common\UI\Button.cpp" />
     <ClCompile Include="Source\Game\Common\UI\Image.cpp" />
     <ClCompile Include="Source\Game\Common\VirtualInputManager.cpp" />
+    <ClCompile Include="Source\Game\Component\EffectPlayer\EffectPlayer.cpp" />
     <ClCompile Include="Source\Game\Component\SoundManager.cpp" />
     <ClCompile Include="Source\Game\Component\Tag.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -551,11 +553,11 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\System\CursorSystem.cpp" />
     <ClCompile Include="Source\Game\System\DebugSystems\ImGuiRenderingSystem.cpp" />
     <ClCompile Include="Source\Game\System\DiscordSystem.cpp" />
+    <ClCompile Include="Source\Game\System\EffectSystem.cpp" />
     <ClCompile Include="Source\Game\System\IMESystem.cpp" />
     <ClCompile Include="Source\Game\System\InputSystem.cpp" />
     <ClCompile Include="Source\Game\System\OBBRenderSystem.cpp" />
     <ClCompile Include="Source\Game\System\PadInputSystem.cpp" />
-    <ClCompile Include="Source\Game\System\ParticleSystem.cpp" />
     <ClCompile Include="Source\Game\System\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Game\System\RaycastSystem.cpp" />
     <ClCompile Include="Source\Game\System\ShaderTimeSystem.cpp" />
@@ -737,6 +739,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\ClearScene\ResultType.h" />
     <ClInclude Include="Source\Game\Common\Canvas.h" />
     <ClInclude Include="Source\Game\Common\ChunkLoader\IWorldLoader.h" />
+    <ClInclude Include="Source\Game\Common\EffectObject.h" />
     <ClInclude Include="Source\Game\Common\GameManager.h" />
     <ClInclude Include="Source\Game\Common\PerlinNoise.h" />
     <ClInclude Include="Source\Game\Common\SceneType.h" />
@@ -751,6 +754,7 @@ pre-commit install</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Source\Game\Component\EffectPlayer\EffectPlayer.h" />
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
     <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
@@ -862,6 +866,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\TutorialUI.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\IInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
+    <ClInclude Include="Source\Game\System\EffectSystem.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyUIInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialPlayerInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialUIInput.h" />
@@ -957,7 +962,6 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\System\OBBRenderSystem.h" />
     <ClInclude Include="Source\Game\System\OBBRenderSystem\DebugOBBMaterial.h" />
     <ClInclude Include="Source\Game\System\PadInputSystem.h" />
-    <ClInclude Include="Source\Game\System\ParticleSystem.h" />
     <ClInclude Include="Source\Game\System\PhysicsSystem.h" />
     <ClInclude Include="Source\Game\System\RaycastSystem.h" />
     <ClInclude Include="Source\Game\System\RaycastSystem\RaycastHitInfo.h" />

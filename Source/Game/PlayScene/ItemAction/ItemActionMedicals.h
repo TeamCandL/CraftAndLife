@@ -14,12 +14,15 @@ struct ItemActionMedicalsData
 
 	// 蘇生中のSE
 	Resource<ResourceType::Audio> resuscitationSE{ "BGM_SE/Process Of Resuscitation.mp3" };
+	GameObject objHealingEffect{};  ///< 治療中エフェクトのオブジェクト
 };
 
 struct ItemActionMedicals : ObjectBase<ItemActionMedicalsData>, IItemAction
 {
+	void Start() override;
 	// IItemAction を介して継承されました
 	void Action(const ItemId _itemId, PlayerData& _playerData, PlayerHandData& _playerHandData) override;
 	// IItemAction を介して継承されました
 	void Update(const ItemId _itemId, PlayerData& _playerData, PlayerHandData& _playerHandData) override;
+	void OnDestroy() override;
 };

@@ -8,6 +8,12 @@
 #include "../UI/HotBar.h"
 #include "../OtherPlayerController.h"
 #include <Game/Manager/AudioManager.h>
+#include <Game/Common/EffectObject.h>
+
+void ItemActionMedicals::Start()
+{
+	objHealingEffect = GetScene().Instantiate<EffectObject>("Effect/Resurrecting.efkefc");
+}
 
 void ItemActionMedicals::Action(
     const ItemId _itemId,
@@ -46,6 +52,7 @@ void ItemActionMedicals::Action(
 						Get<OtherPlayer>(objHit).Data().hp = RESPAWN_HEALTH;
 						Get<OtherPlayerController>(_playerData.objOtherPlayerController)
 						    .AddRespawn(Get<OtherPlayer>(objHit).Data().name.content, RESPAWN_HEALTH);
+						Get<EffectObject>(objHealingEffect).Stop();
 					}
 				}
 				else
@@ -57,12 +64,8 @@ void ItemActionMedicals::Action(
 							objHealTargetOtherPlayer = objHit;
 							healTimeLeftSec          = HEAL_TIME;
 
-							// 蘇生対象を見つけたときだけSEを1回再生
-							if (!isResuscitationSEPlayed)
-							{
-								Get<AudioManager>().PlayResuscitation(resuscitationSE);
-								isResuscitationSEPlayed = true;
-							}
+							// 蘇生開始SEを1回再生
+							Get<AudioManager>().Play(resuscitationSE);
 						}
 					}
 				}
@@ -110,10 +113,15 @@ void ItemActionMedicals::Update(
 			_playerHandData.isActing = false;
 
 			// 蘇生対象をリセット
-			objHealTargetOtherPlayer = {};
-			healTimeLeftSec          = HEAL_TIME;
+			// objHealTargetOtherPlayer = {};
 
+			// transformAnimator.playingTimeSec = 0.0f;
+			// transformAnimator.playAnimation  = "idle";
+			// 治療中のオブジェクトを空にする
+			healTimeLeftSec                              = HEAL_TIME;
+			objHealTargetOtherPlayer                     = GameObject::Empty();
 			_playerHandData.transformAnimator.playToLoop = false;
+			Get<EffectObject>(objHealingEffect).Stop();
 		}
 	}
 
@@ -134,4 +142,9 @@ void ItemActionMedicals::Update(
 			_playerHandData.isActing                         = false;
 		}
 	}
+}
+
+void ItemActionMedicals::OnDestroy()
+{
+	Get<EffectObject>(objHealingEffect).Stop();
 }

@@ -432,10 +432,15 @@ FodyWeavers.xsd
 #*.lscache
 
 # ここはライブラリのlibファイルが入るため無視しない
-!/Library/Debug/*
-!/Library/Debug/*.lib
-!/Library/Release/*
-!/Library/Release/*.lib
+!Library/
+!Library/Debug/
+Library/Debug/*
+!Library/Debug/*.lib
+
+!Library/Release/
+Library/Release/*
+!Library/Release/*.lib
+
 /x64/Debug.zip
 /Resource/imgui.ini
 /x64/Debug3.zip

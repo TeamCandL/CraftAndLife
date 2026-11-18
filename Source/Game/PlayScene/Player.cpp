@@ -23,7 +23,13 @@
 #include <Game/PlayScene/DebugPoint.h>
 #include <shigaLibrary/SgRandom.h>
 #include <Game/PlayScene/ClearFade.h>
+#include <Game/Common/EffectObject.h>
 
+namespace
+{
+	GameObject objHealingEffect{};  ///< 治療中エフェクトのオブジェクト
+
+}
 void Player::Start()
 {
 #ifdef _DEBUG
@@ -31,6 +37,7 @@ void Player::Start()
 #else
 	filterAddItemOnJob = true;
 #endif  // _DEBUG
+	objHealingEffect = GetScene().Instantiate<EffectObject>("Effect/Resurrecting.efkefc");
 
 	obb.isTrigger = true;
 
@@ -118,6 +125,7 @@ void Player::Update()
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::Separator();
 	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+	ImGui::Checkbox("無敵", &isInvincible);
 #endif
 
 	Vec3 angles = transform.rotation.ToEuler();
@@ -257,6 +265,19 @@ void Player::Update()
 	{
 		Respawn(maxHP);
 	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::M))
+
+	{
+		// 治療エフェクトの再生開始
+		EffectObject& effect = Get<EffectObject>(objHealingEffect);
+		effect.Play();
+		// エフェクトの座標を治療中のプレイヤーの座標にする
+		effect.Data().transform.position = transform.position;
+	}
+	if (Get<InputSystem>().GetKeyDown(KeyCode::N))
+	{
+		Get<EffectObject>(objHealingEffect).Stop();
+	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
 }
@@ -306,6 +327,11 @@ void Player::Damaged(
 		return;
 	}
 
+	// デバッグ用。無敵状態ならダメージ判定をスキップ
+	if (isInvincible)
+	{
+		return;
+	}
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
@@ -693,6 +719,9 @@ void Player::Respawn(
 
 	// 蘇生SEを再生
 	Get<AudioManager>().Play(resuscitationSE);
+
+	// 蘇生エフェクトを再生
+	GetScene().Instantiate<OnceEffectObject>("Effect/Heal.efkefc", transform.position);
 }
 
 void Player::GiveItem(
@@ -711,9 +740,22 @@ void Player::GiveItem(
 	{
 		GetScene().Instantiate<DebugPoint>(_fromPosition);
 		Damaged(ITEM_INFO._damageForEnemy, _fromPosition);
+		// エフェクト再生していく
+		// ダメージエンティティからプレイヤーへの方向を取得。Y成分を除いた水平方向。
+		Vec3 horizontalMask{ 1, 0, 1 };
+		Quaternion toPlayer = Quaternion::FromLookAtQuaternion(
+		    DirectX::XMVectorMultiply(_fromPosition, horizontalMask),
+		    DirectX::XMVectorMultiply(transform.position, horizontalMask),
+		    Vec3::Up());
+		// エフェクトに座標、向きを指定して再生
+		GetScene().Instantiate<OnceEffectObject>("Effect/PlayerDamaged.efkefc", transform.position, toPlayer);
 	}
-	else  // それ以外なら基本的にホットバーかバックパックへ
+	else if (ITEM_INFO._type == ItemType::PlayerAttackArrow || ITEM_INFO._type == ItemType::PlayerAttackSword)
 	{
+	}
+	else
+	{
+		// それ以外なら基本的にホットバーかバックパックへ
 		TryAddItem(_itemId);
 	}
 }
