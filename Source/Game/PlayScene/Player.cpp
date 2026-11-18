@@ -279,7 +279,8 @@ void Player::Update()
 		Get<EffectObject>(objHealingEffect).Stop();
 	}
 
-	Get<IPlayerJobController>(objJobController).Update(Data());
+	if (objJobController.IsEmpty())
+		Get<IPlayerJobController>(objJobController).Update(Data());
 }
 
 void Player::Draw()
@@ -405,6 +406,18 @@ void Player::SetHelthState(
 	if (helthState == _state)
 	{
 		return;
+	}
+
+	if (hasReviveChance)
+	{
+		HotBar& hotBar = Get<HotBar>(objHotbar);
+
+		/*if (!hotBar.CanRemoveConsumableItem() || hotBar.GetConsumableItemId() == )
+		{
+		    return;
+		}*/
+
+		hotBar.RemoveConsumableItem();
 	}
 
 	switch (_state)
