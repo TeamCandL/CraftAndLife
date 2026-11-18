@@ -10,7 +10,6 @@ void DayController::Update()
 	ImGui::Begin("DayController");
 	ImGui::DragFloat("boost", &boost, 1.0f, 1.0f);
 	ImGui::DragFloat("currentTimeSec", &currentTimeSec);
-	currentTimeSec = 10.0f;
 	ImGui::End();
 #endif  // _DEBUG
 
