@@ -120,7 +120,7 @@ void ItemActionMedicals::Update(
 			// transformAnimator.playingTimeSec = 0.0f;
 			// transformAnimator.playAnimation  = "idle";
 			// 治療中のオブジェクトを空にする
-			// healTimeLeftSec          = HEAL_TIME;
+			healTimeLeftSec                              = HEAL_TIME;
 			objHealTargetOtherPlayer                     = GameObject::Empty();
 			_playerHandData.transformAnimator.playToLoop = false;
 			Get<EffectObject>(objHealingEffect).Stop();
