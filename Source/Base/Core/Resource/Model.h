@@ -6,7 +6,6 @@
 #include "Material.h"
 #include <ufbx/ufbx.h>
 
-
 namespace cha
 {
 	// アニメーションのクリップ(Run, Walk など)
@@ -31,36 +30,39 @@ namespace cha
 		ModelResource() = default;
 
 		// コピーは禁止
-		ModelResource(const ModelResource&) = delete;
+		ModelResource(const ModelResource&)            = delete;
 		ModelResource& operator=(const ModelResource&) = delete;
 
 		// ムーブを許可
-		ModelResource(ModelResource&& _other) noexcept :
-			file{ std::move(_other.file) },
-			subParts{ std::move(_other.subParts) },
-			isSkinnedModel{ _other.isSkinnedModel },
-			bones{ std::move(_other.bones) },
-			animations{ std::move(_other.animations) },
-			pRawScene{ _other.pRawScene },  // ufbxのシーンポインタは引き継ぐ
-			pBoneConstantBuffer{ std::move(_other.pBoneConstantBuffer) }
+		ModelResource(
+		    ModelResource&& _other) noexcept :
+		    file{ std::move(_other.file) },
+		    subParts{ std::move(_other.subParts) },
+		    isSkinnedModel{ _other.isSkinnedModel },
+		    bones{ std::move(_other.bones) },
+		    animations{ std::move(_other.animations) },
+		    pRawScene{ _other.pRawScene },  // ufbxのシーンポインタは引き継ぐ
+		    pBoneConstantBuffer{ std::move(_other.pBoneConstantBuffer) }
 		{
 			_other.pRawScene = nullptr;  // 移動させた元が二重解放しないようnullptrに
 		}
 
 		// ムーブを許可
-		ModelResource& operator=(ModelResource&& _other) noexcept
+		ModelResource& operator=(
+		    ModelResource&& _other) noexcept
 		{
 			if (this != &_other)
 			{
 				// 自身の持つ古いシーンがあれば先に解放しておく
-				if (pRawScene) ufbx_free_scene(pRawScene);
+				if (pRawScene)
+					ufbx_free_scene(pRawScene);
 
-				file = std::move(_other.file);
-				subParts = std::move(_other.subParts);
-				isSkinnedModel = _other.isSkinnedModel;
-				bones = std::move(_other.bones);
-				animations = std::move(_other.animations);
-				pRawScene = _other.pRawScene;
+				file                = std::move(_other.file);
+				subParts            = std::move(_other.subParts);
+				isSkinnedModel      = _other.isSkinnedModel;
+				bones               = std::move(_other.bones);
+				animations          = std::move(_other.animations);
+				pRawScene           = _other.pRawScene;
 				pBoneConstantBuffer = std::move(_other.pBoneConstantBuffer);
 
 				_other.pRawScene = nullptr;
@@ -76,7 +78,7 @@ namespace cha
 				pRawScene = nullptr;
 			}
 		}
-		
+
 		inline HashValue GetHash() const
 		{
 			HashValue hash{};
@@ -94,6 +96,10 @@ namespace cha
 		/// @param _animIndex アニメーションインデックス
 		void UpdateAnim(const float _deltaTime, const int _animIndex);
 
+		/// @brief 現在のアニメーション時間を設定する
+		/// @param _time 現在のアニメーション時間
+		void SetCurrentAnimTime(const float _time);
+
 		fs::path file{};  ///< モデルファイル
 
 		std::vector<ModelParts> subParts{};
@@ -104,7 +110,7 @@ namespace cha
 		std::vector<AnimationClip> animations{};
 
 		size_t playingAnimIndex{ 0 };   // 再生中のアニメーションインデックス
-		float currentAnimTime{ 0.0f };  // アニメーションの再生時間
+		double currentAnimTime{ 0.0 };  // アニメーションの再生時間
 
 		ufbx_scene* pRawScene{ nullptr };  // シーンの情報をそのままもっちゃう
 
@@ -115,40 +121,32 @@ namespace cha
 	/// @brief モデルリソースを格納
 	class ModelRegistry : public ResourceRegistryBase<ModelResource>
 	{
-	public:
-		ModelRegistry() = default;
+	  public:
+		ModelRegistry()  = default;
 		~ModelRegistry() = default;
 
 		bool TryLoad(fs::path&& _file, ModelResource& _out) override;
 
-	private:
+	  private:
 		/// @brief FBXモデルを試しにロードする
 		/// @param _file fbxフィアルパス
 		/// @param _out 出力先
 		/// @return ロードに成功 true / false
 		bool TryLoadFbx(const fs::path& _file, ModelResource& _out);
 
-		bool TryLoadParts(
-			ufbx_mesh* _pMesh,
-			ufbx_mesh_part* _pPart,
-			ModelParts& _out) const;
+		bool TryLoadParts(ufbx_mesh* _pMesh, ufbx_mesh_part* _pPart, ModelParts& _out) const;
 
-		bool TryCreateVertexBuffer(
-			ComPtr<ID3D11Buffer>& _p,
-			const std::vector<ModelVertex> _vertices) const;
-		bool TryCreateIndexBuffer(
-			ComPtr<ID3D11Buffer>& _p,
-			const std::vector<uint32_t> _indices) const;
+		bool TryCreateVertexBuffer(ComPtr<ID3D11Buffer>& _p, const std::vector<ModelVertex> _vertices) const;
+		bool TryCreateIndexBuffer(ComPtr<ID3D11Buffer>& _p, const std::vector<uint32_t> _indices) const;
 
 		// ボーン専用の定数バッファを作成するヘルパーを追加
-		bool TryCreateBoneBuffer(
-			ComPtr<ID3D11Buffer>& _p) const;
+		bool TryCreateBoneBuffer(ComPtr<ID3D11Buffer>& _p) const;
 	};
 
-	template<> struct ResourceTraits<ResourceType::Model>
+	template <> struct ResourceTraits<ResourceType::Model>
 	{
-		using DataT = ModelResource;
-		using RegistryT = ModelRegistry;
+		using DataT       = ModelResource;
+		using RegistryT   = ModelRegistry;
 		using LoadConfigT = fs::path;
 	};
-}
+}  // namespace cha

@@ -450,24 +450,65 @@ void cha::ModelResource::Draw(
 	// fmod を直接使うと currentAnimTime が大きくなると丸め誤差や大きなジャンプの原因になるため
 	// 細かく時間をラップしておく（ループ時の不連続なジャンプを緩和する）
 	_model.currentAnimTime += _deltaTime;
-	double duration = (stack->time_end) - (stack->time_begin);  // 総再生時間
-	double evalTime = stack->time_begin;
-	if (duration > 0.0)
-	{
-		evalTime += std::fmod(_model.currentAnimTime, duration);
-		//// currentAnimTime を [0, duration) の範囲に保つ
-		// while (_model.currentAnimTime >= duration)
-		//{
-		//	_model.currentAnimTime -= static_cast<float>(duration);
-		// }
-		// while (_model.currentAnimTime < 0.0)
-		//{
-		//	_model.currentAnimTime += static_cast<float>(duration);
-		// }
 
-		//// 評価時間を決定
-		// evalTime = _model.currentAnimTime + stack->time_begin;
+	double firstKeyTime = std::numeric_limits<double>::max();
+
+	for (size_t i = 0; i < stack->layers.count; ++i)
+	{
+		ufbx_anim_layer* layer = stack->layers.data[i];
+
+		for (size_t j = 0; j < layer->anim_values.count; ++j)
+		{
+			ufbx_anim_value* value = layer->anim_values.data[j];
+
+			for (size_t k = 0; k < 3; ++k)
+			{
+				ufbx_anim_curve* curve = value->curves[k];
+
+				if (!curve || curve->keyframes.count == 0)
+					continue;
+
+				double keyTime = curve->keyframes.data[0].time;
+				firstKeyTime   = std::min(firstKeyTime, keyTime);
+			}
+		}
 	}
+
+	if (firstKeyTime != std::numeric_limits<double>::max())
+	{
+		VCU_LOG("全カーブの最初のキー時刻: {:.6f}", firstKeyTime);
+	}
+
+	const double begin    = stack->time_begin;
+	const double end      = stack->time_end;
+	const double duration = end - begin;
+
+	// 再生範囲が不正なら処理しない
+	if (duration <= 0.0)
+	{
+		return;
+	}
+
+	// ループ時間を計算
+	double elapsed = std::fmod(static_cast<double>(_model.currentAnimTime), duration);
+
+	// 負の時間にも対応
+	if (elapsed < 0.0)
+	{
+		elapsed += duration;
+	}
+
+	// 評価時間
+	double evalTime = std::max(begin + elapsed, firstKeyTime);
+
+	// 念のため、浮動小数点誤差だけを補正
+	if (evalTime >= end)
+	{
+		evalTime = std::nextafter(end, begin);
+	}
+
+	// 範囲を確認（Clampする前ではなく、異常を検出する）
+	VCU_ASSERT((evalTime >= begin) && (evalTime < end));
 
 	ufbx_anim* anim = stack->anim;
 
@@ -475,11 +516,10 @@ void cha::ModelResource::Draw(
 	std::vector<DirectX::XMMATRIX> worldMatrices(scene->elements.count, DirectX::XMMatrixIdentity());
 
 	// 階層順にノードのワールド行列を計算
-	for (size_t i = 0; i < scene->nodes.count; ++i)
+	for (size_t i = 0; i < scene->nodes.count; i++)
 	{
-		ufbx_node* node = scene->nodes.data[i];
-		ufbx_transform localTRS =
-		    ufbx_evaluate_transform_flags(anim, node, evalTime, UFBX_TRANSFORM_FLAG_NO_EXTRAPOLATION);
+		ufbx_node* node         = scene->nodes.data[i];
+		ufbx_transform localTRS = ufbx_evaluate_transform_flags(anim, node, evalTime, 0);
 
 		// DirectXMathの型に変換してローカル行列を作成
 		DirectX::XMVECTOR t = DirectX::XMVectorSet(
@@ -514,10 +554,12 @@ void cha::ModelResource::Draw(
 	// ② 逆バインド行列を合成して、最終的な「スキン行列」を作る
 	// -------------------------------------------------------------
 	if (scene->skin_deformers.count == 0)
+	{
 		return;
+	}
 	ufbx_skin_deformer* skin = scene->skin_deformers.data[0];
 
-	std::vector<cha::Mat4x4> skinningMatrices(256);
+	std::vector<cha::Mat4x4> skinningMatrices(256, Mat4x4::Identity());
 	size_t numBones = std::min(skin->clusters.count, size_t(256));
 
 	for (size_t i = 0; i < numBones; ++i)
@@ -665,4 +707,10 @@ void cha::ModelResource::UpdateAnim(
 
 	// 評価用の一時的なシーンを必ず解放（メモリリーク防止）
 	ufbx_free_scene(pEvaluatedScene);
+}
+
+void cha::ModelResource::SetCurrentAnimTime(
+    const float _time)
+{
+	currentAnimTime = _time;
 }

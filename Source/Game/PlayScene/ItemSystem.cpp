@@ -188,7 +188,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "爪",
 	                        "Image/Item/IconClaw.png",
-	                        "Model/HandMaterial/DragonClaw.fbx",
+	                        "Model/HandMaterial/HandClaw.fbx",
 
 	                        false,
 	                        craft,
@@ -380,6 +380,19 @@ ItemSystemData::ItemSystemData()
 	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 5 } });
+	allItemList.push_back({ 25,
+	                        ItemType::Materials,
+	                        "じゅえる",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        0.0f,
+	                        0,
+	                        0,
+	                        0,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
 }
 
 ItemInfo ItemSystem::GetInfo(

@@ -23,6 +23,9 @@ struct AudioManager : IManager
 	/// @brief BGMを止める
 	void SetBGMStop();
 
+	// BGMが再生中か確認
+	bool IsBGMPlaying() const;
+
 	/// @brief BGMを再開する
 	void SetBGMStart();
 

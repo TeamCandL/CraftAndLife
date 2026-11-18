@@ -22,6 +22,7 @@
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include <Game/PlayScene/DebugPoint.h>
 #include <shigaLibrary/SgRandom.h>
+#include <Game/PlayScene/ClearFade.h>
 #include <Game/Common/EffectObject.h>
 
 namespace
@@ -286,7 +287,13 @@ void Player::Draw()
 	Get<Dx11Manager>().SetShader(shaderFront);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
+	ImGui::Begin("PlayerDraw");
+	float animTime = models[jobType].Get().currentAnimTime;
+	ImGui::DragFloat("currentAnimTime", &animTime, 0.0001f);
+	models[jobType].Get().SetCurrentAnimTime(animTime);
+	ImGui::End();
+	// Get<DeltaTime>() * animSpeed * 0.0001f
+	models[jobType].Get().Draw(0.0f, animIndex);
 
 	const auto& subParts{ models[jobType].Get().subParts };
 
@@ -314,6 +321,12 @@ void Player::Damaged(
     int32_t damage,
     const Vec3 _worldPosition)
 {
+	// クリアフェード中はダメージを受けない
+	if (ClearFade::IsClearFadeStarted())
+	{
+		return;
+	}
+
 	// デバッグ用。無敵状態ならダメージ判定をスキップ
 	if (isInvincible)
 	{
