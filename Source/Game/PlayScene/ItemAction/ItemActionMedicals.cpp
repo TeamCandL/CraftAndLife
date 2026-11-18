@@ -8,7 +8,11 @@
 #include "../UI/HotBar.h"
 #include "../OtherPlayerController.h"
 #include <Game/Manager/AudioManager.h>
-
+#include <Game/Common/EffectObject.h>
+void ItemActionMedicals::Start()
+{
+	objHealingEffect = GetScene().Instantiate<EffectObject>("Effect/Resurrecting.efkefc");
+}
 void ItemActionMedicals::Action(
     const ItemId _itemId,
     PlayerData& _playerData,
@@ -46,6 +50,7 @@ void ItemActionMedicals::Action(
 						Get<OtherPlayer>(objHit).Data().hp = RESPAWN_HEALTH;
 						Get<OtherPlayerController>(_playerData.objOtherPlayerController)
 						    .AddRespawn(Get<OtherPlayer>(objHit).Data().name.content, RESPAWN_HEALTH);
+						Get<EffectObject>(objHealingEffect).Stop();
 					}
 				}
 				else
@@ -63,6 +68,14 @@ void ItemActionMedicals::Action(
 								Get<AudioManager>().PlayResuscitation(resuscitationSE);
 								isResuscitationSEPlayed = true;
 							}
+
+							// エフェクト再生
+							// 治療エフェクトの再生開始
+							EffectObject& effect = Get<EffectObject>(objHealingEffect);
+							effect.Play();
+							Vec3 pos = Get<Transform>(objHealTargetOtherPlayer).position;
+							// エフェクトの座標を治療中のプレイヤーの座標にする
+							effect.Data().transform.position = Get<Transform>(objHealTargetOtherPlayer).position;
 						}
 					}
 				}
@@ -114,6 +127,8 @@ void ItemActionMedicals::Update(
 			healTimeLeftSec          = HEAL_TIME;
 
 			_playerHandData.transformAnimator.playToLoop = false;
+
+			Get<EffectObject>(objHealingEffect).Stop();
 		}
 	}
 
