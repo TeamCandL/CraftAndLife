@@ -265,19 +265,6 @@ void Player::Update()
 	{
 		Respawn(maxHP);
 	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::M))
-
-	{
-		// 治療エフェクトの再生開始
-		EffectObject& effect = Get<EffectObject>(objHealingEffect);
-		effect.Play();
-		// エフェクトの座標を治療中のプレイヤーの座標にする
-		effect.Data().transform.position = transform.position;
-	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::N))
-	{
-		Get<EffectObject>(objHealingEffect).Stop();
-	}
 
 	Get<IPlayerJobController>(objJobController).Update(Data());
 }
@@ -721,7 +708,7 @@ void Player::Respawn(
 	Get<AudioManager>().Play(resuscitationSE);
 
 	// 蘇生エフェクトを再生
-	GetScene().Instantiate<OnceEffectObject>("Effect/Heal.efkefc", transform.position);
+	GetScene().Instantiate<OnceEffectObject>("Effect/Resurrection.efkefc", transform.position);
 }
 
 void Player::GiveItem(

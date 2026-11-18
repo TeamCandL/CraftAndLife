@@ -51,6 +51,10 @@ void ItemActionMedicals::Action(
 						Get<OtherPlayerController>(_playerData.objOtherPlayerController)
 						    .AddRespawn(Get<OtherPlayer>(objHit).Data().name.content, RESPAWN_HEALTH);
 						Get<EffectObject>(objHealingEffect).Stop();
+						// 蘇生エフェクトを再生
+						GetScene().Instantiate<OnceEffectObject>(
+						    "Effect/Resurrection.efkefc",
+						    Get<Transform>(objHealTargetOtherPlayer).position);
 					}
 				}
 				else
