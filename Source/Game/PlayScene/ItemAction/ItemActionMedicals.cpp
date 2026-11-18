@@ -52,14 +52,17 @@ void ItemActionMedicals::Action(
 				{
 					if (Get<OtherPlayer>(objHit).Data().hp <= 0)
 					{
-						// 新しい蘇生対象を見つけたときだけ処理
 						if (objHealTargetOtherPlayer != objHit)
 						{
 							objHealTargetOtherPlayer = objHit;
 							healTimeLeftSec          = HEAL_TIME;
 
-							// 蘇生開始SEを1回再生
-							Get<AudioManager>().Play(resuscitationSE);
+							// 蘇生対象を見つけたときだけSEを1回再生
+							if (!isResuscitationSEPlayed)
+							{
+								Get<AudioManager>().PlayResuscitation(resuscitationSE);
+								isResuscitationSEPlayed = true;
+							}
 						}
 					}
 				}
@@ -95,6 +98,13 @@ void ItemActionMedicals::Update(
 	}
 	else
 	{
+		// ボタンを離したときだけフェードアウト
+		if (isResuscitationSEPlayed)
+		{
+			Get<AudioManager>().FadeOutResuscitation();
+			isResuscitationSEPlayed = false;
+		}
+
 		if (_playerHandData.isActing)
 		{
 			_playerHandData.isActing = false;
