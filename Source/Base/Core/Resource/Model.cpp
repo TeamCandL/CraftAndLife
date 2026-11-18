@@ -5,6 +5,10 @@
 #include "../Mathf.h"
 #include "Model/ModelMaterial.h"
 #include "Surface.h"
+#include <functional>
+#include <cmath>
+#include <cstdint>
+#include <cstring>
 
 namespace
 {
@@ -86,6 +90,7 @@ bool cha::ModelRegistry::TryLoadFbx(
 				if (bool succeed = TryLoadParts(pNode->mesh, &part, parts); !succeed)
 				{
 					VCU_ASSERT(false && "パーツ読み込みに失敗");
+					ufbx_free_scene(pScene);
 					return false;
 				}
 
@@ -102,10 +107,15 @@ bool cha::ModelRegistry::TryLoadFbx(
 						continue;  // マテリアル 0 なら無視
 					}
 
+					if (part.index >= pNode->materials.count)
+					{
+						VCU_ASSERT(false && "マテリアルインデックスが範囲外です");
+						continue;
+					}
 					ufbx_material* pUfbxMaterial{ pNode->materials[part.index] };
 
 					pModelProperty->Get().hasTextureSkinAnim.x = FALSE;
-					pModelProperty->Get().hasTextureSkinAnim.y = pScene->skin_deformers.count > 0;
+					pModelProperty->Get().hasTextureSkinAnim.y = pMesh->skin_deformers.count > 0;
 					pModelProperty->Get().hasTextureSkinAnim.z = pScene->anim_stacks.count > 0;
 
 					// マテリアルのプロパティを出力する
@@ -181,6 +191,26 @@ bool cha::ModelRegistry::TryLoadFbx(
 	// NOTE: ufbxのシーンをそのままモデルで使うため、解放はモデル構造体の解放タイミングで行う
 	//     : ufbx_free_scene(pScene);
 	_out.pRawScene = pScene;
+
+	// FBXのEuler回転補間による短時間の大回転を避けるため、
+	// 回転カーブを細かくベイクし、実行時はクォータニオンSLERPで評価する。
+	_out.bakedAnimations.resize(pScene->anim_stacks.count, nullptr);
+	for (size_t i = 0; i < pScene->anim_stacks.count; ++i)
+	{
+		ufbx_anim_stack* animStack = pScene->anim_stacks.data[i];
+		if (!animStack || !animStack->anim)
+			continue;
+
+		ufbx_bake_opts bakeOpts{};
+		bakeOpts.resample_rate         = 240.0;
+		bakeOpts.minimum_sample_rate   = 1000.0;  // 1ms未満の区間だけを除外
+		bakeOpts.no_resample_rotation  = false;
+		bakeOpts.key_reduction_enabled = false;
+
+		ufbx_error bakeError{};
+		_out.bakedAnimations[i] = ufbx_bake_anim(pScene, animStack->anim, &bakeOpts, &bakeError);
+		// ベイク失敗時はnullptrのままにし、Draw()で通常評価へフォールバックする。
+	}
 
 	if (pScene->skin_deformers.count > 0)
 	{
@@ -268,12 +298,16 @@ bool cha::ModelRegistry::TryLoadParts(
 					float weightSum = 0.0f;  // ウェイトの影響度の合計
 					for (uint32_t b = 0; b < useWeights; b++)
 					{
-						uint32_t weightIdx          = skinVertex.weight_begin + b;     // ウェイトのインデクス
-						ufbx_skin_weight skinWeight = pSkin->weights.data[weightIdx];  // ウェイトを参照
-
+						uint32_t weightIdx = skinVertex.weight_begin + b;  // ウェイトのインデクス
+						if (weightIdx >= pSkin->weights.count)
+							continue;
+						ufbx_skin_weight skinWeight = pSkin->weights.data[weightIdx];
+						// HLSL側のBoneMatricesは256本。範囲外のクラスタは使わない。
+						if (skinWeight.cluster_index >= 256 || skinWeight.cluster_index >= pSkin->clusters.count)
+							continue;
 						v.boneIndices[b] = skinWeight.cluster_index;
-						v.boneWeights[b] = static_cast<float>(skinWeight.weight);  // 影響度
-						weightSum += v.boneWeights[b];                             // 影響度を加算
+						v.boneWeights[b] = static_cast<float>(skinWeight.weight);
+						weightSum += v.boneWeights[b];
 					}
 
 					// ウェイトの影響度合計を1に正規化する
@@ -284,9 +318,14 @@ bool cha::ModelRegistry::TryLoadParts(
 							v.boneWeights[b] /= weightSum;  // 正規化！
 						}
 					}
-					else  // もしウェイトの影響度合計が0なら割れないため1.0fする
+					else
 					{
-						v.boneWeights[0] /= 1.0f;
+						// ウェイト0の頂点はシェーダ側でスキニングせず元の位置を使う。
+						for (int b = 0; b < 4; ++b)
+						{
+							v.boneIndices[b] = 0;
+							v.boneWeights[b] = 0.0f;
+						}
 					}
 				}
 				else  // もしスキン情報がないなら 1.0f をべた張り
@@ -429,200 +468,209 @@ void cha::ModelResource::Draw(
     const float _deltaTime,
     const size_t _animIndex)
 {
-	ModelResource& _model = *this;
-
-	ufbx_scene* scene = _model.pRawScene;
-	if (!scene || scene->anim_stacks.count == 0)
+	ufbx_scene* scene = pRawScene;
+	if (!scene || scene->anim_stacks.count == 0 || pBoneConstantBuffer.Get() == nullptr)
 		return;
 
-	const size_t PREV_PLAYING_ANIM_INDEX{ _model.playingAnimIndex };
-	_model.playingAnimIndex = std::min(_animIndex, scene->anim_stacks.count - 1);
-
-	ufbx_anim_stack* stack = scene->anim_stacks.data[_model.playingAnimIndex];  // ひとまず0番目のモーション
-
-	// アニメーションが変更されたなら再生時間を戻す
-	if (PREV_PLAYING_ANIM_INDEX != _model.playingAnimIndex)
+	const size_t animIndex = std::min(_animIndex, scene->anim_stacks.count - 1);
+	if (playingAnimIndex != animIndex)
 	{
-		_model.currentAnimTime = 0.0f;
+		playingAnimIndex = animIndex;
+		currentAnimTime  = 0.0;
 	}
 
-	// アニメーションの時間を追加して再生
-	// fmod を直接使うと currentAnimTime が大きくなると丸め誤差や大きなジャンプの原因になるため
-	// 細かく時間をラップしておく（ループ時の不連続なジャンプを緩和する）
-	_model.currentAnimTime += _deltaTime;
+	ufbx_anim_stack* stack = scene->anim_stacks.data[playingAnimIndex];
+	if (!stack || !stack->anim)
+		return;
 
-	double firstKeyTime = std::numeric_limits<double>::max();
-
-	for (size_t i = 0; i < stack->layers.count; ++i)
-	{
-		ufbx_anim_layer* layer = stack->layers.data[i];
-
-		for (size_t j = 0; j < layer->anim_values.count; ++j)
-		{
-			ufbx_anim_value* value = layer->anim_values.data[j];
-
-			for (size_t k = 0; k < 3; ++k)
-			{
-				ufbx_anim_curve* curve = value->curves[k];
-
-				if (!curve || curve->keyframes.count == 0)
-					continue;
-
-				double keyTime = curve->keyframes.data[0].time;
-				firstKeyTime   = std::min(firstKeyTime, keyTime);
-			}
-		}
-	}
-
-	if (firstKeyTime != std::numeric_limits<double>::max())
-	{
-		VCU_LOG("全カーブの最初のキー時刻: {:.6f}", firstKeyTime);
-	}
-
+	// ufbxのstack範囲で時間をループさせる。
+	// キー範囲外の値は NO_EXTRAPOLATION により最初/最後のキー値に固定する。
 	const double begin    = stack->time_begin;
 	const double end      = stack->time_end;
 	const double duration = end - begin;
-
-	// 再生範囲が不正なら処理しない
-	if (duration <= 0.0)
-	{
+	if (!std::isfinite(begin) || !std::isfinite(end) || duration <= 0.0)
 		return;
-	}
 
-	// ループ時間を計算
-	double elapsed = std::fmod(static_cast<double>(_model.currentAnimTime), duration);
+	if (std::isfinite(_deltaTime))
+		currentAnimTime += static_cast<double>(_deltaTime);
 
-	// 負の時間にも対応
+	double elapsed = std::fmod(currentAnimTime, duration);
 	if (elapsed < 0.0)
-	{
 		elapsed += duration;
-	}
 
-	// 評価時間
-	double evalTime = std::max(begin + elapsed, firstKeyTime);
-
-	// 念のため、浮動小数点誤差だけを補正
+	double evalTime = begin + elapsed;
 	if (evalTime >= end)
-	{
 		evalTime = std::nextafter(end, begin);
-	}
+	if (evalTime < begin)
+		evalTime = begin;
 
-	// 範囲を確認（Clampする前ではなく、異常を検出する）
-	VCU_ASSERT((evalTime >= begin) && (evalTime < end));
-
-	ufbx_anim* anim = stack->anim;
-
-	// 確保サイズは elements.count のままにする（安全のため）
+	const ufbx_anim* anim = stack->anim;
 	std::vector<DirectX::XMMATRIX> worldMatrices(scene->elements.count, DirectX::XMMatrixIdentity());
+	std::vector<uint8_t> evaluated(scene->elements.count, 0);
+	std::vector<uint8_t> evaluating(scene->elements.count, 0);
 
-	// 階層順にノードのワールド行列を計算
-	for (size_t i = 0; i < scene->nodes.count; i++)
+	// ノード配列が親子順に並んでいる保証に依存せず、親を先に評価する。
+	std::function<bool(ufbx_node*)> evaluateNode = [&](ufbx_node* node) -> bool
 	{
-		ufbx_node* node         = scene->nodes.data[i];
-		ufbx_transform localTRS = ufbx_evaluate_transform_flags(anim, node, evalTime, 0);
+		if (!node || node->element_id >= worldMatrices.size())
+			return false;
+		const size_t id = node->element_id;
+		if (evaluated[id])
+			return true;
+		if (evaluating[id])
+			return false;  // 不正な循環階層を検出
+		evaluating[id] = 1;
 
-		// DirectXMathの型に変換してローカル行列を作成
-		DirectX::XMVECTOR t = DirectX::XMVectorSet(
-		    (float)localTRS.translation.x,
-		    (float)localTRS.translation.y,
-		    (float)localTRS.translation.z,
+		if (node->parent && !evaluateNode(node->parent))
+			return false;
+
+		ufbx_transform localTRS =
+		    ufbx_evaluate_transform_flags(anim, node, evalTime, UFBX_TRANSFORM_FLAG_NO_EXTRAPOLATION);
+
+		/*VCU_LOG(
+		    "ANIMLOG {}, time={}, quat=({}, {}, {}, {})", node->name.data,
+		    evalTime,
+		    static_cast<float>(localTRS.rotation.x),
+		    static_cast<float>(localTRS.rotation.y),
+		    static_cast<float>(localTRS.rotation.z),
+		    static_cast<float>(localTRS.rotation.w));*/
+
+		// ベイク済みチャンネルがある場合はSLERP/線形補間で評価する。
+		ufbx_baked_anim* baked = animIndex < bakedAnimations.size() ? bakedAnimations[animIndex] : nullptr;
+		if (baked)
+		{
+			ufbx_baked_node* bakedNode = ufbx_find_baked_node(baked, node);
+			if (bakedNode)
+			{
+				if (bakedNode->translation_keys.count > 0)
+					localTRS.translation = ufbx_evaluate_baked_vec3(bakedNode->translation_keys, evalTime);
+				if (bakedNode->rotation_keys.count > 0)
+					localTRS.rotation = ufbx_evaluate_baked_quat(bakedNode->rotation_keys, evalTime);
+				if (bakedNode->scale_keys.count > 0)
+					localTRS.scale = ufbx_evaluate_baked_vec3(bakedNode->scale_keys, evalTime);
+			}
+		}
+
+		/*VCU_LOG(
+		    "FINAL ANIMLOG {}, time={}, quat=({}, {}, {}, {})",
+		    node->name.data,
+		    evalTime,
+		    static_cast<float>(localTRS.rotation.x),
+		    static_cast<float>(localTRS.rotation.y),
+		    static_cast<float>(localTRS.rotation.z),
+		    static_cast<float>(localTRS.rotation.w));*/
+
+		DirectX::XMVECTOR translation = DirectX::XMVectorSet(
+		    static_cast<float>(localTRS.translation.x),
+		    static_cast<float>(localTRS.translation.y),
+		    static_cast<float>(localTRS.translation.z),
 		    1.0f);
-		DirectX::XMVECTOR r = DirectX::XMVectorSet(
-		    (float)localTRS.rotation.x,
-		    (float)localTRS.rotation.y,
-		    (float)localTRS.rotation.z,
-		    (float)localTRS.rotation.w);
-		DirectX::XMVECTOR s =
-		    DirectX::XMVectorSet((float)localTRS.scale.x, (float)localTRS.scale.y, (float)localTRS.scale.z, 0.0f);
-		//{ 1.0f, 1.0f, 1.0f, 1.0f };
-		DirectX::XMMATRIX localMatrix = DirectX::XMMatrixAffineTransformation(s, DirectX::XMVectorZero(), r, t);
+		DirectX::XMVECTOR rotation = DirectX::XMVectorSet(
+		    static_cast<float>(localTRS.rotation.x),
+		    static_cast<float>(localTRS.rotation.y),
+		    static_cast<float>(localTRS.rotation.z),
+		    static_cast<float>(localTRS.rotation.w));
+		DirectX::XMVECTOR scale = DirectX::XMVectorSet(
+		    static_cast<float>(localTRS.scale.x),
+		    static_cast<float>(localTRS.scale.y),
+		    static_cast<float>(localTRS.scale.z),
+		    0.0f);
 
-		// 修正: 自分の element_id の位置に書き込む
-		// 親がいる場合は、親のループで書き込み済みの parent->element_id の行列を乗算する
-		if (node->parent)
-		{
-			worldMatrices[node->element_id] =
-			    DirectX::XMMatrixMultiply(localMatrix, worldMatrices[node->parent->element_id]);
-		}
+		// クォータニオンがゼロ/非有限の場合のNaN伝播を防ぐ。
+		const float rotationLengthSq = DirectX::XMVectorGetX(DirectX::XMVector4LengthSq(rotation));
+		if (!std::isfinite(rotationLengthSq) || rotationLengthSq < 1.0e-12f)
+			rotation = DirectX::XMQuaternionIdentity();
 		else
+			rotation = DirectX::XMQuaternionNormalize(rotation);
+
+		const DirectX::XMMATRIX localMatrix =
+		    DirectX::XMMatrixAffineTransformation(scale, DirectX::XMVectorZero(), rotation, translation);
+		worldMatrices[id] = node->parent
+		                        ? DirectX::XMMatrixMultiply(localMatrix, worldMatrices[node->parent->element_id])
+		                        : localMatrix;
+
+		evaluating[id] = 0;
+		evaluated[id]  = 1;
+		return true;
+	};
+
+	for (size_t i = 0; i < scene->nodes.count; ++i)
+	{
+		if (!evaluateNode(scene->nodes.data[i]))
 		{
-			worldMatrices[node->element_id] = localMatrix;
+			VCU_ASSERT(false && "ノードの親子行列評価に失敗しました");
+			return;
 		}
 	}
 
-	// -------------------------------------------------------------
-	// ② 逆バインド行列を合成して、最終的な「スキン行列」を作る
-	// -------------------------------------------------------------
 	if (scene->skin_deformers.count == 0)
-	{
 		return;
-	}
-	ufbx_skin_deformer* skin = scene->skin_deformers.data[0];
 
-	std::vector<cha::Mat4x4> skinningMatrices(256, Mat4x4::Identity());
-	size_t numBones = std::min(skin->clusters.count, size_t(256));
+	ufbx_skin_deformer* skin = scene->skin_deformers.data[0];
+	if (!skin)
+		return;
+
+	constexpr size_t MAX_BONES = 256;
+	std::vector<cha::Mat4x4> skinningMatrices(MAX_BONES, cha::Mat4x4::Identity());
+	const size_t numBones = std::min(skin->clusters.count, MAX_BONES);
 
 	for (size_t i = 0; i < numBones; ++i)
 	{
 		ufbx_skin_cluster* cluster = skin->clusters.data[i];
+		if (!cluster)
+			continue;
 
-		// ufbxから逆バインド行列を取得
-		ufbx_matrix m = cluster->geometry_to_bone;
-
-		// ヘルパー関数を変更できないため、ufbx の行列並びのまま初期化する
+		// 元コードのufbx_matrix.vの並びと行列規約を維持する。
+		// ここを転置/並べ替えすると逆バインド行列の解釈が変わるため変更しない。
+		const ufbx_matrix& m      = cluster->geometry_to_bone;
 		DirectX::XMMATRIX invBind = DirectX::XMMatrixSet(
-		    (float)m.v[0],
-		    (float)m.v[1],
-		    (float)m.v[2],
+		    static_cast<float>(m.v[0]),
+		    static_cast<float>(m.v[1]),
+		    static_cast<float>(m.v[2]),
 		    0.0f,
-		    (float)m.v[3],
-		    (float)m.v[4],
-		    (float)m.v[5],
+		    static_cast<float>(m.v[3]),
+		    static_cast<float>(m.v[4]),
+		    static_cast<float>(m.v[5]),
 		    0.0f,
-		    (float)m.v[6],
-		    (float)m.v[7],
-		    (float)m.v[8],
+		    static_cast<float>(m.v[6]),
+		    static_cast<float>(m.v[7]),
+		    static_cast<float>(m.v[8]),
 		    0.0f,
-		    (float)m.v[9],
-		    (float)m.v[10],
-		    (float)m.v[11],
+		    static_cast<float>(m.v[9]),
+		    static_cast<float>(m.v[10]),
+		    static_cast<float>(m.v[11]),
 		    1.0f);
-		// 注意: 前回追加したTransposeを削除（従来の挙動に合わせる）
 
-		// 安全対策: element_id を使って現在のワールド行列を取得
 		DirectX::XMMATRIX currentBoneWorld = DirectX::XMMatrixIdentity();
-		if (cluster->bone_node && cluster->bone_node->element_id < worldMatrices.size())
+		if (cluster->bone_node)
 		{
-			currentBoneWorld = worldMatrices[cluster->bone_node->element_id];
+			const size_t boneId = cluster->bone_node->element_id;
+			if (boneId >= worldMatrices.size() || !evaluated[boneId])
+				continue;
+			currentBoneWorld = worldMatrices[boneId];
 		}
 
-		// 修正: 掛け算の順序を従来の順序に戻す
-		// もし問題がある場合は掛け算の順序を入れ替えて確認してください
+		// 既存の行列規約（invBind * boneWorld）を維持する。
 		DirectX::XMMATRIX finalSkinMatrix = DirectX::XMMatrixMultiply(invBind, currentBoneWorld);
-
-		// HLSL の定数バッファ用に転置を行う（シェーダの要求に合わせる）
-		finalSkinMatrix = DirectX::XMMatrixTranspose(finalSkinMatrix);
-
+		finalSkinMatrix                   = DirectX::XMMatrixTranspose(finalSkinMatrix);
 		DirectX::XMStoreFloat4x4(reinterpret_cast<DirectX::XMFLOAT4X4*>(&skinningMatrices[i]), finalSkinMatrix);
 	}
 
-	// -------------------------------------------------------------
-	// ③ 作成した行列配列を、Modelが持つ専用定数バッファへ転送＆バインド
-	// -------------------------------------------------------------
 	ManagerRegistry::Ref<Dx11Manager>().Ref(
-	    [&](const ComPtr<ID3D11DeviceContext> _pContext)
+	    [this, &skinningMatrices](const ComPtr<ID3D11DeviceContext> context)
 	    {
+		    if (context.Get() == nullptr || pBoneConstantBuffer.Get() == nullptr)
+			    return;
 		    D3D11_MAPPED_SUBRESOURCE mappedResource{};
-		    HRESULT hr =
-		        _pContext->Map(_model.pBoneConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-
-		    if (SUCCEEDED(hr))
+		    const HRESULT hr = context->Map(pBoneConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		    if (FAILED(hr))
 		    {
-			    memcpy(mappedResource.pData, skinningMatrices.data(), sizeof(cha::Mat4x4) * 256);
-			    _pContext->Unmap(_model.pBoneConstantBuffer.Get(), 0);
+			    VCU_ASSERT(false && "ボーン定数バッファのMapに失敗しました");
+			    return;
 		    }
-
-		    _pContext->VSSetConstantBuffers(4, 1, _model.pBoneConstantBuffer.GetAddressOf());
+		    std::memcpy(mappedResource.pData, skinningMatrices.data(), sizeof(cha::Mat4x4) * MAX_BONES);
+		    context->Unmap(pBoneConstantBuffer.Get(), 0);
+		    context->VSSetConstantBuffers(4, 1, pBoneConstantBuffer.GetAddressOf());
 	    });
 }
 
@@ -630,7 +678,11 @@ void cha::ModelResource::UpdateAnim(
     const float _deltaTime,
     const int _animIndex)
 {
-	playingAnimIndex = _animIndex;
+	// スキンモデルの再生時間はDraw()だけが更新する。
+	if (isSkinnedModel)
+		return;
+
+	playingAnimIndex = static_cast<size_t>(std::max(_animIndex, 0));
 
 	ModelResource& _model = *this;
 
