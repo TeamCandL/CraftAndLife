@@ -753,7 +753,6 @@ void Player::RegisterStates(
 	registry.Register({
 	    { "hp", Data().hp },
 	    { "helthState", Data().helthState },
-	    { "animIndex", Data().animIndex },
 	});
 }
 

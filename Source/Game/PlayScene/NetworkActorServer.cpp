@@ -94,11 +94,14 @@ void NetworkActorServer::Update()
 void NetworkActorServer::CreateEnemy(
     EnemyType type)
 {
+	if (IsSpawnEnemies())
+	{
+		return;
+	}
+
 	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
 
 	// Data().objEnemyController = GetScene().Instantiate<EnemyController>();
-
-	// Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
 
 	// 生成した敵のステートを登録
 	// EnemyStateRegistries(objEnemy);
@@ -130,10 +133,14 @@ void NetworkActorServer::CreateEnemies()
 	}
 
 	// 敵管理オブジェクトを生成
-	Data().objEnemyController = GetScene().Instantiate<EnemyController>(objPlaySceneUIController);
+	// 初回だけ敵管理オブジェクトを生成
+	if (Data().objEnemyController.IsEmpty())
+	{
+		Data().objEnemyController = GetScene().Instantiate<EnemyController>(objPlaySceneUIController);
 
-	// 自分自身のGameObjectをEnemyControllerに渡す
-	Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
+		// ここで NetworkActorServer を設定する
+		Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
+	}
 
 	// 敵を生成（同じ種類も複数生成可能）
 	CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });

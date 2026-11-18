@@ -98,8 +98,8 @@ class SessionManager : public IManager
 	/// @param _positions  座標情報
 	/// @param _rotations  回転情報
 	void UpdateEnemies(
-	    SizedBuffer<int>& _enemyIds,
-	    SizedBuffer<int>& _enemyTypes,
+	    SizedBuffer<int32_t>& _enemyIds,
+	    SizedBuffer<int32_t>& _enemyTypes,
 	    SizedBuffer<float>& _positions,
 	    SizedBuffer<float>& _rotations);
 
