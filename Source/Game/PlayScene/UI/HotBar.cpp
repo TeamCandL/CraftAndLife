@@ -4,6 +4,12 @@
 #include <Game/System/AbstructInputSystem.h>
 #include <Game/Manager/AudioManager.h>
 
+const unsigned int BIT_FLAG(
+    const unsigned int _bit)
+{
+	return 1 << _bit;
+}
+
 namespace
 {
 	constexpr size_t WEAPON_SLOT_INDEX{ 0 };
@@ -63,6 +69,8 @@ void HotBar::Start()
 	SlotItem& slotItem    = Get<SlotItem>(Get<Slot>(slots[BAG_SLOT_INDEX]).Data().slotItem);
 	slotItem.Data().id    = BAG_ITEM_ID;
 	slotItem.Data().count = 0;
+
+	BIT_FLAG(ItemType::Arrow) | BIT_FLAG(ItemType::Consumables);
 }
 
 void HotBar::Update()
@@ -432,6 +440,8 @@ size_t HotBar::GetSlotIndexFrom(
 	case ItemType::Arrow:
 	case ItemType::Medicals:
 		slotIndex = CONSUMABLE_SLOT_INDEX;
+		{
+		}
 		break;
 	case ItemType::Tools:
 		slotIndex = TOOL_SLOT_INDEX;

@@ -1,5 +1,6 @@
 #pragma once
 #include <Game/Game.h>
+#include <bitset>
 #include <Game/PlayScene/ItemSystem.h>
 
 struct SlotItemCountData
@@ -40,6 +41,7 @@ struct SlotData
 	GameObject slotItem{};
 	bool selected{ false };
 	bool unusable{ false };
+	std::bitset<ItemType::ItemTypeMax> flag{};
 };
 struct Slot : ObjectBase<SlotData>
 {

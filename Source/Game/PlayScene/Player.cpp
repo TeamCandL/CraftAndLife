@@ -23,17 +23,6 @@
 #include <Game/PlayScene/DebugPoint.h>
 #include <shigaLibrary/SgRandom.h>
 
-struct A
-{
-	void Ins(
-	    SceneBase& _sceneBase)
-	{
-		_sceneBase.Instantiate<ImageObject>();
-		_sceneBase.Instantiate<ImageObject>();
-		_sceneBase.Instantiate<TextObject>();
-	}
-};
-
 void Player::Start()
 {
 #ifdef _DEBUG
