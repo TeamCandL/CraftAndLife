@@ -104,7 +104,7 @@ void EntitySystem::Update()
 
 						picksData.push_back(EntityPickData{
 						    .entityId = entity.GetEntityId(),
-						    .position = Vec3::Up() * 10000,
+						    .position = entity.GetPosition(),
 						});
 
 						Enemy& enemy = Get<Enemy>(info.gameObject);

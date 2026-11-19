@@ -6,6 +6,8 @@
 #include <Windows.h>
 #include <DbgHelp.h>
 #include "VCUWide.h"
+#include "Base/Manager/IssueManager.h"
+#include "Base/ManagerRegistry.h"
 
 // DbgHelp ライブラリを自動リンク
 #pragma comment(lib, "dbghelp.lib")
@@ -114,6 +116,7 @@ inline std::wstring GetCallStack(
 }
 // ↑コールスタックも表示する方法をgeminiくんに聞いてみた
 
+#ifdef _DEBUG
 #define VCU_ASSERT(expr)                                                                                                 \
 	do                                                                                                                   \
 	{                                                                                                                    \
@@ -144,3 +147,24 @@ inline std::wstring GetCallStack(
 		}                                                                                                                \
 	}                                                                                                                    \
 	while (false)
+#else
+#define VCU_ASSERT(expr)                                                                                                 \
+	do                                                                                                                   \
+	{                                                                                                                    \
+		if (!expr)                                                                                                       \
+		{                                                                                                                \
+			std::wstring stackTrace = GetCallStack(1, 16);                                                               \
+			std::wstring text       = std::format(                                                                       \
+                VCU_WIDE("式:{}\r\nファイル:{}\r\n行数:{}\r\n最終エラーコード:{}\r\n\r\n[コールスタック]:\r\n{}"), \
+                VCU_WIDE(#expr),                                                                                   \
+                VCU_WIDE(__FILE__),                                                                                \
+                (unsigned int)__LINE__,                                                                            \
+                GetLastError(),                                                                                    \
+                stackTrace);                                                                                       \
+			std::wstring caption{ L"Assertion Failed!" };                                                                \
+			UINT type{ MB_ABORTRETRYIGNORE | MB_ICONSTOP | MB_DEFBUTTON2 };                                              \
+			cha::ManagerRegistry::Ref<cha::IssueManager>().Error(text);                                                  \
+		}                                                                                                                \
+	}                                                                                                                    \
+	while (false)
+#endif

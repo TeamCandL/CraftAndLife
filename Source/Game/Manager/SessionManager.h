@@ -98,8 +98,8 @@ class SessionManager : public IManager
 	/// @param _positions  座標情報
 	/// @param _rotations  回転情報
 	void UpdateEnemies(
-	    SizedBuffer<int>& _enemyIds,
-	    SizedBuffer<int>& _enemyTypes,
+	    SizedBuffer<int32_t>& _enemyIds,
+	    SizedBuffer<int32_t>& _enemyTypes,
 	    SizedBuffer<float>& _positions,
 	    SizedBuffer<float>& _rotations);
 
@@ -143,6 +143,11 @@ class SessionManager : public IManager
 	/// @brief 昼夜サイクルのためのゲーム内時間の更新
 	/// @param _currentTimeSec ホスト側の昼夜サイクルの現在時刻
 	void UpdateDayTime(float _currentTimeSec, int32_t _dayCount);
+
+	int GetEnemyStateSize()
+	{
+		return static_cast<int>(inSessionStatus_.enemiesStatus.size());
+	}
 
   private:
 	InSessionStatus inSessionStatus_{};  ///< セッション内のステータス

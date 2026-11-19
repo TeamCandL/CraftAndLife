@@ -32,10 +32,10 @@ void Enemy::Start()
 void Enemy::Update()
 {
 	// テスト用コード
-	/*if (Get<InputSystem>().GetKeyDown(KeyCode::O))
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
-	    hp -= 100;
-	}*/
+		hp -= 100;
+	}
 
 	if (isDead)
 	{
@@ -75,6 +75,8 @@ void Enemy::Update()
 
 	// VCU_LOG("敵の追跡状況：{}", followed);
 	Move(targetPos, transform.position, transform.Down(), speed);
+
+	Get<TerrainSystem>().ToSafePosition(transform.position, transform.scale);
 
 	Sensor(transform.Down());
 

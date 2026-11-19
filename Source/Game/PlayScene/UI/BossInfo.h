@@ -15,6 +15,9 @@ struct BossInfoData
 	// BOSS戦BGM
 	Resource<ResourceType::Audio> bossBGM{ "BGM_SE/Boss.mp3" };
 
+	// BOSS撃破BGM
+	Resource<ResourceType::Audio> bossDefeatBGM{ "BGM_SE/Defeat The Boss.mp3" };
+
 	Component<UITransform> transform{ Vec2{ 657, 0 }, Vec2{ 577, 100 } };
 	Component<UIImage> image{ texture };
 

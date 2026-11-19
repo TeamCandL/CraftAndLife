@@ -22,7 +22,14 @@
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include <Game/PlayScene/DebugPoint.h>
 #include <shigaLibrary/SgRandom.h>
+#include <Game/PlayScene/ClearFade.h>
+#include <Game/Common/EffectObject.h>
 
+namespace
+{
+	GameObject objHealingEffect{};  ///< 治療中エフェクトのオブジェクト
+
+}
 void Player::Start()
 {
 #ifdef _DEBUG
@@ -30,6 +37,7 @@ void Player::Start()
 #else
 	filterAddItemOnJob = true;
 #endif  // _DEBUG
+	objHealingEffect = GetScene().Instantiate<EffectObject>("Effect/Resurrecting.efkefc");
 
 	obb.isTrigger = true;
 
@@ -117,6 +125,7 @@ void Player::Update()
 	ImGui::Text("プレイヤー名：%s", playerName.c_str());
 	ImGui::Separator();
 	ImGui::DragFloat3("offset", transform.position.v, 0.0001f);
+	ImGui::Checkbox("無敵", &isInvincible);
 #endif
 
 	Vec3 angles = transform.rotation.ToEuler();
@@ -257,7 +266,10 @@ void Player::Update()
 		Respawn(maxHP);
 	}
 
-	Get<IPlayerJobController>(objJobController).Update(Data());
+	if (!objJobController.IsEmpty())
+	{
+		Get<IPlayerJobController>(objJobController).Update(Data());
+	}
 }
 
 void Player::Draw()
@@ -265,7 +277,13 @@ void Player::Draw()
 	Get<Dx11Manager>().SetShader(shaderFront);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
+	ImGui::Begin("PlayerDraw");
+	float animTime = models[jobType].Get().currentAnimTime;
+	ImGui::DragFloat("currentAnimTime", &animTime, 0.0001f);
+	models[jobType].Get().SetCurrentAnimTime(animTime);
+	ImGui::End();
+	// Get<DeltaTime>() * animSpeed * 0.0001f
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed * 0.001f, animIndex);
 
 	const auto& subParts{ models[jobType].Get().subParts };
 
@@ -293,6 +311,17 @@ void Player::Damaged(
     int32_t damage,
     const Vec3 _worldPosition)
 {
+	// クリアフェード中はダメージを受けない
+	if (ClearFade::IsClearFadeStarted())
+	{
+		return;
+	}
+
+	// デバッグ用。無敵状態ならダメージ判定をスキップ
+	if (isInvincible)
+	{
+		return;
+	}
 	if (nowDamagedCoolTime <= 0.0f && hp > 0)
 	{
 		nowDamagedCoolTime = DAMAGED_COOL_TIME;
@@ -367,6 +396,7 @@ void Player::SetHelthState(
 	{
 		return;
 	}
+	helthState = _state;
 
 	switch (_state)
 	{
@@ -376,6 +406,26 @@ void Player::SetHelthState(
 
 	case HelthState_Dead:
 	{
+		if (hasReviveChance)
+		{
+			HotBar& hotBar = Get<HotBar>(objHotbar);
+			if (hotBar.CanRemoveConsumableItem() && hotBar.GetConsumableItemId() == ITEM_ID_MEDICAL_KIT)
+			{
+				// 医療キッドを持っているなら1個消費して復活
+				hasReviveChance = false;  // 次のチャンスなし
+				hotBar.RemoveConsumableItem();
+
+				hp = 100;  // hp100にして生き返る
+				SetHelthState(HelthState_Live);
+
+				// 自動復活時のSE（重ねて再生）
+				Get<AudioManager>().Play(resuscitationSE);
+				Get<AudioManager>().Play(healSE);
+
+				return;  // 生き返る
+			}
+		}
+
 		// 死亡時のSE
 		Get<AudioManager>().Play(deathSE);
 
@@ -400,8 +450,6 @@ void Player::SetHelthState(
 		VCU_ASSERT("不正な生存ステータスですよ。");
 		return;
 	}
-
-	helthState = _state;
 }
 
 void Player::SetJob(
@@ -680,6 +728,9 @@ void Player::Respawn(
 
 	// 蘇生SEを再生
 	Get<AudioManager>().Play(resuscitationSE);
+
+	// 蘇生エフェクトを再生
+	GetScene().Instantiate<OnceEffectObject>("Effect/Resurrection.efkefc", transform.position);
 }
 
 void Player::GiveItem(
@@ -698,9 +749,22 @@ void Player::GiveItem(
 	{
 		GetScene().Instantiate<DebugPoint>(_fromPosition);
 		Damaged(ITEM_INFO._damageForEnemy, _fromPosition);
+		// エフェクト再生していく
+		// ダメージエンティティからプレイヤーへの方向を取得。Y成分を除いた水平方向。
+		Vec3 horizontalMask{ 1, 0, 1 };
+		Quaternion toPlayer = Quaternion::FromLookAtQuaternion(
+		    DirectX::XMVectorMultiply(_fromPosition, horizontalMask),
+		    DirectX::XMVectorMultiply(transform.position, horizontalMask),
+		    Vec3::Up());
+		// エフェクトに座標、向きを指定して再生
+		GetScene().Instantiate<OnceEffectObject>("Effect/PlayerDamaged.efkefc", transform.position, toPlayer);
 	}
-	else  // それ以外なら基本的にホットバーかバックパックへ
+	else if (ITEM_INFO._type == ItemType::PlayerAttackArrow || ITEM_INFO._type == ItemType::PlayerAttackSword)
 	{
+	}
+	else
+	{
+		// それ以外なら基本的にホットバーかバックパックへ
 		TryAddItem(_itemId);
 	}
 }
@@ -711,7 +775,6 @@ void Player::RegisterStates(
 	registry.Register({
 	    { "hp", Data().hp },
 	    { "helthState", Data().helthState },
-	    { "animIndex", Data().animIndex },
 	});
 }
 

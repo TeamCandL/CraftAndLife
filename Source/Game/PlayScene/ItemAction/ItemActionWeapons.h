@@ -15,6 +15,9 @@ struct ItemActionWeaponsData
 	float swordBigItemRange{ 6.0f };  ///< 大剣アイテムの有効範囲
 
 	float swordAttackColliderForwardDistance{ 1.0f };
+
+	// 採取対象のゲージ
+	GameObject harvestableGauge{};
 };
 
 struct ItemActionWeapons : ObjectBase<ItemActionWeaponsData>, IItemAction

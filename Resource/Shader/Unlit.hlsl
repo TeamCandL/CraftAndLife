@@ -16,8 +16,8 @@ cbuffer BoneBuffer : register(b4)
 struct VSOutput
 {
 	float4 pos : SV_Position; // 頂点座標
-	float3 worldPos : TEXCOORD1;  // ワールド座標
-	float4 normal : NORMAL0;  // 法線
+	float3 worldPos : TEXCOORD1; // ワールド座標
+	float4 normal : NORMAL0; // 法線
 	float2 uv : TEXCOORD0; // UV座標
 };
 
@@ -29,39 +29,49 @@ VSOutput VS(ModelVertex input)
 	float4 worldNormal;
 	if (ModelMaterial_HasTexture_HasSkin_HasAnim.y)
 	{
-		// アニメーション部分
-		matrix skinMatrix =
-			BoneMatrices[input.boneIndices.x] * input.boneWeights.x +
-			BoneMatrices[input.boneIndices.y] * input.boneWeights.y +
-			BoneMatrices[input.boneIndices.z] * input.boneWeights.z +
-			BoneMatrices[input.boneIndices.w] * input.boneWeights.w;
+		float4 weights = max(input.boneWeights, 0.0f);
+		float weightSum = dot(weights, float4(1.0f, 1.0f, 1.0f, 1.0f));
 
-		// スキン行列を使って、モデルのローカル座標をアニメーション後の座標に変形させる
-		float4 animatedLocalPos = mul(input.pos, skinMatrix);
+		if (weightSum > 1.0e-6f)
+		{
+			weights /= weightSum;
+			matrix skinMatrix =
+				BoneMatrices[input.boneIndices.x] * weights.x +
+				BoneMatrices[input.boneIndices.y] * weights.y +
+				BoneMatrices[input.boneIndices.z] * weights.z +
+				BoneMatrices[input.boneIndices.w] * weights.w;
 
-		// 法線も同様に変換する
-		float4 animatedLocalNormal = mul(float4(input.normal.xyz, 0.0f), skinMatrix);
-		
-		worldPos = animatedLocalPos;
-		worldNormal = mul(animatedLocalNormal, ModelTransform_ToWorldMatrix);
+			worldPos = mul(input.pos, skinMatrix);
+			worldNormal = mul(float4(input.normal.xyz, 0.0f), skinMatrix);
+		}
+		else
+		{
+			// ウェイトがない頂点はスキニングせず、元の頂点を使用する。
+			worldPos = input.pos;
+			worldNormal = float4(input.normal.xyz, 0.0f);
+		}
 	}
 	else
 	{
 		worldPos = input.pos;
 		worldNormal = input.normal;
 	}
-	
+
+// モデル変換
 	worldPos = mul(worldPos, ModelTransform_ToWorldMatrix);
+	worldNormal = mul(worldNormal, ModelTransform_ToWorldMatrix);
+
+// ワールド変換
 	worldPos = mul(worldPos, Transform_World);
+	worldNormal = mul(worldNormal, Transform_World);
+
+	output.normal = normalize(worldNormal);
 
 	output.worldPos = worldPos.xyz;
 	
 	output.pos = mul(worldPos, Camera_ViewProjection);
 	
 	output.uv = input.uv;
-
-	
-	output.normal = normalize(worldNormal); // ラスタライザに渡す前に正規化
 	
 	return output;
 }
@@ -69,7 +79,7 @@ VSOutput VS(ModelVertex input)
 // 4x4ベイヤーディザ行列
 float GetBayerDitherValue(uint2 screenPos)
 {
-	const float bayerMatrix[16] =  // TODO: 変換内容はわかりまへん
+	const float bayerMatrix[16] = // TODO: 変換内容はわかりまへん
 	{
 		0.0f / 16.0f, 8.0f / 16.0f, 2.0f / 16.0f, 10.0f / 16.0f,
 		12.0f / 16.0f, 4.0f / 16.0f, 14.0f / 16.0f, 6.0f / 16.0f,
@@ -97,7 +107,7 @@ float4 PS(VSOutput input) : SV_Target0
 		float ditherAlpha = saturate((distToCamera - minDist) / (maxDist - minDist));
 
 		// ベイヤーディザによるクリッピング判定
-		uint2 screenPos = (uint2)input.pos.xy;
+		uint2 screenPos = (uint2) input.pos.xy;
 		float ditherThreshold = GetBayerDitherValue(screenPos);
 
 		if (ditherAlpha < ditherThreshold)

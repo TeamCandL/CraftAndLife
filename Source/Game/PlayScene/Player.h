@@ -112,6 +112,9 @@ struct PlayerData
 	// 蘇生されたときのSE
 	Resource<Audio> resuscitationSE{ "BGM_SE/Resuscitation.mp3" };
 
+	// 回復SE
+	Resource<Audio> healSE{ "BGM_SE/Heal.mp3" };
+
 	// 死亡時のSE
 	Resource<Audio> deathSE{ "BGM_SE/Death.mp3" };
 
@@ -155,6 +158,12 @@ struct PlayerData
 	bool filterAddItemOnJob{ false };
 
 	float radius{ 0.5f };  ///< プレイヤーの半径
+
+	bool isInvincible{ false };  ///< デバッグ用。無敵状態か否か
+
+	bool hasReviveChance{ true };  ///< 1回死んでも生き返られるchanceを持っているか treu / false
+
+	const ItemId ITEM_ID_MEDICAL_KIT{ 18 };  ///< 医療キッドのアイテムId
 };
 
 /// @brief プレイヤー

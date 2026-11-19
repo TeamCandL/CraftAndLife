@@ -14,5 +14,6 @@ namespace cha
 		Material,   ///< コンスタントバッファへ送る素材データ
 		ShaderPro,  ///< 高自由度なシェーダ
 		Font,       ///< フォントリソース
+		Effect,     ///< エフェクト
 	};
 }  // namespace cha
