@@ -112,6 +112,9 @@ struct PlayerData
 	// 蘇生されたときのSE
 	Resource<Audio> resuscitationSE{ "BGM_SE/Resuscitation.mp3" };
 
+	// 回復SE
+	Resource<Audio> healSE{ "BGM_SE/Heal.mp3" };
+
 	// 死亡時のSE
 	Resource<Audio> deathSE{ "BGM_SE/Death.mp3" };
 

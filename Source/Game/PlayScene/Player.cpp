@@ -411,12 +411,17 @@ void Player::SetHelthState(
 			HotBar& hotBar = Get<HotBar>(objHotbar);
 			if (hotBar.CanRemoveConsumableItem() && hotBar.GetConsumableItemId() == ITEM_ID_MEDICAL_KIT)
 			{
-				// 医療キッドを持っているなら消費して復活
+				// 医療キッドを持っているなら1個消費して復活
 				hasReviveChance = false;  // 次のチャンスなし
 				hotBar.RemoveConsumableItem();
 
 				hp = 100;  // hp100にして生き返る
 				SetHelthState(HelthState_Live);
+
+				// 自動復活時のSE（重ねて再生）
+				Get<AudioManager>().Play(resuscitationSE);
+				Get<AudioManager>().Play(healSE);
+
 				return;  // 生き返る
 			}
 		}

@@ -76,6 +76,8 @@ void Enemy::Update()
 	// VCU_LOG("敵の追跡状況：{}", followed);
 	Move(targetPos, transform.position, transform.Down(), speed);
 
+	Get<TerrainSystem>().ToSafePosition(transform.position, transform.scale);
+
 	Sensor(transform.Down());
 
 	nowAttackCoolTime -= Get<DeltaTime>();
