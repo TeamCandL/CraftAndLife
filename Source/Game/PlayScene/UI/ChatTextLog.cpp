@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "ChatTextLog.h"
 #include "ChatTextLogBack.h"
+#include <Game/Manager/AudioManager.h>
 
 void ChatTextLog::Start()
 {
@@ -35,4 +36,7 @@ void ChatTextLog::AddLog(
     const std::string& _content)
 {
 	logs.emplace_back(SHOW_TIME, _content);
+
+	// ログ追加時の通知音
+	Get<AudioManager>().Play(noticeSE);
 }
