@@ -15,6 +15,9 @@ struct ItemActionMedicalsData
 	// 蘇生中のSE
 	Resource<ResourceType::Audio> resuscitationSE{ "BGM_SE/Process Of Resuscitation.mp3" };
 
+	// 蘇生成功時のSE
+	Resource<ResourceType::Audio> reviveSE{ "BGM_SE/Resuscitation.mp3" };
+
 	GameObject objHealingEffect{};
 };
 

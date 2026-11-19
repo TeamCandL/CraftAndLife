@@ -50,6 +50,10 @@ void ItemActionMedicals::Action(
 						Get<OtherPlayer>(objHit).Data().hp = RESPAWN_HEALTH;
 						Get<OtherPlayerController>(_playerData.objOtherPlayerController)
 						    .AddRespawn(Get<OtherPlayer>(objHit).Data().name.content, RESPAWN_HEALTH);
+
+						// ヒーラー側にも蘇生SEを再生
+						Get<AudioManager>().Play(reviveSE);
+
 						Get<EffectObject>(objHealingEffect).Stop();
 						// 蘇生エフェクトを再生
 						GetScene().Instantiate<OnceEffectObject>(
