@@ -119,7 +119,7 @@ void LobbyUI::Update()
 		Get<TextObject>(playerLists[i].jobLabelText).SetContent("ジョブ");
 
 		// ジョブ名
-		Get<TextObject>(playerLists[i].jobNameText).SetContent(GetJobName(status.memberId[i]));
+		Get<TextObject>(playerLists[i].jobNameText).SetContent(GetJobName(status.memberRoles[i]));
 	}
 	// ルーム名
 	Get<TextObject>(teamNameText).SetContent(status.joinRoomName);
