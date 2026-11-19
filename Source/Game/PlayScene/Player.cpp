@@ -415,6 +415,7 @@ void Player::SetHelthState(
 				hasReviveChance = false;  // 次のチャンスなし
 				hotBar.RemoveConsumableItem();
 
+				hp = 100;  // hp100にして生き返る
 				SetHelthState(HelthState_Live);
 				return;  // 生き返る
 			}
