@@ -30,11 +30,13 @@ cha::GameObjectCollection::GameObjectCollection() :
 	systemsSubRegistry_.resize(SYSTEM_COUNT_);
 }
 
-cha::GameObjectCollection::~GameObjectCollection() {}
+cha::GameObjectCollection::~GameObjectCollection()
+{
+	FillComponentRegistry();
+}
 
 void cha::GameObjectCollection::Flush()
 {
-
 	std::set<uint64_t> toFastDestroyIds{};  ///< 速攻消すオブジェクトのId
 
 	// 削除予定のオブジェクトを削除してく

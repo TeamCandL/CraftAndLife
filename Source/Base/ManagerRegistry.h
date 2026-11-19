@@ -8,33 +8,34 @@ namespace cha
 	class ManagerRegistry
 	{
 		friend class GameLoop;
-	private:
-		ManagerRegistry() = delete;
+
+	  private:
+		ManagerRegistry()  = delete;
 		~ManagerRegistry() = delete;
 
-	public:
+	  public:
 		/// @brief マネージャを参照
 		/// @tparam T 指定マネージャ型
 		/// @return マネージャの参照ポインタ
-		template<typename T>
-		inline static T& Ref()
+		template <typename T> inline static T& Ref()
 		{
 			const std::type_index TYPE_INDEX{ typeid(T) };
 
-			VCU_ASSERT(registry_.count(TYPE_INDEX) && "未登録のマネージャが参照されました。");
+			assert(registry_.count(TYPE_INDEX) && "未登録のマネージャが参照されました。");
 
 			auto spT = std::static_pointer_cast<T>(registry_[TYPE_INDEX]);
 
 			return *spT.get();
 		}
 
-	//private:
+		// private:
 		/// @brief マネージャを登録する
 		/// @tparam T 登録するマネージャ型
-		/// @tparam ...Args 
-		/// @param ..._args 
-		template<typename T, typename ...Args>
-		inline static T& Add(Args&&... _args)
+		/// @tparam ...Args
+		/// @param ..._args
+		template <typename T, typename... Args>
+		inline static T& Add(
+		    Args&&... _args)
 		{
 			const std::type_index TYPE_INDEX{ typeid(T) };
 			// マネージャが未登録の場合登録する
@@ -58,8 +59,8 @@ namespace cha
 			}
 		}
 
-	private:
+	  private:
 		// 登録
 		static std::map<std::type_index, std::shared_ptr<IManager>> registry_;
 	};
-}
+}  // namespace cha

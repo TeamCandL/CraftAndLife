@@ -146,7 +146,7 @@ class SessionManager : public IManager
 
 	int GetEnemyStateSize()
 	{
-		return inSessionStatus_.enemiesStatus.size();
+		return static_cast<int>(inSessionStatus_.enemiesStatus.size());
 	}
 
   private:
