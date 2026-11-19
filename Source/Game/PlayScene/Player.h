@@ -160,7 +160,7 @@ struct PlayerData
 
 	bool hasReviveChance{ true };  ///< 1回死んでも生き返られるchanceを持っているか treu / false
 
-	// const 0
+	const ItemId ITEM_ID_MEDICAL_KIT{ 18 };  ///< 医療キッドのアイテムId
 };
 
 /// @brief プレイヤー

@@ -266,8 +266,10 @@ void Player::Update()
 		Respawn(maxHP);
 	}
 
-	if (objJobController.IsEmpty())
+	if (!objJobController.IsEmpty())
+	{
 		Get<IPlayerJobController>(objJobController).Update(Data());
+	}
 }
 
 void Player::Draw()
@@ -394,18 +396,7 @@ void Player::SetHelthState(
 	{
 		return;
 	}
-
-	if (hasReviveChance)
-	{
-		HotBar& hotBar = Get<HotBar>(objHotbar);
-
-		/*if (!hotBar.CanRemoveConsumableItem() || hotBar.GetConsumableItemId() == )
-		{
-		    return;
-		}*/
-
-		hotBar.RemoveConsumableItem();
-	}
+	helthState = _state;
 
 	switch (_state)
 	{
@@ -415,6 +406,20 @@ void Player::SetHelthState(
 
 	case HelthState_Dead:
 	{
+		if (hasReviveChance)
+		{
+			HotBar& hotBar = Get<HotBar>(objHotbar);
+			if (hotBar.CanRemoveConsumableItem() && hotBar.GetConsumableItemId() == ITEM_ID_MEDICAL_KIT)
+			{
+				// 医療キッドを持っているなら消費して復活
+				hasReviveChance = false;  // 次のチャンスなし
+				hotBar.RemoveConsumableItem();
+
+				SetHelthState(HelthState_Live);
+				return;  // 生き返る
+			}
+		}
+
 		// 死亡時のSE
 		Get<AudioManager>().Play(deathSE);
 
@@ -439,8 +444,6 @@ void Player::SetHelthState(
 		VCU_ASSERT("不正な生存ステータスですよ。");
 		return;
 	}
-
-	helthState = _state;
 }
 
 void Player::SetJob(
