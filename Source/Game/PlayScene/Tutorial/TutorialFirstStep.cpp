@@ -75,9 +75,17 @@ bool TutorialFirstStep::CheckClearedTutorial(
 	switch (_type)
 	{
 	case TutorialElementType_CheckCameraMove:
-		return (previousCameraAngles - Get<MainCamera>(objMainCamera).GetAngle()).Length() >= 6.0f;
+		totalCameraAngles += previousCameraAngles - Get<MainCamera>(objMainCamera).GetAngle();
+		previousCameraAngles = Get<MainCamera>(objMainCamera).GetAngle();
+
+		return (totalCameraAngles).Length() >= COMPLITE_CAMERA_MOVE_ANGLES_THRESHOLD;
+
 	case TutorialElementType_CheckBodyMove:
-		return (previousPlayerPosition - Get<Transform>(objPlayer).position).Length() >= 4.0f;
+		totalPlayerMove += previousPlayerPosition - Get<Transform>(objPlayer).position;
+		previousPlayerPosition = Get<Transform>(objPlayer).position;
+
+		return (totalPlayerMove).Length() >= COMPLITE_BODY_MOVE_DISTANCE_THRESHOLD;
+
 	case TutorialElementType_CheckJumpMove:
 		return Get<Transform>(objPlayer).position.y - previousPlayerPosition.y >= 1.0f;
 	case TutorialElementType_CheckSelectBackpack:
