@@ -55,6 +55,7 @@ void OtherEnemyController::Update()
 			    EnemyType type = ToEnemyType(status.enemyType);
 
 			    VCU_LOG("OtherEnemy生成開始: ID={}", enemyId);
+			    VCU_LOG("OtherEnemyTypeIns: Type={}", static_cast<int>(type));
 
 			    if (!enemySpawnList[enemyId].IsSpawned())
 			    {
@@ -62,6 +63,8 @@ void OtherEnemyController::Update()
 				    enemySpawnList[enemyId].Spawned();
 
 				    idToObjOtherEnemy[enemyId] = obj;  // 敵IDと紐づけて敵の情報をidToObjOtherEnemyに登録
+				    VCU_LOG("OtherEnemyID:", enemyId);
+				    VCU_LOG("OtherEnemyTypeIns: Type={}", static_cast<int>(type));
 			    }
 		    }
 		    else
@@ -116,6 +119,7 @@ void OtherEnemyController::Update()
 bool OtherEnemyController::IsBossEnemy(
     const int _id)
 {
+	VCU_LOG("お呼ばれ！");
 	SessionManager& sessionManager = Get<SessionManager>();
 	SessionStateReader reader(sessionManager);
 
@@ -126,5 +130,6 @@ bool OtherEnemyController::IsBossEnemy(
 		VCU_LOG("OtherEnemyのHP取得失敗: ID={}", _id);
 		return false;
 	}
+	VCU_LOG("OtherEnemyIDinIsboss: isBoss={}", _isBoss);
 	return _isBoss;
 }

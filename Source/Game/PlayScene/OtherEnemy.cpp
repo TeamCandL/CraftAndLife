@@ -5,6 +5,7 @@
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include "EnemyHpBar.h"
 #include "Enemy.h"
+#include "StateRegistry.h"
 
 void OtherEnemy::Start()
 {
@@ -189,4 +190,10 @@ void OtherEnemy::UpdateDeathAnimation()
 			DestroyMe();
 		}
 	}
+}
+
+void OtherEnemy::RegisterStates(
+    StateRegistry& registry) const
+{
+	registry.Register("alive", !isDead);
 }

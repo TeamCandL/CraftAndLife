@@ -63,6 +63,20 @@ void Enemy::Update()
 		// DropItem();
 	}
 
+	SessionManager& session = Get<SessionManager>();
+	SessionStateReader readers{ session };
+
+	if (readers.TryGetState(StateTarget::Enemy(GetID()), "alive", alive))
+	{
+		if (!alive)
+		{
+			VCU_LOG("OtherEnemy ID:{} is dead. Destroying...", GetID());
+
+			hp = 0;
+			return;
+		}
+	}
+
 	//// ▼ HPバーの位置と割合の更新
 	// if (!objHpBar.IsEmpty())
 	//{
@@ -150,10 +164,10 @@ void Enemy::Update()
 	else
 	{
 		// ▼ 死亡時にHPバーを削除
-		if (!objHpBar.IsEmpty())
+		/*if (!objHpBar.IsEmpty())
 		{
-			GetScene().Destroy(objHpBar);
-		}
+		    GetScene().Destroy(objHpBar);
+		}*/
 
 		const int32_t enemyId = GetID();
 		VCU_LOG("[Enemy] 死亡開始 ID={}", enemyId);

@@ -149,6 +149,16 @@ void PlayNetworkController::Update()
 				    VCU_LOG("座標データ数: {}", enemyMessage.positions.Size());
 				    VCU_LOG("回転データ数: {}", enemyMessage.rotations.Size());
 
+				    if (enemyMessage.enemyIds.Size() > 6)
+				    {
+					    VCU_LOG("わうわう～わんだほーい");
+					    VCU_LOG("敵ID数: {}", enemyMessage.enemyIds.Size());
+					    for (size_t i = 0; i < enemyMessage.enemyIds.Size(); ++i)
+					    {
+						    VCU_LOG("受信した敵 ID={}, Type={}", enemyMessage.enemyIds[i], enemyMessage.enemyTypes[i]);
+					    }
+				    }
+
 				    Get<SessionManager>().UpdateEnemies(
 				        enemyMessage.enemyIds,
 				        enemyMessage.enemyTypes,
@@ -483,32 +493,18 @@ void PlayNetworkController::Update()
 				auto enemyStatuses = Get<EnemyController>(objEnemyController).GetAllEnemyStatus();
 
 				// 送信済みの敵IDを記録する
-				// std::unordered_set<int> enemyIds;
-
-				Protocol::UpdatedEnemies enemyMessage{};
-				std::vector<int32_t> enemyIds;
-				std::vector<int32_t> enemyTypes;
-				std::vector<float> positions;
-				std::vector<float> rotations;
+				std::unordered_set<int> enemyIds;
 
 				for (const EnemyStatus& enemy : enemyStatuses)
 				{
 					// 同じIDがすでに登録されていたら送信しない
-					// if (!enemyIds.insert(enemy.enemyId).second)
-					// {
-					//	// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
-					//	continue;
-					// }
+					if (!enemyIds.insert(enemy.enemyId).second)
+					{
+						// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
+						continue;
+					}
 
-					enemyIds.push_back(enemy.enemyId);
-					enemyTypes.push_back(enemy.enemyType);
-					positions.push_back(enemy.enemyPosition.x);
-					positions.push_back(enemy.enemyPosition.y);
-					positions.push_back(enemy.enemyPosition.z);
-					rotations.push_back(0.0f);
-					rotations.push_back(enemy.enemyAngleY);
-
-					/*
+					Protocol::UpdateEnemy enemyMessage;
 					enemyMessage.enemyId   = enemy.enemyId;
 					enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
 
@@ -518,21 +514,21 @@ void PlayNetworkController::Update()
 
 					enemyMessage.rotationX = 0.0f;
 					enemyMessage.rotationY = enemy.enemyAngleY;
-					*/
+
 					VCU_LOG(
 					    "送信前の敵座標 ID={}: ({}, {}, {})",
 					    enemy.enemyId,
 					    enemy.enemyPosition.x,
 					    enemy.enemyPosition.y,
 					    enemy.enemyPosition.z);
+
+					networkSessionManager.Send(enemyMessage);
 				}
 				// vectorからsizedBufferに変換
-				enemyMessage.enemyIds   = SizedBuffer<int32_t>(std::move(enemyIds));
+				/*enemyMessage.enemyIds   = SizedBuffer<int32_t>(std::move(enemyIds));
 				enemyMessage.enemyTypes = SizedBuffer<int32_t>(std::move(enemyTypes));
 				enemyMessage.positions  = SizedBuffer<float>(std::move(positions));
-				enemyMessage.rotations  = SizedBuffer<float>(std::move(rotations));
-
-				networkSessionManager.Send(enemyMessage);
+				enemyMessage.rotations  = SizedBuffer<float>(std::move(rotations));*/
 
 				// 敵ステート送信処理
 				const bool fullSync = actorServer.IsFullSync();
