@@ -93,7 +93,7 @@ void OtherEnemyController::Update()
 			    objOtherEnemyHpBar.push_back(hpBar);
 
 			    // ボスなら、ここでBossInfoに対象の敵IDを設定する
-			    if (IsBossEnemy(type))
+			    if (IsBossEnemy(enemyId))
 			    {
 				    VCU_LOG("ボスOtherEnemy生成: ID={}", enemyId);
 
@@ -111,4 +111,20 @@ void OtherEnemyController::Update()
 			    idToObjOtherEnemyHpBar[enemyId] = hpBar;  // 生成したHPバーを敵IDと紐づけて登録
 		    }
 	    });
+}
+
+bool OtherEnemyController::IsBossEnemy(
+    const int _id)
+{
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader(sessionManager);
+
+	StateTarget target = StateTarget::Enemy(_id);
+	bool _isBoss       = 0;
+	if (!reader.TryGetState(target, "isBoss", _isBoss))
+	{
+		VCU_LOG("OtherEnemyのHP取得失敗: ID={}", enemyId);
+		return false;
+	}
+	return _isBoss;
 }

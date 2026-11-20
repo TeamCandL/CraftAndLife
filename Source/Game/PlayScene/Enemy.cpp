@@ -475,6 +475,7 @@ void Enemy::RegisterStates(
 	// registry.Register("followed", followed);
 	registry.Register("alive", alive);
 	registry.Register("attacked", attacked);
+	registry.Register("isBoss", isBoss);
 }
 
 void Enemy::StartDeathAnimation()
