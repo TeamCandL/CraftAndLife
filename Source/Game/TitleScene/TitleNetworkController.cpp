@@ -35,6 +35,7 @@ void TitleNetworkController::Update()
 				    message.roomName = Get<SessionManager>().RefStatus().joinRoomName;
 				    networkSessionManager.SetCurrentState(CheckJoin);
 				    networkSessionManager.Send(message);
+				    networkSessionManager.Flush();
 			    }
 		    });
 		break;

@@ -791,6 +791,8 @@ void PlayNetworkController::Update()
 			breakHarvestableMessage.breakHarvestableId = *foundId;
 			networkSessionManager.Send(breakHarvestableMessage);
 		}
+
+		networkSessionManager.Flush();
 	}
 	break;
 	default:
