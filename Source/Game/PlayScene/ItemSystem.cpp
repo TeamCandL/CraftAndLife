@@ -393,6 +393,21 @@ ItemSystemData::ItemSystemData()
 	                        0,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 1 } });
+	allItemList.push_back({ 26,
+	                        ItemType::EnemyAttack,
+	                        "火ィ攻撃",
+	                        "Image/EmptyItem.png",
+	                        "Model/HandMaterial/HandString.fbx",
+
+	                        false,
+	                        craft,
+
+	                        12.0f,
+	                        12,
+	                        0,
+	                        5,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
 }
 
 ItemInfo ItemSystem::GetInfo(
