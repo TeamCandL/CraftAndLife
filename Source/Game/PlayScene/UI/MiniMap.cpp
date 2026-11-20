@@ -214,7 +214,7 @@ void MiniMap::Update()
 		for (auto& [enemyId, objOtherEnemy] : otherEnemies)
 		{
 			// 敵オブジェクトが存在しない
-			if (objOtherEnemy.IsEmpty())
+			if (!objOtherEnemy)
 			{
 				UpdateEnemyIcon(index, Vec3::Zero(), false, false);
 

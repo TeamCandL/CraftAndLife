@@ -26,9 +26,9 @@ namespace EnemyParam
 	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 2.5f, 1.0f, 3.0f };             ///< 攻撃クールタイム
 	const std::vector<float> RotationAnglePerSec{ 22.5f, 18.0f, 45.0f, 30.5f, 25.5f };   ///< 回転速度
 	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };                      ///< モデルの大きさ
-	const std::vector<int32_t> DropItemId{ 9, 9, 10, 11, 12 };                           ///< ドロップアイテムID
-	const std::vector<int32_t> DropMinCount{ 1, 2, 1, 1, 2 };                            ///< ドロップアイテム最小個数
-	const std::vector<int32_t> DropMaxCount{ 1, 4, 3, 2, 3 };                            ///< ドロップアイテム最大個数
+	const std::vector<int32_t> DropItemId{ 9, 25, 10, 11, 12 };                          ///< ドロップアイテムID
+	const std::vector<int32_t> DropMinCount{ 1, 1, 1, 1, 2 };                            ///< ドロップアイテム最小個数
+	const std::vector<int32_t> DropMaxCount{ 1, 1, 3, 2, 3 };                            ///< ドロップアイテム最大個数
 }  // namespace EnemyParam
 
 struct StateRegistry;
@@ -256,7 +256,7 @@ struct EnemyData
 	const float ATTACK_COOL_TIME{ 5.0f };       ///< 攻撃クールタイム
 	float nowAttackCoolTime{ 0.0f };            ///< 現在の攻撃クールタイム
 	const float ATTACK_COLL_LIFE_TIME{ 0.5f };  ///< 攻撃判定の寿命
-	const float DAMAGED_COOL_TIME{ 0.5f };      ///< 被ダメージクールタイム
+	const float DAMAGED_COOL_TIME{ 0.35f };     ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
 	float scale{ 1.0f };                        ///< モデルの大きさ
 
