@@ -214,7 +214,7 @@ void MiniMap::Update()
 		for (auto& [enemyId, objOtherEnemy] : otherEnemies)
 		{
 			// 敵オブジェクトが存在しない
-			if (objOtherEnemy.IsEmpty())
+			if (!objOtherEnemy)
 			{
 				UpdateEnemyIcon(index, Vec3::Zero(), false, false);
 
@@ -229,7 +229,8 @@ void MiniMap::Update()
 			bool isBoss = otherEnemyController.IsBossEnemy(enemy.Data().enemyType);
 
 			// ゲスト側の敵位置
-			Vec3 enemyPosition = enemy.transform.position;
+			Transform& enemyTransform = Get<Transform>(objOtherEnemy);
+			Vec3 enemyPosition        = enemyTransform.position;
 
 			// アイコン更新
 			UpdateEnemyIcon(index, enemyPosition, isBoss, !enemy.Data().isDead);
