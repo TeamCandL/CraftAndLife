@@ -54,7 +54,7 @@ void PlayNetworkController::Update()
 	// static int testing{};
 	// testing++;
 	// if (testing % 6 != 0)
-	//{
+	// {
 	//	return;
 	// }
 
@@ -357,7 +357,15 @@ void PlayNetworkController::Update()
 				    PlaySceneUIController& playSceneUIController = Get<PlaySceneUIController>(objUIController);
 
 				    GameObject objChatTextLog = playSceneUIController.Data().objChatTextLog;
-				    Get<ChatTextLog>(objChatTextLog).AddLog(message.content);
+
+				    // 自分の名前を取得
+				    const std::string& localName = Get<SessionManager>().RefStatus().name;
+
+				    // 他プレイヤーからのログか判定
+				    const bool isOtherPlayer = !message.sender.empty() && message.sender != localName;
+
+				    // ログは全員に表示、通知音は他プレイヤーの場合のみ
+				    Get<ChatTextLog>(objChatTextLog).AddLog(message.content, isOtherPlayer);
 
 				    break;
 			    }
@@ -487,10 +495,10 @@ void PlayNetworkController::Update()
 				{
 					// 同じIDがすでに登録されていたら送信しない
 					// if (!enemyIds.insert(enemy.enemyId).second)
-					//{
+					// {
 					//	// VCU_LOG("敵IDが重複しています: {}", enemy.enemyId);
 					//	continue;
-					//}
+					// }
 
 					enemyIds.push_back(enemy.enemyId);
 					enemyTypes.push_back(enemy.enemyType);
@@ -685,10 +693,12 @@ void PlayNetworkController::Update()
 
 		std::vector<std::string> requestLogs =
 		    Get<ChatTextLog>(playSceneUIController.Data().objChatTextLog).TakeLogRequests();
+
 		for (auto& log : requestLogs)
 		{
 			Protocol::TextChated message{};
 			message.content = log;
+			message.sender  = Get<SessionManager>().RefStatus().name;
 
 			networkSessionManager.Send(message);
 		}
@@ -743,7 +753,7 @@ void PlayNetworkController::Update()
 
 		    networkSessionManager.Send(removeMessage);
 
-		    VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
+		    VCU_LOG("エンティティ削除情報送信 ID={}", removeMessage.entityId);
 		}
 
 		// 送信後に送信待ちデータをクリア
