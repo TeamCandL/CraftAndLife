@@ -118,6 +118,24 @@ void ItemActionWeapons::Action(
 
 					switch (harvestable.Data().type)
 					{
+					case HarvestableType::Mushroom:
+						if (_itemId == ITEM_ID_AXE)
+						{
+							harvestable.TakeDamage(ITEM_INFO._damageForObject);
+							GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", hitInfo.hitPosition);
+
+							// ゲージがまだ生成されていなければ生成
+							if (harvestableGauge.IsEmpty())
+							{
+								harvestableGauge = GetScene().Instantiate<HarvestableGauge>(objHit);
+							}
+							else
+							{
+								// 既存のゲージの表示対象を変更
+								Get<HarvestableGauge>(harvestableGauge).SetTarget(objHit);
+							}
+						}
+						break;
 					case HarvestableType::Tree:
 					case HarvestableType::TreeHigh:
 						if (_itemId == ITEM_ID_AXE)
