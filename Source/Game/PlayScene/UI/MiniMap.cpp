@@ -229,8 +229,7 @@ void MiniMap::Update()
 			bool isBoss = otherEnemyController.IsBossEnemy(enemy.Data().enemyType);
 
 			// ゲスト側の敵位置
-			Transform& enemyTransform = Get<Transform>(objOtherEnemy);
-			Vec3 enemyPosition        = enemyTransform.position;
+			Vec3 enemyPosition = enemy.transform.position;
 
 			// アイコン更新
 			UpdateEnemyIcon(index, enemyPosition, isBoss, !enemy.Data().isDead);
