@@ -20,11 +20,19 @@ struct MiniMapData
 	GameObject objPlayer{};
 	GameObject objOtherPlayerController{};
 
+	GameObject objEnemyController{};
+
+	GameObject objOtherEnemyController{};
+
 	GameObject objPlayerIcon2{};
 	GameObject objPlayerIcon3{};
 	GameObject objPlayerIcon4{};
 
 	std::vector<GameObject> points{};
+
+	// 敵アイコン管理
+	std::vector<GameObject> enemyIcons{};
+	std::vector<bool> enemyIconIsBoss{};
 };
 
 struct MiniMap : ObjectBase<MiniMapData>
@@ -33,4 +41,8 @@ struct MiniMap : ObjectBase<MiniMapData>
 
 	void Start() override;
 	void Update() override;
+
+	void SetEnemyController(GameObject obj);
+
+	void SetOtherEnemyController(GameObject obj);
 };

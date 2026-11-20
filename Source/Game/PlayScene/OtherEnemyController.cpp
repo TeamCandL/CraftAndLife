@@ -9,6 +9,7 @@
 #include "OtherEnemyHpBar.h"
 #include "Enemy.h"
 #include "PlaySceneUIController.h"
+#include "UI/MiniMap.h"
 
 #include "../Manager/SessionManager/SessionStateReader.h"
 
