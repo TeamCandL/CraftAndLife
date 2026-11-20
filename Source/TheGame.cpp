@@ -10,7 +10,7 @@ void Main(
 {
 	cha::GameLoop gameLoop{ {
 #if _DEBUG
-		.clientSize = { 1920 / 2, 1080 / 2 },
+		.clientSize = { 1920, 1080 },
 		.targetFPS  = 60,
 		.isWindow   = true,
 #elif 1
