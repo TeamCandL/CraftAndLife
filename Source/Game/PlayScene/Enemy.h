@@ -256,7 +256,7 @@ struct EnemyData
 	const float ATTACK_COOL_TIME{ 5.0f };       ///< 攻撃クールタイム
 	float nowAttackCoolTime{ 0.0f };            ///< 現在の攻撃クールタイム
 	const float ATTACK_COLL_LIFE_TIME{ 0.5f };  ///< 攻撃判定の寿命
-	const float DAMAGED_COOL_TIME{ 0.5f };      ///< 被ダメージクールタイム
+	const float DAMAGED_COOL_TIME{ 0.35f };     ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
 	float scale{ 1.0f };                        ///< モデルの大きさ
 
