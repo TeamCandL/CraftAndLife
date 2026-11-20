@@ -10,7 +10,8 @@ enum class HarvestableType : int32_t
 {
 	Tree,      // 通常の木
 	TreeHigh,  // 背の高い木
-	Rock       // 岩
+	Rock,      // 岩
+	Mushroom   // キノコ
 };
 
 /// @brief 採取可能なもののデータ

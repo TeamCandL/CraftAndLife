@@ -27,6 +27,12 @@ void Harvestable::Start()
 		obb.scale     = { 0.5f, 0.5f, 0.5f };
 		break;
 
+	case HarvestableType::Mushroom:
+		model         = Resource<Model>{ "Model/HandFood/HandMushroom.fbx" };
+		maxDurability = 10;
+		obb.scale     = { 0.2f, 0.2f, 0.2f };
+		break;
+
 	default:
 		// 未定義の種類は通常の木にする
 		model         = Resource<Model>{ "Model/Harvestable/Tree.fbx" };
@@ -144,8 +150,6 @@ void Harvestable::OnBroken()
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up(), Vec3::Up() * 0.05f);
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Left(), Vec3::Up() * 0.05f);
 		Get<EntitySystem>().Spawn(ITEM_ID_WOOD, transform.position + Vec3::Up() + Vec3::Right(), Vec3::Up() * 0.05f);
-		Get<EntitySystem>().Spawn(ITEM_ID_Mushroom, transform.position + Vec3::Up() + Vec3::Back(), Vec3::Up() * 0.05f);
-
 		break;
 
 	case HarvestableType::TreeHigh:
@@ -161,14 +165,6 @@ void Harvestable::OnBroken()
 		    ITEM_ID_WOOD,
 		    transform.position + Vec3::Up() + Vec3::Left() + Vec3::Back(),
 		    Vec3::Up() * 0.0f);
-		Get<EntitySystem>().Spawn(
-		    ITEM_ID_Mushroom,
-		    transform.position + Vec3::Up() + Vec3::Right() + Vec3::Forward(),
-		    Vec3::Up() * 0.05f);
-		Get<EntitySystem>().Spawn(
-		    ITEM_ID_Mushroom,
-		    transform.position + Vec3::Up() + Vec3::Right() + Vec3::Back(),
-		    Vec3::Up() * 0.05f);
 		break;
 
 	case HarvestableType::Rock:
@@ -179,6 +175,10 @@ void Harvestable::OnBroken()
 		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position + Vec3::Up() + Vec3::Left(), Vec3::Up() * 0.0f);
 		Get<EntitySystem>().Spawn(ITEM_ID_ROCK, transform.position + Vec3::Up() + Vec3::Right(), Vec3::Up() * 0.0f);
 		break;
+
+	case HarvestableType::Mushroom:
+
+		Get<EntitySystem>().Spawn(ITEM_ID_Mushroom, transform.position + Vec3::Up(), Vec3::Up() * 0.05f);
 
 	default:
 		break;

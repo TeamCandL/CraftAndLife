@@ -19,6 +19,9 @@ struct ChatTextLogData
 	std::vector<std::string> textChatRequests{};
 	const float SHOW_TIME{ 6.0f };
 
+	// 通知音
+	Resource<Audio> noticeSE{ "BGM_SE/Notice.mp3" };
+
 	GameObject objChatTextLogBack{};  ///< 裏の文字オブジェクト
 };
 
