@@ -91,7 +91,6 @@ void OtherEnemyController::Update()
 			    GameObject obj                           = idToObjOtherEnemy.at(enemyId);
 			    GameObject hpBar = GetScene().Instantiate<OtherEnemyHpBar>(obj, _position, _hp, _hp);
 			    objOtherEnemyHpBar.push_back(hpBar);
-			    idToObjOtherEnemyHpBar[enemyId] = hpBar;  // 生成したHPバーを敵IDと紐づけて登録
 
 			    // ボスなら、ここでBossInfoに対象の敵IDを設定する
 			    if (IsBossEnemy(type))
@@ -109,6 +108,7 @@ void OtherEnemyController::Update()
 				    Get<BossGauge>(uiController.Data().objBossGauge).SetActive(true);
 				    Get<BossGaugeR>(uiController.Data().objBossGaugeR).SetActive(true);
 			    }
+			    idToObjOtherEnemyHpBar[enemyId] = hpBar;  // 生成したHPバーを敵IDと紐づけて登録
 		    }
 	    });
 }
