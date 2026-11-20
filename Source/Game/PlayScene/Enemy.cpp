@@ -395,7 +395,6 @@ void Enemy::AttackCollider(
 	attacked = true;
 
 	// Get<AudioManager>().Play(attackSE);
-	const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 
 	Vec3 dir = forward_.Normalize() * 10.0f;
 	if (dir.Length() <= FLT_EPSILON)
@@ -403,8 +402,17 @@ void Enemy::AttackCollider(
 		dir = Vec3::Forward();
 	}
 
-	// 蜘蛛の糸攻撃！
-	Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
+	Get<EntitySystem>().Spawn(20, transform.position, dir);
+	if (enemyType == EnemyType::Spider)  // 蜘蛛の糸攻撃！
+	{
+		const ItemId ITEM_ID_SPIDER_STRING{ 20 };
+		Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
+	}
+	else if (enemyType == EnemyType::Dragon)  //	ドラゴンの火攻撃！
+	{
+		const ItemId ITEM_ID_DRAGON_FIRE{ 26 };
+		Get<EntitySystem>().Spawn(ITEM_ID_DRAGON_FIRE, transform.position, dir);
+	}
 
 	// NOTE: エンティティへ移行しますた
 	// GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f,

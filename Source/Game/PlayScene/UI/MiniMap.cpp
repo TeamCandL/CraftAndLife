@@ -209,33 +209,26 @@ void MiniMap::Update()
 
 		auto& otherEnemies = otherEnemyController.Data().idToObjOtherEnemy;
 
-		size_t index = 0;
-
 		for (auto& [enemyId, objOtherEnemy] : otherEnemies)
 		{
 			// 敵オブジェクトが存在しない
 			if (!objOtherEnemy)
 			{
-				UpdateEnemyIcon(index, Vec3::Zero(), false, false);
-
-				index++;
+				UpdateEnemyIcon(static_cast<size_t>(enemyId), Vec3::Zero(), false, false);
 
 				continue;
 			}
 
 			OtherEnemy& enemy = Get<OtherEnemy>(objOtherEnemy);
 
-			// ボス判定
-			bool isBoss = otherEnemyController.IsBossEnemy(enemy.Data().enemyType);
+			// ボス判定（敵IDを渡す）
+			bool isBoss = otherEnemyController.IsBossEnemy(enemyId);
 
 			// ゲスト側の敵位置
-			Transform& enemyTransform = Get<Transform>(objOtherEnemy);
-			Vec3 enemyPosition        = enemyTransform.position;
+			Vec3 enemyPosition = Get<Transform>(objOtherEnemy).position;
 
 			// アイコン更新
-			UpdateEnemyIcon(index, enemyPosition, isBoss, !enemy.Data().isDead);
-
-			index++;
+			UpdateEnemyIcon(static_cast<size_t>(enemyId), enemyPosition, isBoss, !enemy.Data().isDead);
 		}
 	}
 }

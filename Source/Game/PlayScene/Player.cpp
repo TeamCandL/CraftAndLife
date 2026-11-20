@@ -420,7 +420,7 @@ void Player::SetHelthState(
 
 				// 自動復活時のSE（重ねて再生）
 				Get<AudioManager>().Play(resuscitationSE);
-				Get<AudioManager>().Play(healSE);
+				Get<AudioManager>().Play(healSE, 0.3f);
 
 				return;  // 生き返る
 			}
