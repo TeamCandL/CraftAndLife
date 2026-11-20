@@ -123,7 +123,7 @@ bool OtherEnemyController::IsBossEnemy(
 	bool _isBoss       = 0;
 	if (!reader.TryGetState(target, "isBoss", _isBoss))
 	{
-		VCU_LOG("OtherEnemyのHP取得失敗: ID={}", enemyId);
+		VCU_LOG("OtherEnemyのHP取得失敗: ID={}", _id);
 		return false;
 	}
 	return _isBoss;
