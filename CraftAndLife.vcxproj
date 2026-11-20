@@ -475,6 +475,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionShield.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\NPC\NPCRobo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherEnemyHpBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
@@ -795,6 +796,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\NPCRobo.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBar.h" />
     <ClInclude Include="Source\Game\PlayScene\Tutorial\ITutorialObserver.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
