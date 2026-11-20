@@ -31,8 +31,10 @@ void TitleNetworkController::Update()
 		    {
 			    if (_event.type == ENetTransport::EventType::Connected)
 			    {
+				    // ここ後で確認
 				    Protocol::JoinRoom message{};
-				    message.roomName = Get<SessionManager>().RefStatus().joinRoomName;
+				    message.roomName   = Get<SessionManager>().RefStatus().joinRoomName;
+				    message.playerName = Get<SessionManager>().RefStatus().name;
 				    networkSessionManager.SetCurrentState(CheckJoin);
 				    networkSessionManager.Send(message);
 			    }

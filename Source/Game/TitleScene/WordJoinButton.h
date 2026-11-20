@@ -5,22 +5,28 @@
 /// @brief 合言葉で参加するボタンのデータ
 struct WordJoinButtonData
 {
-	WordJoinButtonData(const GameObject _objWordInputPanel) :
-		objWordInputPanel{ _objWordInputPanel }
+	WordJoinButtonData(
+	    const GameObject _objWordInputPanel) :
+	    objWordInputPanel{ _objWordInputPanel }
 	{
 	}
 
 	GameObject objWordInputPanel{};  ///< 合言葉入力パネルオブジェクト
 
-	GameObject objButton{};  ///< ボタンオブジェクト
+	GameObject objButton{};                                              ///< ボタンオブジェクト
 	std::string_view imageFileName{ "Image/Title/WordJoinButton.png" };  ///< ボタン画像のファイルパス
-	Vec2 begin{ 720, 840 };  ///< ボタンの開始位置ピクセル
-	Vec2 scale{ 482, 142 };  ///< ボタンのサイズピクセル
+	Vec2 begin{ 720, 840 };                                              ///< ボタンの開始位置ピクセル
+	Vec2 scale{ 482, 142 };                                              ///< ボタンのサイズピクセル
 
 	bool isInputtingWord{ false };
 	std::string inputWord{};
+	std::string inputPlayerName{};
 
 	Resource<Audio> pushSound{ "Sound/stopbutton.mp3" };
+
+	static constexpr std::array<std::string_view, 10> defaultPlayerNames{
+
+	};
 };
 
 /// @brief 合言葉で参加するボタン

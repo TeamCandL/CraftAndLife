@@ -8,8 +8,9 @@
 
 void WordJoinButton::Start()
 {
-	inputWord = "hello";
-	objButton = GetScene().Instantiate<UI::Button>(imageFileName, imageFileName, imageFileName, "", begin, scale);
+	inputWord       = "hello";
+	inputPlayerName = "なんかランダムで入れたいよねー";
+	objButton       = GetScene().Instantiate<UI::Button>(imageFileName, imageFileName, imageFileName, "", begin, scale);
 }
 
 void WordJoinButton::Update()
@@ -20,7 +21,7 @@ void WordJoinButton::Update()
 	{
 		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2{ 0.5f, 0.5f });
-		ImGui::SetNextWindowSize(ImVec2{ 300, 200 }, ImGuiCond_Appearing);
+		ImGui::SetNextWindowSize(ImVec2{ 350, 250 }, ImGuiCond_Appearing);
 
 		// 適用するフラグのセット
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |      // 移動不可
@@ -30,6 +31,9 @@ void WordJoinButton::Update()
 
 		ImGui::Begin("合言葉入力欄", nullptr, flags);
 		ImGui::InputText("##inputWord", &inputWord);
+		ImGui::Spacing();
+		ImGui::Text("プレイヤー名");
+		ImGui::InputText("##inputPlayerName", &inputPlayerName);
 		ImGui::End();
 
 		if (Get<WordInputPanel>(objWordInputPanel).IsShown())
@@ -45,6 +49,8 @@ void WordJoinButton::Update()
 			networkSessionManager.Connect();
 
 			Get<SessionManager>().SetJoinRoomName(inputWord);
+			Get<SessionManager>().SetPlayerName(inputPlayerName);
+			// ここで名前のセットもする
 		}
 		isInputtingWord = false;
 
