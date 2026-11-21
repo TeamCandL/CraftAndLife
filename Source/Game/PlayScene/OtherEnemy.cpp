@@ -9,7 +9,7 @@
 
 void OtherEnemy::Start()
 {
-	VCU_LOG("OtherEnemy Start: ID={}", enemyId);
+	VCU_LOG("OtherEnemy Start: ID={}, Type={}", enemyId, static_cast<int>(enemyType));
 	obb.isTrigger = true;
 }
 

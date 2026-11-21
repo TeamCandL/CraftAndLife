@@ -48,10 +48,12 @@ void OtherEnemyController::Update()
 	sessionManager.ForeachEnemyStatus(
 	    [this](int enemyId, const InSessionStatus::EnemyStatus& status)
 	    {
+		    VCU_LOG("受信ステータス: ID={}, enemyType={}", enemyId, status.enemyType);
 		    // 敵オブジェクトが未生成なら生成
 		    if (idToObjOtherEnemy.count(enemyId) ==
 		        0)  // idToObjOtherEnemyに登録されてなければ敵の生成処理をし、idToObjOtherEnemyに登録をする
 		    {
+
 			    EnemyType type = ToEnemyType(status.enemyType);
 
 			    VCU_LOG("OtherEnemy生成開始: ID={}", enemyId);

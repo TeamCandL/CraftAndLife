@@ -154,12 +154,15 @@ void NetworkActorServer::CreateEnemies()
 	}
 
 	// 敵を生成（同じ種類も複数生成可能）
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
-	CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
-	if (Get<DayController>(objDayController).GetCurrentDay() == 2)
+	if (Get<DayController>(objDayController).GetCurrentDay() == 1)
+	{
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
+		CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
+	}
+	else if (Get<DayController>(objDayController).GetCurrentDay() == 2)
 	{
 		CreateEnemy(EnemyType::Bat, Vec3{ 30.0f, 0.0f, 30.0f });
 		CreateEnemy(EnemyType::Bat, Vec3{ -30.0f, 0.0f, 30.0f });

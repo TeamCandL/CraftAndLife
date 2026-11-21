@@ -100,7 +100,11 @@ std::vector<EnemyStatus> EnemyController::GetAllEnemyStatus()
 			continue;
 
 		allStatus.push_back(Get<Enemy>(obj).GetStatus());
+		EnemyStatus status = Get<Enemy>(obj).GetStatus();
+
+		VCU_LOG("enemycontrollerdata: ID={}", status.enemyId);
 	}
+	VCU_LOG("送信する敵の数: {}", allStatus.size());
 
 	return allStatus;
 }
