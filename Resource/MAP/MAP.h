@@ -110,8 +110,8 @@ struct MapData
 	Resource<Shader> shader{ "Shader/Terrain.hlsl" };
 
 	//地面テクスチャ変更場所
-	//Resource<Texture> texture{ "Texture/Terrain/TileGrass.png", true };
-	Resource<Texture> texture{ "Texture/Terrain/grass_01.png", true };
+	Resource<Texture> texture{ "Texture/Terrain/TileGrass.png", true };
+	//Resource<Texture> texture{ "Texture/Terrain/grass_01.png", true };
 
 	Resource<Material> material{};
 	Resource<Surface> surface{};

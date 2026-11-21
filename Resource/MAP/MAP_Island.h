@@ -71,7 +71,8 @@ struct MAP_IslandData
 	Resource<Shader> shader{ "Shader/Terrain.hlsl", BEACH_RASTERIZER_CONFIG } ;
 
 	// 砂浜専用テクスチャ
-	Resource<Texture> texture{ "Texture/Terrain/Sand.png", true };
+	//Resource<Texture> texture{ "Texture/Terrain/Sand.png", true };
+	Resource<Texture> texture{ "Texture/Terrain/TileSand.png", true };
 
 	Resource<Material> material{};
 	Resource<Surface> surface{};
