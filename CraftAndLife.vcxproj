@@ -377,6 +377,7 @@ pre-commit install</Command>
       </ForcedIncludeFiles>
     </ClCompile>
     <ClCompile Include="Resource\MAP\MAP.cpp" />
+    <ClCompile Include="Resource\MAP\MAP_Island.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentBase.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentPool\ComponentPools.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentPool\View.cpp" />
@@ -624,6 +625,7 @@ pre-commit install</Command>
     <ClInclude Include="Library\shigaLibrary\SgRandom.h" />
     <ClInclude Include="Library\ufbx\ufbx.h" />
     <ClInclude Include="Resource\MAP\MAP.h" />
+    <ClInclude Include="Resource\MAP\MAP_Island.h" />
     <ClInclude Include="Source\Base\Base.h" />
     <ClInclude Include="Source\Base\BasePch.h" />
     <ClInclude Include="Source\Base\ClientConfig.h" />

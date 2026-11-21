@@ -174,13 +174,13 @@ struct MAP : ObjectBase<MapData>, ITerrain
 	void Start() override;   // 初期化
 	void Update() override;  // 更新
 	void Draw() override;    // 描画
-
+	float GetHeight(const float _worldX, const float _worldZ) override;
   private:
 	// 地形データから描画用メッシュを作り直す
 	void Reload();
 
 	// ITerrainの実装
-	float GetHeight(const float _worldX, const float _worldZ) override;
+	//float GetHeight(const float _worldX, const float _worldZ) override;
 	Vec3 GetNormal(const float _worldX, const float _worldZ) override;
 
 	/// @brief 地形のサイズを取得する

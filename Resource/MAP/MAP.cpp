@@ -83,19 +83,6 @@ namespace MapConfig
 
 	// 法線計算などで使用する許容誤差
 	constexpr float EPSILON = 0.0001f;
-
-	// ============================================================
-	// 砂浜の設定
-	// ============================================================
-
-	// 砂浜の幅
-	constexpr float BEACH_WIDTH = 8.0f;
-
-	// 砂浜から通常地形へ移行する幅
-	constexpr float BEACH_BLEND_WIDTH = 8.0f;
-
-	// 砂浜の高さ（BASE_HEIGHTからの高さ）
-	constexpr float BEACH_HEIGHT = 0.4f;
 }  // namespace MapConfig
 
 // ============================================================
