@@ -176,6 +176,9 @@ inline void SessionManager::ForeachEnemyStatus(
 {
 	for (const auto& [id, status] : inSessionStatus_.enemiesStatus)
 	{
+		if (!status.hasReceivedEnemyInfo)
+			continue;
+
 		_func(id, status);
 	}
 }
