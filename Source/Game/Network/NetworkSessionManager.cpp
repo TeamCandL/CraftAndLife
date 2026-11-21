@@ -75,5 +75,7 @@ void NetworkSessionManager::Flush()
 		std::vector<char> binary = package.Dump();
 
 		transport_.Send(binary, i, ENetSendMode::Reliable);
+
+		sendBinaryMessages[i].clear();
 	}
 }

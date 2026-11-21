@@ -55,5 +55,7 @@ void LobbyReadyButton::Update()
 			Protocol::StartGame message{};
 			networkSessionManager.Send(message);
 		}
+
+		networkSessionManager.Flush();
 	}
 }
