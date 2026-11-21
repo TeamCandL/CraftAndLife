@@ -43,9 +43,5 @@ struct OtherEnemyController : ObjectBase<OtherEnemyControllerData>
 	/// @brief 更新処理
 	void Update() override;
 
-	bool IsBossEnemy(
-	    EnemyType type)
-	{
-		return type == EnemyType::Dragon;
-	}
+	bool IsBossEnemy(const int _id);
 };

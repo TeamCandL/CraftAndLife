@@ -9,6 +9,7 @@
 #include "OtherEnemyHpBar.h"
 #include "Enemy.h"
 #include "PlaySceneUIController.h"
+#include "UI/MiniMap.h"
 
 #include "../Manager/SessionManager/SessionStateReader.h"
 
@@ -54,6 +55,7 @@ void OtherEnemyController::Update()
 			    EnemyType type = ToEnemyType(status.enemyType);
 
 			    VCU_LOG("OtherEnemy生成開始: ID={}", enemyId);
+			    VCU_LOG("OtherEnemyTypeIns: Type={}", static_cast<int>(type));
 
 			    if (!enemySpawnList[enemyId].IsSpawned())
 			    {
@@ -61,6 +63,8 @@ void OtherEnemyController::Update()
 				    enemySpawnList[enemyId].Spawned();
 
 				    idToObjOtherEnemy[enemyId] = obj;  // 敵IDと紐づけて敵の情報をidToObjOtherEnemyに登録
+				    VCU_LOG("OtherEnemyID:", enemyId);
+				    VCU_LOG("OtherEnemyTypeIns: Type={}", static_cast<int>(type));
 			    }
 		    }
 		    else
@@ -90,10 +94,9 @@ void OtherEnemyController::Update()
 			    GameObject obj                           = idToObjOtherEnemy.at(enemyId);
 			    GameObject hpBar = GetScene().Instantiate<OtherEnemyHpBar>(obj, _position, _hp, _hp);
 			    objOtherEnemyHpBar.push_back(hpBar);
-			    idToObjOtherEnemyHpBar[enemyId] = hpBar;  // 生成したHPバーを敵IDと紐づけて登録
 
 			    // ボスなら、ここでBossInfoに対象の敵IDを設定する
-			    if (IsBossEnemy(type))
+			    if (IsBossEnemy(enemyId))
 			    {
 				    VCU_LOG("ボスOtherEnemy生成: ID={}", enemyId);
 
@@ -108,6 +111,25 @@ void OtherEnemyController::Update()
 				    Get<BossGauge>(uiController.Data().objBossGauge).SetActive(true);
 				    Get<BossGaugeR>(uiController.Data().objBossGaugeR).SetActive(true);
 			    }
+			    idToObjOtherEnemyHpBar[enemyId] = hpBar;  // 生成したHPバーを敵IDと紐づけて登録
 		    }
 	    });
+}
+
+bool OtherEnemyController::IsBossEnemy(
+    const int _id)
+{
+	VCU_LOG("お呼ばれ！");
+	SessionManager& sessionManager = Get<SessionManager>();
+	SessionStateReader reader(sessionManager);
+
+	StateTarget target = StateTarget::Enemy(_id);
+	bool _isBoss       = 0;
+	if (!reader.TryGetState(target, "isBoss", _isBoss))
+	{
+		VCU_LOG("OtherEnemyのHP取得失敗: ID={}", _id);
+		return false;
+	}
+	VCU_LOG("OtherEnemyIDinIsboss: isBoss={}", _isBoss);
+	return _isBoss;
 }
