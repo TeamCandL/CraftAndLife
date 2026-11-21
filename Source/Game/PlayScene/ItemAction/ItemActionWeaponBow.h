@@ -11,7 +11,7 @@ struct ItemActionWeaponBowData
 
 	const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };  ///< 矢のアイテムId
 	const float FIRE_SPEED_PER_SEC{ 30.0f };         ///< 矢の初速
-	const float TRIPLE_FIRE_DISTANCEX{ 2.0f };       ///< 3本射出するときの真ん中の矢からの左右の幅
+	const float TRIPLE_FIRE_DISTANCEX{ 0.3f };       ///< 3本射出するときの真ん中の矢からの左右の幅
 
 	// 弓を引き絞る音
 	Resource<Audio> pullBowSE{ "BGM_SE/Pull the bow.mp3" };

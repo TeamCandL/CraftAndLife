@@ -83,6 +83,19 @@ namespace MapConfig
 
 	// 法線計算などで使用する許容誤差
 	constexpr float EPSILON = 0.0001f;
+
+	// ============================================================
+	// 砂浜の設定
+	// ============================================================
+
+	// 砂浜の幅
+	constexpr float BEACH_WIDTH = 8.0f;
+
+	// 砂浜から通常地形へ移行する幅
+	constexpr float BEACH_BLEND_WIDTH = 8.0f;
+
+	// 砂浜の高さ（BASE_HEIGHTからの高さ）
+	constexpr float BEACH_HEIGHT = 0.4f;
 }  // namespace MapConfig
 
 // ============================================================
@@ -821,38 +834,38 @@ void MAP::Start()
 		{ HarvestableType::Rock, 85.0f, 85.0f, 3.0f },
 
 		// キノコ（30個）
-		{ HarvestableType::Mushroom, -88.0f, -55.0f, 2.0f },
-		{ HarvestableType::Mushroom, -78.0f, -48.0f, 2.0f },
-		{ HarvestableType::Mushroom, -60.0f, -65.0f, 2.0f },
-		{ HarvestableType::Mushroom, -45.0f, -55.0f, 2.0f },
-		{ HarvestableType::Mushroom, -25.0f, -60.0f, 2.0f },
-		{ HarvestableType::Mushroom, -10.0f, -75.0f, 2.0f },
-		{ HarvestableType::Mushroom, 15.0f, -70.0f, 2.0f },
-		{ HarvestableType::Mushroom, 35.0f, -68.0f, 2.0f },
-		{ HarvestableType::Mushroom, 60.0f, -60.0f, 2.0f },
-		{ HarvestableType::Mushroom, 78.0f, -48.0f, 2.0f },
+		{ HarvestableType::Mushroom, -88.0f, -55.0f, 0.5f },
+		{ HarvestableType::Mushroom, -78.0f, -48.0f, 0.5f },
+		{ HarvestableType::Mushroom, -60.0f, -65.0f, 0.5f },
+		{ HarvestableType::Mushroom, -45.0f, -55.0f, 0.5f },
+		{ HarvestableType::Mushroom, -25.0f, -60.0f, 0.5f },
+		{ HarvestableType::Mushroom, -10.0f, -75.0f, 0.5f },
+		{ HarvestableType::Mushroom, 15.0f, -70.0f, 0.5f },
+		{ HarvestableType::Mushroom, 35.0f, -68.0f, 0.5f },
+		{ HarvestableType::Mushroom, 60.0f, -60.0f, 0.5f },
+		{ HarvestableType::Mushroom, 78.0f, -48.0f, 0.5f },
 
-		{ HarvestableType::Mushroom, -85.0f, -25.0f, 2.0f },
-		{ HarvestableType::Mushroom, -65.0f, -15.0f, 2.0f },
-		{ HarvestableType::Mushroom, -45.0f, -30.0f, 2.0f },
-		{ HarvestableType::Mushroom, -25.0f, -15.0f, 2.0f },
-		{ HarvestableType::Mushroom, -8.0f, 25.0f, 2.0f },
-		{ HarvestableType::Mushroom, 18.0f, 25.0f, 2.0f },
-		{ HarvestableType::Mushroom, 55.0f, -5.0f, 2.0f },
-		{ HarvestableType::Mushroom, 82.0f, 0.0f, 2.0f },
-		{ HarvestableType::Mushroom, -80.0f, 25.0f, 2.0f },
-		{ HarvestableType::Mushroom, -55.0f, 35.0f, 2.0f },
+		{ HarvestableType::Mushroom, -85.0f, -25.0f, 0.5f },
+		{ HarvestableType::Mushroom, -65.0f, -15.0f, 0.5f },
+		{ HarvestableType::Mushroom, -45.0f, -30.0f, 0.5f },
+		{ HarvestableType::Mushroom, -25.0f, -15.0f, 0.5f },
+		{ HarvestableType::Mushroom, -8.0f, 25.0f, 0.5f },
+		{ HarvestableType::Mushroom, 18.0f, 25.0f, 0.5f },
+		{ HarvestableType::Mushroom, 55.0f, -5.0f, 0.5f },
+		{ HarvestableType::Mushroom, 82.0f, 0.0f, 0.5f },
+		{ HarvestableType::Mushroom, -80.0f, 25.0f, 0.5f },
+		{ HarvestableType::Mushroom, -55.0f, 35.0f, 0.5f },
 
-		{ HarvestableType::Mushroom, -70.0f, 60.0f, 2.0f },
-		{ HarvestableType::Mushroom, -45.0f, 70.0f, 2.0f },
-		{ HarvestableType::Mushroom, -20.0f, 80.0f, 2.0f },
-		{ HarvestableType::Mushroom, 5.0f, 65.0f, 2.0f },
-		{ HarvestableType::Mushroom, 25.0f, 78.0f, 2.0f },
-		{ HarvestableType::Mushroom, 45.0f, 68.0f, 2.0f },
-		{ HarvestableType::Mushroom, 65.0f, 85.0f, 2.0f },
-		{ HarvestableType::Mushroom, 85.0f, 75.0f, 2.0f },
-		{ HarvestableType::Mushroom, -5.0f, 45.0f, 2.0f },
-		{ HarvestableType::Mushroom, 75.0f, 35.0f, 2.0f },
+		{ HarvestableType::Mushroom, -70.0f, 60.0f, 0.5f },
+		{ HarvestableType::Mushroom, -45.0f, 70.0f, 0.5f },
+		{ HarvestableType::Mushroom, -20.0f, 80.0f, 0.5f },
+		{ HarvestableType::Mushroom, 5.0f, 65.0f, 0.5f },
+		{ HarvestableType::Mushroom, 25.0f, 78.0f, 0.5f },
+		{ HarvestableType::Mushroom, 45.0f, 68.0f, 0.5f },
+		{ HarvestableType::Mushroom, 65.0f, 85.0f, 0.5f },
+		{ HarvestableType::Mushroom, 85.0f, 75.0f, 0.5f },
+		{ HarvestableType::Mushroom, -5.0f, 45.0f, 0.5f },
+		{ HarvestableType::Mushroom, 75.0f, 35.0f, 0.5f },
 	};
 
 	// 実際のスタート・ゴール座標

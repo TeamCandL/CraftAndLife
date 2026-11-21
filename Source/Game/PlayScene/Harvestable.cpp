@@ -30,7 +30,7 @@ void Harvestable::Start()
 	case HarvestableType::Mushroom:
 		model         = Resource<Model>{ "Model/HandFood/HandMushroom.fbx" };
 		maxDurability = 10;
-		obb.scale     = { 0.2f, 0.2f, 0.2f };
+		obb.scale     = { 0.5f, 1.0f, 0.5f };
 		break;
 
 	default:
@@ -180,7 +180,6 @@ void Harvestable::OnBroken()
 
 		Get<EntitySystem>().Spawn(ITEM_ID_Mushroom, transform.position + Vec3::Up(), Vec3::Up() * 0.05f);
 
-	default:
 		break;
 	}
 }
