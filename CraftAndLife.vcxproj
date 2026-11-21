@@ -761,6 +761,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\StateTarget.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
+    <ClInclude Include="Source\Game\Network\MultiMessage.h" />
     <ClInclude Include="Source\Game\Network\Protocols\BreakHarvestable.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntityPicked.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntityPickRequest.h" />
