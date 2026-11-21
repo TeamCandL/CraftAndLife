@@ -28,6 +28,7 @@
 #include "ClearSceneTrigger.h"
 #include "ClearFade.h"
 #include "Tutorial/TutorialFirstStep.h"
+#include <../Resource/MAP/MAP_Island.h>
 
 void PlayScene::Start()
 {
@@ -40,6 +41,7 @@ void PlayScene::Start()
 
 	GameObject objHarvestableController = Instantiate<HarvestableController>();
 	GameObject objTerrain               = Instantiate<MAP>(objHarvestableController);
+	GameObject objIsland                = Instantiate<MAP_Island>(objTerrain);
 
 	// GameObject objTerrain = Instantiate<Terrain>();
 
