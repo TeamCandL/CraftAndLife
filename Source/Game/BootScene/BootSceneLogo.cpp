@@ -2,6 +2,7 @@
 #include <Game/MapTestScene/MapTestScene.h>
 #include <Game/PlayScene/PlayScene.h>
 #include <Game/TitleScene/TitleScene.h>
+#include <Game/ModelTestScene/ModelTestScene.h>
 
 void BootSceneLogo::Start()
 {
@@ -21,7 +22,8 @@ void BootSceneLogo::Update()
 	if (last <= 0.0f)
 	{
 		// ロゴの表示が終わったためシーン遷移する
-		Get<SceneManager>().Move<TitleScene>();
+		// Get<SceneManager>().Move<TitleScene>();
+		Get<SceneManager>().Move<ModelTestScene>();
 		// Get<SceneManager>().Move<MapTestScene>();
 		// Get<SceneManager>().Move<PlayScene>();
 		return;

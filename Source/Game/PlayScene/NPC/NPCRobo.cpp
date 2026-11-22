@@ -2,7 +2,10 @@
 #include "NPCRobo.h"
 #include <Game/PlayScene/TerrainSystem.h>
 
-void NPCRobo::Start() {}
+void NPCRobo::Start()
+{
+	transform.scale = Vec3::One() * 200.0f;
+}
 
 void NPCRobo::Update()
 {
@@ -18,7 +21,10 @@ void NPCRobo::Draw()
 	ImGui::Begin("NPC-Draw");
 	float animTime = model.Get().currentAnimTime;
 	ImGui::DragFloat("currentAnimTime", &animTime, 0.0001f);
+	ImGui::DragFloat("playSpeed", &animPlaySpeed, 0.0001f);
 	model.Get().SetCurrentAnimTime(animTime);
+
+	ImGui::DragInt("animIndex", &animIndex);
 	ImGui::End();
 #endif
 	// Get<DeltaTime>() * animSpeed * 0.0001f

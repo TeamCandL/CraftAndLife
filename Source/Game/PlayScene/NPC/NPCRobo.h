@@ -18,8 +18,8 @@ namespace
 
 struct NPCRoboData
 {
-	Resource<Model> model{};                         ///< モデル
-	Resource<Shader> shader{ "Shader/Unlit.hlsl" };  ///< シェーダ
+	Resource<Model> model{ "Model/kenney_mini-characters/Models/FBX format/character-robot.fbx" };     ///< モデル
+	Resource<Shader> shader{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };  ///< シェーダ
 
 	Component<Transform> transform{};      ///< 座標系
 	Component<RigidBody> rigidBody{};      ///< 剛体
@@ -35,6 +35,24 @@ struct NPCRoboData
 	GameObject objAILookAt{};  ///< 見るターゲット
 	Vec2 posAiTarget{};        ///< 移動先
 	ItemId itemIdWant{};       ///< 欲しいアイテムId
+
+	// 参照したいゲームオブジェクト
+	GameObject objPlayer{};                 ///< プレイヤー
+	GameObject objHarvestableController{};  ///< ハーベスタブルオブジェクト
+	GameObject objEnemyController{};        ///< 敵コントローラー
+	GameObject objDayController{};          ///< 日コントローラー
+
+	NPCRoboData(
+	    const GameObject _objPlayer                = {},
+	    const GameObject _objHarvestableController = {},
+	    const GameObject _objEnemyController       = {},
+	    const GameObject _objDayController         = {}) :
+	    objPlayer{ _objPlayer },
+	    objHarvestableController{ _objHarvestableController },
+	    objEnemyController{ _objEnemyController },
+	    objDayController{ _objDayController }
+	{
+	}
 
 	using AIResult = int32_t;
 	enum AIResult_ : AIResult
@@ -137,6 +155,8 @@ struct NPCRoboData
 
 struct NPCRobo : ObjectBase<NPCRoboData>
 {
+	using ObjectBase<NPCRoboData>::ObjectBase;
+
 	/// @brief 開始処理
 	void Start() override;
 	/// @brief 更新処理
