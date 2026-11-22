@@ -28,7 +28,9 @@ void Entity::Start()
 	{
 		canHitToEnemy = true;
 	}
-	else if (ITEM_INFO._type == ItemType::PlayerAttackSword || ITEM_INFO._type == ItemType::PlayerAttackArrow)
+	else if (
+	    ITEM_INFO._type == ItemType::PlayerAttackSword || ITEM_INFO._type == ItemType::PlayerAttackArrow ||
+	    ITEM_INFO._id == ITEM_ID_PLAYER_ATTACK_OTHER)
 	{
 		pickupCooldownSec = 99999999.0f;  // 絶対に取得できない
 		canHitToEnemy     = true;

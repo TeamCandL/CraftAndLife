@@ -46,6 +46,7 @@ struct EntityData
 	float pickupCooldownSec{ 3.0f };                               ///< 拾えない時間(秒)
 	inline static const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };  ///< 敵の攻撃のアイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };  ///< プレイヤーの攻撃の矢アイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_OTHER{ 27 };  ///< プレイヤーの攻撃の他アイテムId
 };
 
 /// @brief エンティティ
