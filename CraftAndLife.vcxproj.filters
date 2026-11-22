@@ -1955,6 +1955,18 @@
     <ClInclude Include="Source\Base\Core\Resource\Model\BoneInfo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceDayController.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferencePlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceHarvestableController.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceEnemyController.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Base\Core\ComponentPool\ComponentPools.inl">

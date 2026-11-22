@@ -32,9 +32,9 @@ struct NPCRoboData
 	int32_t hp{ 100 };            ///< hp
 	float animPlaySpeed{ 1.0f };  ///< アニメーション再生速度
 
-	GameObject objAILookAt{};  ///< 見るターゲット
-	Vec2 posAiTarget{};        ///< 移動先
-	ItemId itemIdWant{};       ///< 欲しいアイテムId
+	GameObject objTarget{};  ///< ターゲット
+	Vec3 posMoveTo{};        ///< 移動先
+	ItemId itemIdWant{};     ///< 欲しいアイテムId
 
 	// 参照したいゲームオブジェクト
 	GameObject objPlayer{};                 ///< プレイヤー

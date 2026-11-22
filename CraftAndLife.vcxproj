@@ -805,6 +805,10 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceDayController.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceEnemyController.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceHarvestableController.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferencePlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\NPCRobo.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBar.h" />
     <ClInclude Include="Source\Game\PlayScene\Tutorial\ITutorialObserver.h" />

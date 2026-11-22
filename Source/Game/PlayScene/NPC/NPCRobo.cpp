@@ -1,6 +1,10 @@
 #include "pch\pch.h"
 #include "NPCRobo.h"
 #include <Game/PlayScene/TerrainSystem.h>
+#include "AI/IAIReferenceDayController.h"
+#include "AI/IAIReferenceEnemyController.h"
+#include "AI/IAIReferenceHarvestableController.h"
+#include "AI/IAIReferencePlayer.h"
 
 void NPCRobo::Start()
 {
@@ -41,6 +45,13 @@ void NPCRobo::Draw()
 	}
 }
 
-void NPCRobo::InitializeAI() {}
+void NPCRobo::InitializeAI()
+{
+	auto isDaytime = std::make_shared<AINodeCondition>(
+	    []
+	    {
+		    return
+	    });
+}
 
 void NPCRobo::UpdateAI() {}
