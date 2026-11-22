@@ -42,6 +42,9 @@ struct NPCRoboData
 	GameObject objEnemyController{};        ///< 敵コントローラー
 	GameObject objDayController{};          ///< 日コントローラー
 
+	// 追従させるUIたち
+	GameObject objUIGiftRequestBox{};  ///< ギフトちょうだいメッセージボックス
+
 	NPCRoboData(
 	    const GameObject _objPlayer                = {},
 	    const GameObject _objHarvestableController = {},

@@ -795,6 +795,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyHpBar.h" />
     <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestBox.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
     <ClInclude Include="Source\Game\PlayScene\IEntitySystemNetwork.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />

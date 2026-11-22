@@ -5,15 +5,20 @@
 #include "AI/IAIReferenceEnemyController.h"
 #include "AI/IAIReferenceHarvestableController.h"
 #include "AI/IAIReferencePlayer.h"
+#include "../Gift/GiftRequestBox.h"
 
 void NPCRobo::Start()
 {
 	transform.scale = Vec3::One() * 200.0f;
+
+	objUIGiftRequestBox = GetScene().Instantiate<GiftRequestBox>();
 }
 
 void NPCRobo::Update()
 {
 	transform.position.y = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
+
+	Get<Transform>(objUIGiftRequestBox).position = transform.position + Vec3::Up() * 1.5f;
 }
 
 void NPCRobo::Draw()

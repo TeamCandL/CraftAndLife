@@ -9,14 +9,18 @@ struct UIWorldBinder : ComponentBase<UIWorldBinder>
 {
 	inline UIWorldBinder(
 	    UITransform& _uiTransform,
-	    Transform& _transform) :
+	    Transform& _transform,
+	    const float _fixedScaleDistance = 0.0f) :
 	    uiTransform{ _uiTransform },
-	    transform{ _transform }
+	    transform{ _transform },
+	    fixedScaleDistance{ _fixedScaleDistance }
 	{
 	}
 
 	UITransform& uiTransform;
 	Transform& transform;
+
+	float fixedScaleDistance{};
 
 	Vec2 baseScale{};     ///< 元のスケール
 	Vec2 basePosition{};  ///< 元のUI座標
