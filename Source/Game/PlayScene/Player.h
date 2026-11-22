@@ -22,11 +22,11 @@ struct PlayerData
 	{
 	}
 
-	Resource<Shader> shaderFront{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
-	Resource<Shader> shaderBack{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
-	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
+	Resource<Shader> shaderFront{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
+	Resource<Shader> shaderBack{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
+	Resource<Shader> shader{ "Shader/UnlitFbx.hlsl" };
 
-	std::array<Resource<Model>, PlayerJobType_Max> models{
+	std::array<Resource<ModelFbx>, PlayerJobType_Max> models{
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",    // Tank
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",    // Fighter

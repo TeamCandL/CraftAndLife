@@ -286,7 +286,7 @@ void Player::Draw()
 #endif
 
 	// Get<DeltaTime>() * animSpeed * 0.0001f
-	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed * 0.001f, animIndex);
+	models[jobType].Get().Draw(Get<DeltaTime>() * animSpeed, animIndex);
 
 	const auto& subParts{ models[jobType].Get().subParts };
 

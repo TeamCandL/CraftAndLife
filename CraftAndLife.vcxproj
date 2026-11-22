@@ -395,6 +395,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Base\Core\Resource\Font.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Material.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model.cpp" />
+    <ClCompile Include="Source\Base\Core\Resource\ModelFbx.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model\ModelMaterial.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\ResourceRegistryBase.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Shader.cpp" />
@@ -677,12 +678,15 @@ pre-commit install</Command>
     <ClInclude Include="Source\Base\Core\ResourceManagerInstance.h" />
     <ClInclude Include="Source\Base\Core\ResourceTraits.h" />
     <ClInclude Include="Source\Base\Core\Resource\Audio.h" />
+    <ClInclude Include="Source\Base\Core\Resource\ModelFbx.h" />
     <ClInclude Include="Source\Base\Core\Resource\Font.h" />
     <ClInclude Include="Source\Base\Core\Resource\IResourceRegistry.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material\IMaterialProperty.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material\MaterialProperty.h" />
     <ClInclude Include="Source\Base\Core\Resource\Model.h" />
+    <ClInclude Include="Source\Base\Core\Resource\Model\AnimationClip.h" />
+    <ClInclude Include="Source\Base\Core\Resource\Model\BoneInfo.h" />
     <ClInclude Include="Source\Base\Core\Resource\Model\ModelMaterial.h" />
     <ClInclude Include="Source\Base\Core\Resource\Model\ModelParts.h" />
     <ClInclude Include="Source\Base\Core\Resource\Model\ModelTransformMaterialProperty.h" />
@@ -1079,6 +1083,7 @@ pre-commit install</Command>
     <FxCompile Include="Resource\Shader\UI.hlsl" />
     <FxCompile Include="Resource\Shader\UICircleImage.hlsl" />
     <FxCompile Include="Resource\Shader\Unlit.hlsl" />
+    <FxCompile Include="Resource\Shader\UnlitFbx.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Library\Debug\DirectXTex.lib">

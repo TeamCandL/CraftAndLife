@@ -18,8 +18,8 @@ namespace
 
 struct NPCRoboData
 {
-	Resource<Model> model{ "Model/kenney_mini-characters/Models/FBX format/character-robot.fbx" };     ///< モデル
-	Resource<Shader> shader{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };  ///< シェーダ
+	Resource<ModelFbx> model{ "Model/kenney_mini-characters/Models/FBX format/character-robot.fbx" };     ///< モデル
+	Resource<Shader> shader{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };  ///< シェーダ
 
 	Component<Transform> transform{};      ///< 座標系
 	Component<RigidBody> rigidBody{};      ///< 剛体

@@ -23,6 +23,7 @@
 #include "Core/Resource/Surface.h"
 #include "Core/Resource/Texture.h"
 #include "Core/Resource/Model.h"
+#include "Core/Resource/ModelFbx.h"
 #include "Core/Resource/ShaderPro.h"
 #include "Core/Resource/Font.h"
 
