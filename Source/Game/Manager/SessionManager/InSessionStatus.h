@@ -19,10 +19,11 @@ struct InSessionStatus
 
 	struct EnemyStatus
 	{
-		int enemyType{ 0 };         ///< 種類
-		Vec3 position{ 0, 10, 0 };  ///< 座標
-		Vec2 rotation{ 0, 0 };      ///< 角度データ
-		bool updatedFlag{ false };  ///< 更新時のフラグ false / true 切り替え用
+		int enemyType{ 0 };                  ///< 種類
+		Vec3 position{ 0, 10, 0 };           ///< 座標
+		Vec2 rotation{ 0, 0 };               ///< 角度データ
+		bool updatedFlag{ false };           ///< 更新時のフラグ false / true 切り替え用
+		bool hasReceivedEnemyInfo{ false };  ///< 敵の基本情報を受信済みか
 
 		std::unordered_map<std::string, StateValue> states{};
 	};

@@ -108,7 +108,10 @@ struct MapData
 	// --------------------------------------------------------
 
 	Resource<Shader> shader{ "Shader/Terrain.hlsl" };
+
+	//地面テクスチャ変更場所
 	Resource<Texture> texture{ "Texture/Terrain/TileGrass.png", true };
+	//Resource<Texture> texture{ "Texture/Terrain/grass_01.png", true };
 
 	Resource<Material> material{};
 	Resource<Surface> surface{};
@@ -174,13 +177,13 @@ struct MAP : ObjectBase<MapData>, ITerrain
 	void Start() override;   // 初期化
 	void Update() override;  // 更新
 	void Draw() override;    // 描画
-
+	float GetHeight(const float _worldX, const float _worldZ) override;
   private:
 	// 地形データから描画用メッシュを作り直す
 	void Reload();
 
 	// ITerrainの実装
-	float GetHeight(const float _worldX, const float _worldZ) override;
+	//float GetHeight(const float _worldX, const float _worldZ) override;
 	Vec3 GetNormal(const float _worldX, const float _worldZ) override;
 
 	/// @brief 地形のサイズを取得する

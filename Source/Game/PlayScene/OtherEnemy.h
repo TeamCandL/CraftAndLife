@@ -3,6 +3,8 @@
 #include "EnemyType.h"
 #include <Game/Game.h>
 
+struct StateRegistry;
+
 struct OtherEnemyData
 {
 	OtherEnemyData(
@@ -70,4 +72,6 @@ struct OtherEnemy : ObjectBase<OtherEnemyData>
 	void StartDeathAnimation();
 
 	void UpdateDeathAnimation();
+
+	void RegisterStates(StateRegistry& registry) const;
 };

@@ -17,6 +17,9 @@
 #include <memory>
 #include <vector>
 
+#define _CRT_SECURE_NO_WARNINGS
+#include<fast-cpp-csv-parser/csv.h>
+
 // ============================================================
 // マップ内部設定
 // MAP.h にある MapConfig はマップ全体の設定です。
@@ -179,6 +182,77 @@ namespace
 		const float EXCLUSION_RADIUS = MapConfig::SPIRAL_HILL_RADIUS + MapConfig::SPIRAL_HILL_MARGIN;
 
 		return DISTANCE <= EXCLUSION_RADIUS;
+	}
+
+
+	// ============================================================
+	// CSVから読み込んだ配置座標が使用可能か判定する
+	// ============================================================
+	bool IsValidPlacementPosition(
+	    float x,
+	    float z)
+	{
+		// マップの半分のサイズ
+		const float HALF_WIDTH = MapConfig::MAP_WIDTH * MapConfig::TILE_SIZE * 0.5f;
+
+		const float HALF_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+
+		// マップの端から配置を避ける距離
+		constexpr float MAP_EDGE_MARGIN = 2.0f;
+
+		// マップ外・端付近なら配置しない
+		if (x < -HALF_WIDTH + MAP_EDGE_MARGIN || x > HALF_WIDTH - MAP_EDGE_MARGIN ||
+		    z < -HALF_DEPTH + MAP_EDGE_MARGIN || z > HALF_DEPTH - MAP_EDGE_MARGIN)
+		{
+			return false;
+		}
+
+		// 渦巻き丘の内部と周囲なら配置しない
+		if (IsInsideSpiralHill(x, z))
+		{
+			return false;
+		}
+
+		// スタート地点付近には配置しない
+		constexpr float START_CLEARANCE = 4.0f;
+
+		if (GetDistance(x, z, MapConfig::PATH_START_X, MapConfig::PATH_START_Z) < START_CLEARANCE)
+		{
+			return false;
+		}
+
+		// ゴール地点付近には配置しない
+		constexpr float GOAL_CLEARANCE = 5.0f;
+
+		if (GetDistance(x, z, MapConfig::PATH_GOAL_X, MapConfig::PATH_GOAL_Z) < GOAL_CLEARANCE)
+		{
+			return false;
+		}
+
+		// 川の中には配置しない
+		if (std::abs(x - GetRiverCenterX(z)) < MapConfig::RIVER_WIDTH * 0.5f)
+		{
+			return false;
+		}
+
+		// 道の上には配置しない
+		const float HALF_MAP_DEPTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE * 0.5f;
+
+		const float MAP_LENGTH = MapConfig::MAP_DEPTH * MapConfig::TILE_SIZE;
+
+		const float RATE = ClampValue((z + HALF_MAP_DEPTH) / MAP_LENGTH, 0.0f, 1.0f);
+
+		const float PATH_CENTER_X =
+		    Lerp(MapConfig::PATH_START_X, MapConfig::PATH_GOAL_X, RATE) +
+		    std::sin(RATE * MapConfig::PATH_CURVE_FREQUENCY_A * PI) * MapConfig::PATH_CURVE_AMPLITUDE_A +
+		    std::cos(RATE * MapConfig::PATH_CURVE_FREQUENCY_B * PI) * MapConfig::PATH_CURVE_AMPLITUDE_B;
+
+		if (std::abs(x - PATH_CENTER_X) < MapConfig::PATH_WIDTH * 0.5f)
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	// --------------------------------------------------------
@@ -644,267 +718,70 @@ void MAP::Start()
 		float z;
 	};
 	
-	const HarvestableEntity harvestableEntities[] = {
-		// ==============================
-		// 木のアイテム（16個）
-		// ==============================
-		{ 8, -86.0f, -91.0f },
-		{ 8, -82.0f, -98.0f },
-		{ 8, -94.0f, -86.0f },
-		{ 8, -78.0f, -91.0f },
 
-		{ 8, -88.0f, -78.0f },
-		{ 8, -73.0f, -96.0f },
-		{ 8, -68.0f, -88.0f },
-		{ 8, -99.0f, -91.0f },
+	io::CSVReader<4> in("Harvestable.csv");
+	in.read_header(io::ignore_extra_column, "Type", "X", "Z", "Y");
+	std::string type{};
+	float x{}, y{}, z{};
+	while (in.read_row(type, x, z, y))
+	{
+		// 配置禁止場所なら読み飛ばす
+		if (!IsValidPlacementPosition(x, z))
+		{
+			continue;
+		}
 
-		{ 8, -62.0f, -96.0f },
-		{ 8, -76.0f, -72.0f },
-		{ 8, -58.0f, -82.0f },
-		{ 8, -91.0f, -60.0f },
+		const float GROUND_HEIGHT = GetHeight(x, z);
 
-		{ 8, -52.0f, -95.0f },
-		{ 8, -65.0f, -65.0f },
-		{ 8, -45.0f, -78.0f },
-		{ 8, -55.0f, -55.0f },
-
-		// ==============================
-		// 石のアイテム（16個）
-		// ==============================
-		{ 7, -84.0f, -84.0f },
-		{ 7, -76.0f, -97.0f },
-		{ 7, -97.0f, -99.0f },
-		{ 7, -70.0f, -85.0f },
-
-		{ 7, -82.0f, -68.0f },
-		{ 7, -62.0f, -88.0f },
-		{ 7, -56.0f, -92.0f },
-		{ 7, -96.0f, -55.0f },
-
-		{ 7, -48.0f, -96.0f },
-		{ 7, -68.0f, -55.0f },
-		{ 7, -42.0f, -88.0f },
-		{ 7, -88.0f, -48.0f },
-
-		{ 7, -55.0f, -42.0f },
-		{ 7, -38.0f, -70.0f },
-		{ 7, -72.0f, -40.0f },
-		{ 7, -45.0f, -50.0f },
+		if (type == "Tree")
+		{
+			Get<HarvestableController>(objHarvestableController)
+			    .AddHarvestable(HarvestableType::Tree, Vec3(x, GROUND_HEIGHT, z), 5.0f);
+		}
+		else if (type == "TreeHigh")
+		{
+			Get<HarvestableController>(objHarvestableController)
+			    .AddHarvestable(HarvestableType::TreeHigh, Vec3(x, GROUND_HEIGHT, z), 5.2f);
+		}
+		else if (type == "Rock")
+		{
+			Get<HarvestableController>(objHarvestableController)
+			    .AddHarvestable(HarvestableType::Rock, Vec3(x, GROUND_HEIGHT, z), 3.0f);
+		}
+		else if (type == "Mushroom")
+		{
+			Get<HarvestableController>(objHarvestableController)
+			    .AddHarvestable(HarvestableType::Mushroom, Vec3(x, GROUND_HEIGHT, z), 0.5f);
+		}
+		
 
 		
-	};
-	for (const auto& entity : harvestableEntities)
+		
+	}
+	io::CSVReader<4> In("HarvestableEntity.csv");
+	In.read_header(io::ignore_extra_column, "Type", "X", "Z", "Y");
+	std::string Type{};
+	float X{}, Y{}, Z{};
+	while (In.read_row(Type, X, Z, Y))
 	{
-		const float y = GetHeight(entity.x, entity.z);
-		Get<EntitySystem>().Spawn(entity.itemId, Vec3(entity.x,y,entity.z), Vec3());
+		if (Type == "Wood")
+		{
+			Get<EntitySystem>().Spawn(8, Vec3(X, GetHeight(X, Z), Z), Vec3());
+		}
+		else if (Type == "Stone")
+		{
+			Get<EntitySystem>().Spawn(7, Vec3(X, GetHeight(X, Z), Z), Vec3());
+		}
 	}
 
-	const HarvestablePlacement placements[] = {
-		// スタート付近の木
-		{ HarvestableType::Tree, -96.0f, -94.0f, 5.0f },
-		{ HarvestableType::Tree, -92.0f, -86.0f, 5.0f },
-		{ HarvestableType::Tree, -84.0f, -96.0f, 5.0f },
-		{ HarvestableType::Tree, -80.0f, -89.0f, 5.0f },
-		{ HarvestableType::Tree, -95.0f, -80.0f, 5.0f },
-		{ HarvestableType::Tree, -76.0f, -82.0f, 5.0f },
-		{ HarvestableType::Tree, -70.0f, -94.0f, 5.0f },
-		{ HarvestableType::Tree, -65.0f, -85.0f, 5.0f },
-		{ HarvestableType::Tree, -98.0f, -68.0f, 5.0f },
-		{ HarvestableType::Tree, -86.0f, -64.0f, 5.0f },
-		{ HarvestableType::Tree, -72.0f, -70.0f, 5.0f },
 
-		{ HarvestableType::TreeHigh, -94.0f, -88.0f, 5.2f },
-		{ HarvestableType::TreeHigh, -78.0f, -96.0f, 5.2f },
-		{ HarvestableType::TreeHigh, -98.0f, -78.0f, 5.2f },
-		{ HarvestableType::TreeHigh, -68.0f, -76.0f, 5.2f },
-
-		// マップ各地の木
-		{ HarvestableType::Tree, -85.0f, -65.0f, 5.0f },
-		{ HarvestableType::Tree, -30.0f, -45.0f, 5.0f },
-		{ HarvestableType::Tree, 10.0f, -60.0f, 5.0f },
-		{ HarvestableType::Tree, 30.0f, -40.0f, 5.0f },
-		{ HarvestableType::Tree, -80.0f, -20.0f, 5.0f },
-		{ HarvestableType::Tree, -55.0f, 0.0f, 5.0f },
-		{ HarvestableType::Tree, 15.0f, 10.0f, 5.0f },
-		{ HarvestableType::Tree, 45.0f, 30.0f, 5.0f },
-		{ HarvestableType::Tree, -35.0f, -85.0f, 5.0f },
-		{ HarvestableType::Tree, 5.0f, -85.0f, 5.0f },
-		{ HarvestableType::Tree, 25.0f, -90.0f, 5.0f },
-		{ HarvestableType::Tree, 45.0f, -80.0f, 5.0f },
-		{ HarvestableType::Tree, 65.0f, -85.0f, 5.0f },
-		{ HarvestableType::Tree, 85.0f, -75.0f, 5.0f },
-		{ HarvestableType::Tree, -90.0f, -50.0f, 5.0f },
-		{ HarvestableType::Tree, 5.0f, -20.0f, 5.0f },
-		{ HarvestableType::Tree, 25.0f, -15.0f, 5.0f },
-		{ HarvestableType::Tree, 50.0f, -25.0f, 5.0f },
-		{ HarvestableType::Tree, 75.0f, -30.0f, 5.0f },
-		{ HarvestableType::Tree, 90.0f, -10.0f, 5.0f },
-		{ HarvestableType::Tree, -90.0f, 5.0f, 5.0f },
-		{ HarvestableType::Tree, -5.0f, 35.0f, 5.0f },
-		{ HarvestableType::Tree, 20.0f, 30.0f, 5.0f },
-		{ HarvestableType::Tree, 40.0f, 45.0f, 5.0f },
-		{ HarvestableType::Tree, 65.0f, 35.0f, 5.0f },
-		{ HarvestableType::Tree, 85.0f, 25.0f, 5.0f },
-		{ HarvestableType::Tree, -80.0f, 45.0f, 5.0f },
-		{ HarvestableType::Tree, -35.0f, 50.0f, 5.0f },
-		{ HarvestableType::Tree, -10.0f, 60.0f, 5.0f },
-		{ HarvestableType::Tree, 15.0f, 55.0f, 5.0f },
-		{ HarvestableType::Tree, 35.0f, 65.0f, 5.0f },
-		{ HarvestableType::Tree, 80.0f, 70.0f, 5.0f },
-		{ HarvestableType::Tree, -90.0f, 80.0f, 5.0f },
-		{ HarvestableType::Tree, 10.0f, 80.0f, 5.0f },
-		{ HarvestableType::Tree, 35.0f, 90.0f, 5.0f },
-		{ HarvestableType::Tree, 85.0f, 90.0f, 5.0f },
-
-		// 背の高い木
-		{ HarvestableType::TreeHigh, -75.0f, -40.0f, 5.2f },
-		{ HarvestableType::TreeHigh, -35.0f, -65.0f, 5.2f },
-		{ HarvestableType::TreeHigh, 25.0f, -20.0f, 5.2f },
-		{ HarvestableType::TreeHigh, -75.0f, 15.0f, 5.2f },
-		{ HarvestableType::TreeHigh, -5.0f, -70.0f, 5.2f },
-		{ HarvestableType::TreeHigh, 55.0f, -75.0f, 5.2f },
-		{ HarvestableType::TreeHigh, 80.0f, -55.0f, 5.2f },
-		{ HarvestableType::TreeHigh, -85.0f, 40.0f, 5.2f },
-		{ HarvestableType::TreeHigh, 25.0f, 50.0f, 5.2f },
-		{ HarvestableType::TreeHigh, 60.0f, 45.0f, 5.2f },
-		{ HarvestableType::TreeHigh, 85.0f, 60.0f, 5.2f },
-		{ HarvestableType::TreeHigh, 15.0f, 75.0f, 5.2f },
-		{ HarvestableType::TreeHigh, 50.0f, 85.0f, 5.2f },
-
-		// 道中の岩
-		{ HarvestableType::Rock, -72.0f, -55.0f, 3.0f },
-		{ HarvestableType::Rock, -55.0f, -48.0f, 3.0f },
-		{ HarvestableType::Rock, -38.0f, -35.0f, 3.0f },
-		{ HarvestableType::Rock, -20.0f, -25.0f, 3.0f },
-		{ HarvestableType::Rock, -5.0f, -10.0f, 3.0f },
-		{ HarvestableType::Rock, 15.0f, -5.0f, 3.0f },
-		{ HarvestableType::Rock, 35.0f, 5.0f, 3.0f },
-		{ HarvestableType::Rock, -65.0f, -35.0f, 3.0f },
-		{ HarvestableType::Rock, -48.0f, -20.0f, 3.0f },
-		{ HarvestableType::Rock, -30.0f, -5.0f, 3.0f },
-		{ HarvestableType::Rock, -10.0f, 10.0f, 3.0f },
-		{ HarvestableType::Rock, 12.0f, 18.0f, 3.0f },
-		{ HarvestableType::Rock, 32.0f, 30.0f, 3.0f },
-		{ HarvestableType::Rock, 40.0f, 42.0f, 3.0f },
-		{ HarvestableType::Rock, 48.0f, 50.0f, 3.0f },
-		{ HarvestableType::Rock, 62.0f, 52.0f, 3.0f },
-		{ HarvestableType::Rock, 72.0f, 62.0f, 3.0f },
-		{ HarvestableType::Rock, 43.0f, 78.0f, 3.0f },
-		{ HarvestableType::Rock, 68.0f, 82.0f, 3.0f },
-
-		// マップの端側の岩
-		{ HarvestableType::Rock, -90.0f, -45.0f, 3.0f },
-		{ HarvestableType::Rock, -30.0f, -80.0f, 3.0f },
-		{ HarvestableType::Rock, 0.0f, -35.0f, 3.0f },
-		{ HarvestableType::Rock, 35.0f, -60.0f, 3.0f },
-		{ HarvestableType::Rock, 55.0f, 15.0f, 3.0f },
-		{ HarvestableType::Rock, 75.0f, 45.0f, 3.0f },
-		{ HarvestableType::Rock, 10.0f, -90.0f, 3.0f },
-		{ HarvestableType::Rock, 40.0f, -85.0f, 3.0f },
-		{ HarvestableType::Rock, 70.0f, -90.0f, 3.0f },
-		{ HarvestableType::Rock, 90.0f, -70.0f, 3.0f },
-		{ HarvestableType::Rock, 5.0f, -45.0f, 3.0f },
-		{ HarvestableType::Rock, 45.0f, -40.0f, 3.0f },
-		{ HarvestableType::Rock, 80.0f, -35.0f, 3.0f },
-		{ HarvestableType::Rock, -90.0f, -10.0f, 3.0f },
-		{ HarvestableType::Rock, 5.0f, 15.0f, 3.0f },
-		{ HarvestableType::Rock, 35.0f, 20.0f, 3.0f },
-		{ HarvestableType::Rock, 70.0f, 5.0f, 3.0f },
-		{ HarvestableType::Rock, 90.0f, 20.0f, 3.0f },
-		{ HarvestableType::Rock, -85.0f, 30.0f, 3.0f },
-		{ HarvestableType::Rock, -25.0f, 40.0f, 3.0f },
-		{ HarvestableType::Rock, 5.0f, 50.0f, 3.0f },
-		{ HarvestableType::Rock, 40.0f, 55.0f, 3.0f },
-		{ HarvestableType::Rock, 75.0f, 65.0f, 3.0f },
-		{ HarvestableType::Rock, 20.0f, 90.0f, 3.0f },
-		{ HarvestableType::Rock, 50.0f, 80.0f, 3.0f },
-		{ HarvestableType::Rock, 85.0f, 85.0f, 3.0f },
-
-		// キノコ（30個）
-		{ HarvestableType::Mushroom, -88.0f, -55.0f, 2.0f },
-		{ HarvestableType::Mushroom, -78.0f, -48.0f, 2.0f },
-		{ HarvestableType::Mushroom, -60.0f, -65.0f, 2.0f },
-		{ HarvestableType::Mushroom, -45.0f, -55.0f, 2.0f },
-		{ HarvestableType::Mushroom, -25.0f, -60.0f, 2.0f },
-		{ HarvestableType::Mushroom, -10.0f, -75.0f, 2.0f },
-		{ HarvestableType::Mushroom, 15.0f, -70.0f, 2.0f },
-		{ HarvestableType::Mushroom, 35.0f, -68.0f, 2.0f },
-		{ HarvestableType::Mushroom, 60.0f, -60.0f, 2.0f },
-		{ HarvestableType::Mushroom, 78.0f, -48.0f, 2.0f },
-
-		{ HarvestableType::Mushroom, -85.0f, -25.0f, 2.0f },
-		{ HarvestableType::Mushroom, -65.0f, -15.0f, 2.0f },
-		{ HarvestableType::Mushroom, -45.0f, -30.0f, 2.0f },
-		{ HarvestableType::Mushroom, -25.0f, -15.0f, 2.0f },
-		{ HarvestableType::Mushroom, -8.0f, 25.0f, 2.0f },
-		{ HarvestableType::Mushroom, 18.0f, 25.0f, 2.0f },
-		{ HarvestableType::Mushroom, 55.0f, -5.0f, 2.0f },
-		{ HarvestableType::Mushroom, 82.0f, 0.0f, 2.0f },
-		{ HarvestableType::Mushroom, -80.0f, 25.0f, 2.0f },
-		{ HarvestableType::Mushroom, -55.0f, 35.0f, 2.0f },
-
-		{ HarvestableType::Mushroom, -70.0f, 60.0f, 2.0f },
-		{ HarvestableType::Mushroom, -45.0f, 70.0f, 2.0f },
-		{ HarvestableType::Mushroom, -20.0f, 80.0f, 2.0f },
-		{ HarvestableType::Mushroom, 5.0f, 65.0f, 2.0f },
-		{ HarvestableType::Mushroom, 25.0f, 78.0f, 2.0f },
-		{ HarvestableType::Mushroom, 45.0f, 68.0f, 2.0f },
-		{ HarvestableType::Mushroom, 65.0f, 85.0f, 2.0f },
-		{ HarvestableType::Mushroom, 85.0f, 75.0f, 2.0f },
-		{ HarvestableType::Mushroom, -5.0f, 45.0f, 2.0f },
-		{ HarvestableType::Mushroom, 75.0f, 35.0f, 2.0f },
-	};
+	
 
 	// 実際のスタート・ゴール座標
 	const Vec3 START_POSITION{ -88.0f, 1.830f, -92.3f };
 	const Vec3 GOAL_POSITION{ 53.21f, 16.0f, 68.91f };
 
-	// 配置候補を1つずつ確認する
-	for (const auto& placement : placements)
-	{
-		// マップの外には配置しない
-		if (!IsInsideMap(placement.x, placement.z))
-		{
-			continue;
-		}
-
-		// 渦巻き丘の内部と周囲には配置しない
-		if (IsInsideSpiralHill(placement.x, placement.z))
-		{
-			continue;
-		}
-
-		// スタート地点付近を空ける
-		if (GetDistance(placement.x, placement.z, START_POSITION.x, START_POSITION.z) < MapConfig::START_CLEARANCE)
-		{
-			continue;
-		}
-
-		// ゴール地点付近を空ける
-		if (GetDistance(placement.x, placement.z, GOAL_POSITION.x, GOAL_POSITION.z) < MapConfig::GOAL_CLEARANCE)
-		{
-			continue;
-		}
-
-		// 道の上には配置しない
-		if (IsPath(placement.x, placement.z))
-		{
-			continue;
-		}
-
-		// 川の上には配置しない
-		if (IsRiver(placement.x, placement.z))
-		{
-			continue;
-		}
-
-		// 地形の高さを取得して配置する
-		const float GROUND_Y = GetHeight(placement.x, placement.z);
-
-		const Vec3 POSITION{ placement.x, GROUND_Y, placement.z };
-
-		Get<HarvestableController>(objHarvestableController).AddHarvestable(placement.type, POSITION, placement.scale);
-	}
+	
 }
 
 // ============================================================

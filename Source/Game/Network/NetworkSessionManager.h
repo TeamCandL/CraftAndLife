@@ -6,7 +6,7 @@
 /// @brief enetでセッションを管理するマネージャー
 class NetworkSessionManager : public IManager
 {
-public:
+  public:
 	/// @brief ネットワーク上の状態
 	enum struct State
 	{
@@ -19,8 +19,8 @@ public:
 		InResult,
 	};
 
-public:
-	NetworkSessionManager() = default;
+  public:
+	NetworkSessionManager()  = default;
 	~NetworkSessionManager() = default;
 
 	/// @brief サーバーへ接続する
@@ -38,19 +38,30 @@ public:
 	/// @param _message メッセージ
 	void Send(INetworkMessage& _message);
 
-	template<typename Func>
-	void Receive(Func&& _func);
+	template <typename Func> void Receive(Func&& _func);
+
+	/// @brief 貯めているものを一気に処理する
+	void Flush();
 
 	/// @brief 現在のステートを取得する
 	/// @return 現在のステート
-	State GetCurrentState() const { return state_; }
+	State GetCurrentState() const
+	{
+		return state_;
+	}
 	/// @brief 現在のステートを変更する
 	/// @param _state ステート
-	void SetCurrentState(const State _state) { state_ = _state; }
+	void SetCurrentState(
+	    const State _state)
+	{
+		state_ = _state;
+	}
 
-private:
+  private:
 	ENetTransport transport_{};
 	State state_{ State::Disconnected };
+	inline static const size_t CHANNLEL_MAX{ 2 };
+	std::array<std::vector<std::vector<char>>, CHANNLEL_MAX> sendBinaryMessages{};
 };
 
 #include "NetworkSessionManager.inl"

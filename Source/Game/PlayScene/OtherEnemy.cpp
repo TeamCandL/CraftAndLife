@@ -5,10 +5,11 @@
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include "EnemyHpBar.h"
 #include "Enemy.h"
+#include "StateRegistry.h"
 
 void OtherEnemy::Start()
 {
-	VCU_LOG("OtherEnemy Start: ID={}", enemyId);
+	VCU_LOG("OtherEnemy Start: ID={}, Type={}", enemyId, static_cast<int>(enemyType));
 	obb.isTrigger = true;
 }
 
@@ -189,4 +190,10 @@ void OtherEnemy::UpdateDeathAnimation()
 			DestroyMe();
 		}
 	}
+}
+
+void OtherEnemy::RegisterStates(
+    StateRegistry& registry) const
+{
+	registry.Register("alive", !isDead);
 }
