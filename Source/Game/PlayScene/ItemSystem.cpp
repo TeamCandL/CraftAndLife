@@ -408,6 +408,21 @@ ItemSystemData::ItemSystemData()
 	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 1 } });
+	allItemList.push_back({ 27,
+	                        ItemType::PlayerAttackTool,
+	                        "採取ツール攻撃",
+	                        "Image/EmptyItem.png",
+	                        {},
+
+	                        false,
+	                        craft,
+
+	                        1.0f,
+	                        1,
+	                        0,
+	                        0,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
 }
 
 ItemInfo ItemSystem::GetInfo(

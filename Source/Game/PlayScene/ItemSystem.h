@@ -18,6 +18,7 @@ enum ItemType
 	EnemyAttack,        ///<	敵の攻撃アイテム
 	PlayerAttackSword,  ///<	プレイヤーの剣攻撃アイテム
 	PlayerAttackArrow,  ///<	プレイヤーの弓攻撃アイテム
+	PlayerAttackTool,   ///<	プレイヤーの採取ツール攻撃アイテム
 	ItemTypeMax,        ///<	その他アイテム
 };
 
