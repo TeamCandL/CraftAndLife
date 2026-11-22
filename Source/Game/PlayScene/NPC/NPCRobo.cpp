@@ -47,11 +47,11 @@ void NPCRobo::Draw()
 
 void NPCRobo::InitializeAI()
 {
-	auto isDaytime = std::make_shared<AINodeCondition>(
+	/*auto isDaytime = std::make_shared<AINodeCondition>(
 	    []
 	    {
-		    return
-	    });
+	        return
+	    });*/
 }
 
 void NPCRobo::UpdateAI() {}
