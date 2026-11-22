@@ -408,6 +408,20 @@ ItemSystemData::ItemSystemData()
 	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 1 } });
+	allItemList.push_back(  // TODO: 仮で27とっときます
+	    { 27,
+	      ItemType::PlayerAttackSword,
+	      "プレイヤーその他の攻撃",
+	      {},
+	      {},
+	      false,
+	      craft,
+	      1.0f,
+	      5,
+	      0,
+	      5,
+	      PlayerJobType_Max,
+	      Vec3{ 1, 1, 2 } });
 }
 
 ItemInfo ItemSystem::GetInfo(
