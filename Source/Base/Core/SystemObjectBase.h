@@ -12,16 +12,23 @@ namespace cha
 	template <typename SystemT, typename DataT = NullObjectData>
 	class SystemObjectBase : public ObjectBase<DataT>, public ISystemObject
 	{
-	public:
+	  public:
+		SystemObjectBase()
+		{
+			(void)&INDEX_;
+		}
+
 		/// @brief 参照関係を登録、リンクする
 		/// @param _linker リンクするやつ
-		virtual void OnDependencyLink(DependencyLinker& _linker) override {}
+		virtual void OnDependencyLink(
+		    DependencyLinker& _linker) override
+		{
+		}
 
 		/// @brief 遅い更新処理
 		void LateUpdate() override {}
 
-	private:
-		inline static uint64_t INDEX_ = 
-			SystemRegistry::GetSystemIndex<SystemT>();  // システムのインデクス
+	  private:
+		inline static uint64_t INDEX_ = SystemRegistry::GetSystemIndex<SystemT>();  // システムのインデクス
 	};
-}
+}  // namespace cha
