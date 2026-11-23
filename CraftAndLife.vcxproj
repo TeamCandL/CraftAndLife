@@ -445,6 +445,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Component\Transform.cpp" />
     <ClCompile Include="Source\Game\Component\TransformAnimator.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyNetworkController.cpp" />
+    <ClCompile Include="Source\Game\LobbyScene\LobbyPlayerRoleSelectButton.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyReadyButton.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyScene.cpp" />
     <ClCompile Include="Source\Game\LobbyScene\LobbyUI.cpp" />
@@ -756,6 +757,7 @@ pre-commit install</Command>
     </ClInclude>
     <ClInclude Include="Source\Game\Component\EffectPlayer\EffectPlayer.h" />
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
+    <ClInclude Include="Source\Game\LobbyScene\LobbyPlayerRoleSelectButton.h" />
     <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\StateTarget.h" />
