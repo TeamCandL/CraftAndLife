@@ -201,6 +201,11 @@ void cha::GameObjectCollection::Remove(
 size_t cha::GameObjectCollection::IdToRegistryIndex(
     const uint64_t _id) const
 {
+	if (_id >= indices_.size())
+	{
+		return std::numeric_limits<size_t>::max();
+	}
+
 	return indices_[_id];
 }
 
@@ -231,16 +236,33 @@ void cha::GameObjectCollection::UpdateComponentRegistry(
     const uint64_t _gameObjectId,
     const size_t _addedIndex)
 {
-	// TODO: キャパシティ分線形探索は非効率？
-	for (uint32_t componentIndex = 0; componentIndex < COMPONENT_CAPACITY; componentIndex++)
+	if (_addedIndex >= PreviousComponentRegister::registry_.size())
 	{
-		if (_flag.test(componentIndex))
+		throw std::out_of_range("Invalid pending component registry index.");
+	}
+
+	const size_t REGISTRY_INDEX = IdToRegistryIndex(_gameObjectId);
+
+	if (REGISTRY_INDEX == std::numeric_limits<size_t>::max())
+	{
+		throw std::out_of_range("Invalid GameObject ID.");
+	}
+
+	for (uint32_t componentIndex = 0; componentIndex < COMPONENT_CAPACITY; ++componentIndex)
+	{
+		if (!_flag.test(componentIndex))
 		{
-			// 指定コンポーネントのフラグが立っているなら登録関数が更新されている
-			PreviousComponentRegister::registry_[_addedIndex][componentIndex](
-			    *pComponentPools_.get(),
-			    IdToRegistryIndex(_gameObjectId));
+			continue;
 		}
+
+		auto& callback = PreviousComponentRegister::registry_[_addedIndex][componentIndex];
+
+		if (!callback)
+		{
+			throw std::logic_error("Component registration callback is empty.");
+		}
+
+		callback(*pComponentPools_, REGISTRY_INDEX);
 	}
 }
 
@@ -254,11 +276,28 @@ void cha::GameObjectCollection::DestroyAt(
 
 void cha::GameObjectCollection::Clear()
 {
-	indices_.clear();
-	registry_.clear();
-	toAdd_.clear();
 	toDestroyIds_.clear();
+	toAdd_.clear();
+	registry_.clear();
+	indices_.clear();
+	systemsSubRegistry_.clear();
+	PreviousComponentRegister::registry_.clear();
+
 	pComponentPools_ = std::make_unique<ComponentPools>();
+
+	indices_.reserve(SYSTEM_COUNT_);
+	registry_.resize(SYSTEM_COUNT_);
+	systemsSubRegistry_.resize(SYSTEM_COUNT_);
+
+	for (size_t i = 0; i < SYSTEM_COUNT_; ++i)
+	{
+		indices_.push_back(i);
+	}
+
+	GameObjectElement& element = registry_[0];
+	element.pObject            = std::make_shared<NullObjectSystem>();
+	element.typeIndex          = typeid(NullObjectSystem);
+	element.componentFlag.reset();
 }
 
 bool cha::GameObjectCollection::Exist(
