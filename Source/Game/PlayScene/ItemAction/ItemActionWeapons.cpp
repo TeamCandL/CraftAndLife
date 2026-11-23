@@ -126,6 +126,7 @@ void ItemActionWeapons::Action(
 						if (_itemId == ITEM_ID_AXE)
 						{
 							harvestable.TakeDamage(ITEM_INFO._damageForObject);
+							Get<AudioManager>().Play(mushroomSE);
 							GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", hitInfo.hitPosition);
 
 							// ゲージがまだ生成されていなければ生成
