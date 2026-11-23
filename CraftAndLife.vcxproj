@@ -884,6 +884,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TutorialUI.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\IInput.h" />
+    <ClInclude Include="Source\Game\System\InputSystem\InputDirectionType.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
     <ClInclude Include="Source\Game\System\EffectSystem.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyUIInput.h" />

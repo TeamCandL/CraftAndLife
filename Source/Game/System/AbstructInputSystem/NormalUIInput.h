@@ -22,32 +22,32 @@ class NormalUIInput : public IUIInput
 	/// @brief 更新処理
 	virtual void Update() override;
 
+  private:
+	/// @brief 自動パルス入力の更新処理
+	/// @param _directionType 方向
+	/// @param _isOn 入力があるか true / false
+	/// @return 自動パルス入力の出力
+	bool UpdateAutoInput(const InputDirectionType _directionType, const bool _isOn);
+
   protected:
-	inline static const float AUTO_INPUT_WAIT_THRESHOLD_SEC{ 0.3f };
-	inline static const float AUTO_INPUT_DISTANCE_SEC{ 0.3f };
-
-	using DirectionType = int32_t;
-	enum DirectionType_ : DirectionType
-	{
-		DirectionType_Up,
-		DirectionType_Down,
-		DirectionType_Left,
-		DirectionType_Right,
-		DirectionType_Max,
-	};
-
 	AbstructInputSystem& abstructInputSystem_;
 
-	std::array<float, DirectionType_Max> autoInputWaitTimeLefts{
+	std::array<float, InputDirectionType_Max> autoInputWaitTimeLefts{
 		AUTO_INPUT_WAIT_THRESHOLD_SEC,
 		AUTO_INPUT_WAIT_THRESHOLD_SEC,
 		AUTO_INPUT_WAIT_THRESHOLD_SEC,
 		AUTO_INPUT_WAIT_THRESHOLD_SEC,
 	};
-	std::array<float, DirectionType_Max> autoInputTimeLefts{
+	std::array<float, InputDirectionType_Max> autoInputTimeLefts{
 		AUTO_INPUT_DISTANCE_SEC,
 		AUTO_INPUT_DISTANCE_SEC,
 		AUTO_INPUT_DISTANCE_SEC,
 		AUTO_INPUT_DISTANCE_SEC,
+	};
+	std::array<bool, InputDirectionType_Max> autoInputValues{
+		false,
+		false,
+		false,
+		false,
 	};
 };

@@ -9,9 +9,8 @@ NormalUIInput::NormalUIInput(
 
 bool NormalUIInput::IsMovedUp()
 {
-	if (autoInputTimeLefts[DirectionType_Up] <= 0.0f)
+	if (autoInputValues[InputDirectionType_Up])
 	{
-		autoInputTimeLefts[DirectionType_Up] = AUTO_INPUT_DISTANCE_SEC;
 		return true;
 	}
 
@@ -24,9 +23,8 @@ bool NormalUIInput::IsMovedUp()
 
 bool NormalUIInput::IsMovedDown()
 {
-	if (autoInputTimeLefts[DirectionType_Down] <= 0.0f)
+	if (autoInputValues[InputDirectionType_Down])
 	{
-		autoInputTimeLefts[DirectionType_Down] = AUTO_INPUT_DISTANCE_SEC;
 		return true;
 	}
 
@@ -39,9 +37,8 @@ bool NormalUIInput::IsMovedDown()
 
 bool NormalUIInput::IsMovedLeft()
 {
-	if (autoInputTimeLefts[DirectionType_Left] <= 0.0f)
+	if (autoInputValues[InputDirectionType_Left])
 	{
-		autoInputTimeLefts[DirectionType_Left] = AUTO_INPUT_DISTANCE_SEC;
 		return true;
 	}
 
@@ -54,9 +51,8 @@ bool NormalUIInput::IsMovedLeft()
 
 bool NormalUIInput::IsMovedRight()
 {
-	if (autoInputTimeLefts[DirectionType_Right] <= 0.0f)
+	if (autoInputValues[InputDirectionType_Right])
 	{
-		autoInputTimeLefts[DirectionType_Right] = AUTO_INPUT_DISTANCE_SEC;
 		return true;
 	}
 
@@ -83,5 +79,36 @@ bool NormalUIInput::IsChanneled() const
 
 void NormalUIInput::Update()
 {
-	// if (abstructInputSystem_.GetPadInputSystem().IsOnDown())
+	// 全方向のパルス入力を更新
+	for (InputDirectionType type{}; type < InputDirectionType_Max; type++)
+	{
+		autoInputValues[type] =
+		    UpdateAutoInput(type, abstructInputSystem_.GetPadInputSystem().IsOn(GamePadInputStick::Left, type));
+	}
+}
+
+bool NormalUIInput::UpdateAutoInput(
+    const InputDirectionType _directionType,
+    const bool _isOn)
+{
+	if (_isOn)
+	{
+		autoInputWaitTimeLefts[_directionType] -= ManagerRegistry::Ref<DeltaTime>();
+		if (autoInputWaitTimeLefts[_directionType] <= 0.0f)
+		{
+			autoInputTimeLefts[_directionType] -= ManagerRegistry::Ref<DeltaTime>();
+			if (autoInputTimeLefts[_directionType] <= 0.0f)
+			{
+				autoInputTimeLefts[_directionType] = AUTO_INPUT_DISTANCE_SEC;
+				return true;
+			}
+		}
+	}
+	else
+	{
+		autoInputWaitTimeLefts[_directionType] = AUTO_INPUT_WAIT_THRESHOLD_SEC;
+		autoInputTimeLefts[_directionType]     = 0.0f;
+	}
+
+	return false;
 }

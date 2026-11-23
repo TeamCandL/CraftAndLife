@@ -1970,6 +1970,9 @@
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestBox.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\System\InputSystem\InputDirectionType.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Base\Core\ComponentPool\ComponentPools.inl">
