@@ -7,7 +7,7 @@ cha::GameObjectCollection::GameObjectCollection() :
     // NOTE: 外システムの登録が終わったコンストラクタタイミングで取得
     //     : index == システム数 - 1
     //     : NullObjectSystemを含め +1 で総数
-    SYSTEM_COUNT_{ SystemRegistry::GetSystemIndex<NullObjectSystem>() + 1 },
+    SYSTEM_COUNT_{ static_cast<size_t>(SystemRegistry::GetSystemIndex<NullObjectSystem>() + 1) },
     pComponentPools_{ std::make_unique<ComponentPools>() }
 {
 	// 各システム分開けておく
@@ -63,7 +63,10 @@ void cha::GameObjectCollection::Flush()
 	// Start呼び出し中にInstantiateした場合に対応し1フレームでStartしきる
 	while (!toAdd_.empty())
 	{
-		std::vector<GameObjectElement> toAdd = std::move(toAdd_);
+		std::vector<GameObjectElement> toAdd(toAdd_.size());
+
+		std::copy(toAdd_.begin(), toAdd_.end(), toAdd.begin());
+		toAdd_.clear();
 
 		// 追加前のレジストリサイズを持っておく
 		const size_t PREVIOUS_REGISTRY_SIZE{ registry_.size() };
