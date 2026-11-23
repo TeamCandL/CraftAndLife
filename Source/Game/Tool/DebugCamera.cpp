@@ -8,10 +8,33 @@ void DebugCamera::Start()
 {
 	// 地形上に表示するデバッグポイントを生成
 	objDebugPoint = GetScene().Instantiate<DebugPoint>();
+
+	// カメラシステムのデータを参照
+	CameraSystemData& camera = Get<CameraSystem>().Data();
+
+	// 回転をtransformに適用
+	camera.transform.rotation = DirectX::XMQuaternionRotationRollPitchYaw(angles.x, angles.y, 0.0f);
+
+	// 座標をtransformに適用
+	camera.transform.position = position;
 }
 
 void DebugCamera::Update()
 {
+	ImGui::Begin("DebugCamera");
+	if (ImGui::Button(isEnabled ? "無効化する" : "有効化する"))
+	{
+		isEnabled = !isEnabled;
+	}
+	ImGui::DragFloat3("position", position.v);
+	ImGui::DragFloat2("angles", angles.v);
+	ImGui::End();
+
+	if (!isEnabled)
+	{
+		return;  // 操作無効なら無視
+	}
+
 	// フレーム間時間を取得
 	const float DELTA_TIME = Get<DeltaTime>();
 

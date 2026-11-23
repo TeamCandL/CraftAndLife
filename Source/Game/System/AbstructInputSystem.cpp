@@ -12,6 +12,16 @@ void AbstructInputSystem::Start()
 
 void AbstructInputSystem::Update()
 {
+	if (pPlayerInput)
+	{
+		pPlayerInput->Update();
+	}
+
+	if (pUIInput)
+	{
+		pUIInput->Update();
+	}
+
 	if (pPlayerInput && pUIInput)
 	{
 		PadInputSystem& padInputSystem = Get<PadInputSystem>();

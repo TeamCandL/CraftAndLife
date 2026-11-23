@@ -395,6 +395,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Base\Core\Resource\Font.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Material.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model.cpp" />
+    <ClCompile Include="Source\Base\Core\Resource\ModelFbx.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Model\ModelMaterial.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\ResourceRegistryBase.cpp" />
     <ClCompile Include="Source\Base\Core\Resource\Shader.cpp" />
@@ -454,6 +455,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Manager\SessionManager.cpp" />
     <ClCompile Include="Source\Game\Manager\SessionManager\SessionStateReader.cpp" />
     <ClCompile Include="Source\Game\MapTestScene\MapTestScene.cpp" />
+    <ClCompile Include="Source\Game\ModelTestScene\ModelTestScene.cpp" />
     <ClCompile Include="Source\Game\Network\ENetTransport.cpp" />
     <ClCompile Include="Source\Game\Network\INetworkMessage.cpp" />
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
@@ -476,6 +478,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionShield.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\NPC\NPCRobo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherEnemyHpBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
@@ -675,12 +678,15 @@ pre-commit install</Command>
     <ClInclude Include="Source\Base\Core\ResourceManagerInstance.h" />
     <ClInclude Include="Source\Base\Core\ResourceTraits.h" />
     <ClInclude Include="Source\Base\Core\Resource\Audio.h" />
+    <ClInclude Include="Source\Base\Core\Resource\ModelFbx.h" />
     <ClInclude Include="Source\Base\Core\Resource\Font.h" />
     <ClInclude Include="Source\Base\Core\Resource\IResourceRegistry.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material\IMaterialProperty.h" />
     <ClInclude Include="Source\Base\Core\Resource\Material\MaterialProperty.h" />
     <ClInclude Include="Source\Base\Core\Resource\Model.h" />
+    <ClInclude Include="Source\Base\Core\Resource\Model\AnimationClip.h" />
+    <ClInclude Include="Source\Base\Core\Resource\Model\BoneInfo.h" />
     <ClInclude Include="Source\Base\Core\Resource\Model\ModelMaterial.h" />
     <ClInclude Include="Source\Base\Core\Resource\Model\ModelParts.h" />
     <ClInclude Include="Source\Base\Core\Resource\Model\ModelTransformMaterialProperty.h" />
@@ -759,10 +765,12 @@ pre-commit install</Command>
     </ClInclude>
     <ClInclude Include="Source\Game\Component\EffectPlayer\EffectPlayer.h" />
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
+    <ClInclude Include="Source\Game\Component\UI\UIWorldBinder.h" />
     <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\StateTarget.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
+    <ClInclude Include="Source\Game\ModelTestScene\ModelTestScene.h" />
     <ClInclude Include="Source\Game\Network\MultiMessage.h" />
     <ClInclude Include="Source\Game\Network\Protocols\BreakHarvestable.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntityPicked.h" />
@@ -787,6 +795,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyHpBar.h" />
     <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestBox.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
     <ClInclude Include="Source\Game\PlayScene\IEntitySystemNetwork.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />
@@ -797,6 +806,11 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeaponBow.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.h" />
     <ClInclude Include="Source\Game\PlayScene\EntityNetworkData.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceDayController.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceEnemyController.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceHarvestableController.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferencePlayer.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\NPCRobo.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBar.h" />
     <ClInclude Include="Source\Game\PlayScene\Tutorial\ITutorialObserver.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
@@ -870,6 +884,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\UI\TaskBackground.h" />
     <ClInclude Include="Source\Game\PlayScene\UI\TutorialUI.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\IInput.h" />
+    <ClInclude Include="Source\Game\System\InputSystem\InputDirectionType.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyPlayerInput.h" />
     <ClInclude Include="Source\Game\System\EffectSystem.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\PadOnlyUIInput.h" />
@@ -1074,6 +1089,7 @@ pre-commit install</Command>
     <FxCompile Include="Resource\Shader\UI.hlsl" />
     <FxCompile Include="Resource\Shader\UICircleImage.hlsl" />
     <FxCompile Include="Resource\Shader\Unlit.hlsl" />
+    <FxCompile Include="Resource\Shader\UnlitFbx.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Library\Debug\DirectXTex.lib">

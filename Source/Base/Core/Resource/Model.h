@@ -5,25 +5,11 @@
 #include "../Resource.h"
 #include "Material.h"
 #include <ufbx/ufbx.h>
+#include "Model/AnimationClip.h"
+#include "Model/BoneInfo.h"
 
 namespace cha
 {
-	// アニメーションのクリップ(Run, Walk など)
-	struct AnimationClip
-	{
-		std::string name{};
-		float duration{};
-	};
-
-	/// @brief ボーンの情報
-	struct BoneInfo
-	{
-		std::string name;
-		int parentIndex;        // 親ボーンの配列インデックス
-		Mat4x4 invBindMatrix;   // 逆バインドポーズ行列
-		Mat4x4 localTransform;  // 初期ポーズのTRS
-	};
-
 	/// @brief モデルリソース
 	struct ModelResource
 	{

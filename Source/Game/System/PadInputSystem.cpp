@@ -182,7 +182,7 @@ bool PadInputSystem::IsOnLeft(
     const GamePadInputStick _stick)
 {
 	const float CURRENT_X = _stick == GamePadInputStick::Left ? current.leftStickX : current.rightStickX;
-	return CURRENT_X < deadZoneStick;
+	return CURRENT_X < -deadZoneStick;
 }
 
 bool PadInputSystem::IsOnUp(
@@ -196,7 +196,28 @@ bool PadInputSystem::IsOnDown(
     const GamePadInputStick _stick)
 {
 	const float CURRENT_Y = _stick == GamePadInputStick::Left ? current.leftStickY : current.rightStickY;
-	return CURRENT_Y < deadZoneStick;
+	return CURRENT_Y < -deadZoneStick;
+}
+
+bool PadInputSystem::IsOn(
+    const GamePadInputStick _stick,
+    const InputDirectionType _directionType)
+{
+	switch (_directionType)
+	{
+	case InputDirectionType_Up:
+		return IsOnUp(_stick);
+	case InputDirectionType_Down:
+		return IsOnDown(_stick);
+	case InputDirectionType_Left:
+		return IsOnLeft(_stick);
+	case InputDirectionType_Right:
+		return IsOnRight(_stick);
+	case InputDirectionType_Max:
+	default:
+		break;
+	}
+	return false;
 }
 
 Vec2 PadInputSystem::GetLeftStickXY() const

@@ -91,6 +91,10 @@ void ItemActionWeapons::Action(
 	if (_itemId == ITEM_ID_AXE || _itemId == ITEM_ID_HAMMER)
 	{
 		Get<AudioManager>().Play(_playerData.swingMissSE);
+		Get<EntitySystem>().Spawn(
+		    ITEM_ID_PLAYER_ATTACK_OTHER,
+		    _playerData.transform.position + (_playerData.transform.Forward() * (ACTION_RANGE * 0.5f)),
+		    _playerData.transform.Forward() * 1.0f);
 	}
 
 	Vec3 positionFrom = _playerData.transform.position + Vec3::Up() * 1.0f;

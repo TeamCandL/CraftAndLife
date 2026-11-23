@@ -1,6 +1,7 @@
 #pragma once
 #include <Game/Game.h>
 #include <GameInput.h>
+#include "InputSystem/InputDirectionType.h"
 
 /// @brief ゲームパッド入力のボタンとしてのトリガー部分
 enum struct GamePadInputTriggerButton
@@ -117,6 +118,12 @@ struct PadInputSystem : SystemObjectBase<PadInputSystem, PadInputSystemData>
 	/// @param _stick スティック
 	/// @return 入力があった true / false
 	bool IsOnDown(const GamePadInputStick _stick);
+
+	/// @brief スティックの指定方向への入力があるか
+	/// @param _stick スティック
+	/// @param _directionType 方向
+	/// @return 入力がある true / false
+	bool IsOn(const GamePadInputStick _stick, const InputDirectionType _directionType);
 
 	/// @brief 左スティックの入力を取得
 	/// @return 入力Vec2
