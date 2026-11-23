@@ -51,12 +51,12 @@ void PlayNetworkController::Start()
 
 void PlayNetworkController::Update()
 {
-	// static int testing{};
-	// testing++;
-	// if (testing % 6 != 0)
-	// {
-	//	return;
-	// }
+	static int testing{};
+	testing++;
+	if (testing % 6 != 0)
+	{
+		return;
+	}
 
 	NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
 
