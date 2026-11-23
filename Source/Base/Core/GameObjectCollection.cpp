@@ -2,12 +2,13 @@
 #include "NullObjectSystem.h"
 #include "SystemRegistry.h"
 #include "ComponentPool/ComponentPools.h"
+#include <AllSystem.h>
 
 cha::GameObjectCollection::GameObjectCollection() :
     // NOTE: 外システムの登録が終わったコンストラクタタイミングで取得
     //     : index == システム数 - 1
     //     : NullObjectSystemを含め +1 で総数
-    SYSTEM_COUNT_{ static_cast<size_t>(SystemRegistry::GetSystemIndex<NullObjectSystem>() + 1) },
+    SYSTEM_COUNT_{ AllSystems::COUNT /*static_cast<size_t>(SystemRegistry::GetSystemIndex<NullObjectSystem>() + 1) */ },
     pComponentPools_{ std::make_unique<ComponentPools>() }
 {
 	// 各システム分開けておく
