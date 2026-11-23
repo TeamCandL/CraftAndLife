@@ -765,6 +765,7 @@ pre-commit install</Command>
     </ClInclude>
     <ClInclude Include="Source\Game\Component\EffectPlayer\EffectPlayer.h" />
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
+    <ClInclude Include="Source\Game\Component\UI\UIImageCircle.h" />
     <ClInclude Include="Source\Game\Component\UI\UIWorldBinder.h" />
     <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
@@ -1048,6 +1049,7 @@ pre-commit install</Command>
     <None Include="Resource\Shader\Material\TerrainMaterial.hlsli" />
     <None Include="Resource\Shader\Material\TimeMaterial.hlsli" />
     <None Include="Resource\Shader\Material\UICircleImageMaterial.hlsli" />
+    <None Include="Resource\Shader\Material\UIImageCircleMaterial.hlsli" />
     <None Include="Resource\Shader\ModelTransform.hlsli" />
     <None Include="Resource\Shader\ShadowMapTexture.hlsli" />
     <None Include="Resource\Shader\Transform.hlsli" />
@@ -1088,6 +1090,7 @@ pre-commit install</Command>
     <FxCompile Include="Resource\Shader\ToonEdge.hlsl" />
     <FxCompile Include="Resource\Shader\UI.hlsl" />
     <FxCompile Include="Resource\Shader\UICircleImage.hlsl" />
+    <FxCompile Include="Resource\Shader\UIImageCircle.hlsl" />
     <FxCompile Include="Resource\Shader\Unlit.hlsl" />
     <FxCompile Include="Resource\Shader\UnlitFbx.hlsl" />
   </ItemGroup>

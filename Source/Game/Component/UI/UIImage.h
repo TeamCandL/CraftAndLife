@@ -13,6 +13,7 @@ struct UIImage : ComponentBase<UIImage>
 	{
 	}
 	~UIImage() = default;
-	Resource<ResourceType::Texture> texture{};  // テクスチャ
-	Color baseColor{};                          // ベースの色
+
+	Resource<ResourceType::Texture> texture{};  ///< テクスチャ
+	Color baseColor{};                          ///< ベースの色
 };
