@@ -16,9 +16,10 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
-
-#define _CRT_SECURE_NO_WARNINGS
-#include<fast-cpp-csv-parser/csv.h>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <stdexcept>
 
 // ============================================================
 // マップ内部設定
@@ -183,7 +184,6 @@ namespace
 
 		return DISTANCE <= EXCLUSION_RADIUS;
 	}
-
 
 	// ============================================================
 	// CSVから読み込んだ配置座標が使用可能か判定する
@@ -531,9 +531,9 @@ void MapData::Generate()
 // MapData：指定位置の地形の高さを取得する
 // ============================================================
 
-
-
-float MapData::GetHeight(float x,float z) const
+float MapData::GetHeight(
+    float x,
+    float z) const
 {
 	// =========================================================
 	// 1. 地形データの確認
@@ -604,8 +604,6 @@ float MapData::GetHeight(float x,float z) const
 	// 三角形2：H10、H11、H01
 	return H10 * (GRID_RATIO_MAX - FZ) + H11 * (FX + FZ - TRIANGLE_SPLIT_RATIO) + H01 * (GRID_RATIO_MAX - FX);
 }
-
-
 
 // ============================================================
 // MapData：指定位置が道か判定する
@@ -699,89 +697,154 @@ void MAP::Start()
 	Reload();
 
 	// --------------------------------------------------------
-	// 木・岩の配置データ
-	// Y座標は配置時に地形の高さから取得します。
+	// 200x200のCSVからオブジェクトを配置する
+	// 0:なし 1:Tree 2:TreeHigh 3:Rock
+	// 4:Mushroom 5:Wood 6:Stone
 	// --------------------------------------------------------
+	LoadMapPlacementCSV();
+}
 
-	struct HarvestablePlacement
-	{
-		HarvestableType type;
-		float x;
-		float z;
-		float scale;
-	};
-	
-	struct HarvestableEntity
-	{
-		ItemId itemId;
-		float x;
-		float z;
-	};
-	
+// ============================================================
+// MAP：200x200の配置CSVを読み込む
+// ============================================================
 
-	io::CSVReader<4> in("Harvestable.csv");
-	in.read_header(io::ignore_extra_column, "Type", "X", "Z", "Y");
-	std::string type{};
-	float x{}, y{}, z{};
-	while (in.read_row(type, x, z, y))
+void MAP::LoadMapPlacementCSV()
+{
+	constexpr const char* CSV_FILE_NAME = "MapPlacement.csv";
+
+	std::ifstream file(CSV_FILE_NAME);
+
+	if (!file.is_open())
 	{
-		// 配置禁止場所なら読み飛ばす
-		if (!IsValidPlacementPosition(x, z))
+		// CSVが開けない場合は配置せずに終了する
+		return;
+	}
+
+	const float HALF_WIDTH = static_cast<float>(MapConfig::MAP_WIDTH) * MapConfig::TILE_SIZE * 0.5f;
+
+	const float HALF_DEPTH = static_cast<float>(MapConfig::MAP_DEPTH) * MapConfig::TILE_SIZE * 0.5f;
+
+	std::string line{};
+	int32_t gridZ = 0;
+
+	while (std::getline(file, line))
+	{
+		if (gridZ >= MapConfig::MAP_DEPTH)
+		{
+			break;
+		}
+
+		// 空行はマス目の行として数えない
+		if (line.empty())
 		{
 			continue;
 		}
 
-		const float GROUND_HEIGHT = GetHeight(x, z);
+		std::stringstream lineStream(line);
+		std::string cell{};
+		std::vector<int32_t> rowValues{};
 
-		if (type == "Tree")
-		{
-			Get<HarvestableController>(objHarvestableController)
-			    .AddHarvestable(HarvestableType::Tree, Vec3(x, GROUND_HEIGHT, z), 5.0f);
-		}
-		else if (type == "TreeHigh")
-		{
-			Get<HarvestableController>(objHarvestableController)
-			    .AddHarvestable(HarvestableType::TreeHigh, Vec3(x, GROUND_HEIGHT, z), 5.2f);
-		}
-		else if (type == "Rock")
-		{
-			Get<HarvestableController>(objHarvestableController)
-			    .AddHarvestable(HarvestableType::Rock, Vec3(x, GROUND_HEIGHT, z), 3.0f);
-		}
-		else if (type == "Mushroom")
-		{
-			Get<HarvestableController>(objHarvestableController)
-			    .AddHarvestable(HarvestableType::Mushroom, Vec3(x, GROUND_HEIGHT, z), 0.5f);
-		}
-		
+		bool isValidRow = true;
 
-		
-		
+		while (std::getline(lineStream, cell, ','))
+		{
+			try
+			{
+				size_t parsedLength = 0;
+				const int32_t value = std::stoi(cell, &parsedLength);
+
+				// 数字以外が混ざっているセルは無効
+				if (parsedLength != cell.size() || value < 0 || value > 6)
+				{
+					isValidRow = false;
+					break;
+				}
+
+				rowValues.push_back(value);
+			}
+			catch (const std::exception&)
+			{
+				isValidRow = false;
+				break;
+			}
+		}
+
+		// 1行が200列でなければ、その行は配置しない
+		if (!isValidRow || rowValues.size() != static_cast<size_t>(MapConfig::MAP_WIDTH))
+		{
+			++gridZ;
+			continue;
+		}
+
+		for (int32_t gridX = 0; gridX < MapConfig::MAP_WIDTH; ++gridX)
+		{
+			const int32_t type = rowValues[static_cast<size_t>(gridX)];
+
+			// 0は何も配置しない
+			if (type == 0)
+			{
+				continue;
+			}
+
+			// 各マスの中央を配置座標にする
+			const float worldX = -HALF_WIDTH + (static_cast<float>(gridX) + 0.5f) * MapConfig::TILE_SIZE;
+
+			const float worldZ = -HALF_DEPTH + (static_cast<float>(gridZ) + 0.5f) * MapConfig::TILE_SIZE;
+
+			// マップ端・渦巻き丘・スタート・ゴール・川・道を除外
+			if (!IsValidPlacementPosition(worldX, worldZ))
+			{
+				continue;
+			}
+
+			PlaceMapObject(type, worldX, worldZ);
+		}
+
+		++gridZ;
 	}
-	io::CSVReader<4> In("HarvestableEntity.csv");
-	In.read_header(io::ignore_extra_column, "Type", "X", "Z", "Y");
-	std::string Type{};
-	float X{}, Y{}, Z{};
-	while (In.read_row(Type, X, Z, Y))
+}
+
+// ============================================================
+// MAP：数字に対応したオブジェクトを配置する
+// ============================================================
+
+void MAP::PlaceMapObject(
+    int32_t type,
+    float x,
+    float z)
+{
+	const float groundHeight = GetHeight(x, z);
+	const Vec3 position{ x, groundHeight, z };
+
+	switch (type)
 	{
-		if (Type == "Wood")
-		{
-			Get<EntitySystem>().Spawn(8, Vec3(X, GetHeight(X, Z), Z), Vec3());
-		}
-		else if (Type == "Stone")
-		{
-			Get<EntitySystem>().Spawn(7, Vec3(X, GetHeight(X, Z), Z), Vec3());
-		}
+	case 1:  // Tree
+		Get<HarvestableController>(objHarvestableController).AddHarvestable(HarvestableType::Tree, position, 5.0f);
+		break;
+
+	case 2:  // TreeHigh
+		Get<HarvestableController>(objHarvestableController).AddHarvestable(HarvestableType::TreeHigh, position, 5.2f);
+		break;
+
+	case 3:  // Rock
+		Get<HarvestableController>(objHarvestableController).AddHarvestable(HarvestableType::Rock, position, 3.0f);
+		break;
+
+	case 4:  // Mushroom
+		Get<HarvestableController>(objHarvestableController).AddHarvestable(HarvestableType::Mushroom, position, 0.5f);
+		break;
+
+	case 5:  // Wood（地面アイテム）
+		Get<EntitySystem>().Spawn(8, position, Vec3());
+		break;
+
+	case 6:  // Stone（地面アイテム）
+		Get<EntitySystem>().Spawn(7, position, Vec3());
+		break;
+
+	default:
+		break;
 	}
-
-
-	
-
-	// 実際のスタート・ゴール座標
-	const Vec3 START_POSITION{ -88.0f, 1.830f, -92.3f };
-	const Vec3 GOAL_POSITION{ 53.21f, 16.0f, 68.91f };
-
-	
 }
 
 // ============================================================
@@ -1010,7 +1073,9 @@ Vec3 MAP::GetNormal(
 
 Vec3 MAP::GetSize()
 {
-	return Vec3{ static_cast<float>(MapConfig::MAP_WIDTH), MapConfig::MAX_HEIGHT, static_cast<float>(MapConfig::MAP_DEPTH) };
+	return Vec3{ static_cast<float>(MapConfig::MAP_WIDTH),
+		         MapConfig::MAX_HEIGHT,
+		         static_cast<float>(MapConfig::MAP_DEPTH) };
 }
 
 Vec3 MAP::GetMinPosition()
