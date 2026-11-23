@@ -105,7 +105,7 @@ InputSystem& AbstructInputSystem::GetInputSystem()
 
 void AbstructInputSystem::ResetInput()
 {
-#if _DEBUG
+#if _DEBUG or 1
 	SetPlayerInput<NormalPlayerInput>();
 	SetUIInput<NormalUIInput>();
 #else

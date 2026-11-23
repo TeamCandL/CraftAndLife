@@ -137,6 +137,7 @@ class SessionManager : public IManager
 	const InSessionStatus::EnemyStatus& RefEnemyStatus(
 	    int _enemyId) const
 	{
+		VCU_LOG("SessionManager EnemyStatus enemyId: ID={}", _enemyId);
 		return inSessionStatus_.enemiesStatus.at(_enemyId);
 	}
 

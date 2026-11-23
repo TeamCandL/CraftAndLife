@@ -10,10 +10,20 @@ void OtherEnemyHpBar::Update()
 	// 敵から最新のHPと座標を同期
 	if (!ownerEnemy.IsEmpty())
 	{
-		OtherEnemy& enemy                          = Get<OtherEnemy>(ownerEnemy);
-		SessionManager& sessionManager             = Get<SessionManager>();
-		const InSessionStatus::EnemyStatus& status = sessionManager.RefEnemyStatus(enemy.Data().enemyId);
+		OtherEnemy& enemy              = Get<OtherEnemy>(ownerEnemy);
+		SessionManager& sessionManager = Get<SessionManager>();
 		SessionStateReader reader(sessionManager);
+
+		const int32_t enemyId = enemy.Data().enemyId;
+
+		// セッション上に敵が存在するか確認
+		if (!sessionManager.IsExistEnemy(enemyId))
+		{
+			VCU_LOG("HPバー：敵が存在しません ID={}", enemyId);
+			return;
+		}
+
+		const InSessionStatus::EnemyStatus& status = sessionManager.RefEnemyStatus(enemy.Data().enemyId);
 
 		StateTarget target = StateTarget::Enemy(enemy.Data().enemyId);
 		int32_t _hp        = 0;

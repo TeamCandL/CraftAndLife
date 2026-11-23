@@ -8,7 +8,7 @@ struct NullComponent
 cha::ComponentPools::ComponentPools()
 {
 	// NullComponentを一番最後に登録することで+1=全コンポーネント数が求まる
-	const size_t INDEX{ ComponentRegistry::GetComponentIndex<NullComponent>() };
+	const size_t INDEX{ static_cast<size_t>(ComponentRegistry::GetComponentIndex<NullComponent>()) };
 	pool_.resize(INDEX + 1);
 }
 
