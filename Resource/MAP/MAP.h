@@ -197,4 +197,7 @@ struct MAP : ObjectBase<MapData>, ITerrain
 	/// @brief 最大地点のワールド座標を取得する
 	/// @return 最大地点のワールド座標
 	Vec3 GetMaxPosition() override;
+
+	void LoadMapPlacementCSV();
+	void PlaceMapObject(int32_t type, float x, float z);
 };
