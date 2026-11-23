@@ -9,9 +9,9 @@
 void LobbyScene::Start()
 {
 	Instantiate<GameManager>();
-	Instantiate<LobbyPlayerRoleSelectButton>();
 	Instantiate<LobbyReadyButton>();
-	Instantiate<LobbyUI>();
+	GameObject objRoleSelectButton = Instantiate<LobbyPlayerRoleSelectButton>();
+	Instantiate<LobbyUI>(objRoleSelectButton);
 	// GameObject objMemberList = Instantiate<MemberList>();
 	Instantiate<LobbyNetworkController>();  //(objMemberList);
 }

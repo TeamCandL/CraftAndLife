@@ -1,8 +1,17 @@
 #pragma once
 #include <Game/Game.h>
 #include <array>
+
 struct LobbyUIData
 {
+	LobbyUIData(
+	    GameObject _objRoleSelectButton) :
+	    objRoleSelectButton{ _objRoleSelectButton }
+	{
+	}
+
+	GameObject objRoleSelectButton{};
+
 	GameObject lobbyLabelText{};
 	GameObject teamNameLabelText{};
 	GameObject teamNameText{};

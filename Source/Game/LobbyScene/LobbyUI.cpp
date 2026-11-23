@@ -5,6 +5,8 @@
 #include <fstream>
 #include <Game/Manager/SessionManager.h>
 #include <Game/PlayScene/Player/PlayerJobType.h>
+#include "LobbyPlayerRoleSelectButton.h"
+
 namespace
 {
 
@@ -105,6 +107,8 @@ void LobbyUI::Update()
 	auto status                                 = Get<SessionManager>().RefStatus();
 	const std::vector<std::string>& memberNames = status.memberNames;
 	constexpr float fontSize{ PLAYER_PARAMETER_FONT_SIZE };
+	LobbyPlayerRoleSelectButton& roleSelectButton = Get<LobbyPlayerRoleSelectButton>(Data().objRoleSelectButton);
+	int currentRoleId                             = roleSelectButton.GetCurrentRoleId();
 	for (int i = 0; i < memberNames.size(); i++)
 	{
 		// プレイヤー名
@@ -119,7 +123,15 @@ void LobbyUI::Update()
 		Get<TextObject>(playerLists[i].jobLabelText).SetContent("ジョブ");
 
 		// ジョブ名
-		Get<TextObject>(playerLists[i].jobNameText).SetContent(GetJobName(status.memberRoles[i]));
+		if (memberNames[i] == status.name && roleSelectButton.IsInitialized())
+		{
+			Get<TextObject>(playerLists[i].jobNameText)
+			    .SetContent(GetJobName(static_cast<PlayerJobType>(currentRoleId)));
+		}
+		else
+		{
+			Get<TextObject>(playerLists[i].jobNameText).SetContent(GetJobName(status.memberRoles[i]));
+		}
 	}
 	// ルーム名
 	Get<TextObject>(teamNameText).SetContent(status.joinRoomName);

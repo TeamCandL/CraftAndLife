@@ -5,6 +5,8 @@
 struct LobbyPlayerRoleSelectButtonData
 {
 	int currentRoleId{};
+	bool isRoleChange{ false };
+	bool isInitialized{ false };
 };
 
 /// @brief プレイヤーのロールセレクトボタン
@@ -14,4 +16,14 @@ struct LobbyPlayerRoleSelectButton : ObjectBase<LobbyPlayerRoleSelectButtonData>
 	void Start() override;
 	/// @brief 更新処理
 	void Update() override;
+
+	int GetCurrentRoleId() const
+	{
+		return currentRoleId;
+	}
+
+	bool IsInitialized() const
+	{
+		return isInitialized;
+	}
 };
