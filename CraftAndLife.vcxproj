@@ -471,6 +471,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyAttackColl.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyHpBar.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\EnemyHpBarBackGround.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
     <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.cpp" />
@@ -481,6 +482,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionWeapons.cpp" />
     <ClCompile Include="Source\Game\PlayScene\NPC\NPCRobo.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherEnemyHpBar.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\OtherEnemyHpBarBg.cpp" />
     <ClCompile Include="Source\Game\PlayScene\OtherPlayerHand.cpp" />
     <ClCompile Include="Source\Game\PlayScene\StateRegistry.cpp" />
     <ClCompile Include="Source\Game\PlayScene\Entity.cpp" />
@@ -796,6 +798,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\DebugPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyAiCheckPoint.h" />
     <ClInclude Include="Source\Game\PlayScene\EnemyHpBar.h" />
+    <ClInclude Include="Source\Game\PlayScene\EnemyHpBarBackGround.h" />
     <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestBox.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
@@ -814,6 +817,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferencePlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\NPCRobo.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBar.h" />
+    <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBarBg.h" />
     <ClInclude Include="Source\Game\PlayScene\Tutorial\ITutorialObserver.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherPlayerHand.h" />
     <ClInclude Include="Source\Game\PlayScene\PlayerRespawnedNetworkData.h" />
