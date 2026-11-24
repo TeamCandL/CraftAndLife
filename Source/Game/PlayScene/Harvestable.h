@@ -46,6 +46,8 @@ struct HarvestableData
 	// モデル描画用シェーダー
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
 
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
+
 	// ワールド座標・回転・大きさ
 	Component<Transform> transform{};
 
@@ -86,6 +88,7 @@ struct Harvestable : ObjectBase<HarvestableData>
 	void Start() override;
 	void Update() override;
 	void Draw() override;
+	void DrawShadowMap() override;
 
 	/// @brief 耐久値を減らす
 	void TakeDamage(int32_t damage);

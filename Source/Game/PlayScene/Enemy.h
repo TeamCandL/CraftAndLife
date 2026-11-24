@@ -224,6 +224,7 @@ struct EnemyData
 		Resource<Model>{ "Model/Enemy/Spider.fbx" },   Resource<Model>{ "Model/Enemy/Bat.fbx" },
 		Resource<Model>{ "Model/Enemy/Dragon.fbx" },
 	};
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
 	int32_t modelIndex{};
 
 	Component<Transform> transform{ Vec3{},
@@ -311,6 +312,8 @@ struct Enemy : ObjectBase<EnemyData>
 
 	/// @brief 描画処理
 	void Draw() override;
+
+	void DrawShadowMap() override;
 
 	void OnDestroy() override;
 

@@ -25,6 +25,7 @@ struct PlayerData
 	Resource<Shader> shaderFront{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
 	Resource<Shader> shaderBack{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
 	Resource<Shader> shader{ "Shader/UnlitFbx.hlsl" };
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
 
 	std::array<Resource<ModelFbx>, PlayerJobType_Max> models{
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
@@ -179,6 +180,8 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	/// @brief 描画処理
 	void Draw() override;
+
+	void DrawShadowMap() override;
 
 	void AttackCollider();
 

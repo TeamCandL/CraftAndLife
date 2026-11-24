@@ -19,6 +19,7 @@ struct OtherPlayerHandData
 	ItemId haveItemId{};               ///< 持っているアイテムのId
 
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };  ///< シェーダ
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
 };
 
 /// @brief 他プレイヤーの手
@@ -32,4 +33,5 @@ struct OtherPlayerHand : ObjectBase<OtherPlayerHandData>
 	void Update() override;
 	/// @brief 描画処理
 	void Draw() override;
+	void DrawShadowMap() override;
 };
