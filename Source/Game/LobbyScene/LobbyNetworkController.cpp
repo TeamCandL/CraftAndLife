@@ -7,6 +7,7 @@
 #include <Game/Network/NetworkSessionManager.h>
 #include <Game/Network/Protocols/LobbyMembers.h>
 #include <Game/Network/Protocols/StartedGame.h>
+#include <Game/Network/Protocols/UpdatedPlayerRole.h>
 
 using enum NetworkSessionManager::State;
 
@@ -48,6 +49,14 @@ void LobbyNetworkController::Update()
 				    // メンバーリスト更新されたよ！！
 				    // Get<MemberList>(objMemberList).UpdateMemberList();
 
+				    break;
+			    }
+			    case ProtocolType::UpdatedPlayerRole:
+			    {
+				    Protocol::UpdatedPlayerRole protocol{};
+				    converter.ToMessage(_event.data, protocol);
+				    VCU_LOG("プレイヤーの役職変更受信: ID={},roleID={}", protocol.playerId, protocol.roleId);
+				    Get<SessionManager>().SetPlayerRole(protocol.playerId, protocol.roleId);
 				    break;
 			    }
 			    case ProtocolType::StartedGame:

@@ -1,6 +1,8 @@
 #include "pch\pch.h"
 #include "LobbyPlayerRoleSelectButton.h"
 #include <Game/PlayScene/Player/PlayerJobType.h>
+#include <Game/Network/NetworkSessionManager.h>
+#include <Game/Network/Protocols/UpdatePlayerRole.h>
 
 #include <Game/Manager/SessionManager.h>
 
@@ -56,8 +58,10 @@ void LobbyPlayerRoleSelectButton::Update()
 
 	if (isRoleChange)
 	{
-		// ここで役職変更プロトコルを送信。まだ未実装
-
+		// ここで役職変更プロトコルを送信
+		NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
+		Protocol::UpdatePlayerRole message;
+		networkSessionManager.Send(message);
 		VCU_LOG("役職変更送信: RoleID={}", currentRoleId);
 
 		isRoleChange = false;

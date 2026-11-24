@@ -773,11 +773,13 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedDayTime.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemies.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedEnemyStates.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatedPlayerRole.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdatedPlayerStates.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemy.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEntityRemove.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEntitySpawn.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemyDamage.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\UpdatePlayerRole.h" />
     <ClInclude Include="Source\Game\PlayScene\ClearFade.h" />
     <ClInclude Include="Source\Game\PlayScene\ClearSceneTrigger.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />

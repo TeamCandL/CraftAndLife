@@ -7,6 +7,8 @@ enum struct ProtocolType : uint8_t
 	JoinOK,        ///< 部屋の参加ok (プレイヤー名)
 	JoinNG,
 	LobbyMembers,         ///< ロビー内メンバー一覧
+	UpdatePlayerRole,     ///< ロビー内でプレイヤーの役職が変更されたとき情報更新
+	UpdatedPlayerRole,    ///< サーバで更新された役職をほかのプレイヤーに通知
 	ReadySelf,            ///< ロビー内で準備ok
 	StartGame,            ///< ゲーム開始
 	StartedGame,          ///< ゲームが開始された
