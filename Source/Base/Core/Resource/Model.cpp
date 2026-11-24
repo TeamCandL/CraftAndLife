@@ -707,7 +707,7 @@ void cha::ModelResource::UpdateAnim(
 
 	if (duration > 0.0f)
 	{
-		evalTime += std::fmodf(currentAnimTime, duration);
+		evalTime += std::fmodf(static_cast<float>(currentAnimTime), duration);
 	}
 
 	// 指定時間に置けるアニメーション状態をサンプリング

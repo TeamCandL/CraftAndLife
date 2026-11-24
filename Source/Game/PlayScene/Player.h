@@ -22,11 +22,11 @@ struct PlayerData
 	{
 	}
 
-	Resource<Shader> shaderFront{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
-	Resource<Shader> shaderBack{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
-	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
+	Resource<Shader> shaderFront{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
+	Resource<Shader> shaderBack{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
+	Resource<Shader> shader{ "Shader/UnlitFbx.hlsl" };
 
-	std::array<Resource<Model>, PlayerJobType_Max> models{
+	std::array<Resource<ModelFbx>, PlayerJobType_Max> models{
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",    // Tank
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",    // Fighter
@@ -112,6 +112,9 @@ struct PlayerData
 	// 蘇生されたときのSE
 	Resource<Audio> resuscitationSE{ "BGM_SE/Resuscitation.mp3" };
 
+	// 回復SE
+	Resource<Audio> healSE{ "BGM_SE/Heal.mp3" };
+
 	// 死亡時のSE
 	Resource<Audio> deathSE{ "BGM_SE/Death.mp3" };
 
@@ -157,6 +160,10 @@ struct PlayerData
 	float radius{ 0.5f };  ///< プレイヤーの半径
 
 	bool isInvincible{ false };  ///< デバッグ用。無敵状態か否か
+
+	bool hasReviveChance{ true };  ///< 1回死んでも生き返られるchanceを持っているか treu / false
+
+	const ItemId ITEM_ID_MEDICAL_KIT{ 18 };  ///< 医療キッドのアイテムId
 };
 
 /// @brief プレイヤー

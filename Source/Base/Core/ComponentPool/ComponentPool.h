@@ -33,13 +33,11 @@ namespace cha
 		inline ComponentT& At(
 		    const size_t _registryIndex)
 		{
-			// 指定コンポーネントまで nullptrで埋める
-			while (pool_.size() <= _registryIndex)
+			if (_registryIndex >= pool_.size() || pool_[_registryIndex] == nullptr)
 			{
-				pool_.push_back(nullptr);
+				throw std::out_of_range("ComponentPool does not contain the requested component.");
 			}
 
-			VCU_ASSERT(pool_[_registryIndex] && "指定コンポーネントのポインタを持っていない");
 			return *pool_[_registryIndex];
 		}
 
@@ -48,6 +46,11 @@ namespace cha
 		inline void SwapToBack(
 		    const size_t _registryIndex) override
 		{
+			if (_registryIndex >= pool_.size() || pool_.empty())
+			{
+				return;
+			}
+
 			std::swap(pool_[_registryIndex], pool_.back());
 		}
 

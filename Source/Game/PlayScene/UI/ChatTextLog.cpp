@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "ChatTextLog.h"
 #include "ChatTextLogBack.h"
+#include <Game/Manager/AudioManager.h>
 
 void ChatTextLog::Start()
 {
@@ -10,6 +11,7 @@ void ChatTextLog::Start()
 void ChatTextLog::Update()
 {
 	const float DELTA_TIME{ Get<DeltaTime>() };
+
 	for (auto& [timeLeft, content] : logs)
 	{
 		timeLeft -= DELTA_TIME;
@@ -23,6 +25,7 @@ void ChatTextLog::Update()
 	    });
 
 	text.content = "";
+
 	for (auto& [timeLeft, content] : logs)
 	{
 		text.content += std::format("{} \n", content);
@@ -32,7 +35,14 @@ void ChatTextLog::Update()
 }
 
 void ChatTextLog::AddLog(
-    const std::string& _content)
+    const std::string& _content,
+    bool _playNotice)
 {
 	logs.emplace_back(SHOW_TIME, _content);
+
+	// 通知音を鳴らす場合のみ再生
+	if (_playNotice)
+	{
+		Get<AudioManager>().Play(noticeSE);
+	}
 }

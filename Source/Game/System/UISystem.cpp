@@ -6,6 +6,7 @@
 #include "../Component/UI/UIImage.h"
 #include "../Component/UI/UIText.h"
 #include "../Component/UI/UIRaycastTarget.h"
+#include "../Component/UI/UIWorldBinder.h"
 #include "UISystem/SpriteRendererMaterial.h"
 
 void UISystem::Start()
@@ -86,9 +87,87 @@ void UISystem::Start()
 
 void UISystem::Update()
 {
+	UpdateBindWorld();
 	UpdateText();
 	UpdateRenderer();
 	UpdateRaycast();
+}
+
+void UISystem::UpdateBindWorld()
+{
+	auto view = GetView<UITransform, Transform, UIWorldBinder>();
+
+	// スクリーンのサイズ
+	const Vec2 SCREEN_SIZE              = Get<ScreenSize>();
+	const CameraSystemData& CAMERA_DATA = Get<CameraSystem>().Data();
+
+	// ビュー行列の逆行列からカメラ位置を取得
+	const DirectX::XMMATRIX INVERSE_VIEW = DirectX::XMMatrixInverse(nullptr, CAMERA_DATA.viewMatrix);
+
+	const DirectX::XMVECTOR CAMERA_POSITION = INVERSE_VIEW.r[3];
+
+	view.ForEach(
+	    [SCREEN_SIZE, &CAMERA_DATA, CAMERA_POSITION](
+	        IObject& _object,
+	        UITransform& _uiTransform,
+	        Transform& _transform,
+	        UIWorldBinder& _uiWorldBinder)
+	    {
+		    if (_uiWorldBinder.baseScale.x * _uiWorldBinder.baseScale.y <= FLT_EPSILON)
+		    {
+			    // xy どちらかが0ならスケールを保存しておく
+			    _uiWorldBinder.baseScale    = _uiTransform.scale;
+			    _uiWorldBinder.basePosition = _uiTransform.position;
+		    }
+
+		    // ワールド座標
+		    const Vec3 WORLD_POSITION = _transform.WorldPosition();
+
+		    // 3D座標を2D座標に変換
+		    const Vec3 SCREEN_POSITION = DirectX::XMVector3Project(
+		        WORLD_POSITION,
+		        0.0f,
+		        0.0f,
+		        SCREEN_SIZE.x,
+		        SCREEN_SIZE.y,
+		        0.0f,
+		        1.0f,
+		        CAMERA_DATA.projectionMatrix,
+		        CAMERA_DATA.viewMatrix,
+		        DirectX::XMMatrixIdentity());
+
+		    // カメラの後ろにいる場合は表示しない
+		    if (SCREEN_POSITION.z < 0.0f || 1.0f < SCREEN_POSITION.z)
+		    {
+			    _uiTransform.scale = Vec2::Zero();
+			    return;
+		    }
+
+		    // ワールド座標をXMVECTORに変換
+		    const DirectX::XMVECTOR WORLD_POS =
+		        DirectX::XMVectorSet(WORLD_POSITION.x, WORLD_POSITION.y, WORLD_POSITION.z, 1.0f);
+
+		    // カメラからワールド座標までの距離
+		    const float DISTANCE =
+		        DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(WORLD_POS, CAMERA_POSITION)));
+
+		    // サイズ倍率
+		    float SCALE_RATE = 1.0f;
+
+		    // 固定距離を超えた場合のみ縮小
+		    if (_uiWorldBinder.fixedScaleDistance > FLT_EPSILON && DISTANCE > _uiWorldBinder.fixedScaleDistance)
+		    {
+			    SCALE_RATE = _uiWorldBinder.fixedScaleDistance / DISTANCE;
+		    }
+
+		    // UIスケールを確定
+		    // 幅優先で倍率を決め、高さも同じ倍率にする
+		    _uiTransform.scale = _uiWorldBinder.baseScale * SCALE_RATE;
+
+		    // UI位置を確定
+		    // basePositionも倍率を掛け、ワールド座標を中心に縮小する
+		    _uiTransform.position = Vec2{ SCREEN_POSITION } + _uiWorldBinder.basePosition * SCALE_RATE;
+	    });
 }
 
 void UISystem::UpdateRenderer()

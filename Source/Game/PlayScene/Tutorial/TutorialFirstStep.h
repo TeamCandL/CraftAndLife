@@ -23,8 +23,15 @@ struct TutorialFirstStepData
 
 	GameObject objPlaySceneUIController{};
 
-	Vec3 previousPlayerPosition{};
-	Vec2 previousCameraAngles{};
+	Vec3 previousPlayerPosition{};                              ///< 前回のプレイヤーの座標
+	Vec3 totalPlayerMove{};                                     ///< 総プレイヤーの移動量
+	const float COMPLITE_BODY_MOVE_DISTANCE_THRESHOLD{ 4.0f };  ///< 移動のチュートリアル完了とする総移動距離
+
+	Vec2 previousCameraAngles{};  ///< 前回のカメラの角度
+	Vec2 totalCameraAngles{};     ///< 総カメラの移動量
+	const float COMPLITE_CAMERA_MOVE_ANGLES_THRESHOLD{
+		DirectX::XM_PI
+	};  ///< カメラのチュートリアル完了とする総移動角度
 
 	const ItemId ITEM_ID_BACKPACK{ 19 };  ///< バックパックのアイテムId
 };

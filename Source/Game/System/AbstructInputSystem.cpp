@@ -12,6 +12,16 @@ void AbstructInputSystem::Start()
 
 void AbstructInputSystem::Update()
 {
+	if (pPlayerInput)
+	{
+		pPlayerInput->Update();
+	}
+
+	if (pUIInput)
+	{
+		pUIInput->Update();
+	}
+
 	if (pPlayerInput && pUIInput)
 	{
 		PadInputSystem& padInputSystem = Get<PadInputSystem>();
@@ -95,7 +105,7 @@ InputSystem& AbstructInputSystem::GetInputSystem()
 
 void AbstructInputSystem::ResetInput()
 {
-#if _DEBUG
+#if _DEBUG or 1
 	SetPlayerInput<NormalPlayerInput>();
 	SetUIInput<NormalUIInput>();
 #else

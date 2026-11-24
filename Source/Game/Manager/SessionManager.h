@@ -137,6 +137,7 @@ class SessionManager : public IManager
 	const InSessionStatus::EnemyStatus& RefEnemyStatus(
 	    int _enemyId) const
 	{
+		VCU_LOG("SessionManager EnemyStatus enemyId: ID={}", _enemyId);
 		return inSessionStatus_.enemiesStatus.at(_enemyId);
 	}
 
@@ -146,7 +147,13 @@ class SessionManager : public IManager
 
 	int GetEnemyStateSize()
 	{
-		return inSessionStatus_.enemiesStatus.size();
+		VCU_LOG("登録されている敵の数: {}", inSessionStatus_.enemiesStatus.size());
+
+		for (const auto& [enemyId, status] : inSessionStatus_.enemiesStatus)
+		{
+			VCU_LOG("登録済み敵ID: {}", enemyId);
+		}
+		return static_cast<int>(inSessionStatus_.enemiesStatus.size());
 	}
 
   private:
@@ -170,6 +177,9 @@ inline void SessionManager::ForeachEnemyStatus(
 {
 	for (const auto& [id, status] : inSessionStatus_.enemiesStatus)
 	{
+		if (!status.hasReceivedEnemyInfo)
+			continue;
+
 		_func(id, status);
 	}
 }

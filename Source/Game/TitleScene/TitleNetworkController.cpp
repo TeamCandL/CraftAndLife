@@ -37,6 +37,7 @@ void TitleNetworkController::Update()
 				    message.playerName = Get<SessionManager>().RefStatus().name;
 				    networkSessionManager.SetCurrentState(CheckJoin);
 				    networkSessionManager.Send(message);
+				    networkSessionManager.Flush();
 			    }
 		    });
 		break;

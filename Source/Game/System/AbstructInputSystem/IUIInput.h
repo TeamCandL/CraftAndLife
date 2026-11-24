@@ -29,4 +29,8 @@ class IUIInput : public IInput
 	/// @brief キャンセルされたか
 	/// @return キャンセルされた true / false
 	virtual bool IsChanneled() const = 0;
+
+  public:
+	inline static const float AUTO_INPUT_WAIT_THRESHOLD_SEC{ 0.5f };
+	inline static const float AUTO_INPUT_DISTANCE_SEC{ 0.1f };
 };

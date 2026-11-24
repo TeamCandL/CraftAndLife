@@ -63,23 +63,23 @@ void LobbyUI::Start()
 	/// -------------------
 	{
 		nlohmann::json elementJ = j["player_name_first_element"];
-		playerNameBegin.x       = elementJ.at("x").get<int>();
-		playerNameBegin.y       = elementJ.at("y").get<int>();
+		playerNameBegin.x       = static_cast<float>(elementJ.at("x").get<int>());
+		playerNameBegin.y       = static_cast<float>(elementJ.at("y").get<int>());
 	}
 	{
 		nlohmann::json elementJ = j["player_ready_first_element"];
-		readyTextBegin.x        = elementJ.at("x").get<int>();
-		readyTextBegin.y        = elementJ.at("y").get<int>();
+		readyTextBegin.x        = static_cast<float>(elementJ.at("x").get<int>());
+		readyTextBegin.y        = static_cast<float>(elementJ.at("y").get<int>());
 	}
 	{
 		nlohmann::json elementJ = j["player_job_label_first_element"];
-		jobLabelBegin.x         = elementJ.at("x").get<int>();
-		jobLabelBegin.y         = elementJ.at("y").get<int>();
+		jobLabelBegin.x         = static_cast<float>(elementJ.at("x").get<int>());
+		jobLabelBegin.y         = static_cast<float>(elementJ.at("y").get<int>());
 	}
 	{
 		nlohmann::json elementJ = j["player_job_first_element"];
-		jobNameBegin.x          = elementJ.at("x").get<int>();
-		jobNameBegin.y          = elementJ.at("y").get<int>();
+		jobNameBegin.x          = static_cast<float>(elementJ.at("x").get<int>());
+		jobNameBegin.y          = static_cast<float>(elementJ.at("y").get<int>());
 	}
 	FontLoadConfig config;
 	config.fontSize = PLAYER_PARAMETER_FONT_SIZE;

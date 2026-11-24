@@ -6,6 +6,8 @@
 #include "EnemyController.h"
 #include "OtherEnemyController.h"
 #include "DayController.h"
+#include "UI/MiniMap.h"
+#include "PlaySceneUIController.h"
 
 void NetworkActorServer::Start()
 {
@@ -87,6 +89,11 @@ void NetworkActorServer::Update()
 		if (Data().objOtherEnemyController.IsEmpty())
 		{
 			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>(objPlaySceneUIController);
+
+			// ミニマップにゲスト側の敵管理オブジェクトを渡す
+			PlaySceneUIController& uiController = Get<PlaySceneUIController>(objPlaySceneUIController);
+
+			Get<MiniMap>(uiController.Data().objMiniMap).SetOtherEnemyController(Data().objOtherEnemyController);
 		}
 	}
 }
@@ -138,17 +145,24 @@ void NetworkActorServer::CreateEnemies()
 	{
 		Data().objEnemyController = GetScene().Instantiate<EnemyController>(objPlaySceneUIController);
 
-		// ここで NetworkActorServer を設定する
+		// NetworkActorServerを設定
 		Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
+
+		// ミニマップに敵管理オブジェクトを渡す
+		Get<MiniMap>(Get<PlaySceneUIController>(Data().objPlaySceneUIController).Data().objMiniMap)
+		    .SetEnemyController(Data().objEnemyController);
 	}
 
 	// 敵を生成（同じ種類も複数生成可能）
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
-	CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
-	if (Get<DayController>(objDayController).GetCurrentDay() == 2)
+	if (Get<DayController>(objDayController).GetCurrentDay() == 1)
+	{
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
+		CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
+	}
+	else if (Get<DayController>(objDayController).GetCurrentDay() == 2)
 	{
 		CreateEnemy(EnemyType::Bat, Vec3{ 30.0f, 0.0f, 30.0f });
 		CreateEnemy(EnemyType::Bat, Vec3{ -30.0f, 0.0f, 30.0f });

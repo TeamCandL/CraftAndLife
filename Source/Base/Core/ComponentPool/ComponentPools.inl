@@ -4,12 +4,18 @@
 
 namespace cha
 {
-	template<typename ComponentT>
-	inline void ComponentPools::Register(const size_t _registryIndex, ComponentT* _pComponent)
+	template <typename ComponentT>
+	inline void ComponentPools::Register(
+	    const size_t _registryIndex,
+	    ComponentT* _pComponent)
 	{
-		const uint64_t COMPONENT_INDEX = ComponentRegistry::GetComponentIndex<ComponentT>();
+		const size_t COMPONENT_INDEX{ static_cast<size_t>(ComponentRegistry::GetComponentIndex<ComponentT>()) };
 
-		// 指定コンポーネントのプールが確保されていないなら確保する
+		if (COMPONENT_INDEX >= pool_.size())
+		{
+			pool_.resize(COMPONENT_INDEX + 1);
+		}
+
 		if (!pool_[COMPONENT_INDEX])
 		{
 			pool_[COMPONENT_INDEX] = std::make_shared<ComponentPool<ComponentT>>();
@@ -19,12 +25,18 @@ namespace cha
 
 		spComponentPool->Set(_registryIndex, _pComponent);
 	}
-	template<typename ComponentT>
-	inline ComponentT& ComponentPools::At(const size_t _objectIndex)
-	{
-		const uint64_t COMPONENT_INDEX = ComponentRegistry::GetComponentIndex<ComponentT>();
 
-		// 指定コンポーネントのプールが確保されていないなら確保する
+	template <typename ComponentT>
+	inline ComponentT& ComponentPools::At(
+	    const size_t _objectIndex)
+	{
+		const size_t COMPONENT_INDEX{ static_cast<size_t>(ComponentRegistry::GetComponentIndex<ComponentT>()) };
+
+		if (COMPONENT_INDEX >= pool_.size())
+		{
+			pool_.resize(COMPONENT_INDEX + 1);
+		}
+
 		if (!pool_[COMPONENT_INDEX])
 		{
 			pool_[COMPONENT_INDEX] = std::make_shared<ComponentPool<ComponentT>>();
@@ -34,4 +46,4 @@ namespace cha
 
 		return spComponentPool->At(_objectIndex);
 	}
-}
+}  // namespace cha
