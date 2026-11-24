@@ -16,6 +16,8 @@ class PadOnlyUIInput : public IUIInput
 	bool IsMovedDown() override;
 	bool IsMovedLeft() override;
 	bool IsMovedRight() override;
+	bool IsMovedLeftTab() override;
+	bool IsMovedRightTab() override;
 	bool IsSelected() const override;
 	bool IsChanneled() const override;
 
