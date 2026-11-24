@@ -85,7 +85,7 @@ bool NormalUIInput::IsMovedLeftTab()
 	}
 
 	return abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(
-	           GameInputGamepadButtons::GameInputGamepadRightShoulder) ||
+	           GameInputGamepadButtons::GameInputGamepadLeftShoulder) ||
 	       (abstructInputSystem_.GetInputSystem().GetKeyDown(KeyCode::Tab) &&
 	        abstructInputSystem_.GetInputSystem().GetKey(KeyCode::LeftShift));
 }
