@@ -61,6 +61,7 @@ void LobbyPlayerRoleSelectButton::Update()
 		// ここで役職変更プロトコルを送信
 		NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
 		Protocol::UpdatePlayerRole message;
+		message.roleId = currentRoleId;
 		networkSessionManager.Send(message);
 		VCU_LOG("役職変更送信: RoleID={}", currentRoleId);
 

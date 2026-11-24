@@ -9,7 +9,7 @@
 void WordJoinButton::Start()
 {
 	inputWord       = "hello";
-	inputPlayerName = "なんかランダムで入れたいよねー";
+	inputPlayerName = "a";
 	objButton       = GetScene().Instantiate<UI::Button>(imageFileName, imageFileName, imageFileName, "", begin, scale);
 }
 

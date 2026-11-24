@@ -125,8 +125,7 @@ void LobbyUI::Update()
 		// ジョブ名
 		if (memberNames[i] == status.name && roleSelectButton.IsInitialized())
 		{
-			Get<TextObject>(playerLists[i].jobNameText)
-			    .SetContent(GetJobName(static_cast<PlayerJobType>(currentRoleId)));
+			Get<TextObject>(playerLists[i].jobNameText).SetContent(GetJobName(status.memberRoles[i]));
 		}
 		else
 		{
