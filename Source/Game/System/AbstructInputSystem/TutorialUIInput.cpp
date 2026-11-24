@@ -66,3 +66,27 @@ bool TutorialUIInput::IsChanneled() const
 		return false;
 	}
 }
+
+bool TutorialUIInput::IsMovedLeftTab()
+{
+	switch (tutorialSystem_.GetFocusType())
+	{
+	case TutorialForcusType_SelectBackpack:
+	case TutorialForcusType_None_Max:
+		return __super::IsMovedLeftTab();
+	default:
+		return false;
+	}
+}
+
+bool TutorialUIInput::IsMovedRightTab()
+{
+	switch (tutorialSystem_.GetFocusType())
+	{
+	case TutorialForcusType_SelectBackpack:
+	case TutorialForcusType_None_Max:
+		return __super::IsMovedRightTab();
+	default:
+		return false;
+	}
+}
