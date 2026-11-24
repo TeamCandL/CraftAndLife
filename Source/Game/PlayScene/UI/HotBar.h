@@ -41,7 +41,7 @@ struct SlotData
 	GameObject slotItem{};
 	bool selected{ false };
 	bool unusable{ false };
-	std::bitset<1 << ItemType::ItemTypeMax> flag{};
+	std::bitset<ItemType::ItemTypeMax> flag{};
 };
 struct Slot : ObjectBase<SlotData>
 {

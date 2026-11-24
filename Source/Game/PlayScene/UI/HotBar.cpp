@@ -75,9 +75,9 @@ void HotBar::Start()
 	    BIT_FLAG(ItemType::Weapons) | BIT_FLAG(ItemType::WeaponBow) | BIT_FLAG(ItemType::Shield);
 	Get<Slot>(slots[TOOL_SLOT_INDEX]).Data().flag = BIT_FLAG(ItemType::Tools);
 	Get<Slot>(slots[CONSUMABLE_SLOT_INDEX]).Data().flag =
-	    BIT_FLAG(ItemType::Arrow) | BIT_FLAG(ItemType::Consumables) | BIT_FLAG(ItemType::Materials);
+	    BIT_FLAG(ItemType::Arrow) | BIT_FLAG(ItemType::Consumables) | BIT_FLAG(ItemType::Medicals);
 	Get<Slot>(slots[CONSUMABLE_SLOT_SECOND_INDEX]).Data().flag =
-	    BIT_FLAG(ItemType::Arrow) | BIT_FLAG(ItemType::Consumables) | BIT_FLAG(ItemType::Materials);
+	    BIT_FLAG(ItemType::Arrow) | BIT_FLAG(ItemType::Consumables) | BIT_FLAG(ItemType::Medicals);
 	Get<Slot>(slots[BAG_SLOT_INDEX]).Data().flag = BIT_FLAG(ItemType::Backpack);
 }
 
@@ -368,12 +368,13 @@ void HotBar::RemoveItem(
 	if (CanRemoveItem(_itemType, _count) == false)
 		return;
 
-	size_t slotIndex = GetSlotIndexFrom(_itemType);
+	GameObject slotObj = GetSlot(_itemType);
+	size_t slotIndex   = GetSlotIndexFrom(_itemType);
 
-	if (slotIndex == -1)
+	if (!slotObj)
 		return;
 
-	SlotItemData& itemData = GetSlotItemData(slotIndex);
+	SlotItemData& itemData = Get<SlotItem>(Get<Slot>(slotObj).Data().slotItem).Data();
 
 	if (CannotStack(_itemType))
 	{
@@ -469,7 +470,7 @@ GameObject HotBar::GetSlot(
 	auto range = slots | std::views::filter(
 	                         [this, _itemType](GameObject& _slot)
 	                         {
-		                         return Get<Slot>(_slot).Data().flag.test(BIT_FLAG(_itemType));
+		                         return Get<Slot>(_slot).Data().flag.test(_itemType);
 	                         });
 
 	for (auto& obj : range)
