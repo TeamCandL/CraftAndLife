@@ -1,6 +1,7 @@
 #pragma once
 #include <Game/Game.h>
 #include <DirectXMath.h>
+#include <Game/Component/UI/UIWorldBinder.h>
 
 struct OtherEnemyHpBarData
 {
@@ -25,28 +26,22 @@ struct OtherEnemyHpBarData
 		}
 	}
 
-	// --- 背景用（後ろ・レイヤー9999） ---
-	Resource<Texture> bgTexture{ "Image/UI/self_info.png" };
-	Component<UITransform> backgroundTransform{ Vec2::Zero(), Vec2{ 240, 65 }, UILayerOrder{ 1 }.WithUser(9999) };
-	Component<UIImage> backgroundImage{ bgTexture };
-
-	/*Resource<Texture> bgTexture{ "Image/UI/Mygauge.png" };
-	Component<UITransform> backgroundTransform{ Vec2::Zero(), Vec2{ 240, 65 }, UILayerOrder{}.WithUser(9999) };
-	Component<UIImage> backgroundImage{ bgTexture };*/
-
+	const int32_t BAR_WIDTH  = 200;  // ゲージの最大幅
+	const int32_t BAR_HEIGHT = 38;   // ゲージの高さ
 	// --- 減るゲージ（バー）用（手前・レイヤー10000） ---
-	Resource<Texture> barTexture{ "Image/UI/BossGauge.png" };
-	Component<UITransform> barTransform{ Vec2::Zero(), Vec2{ 200, 16 }, UILayerOrder{ 2 }.WithUser(10000) };
+	Resource<Texture> barTexture{ "Image/UI/EnemyHpBar.png" };
+	Component<UITransform> barTransform{ Vec2{ -BAR_WIDTH / 2, -BAR_HEIGHT / 2 },
+		                                 Vec2{ BAR_WIDTH, BAR_HEIGHT },
+		                                 UILayerOrder{ 2 }.WithUser(10000) };
 	Component<UIImage> barImage{ barTexture };
+	Component<Transform> transform{};
+	Component<UIWorldBinder> uiWorldBinder{ barTransform, transform, 0.0f };
 
-	/*Resource<Texture> barTexture{ "Image/UI/self_info.png" };
-	Component<UITransform> barTransform{ Vec2::Zero(), Vec2{ 200, 16 }, UILayerOrder{}.WithUser(10000) };
-	Component<UIImage> barImage{ barTexture };*/
 	GameObject ownerEnemy;
+	GameObject objBackGround;
 	int32_t hp{};
 	int32_t maxHp{ 100 };
-	float hpRatio{ 1.0f };     // HPの割合（0.0f〜1.0f）
-	float maxWidth{ 200.0f };  // ゲージの最大幅
+	float hpRatio{ 1.0f };  // HPの割合（0.0f〜1.0f）
 
 	Vec3 m_worldPosition{ 0.0f, 0.0f, 0.0f };
 	Vec3 m_offset{ 0.0f, 2.2f, 0.0f };  // 頭上の高さ

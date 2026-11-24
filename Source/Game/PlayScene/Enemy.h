@@ -379,6 +379,13 @@ struct Enemy : ObjectBase<EnemyData>
 		id = id_;
 	};
 
+	/// @brief 現在体力取得（ホスト用）
+	/// @return
+	int32_t GetHp() const
+	{
+		return hp;
+	}
+
 	void DropItem();
 
 	void RegisterStates(StateRegistry& registry) const;
