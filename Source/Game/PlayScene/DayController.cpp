@@ -10,6 +10,7 @@ void DayController::Update()
 	ImGui::Begin("DayController");
 	ImGui::DragFloat("boost", &boost, 1.0f, 1.0f);
 	ImGui::DragFloat("currentTimeSec", &currentTimeSec);
+	ImGui::DragFloat3("lightDir", lightDir.v, 0.01f);
 	ImGui::End();
 #endif  // _DEBUG
 
@@ -109,31 +110,61 @@ void DayController::Update()
 		return;
 	}
 
-	auto itr = std::find_if(
-	    skyAnimKeys.begin(),
-	    skyAnimKeys.end(),
-	    [this](const SkyAnimKey& _key)
-	    {
-		    return currentTimeSec <= _key.timeSec;
-	    });
-
-	if (itr == skyAnimKeys.end())
 	{
-		return;
-	}
+		auto itr = std::find_if(
+		    skyAnimKeys.begin(),
+		    skyAnimKeys.end(),
+		    [this](const SkyAnimKey& _key)
+		    {
+			    return currentTimeSec <= _key.timeSec;
+		    });
 
-	// 先頭要素の場合はitr--しない
-	if (itr == skyAnimKeys.begin())
+		if (itr == skyAnimKeys.end())
+		{
+			return;
+		}
+
+		// 先頭要素の場合はitr--しない
+		if (itr == skyAnimKeys.begin())
+		{
+			Get<Sky>(objSky).Data().skyTime = itr->skyParam;
+			return;
+		}
+
+		SkyAnimKey& end = *itr;
+		itr--;
+		SkyAnimKey& begin = *itr;
+
+		const float RATIO = (currentTimeSec - begin.timeSec) / (end.timeSec - begin.timeSec);
+
+		Get<Sky>(objSky).Data().skyTime = Float4::Lerp(begin.skyParam, end.skyParam, RATIO);
+	}
 	{
-		Get<Sky>(objSky).Data().skyTime = itr->skyParam;
-		return;
+		auto itr = std::find_if(
+		    lightAnimKeys.begin(),
+		    lightAnimKeys.end(),
+		    [this](const LightAnimKey& _key)
+		    {
+			    return currentTimeSec <= _key.timeSec;
+		    });
+
+		if (itr == lightAnimKeys.end())
+		{
+			return;
+		}
+
+		// 先頭要素の場合はitr--しない
+		if (itr == lightAnimKeys.begin())
+		{
+			Get<LightManager>().SetDirection(itr->directionParam);
+			return;
+		}
+
+		LightAnimKey& end = *itr;
+		itr--;
+		LightAnimKey& begin = *itr;
+
+		const float RATIO = (currentTimeSec - begin.timeSec) / (end.timeSec - begin.timeSec);
+		Get<LightManager>().SetDirection(Mathf::Lerp(begin.directionParam, end.directionParam, RATIO));
 	}
-
-	SkyAnimKey& end = *itr;
-	itr--;
-	SkyAnimKey& begin = *itr;
-
-	const float RATIO = (currentTimeSec - begin.timeSec) / (end.timeSec - begin.timeSec);
-
-	Get<Sky>(objSky).Data().skyTime = Float4::Lerp(begin.skyParam, end.skyParam, RATIO);
 }
