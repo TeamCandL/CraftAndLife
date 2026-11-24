@@ -70,7 +70,14 @@ void HotBar::Start()
 	slotItem.Data().id    = BAG_ITEM_ID;
 	slotItem.Data().count = 0;
 
-	BIT_FLAG(ItemType::Arrow) | BIT_FLAG(ItemType::Consumables);
+	Get<Slot>(slots[WEAPON_SLOT_INDEX]).Data().flag =
+	    BIT_FLAG(ItemType::Weapons) | BIT_FLAG(ItemType::WeaponBow) | BIT_FLAG(ItemType::Shield);
+	Get<Slot>(slots[TOOL_SLOT_INDEX]).Data().flag = BIT_FLAG(ItemType::Tools);
+	Get<Slot>(slots[CONSUMABLE_SLOT_INDEX]).Data().flag =
+	    BIT_FLAG(ItemType::Arrow) | BIT_FLAG(ItemType::Consumables) | BIT_FLAG(ItemType::Materials);
+	Get<Slot>(slots[CONSUMABLE_SLOT_SECOND_INDEX]).Data().flag =
+	    BIT_FLAG(ItemType::Arrow) | BIT_FLAG(ItemType::Consumables) | BIT_FLAG(ItemType::Materials);
+	Get<Slot>(slots[BAG_SLOT_INDEX]).Data().flag = BIT_FLAG(ItemType::Backpack);
 }
 
 void HotBar::Update()
@@ -428,6 +435,20 @@ SlotItemData& HotBar::GetSlotItemData(
 size_t HotBar::GetSlotIndexFrom(
     ItemType _itemType)
 {
+	auto [begin, end] = std::equal_range(
+	    slots.begin(),
+	    slots.end(),
+	    [this, _itemType](GameObject& _slot)
+	    {
+		    return Get<Slot>(_slot).Data().flag.test(BIT_FLAG(_itemType));
+	    });
+	for (auto itr = begin; itr != end; itr++)
+	{
+		SlotData& slotData = Get<Slot>(*itr).Data();
+		if (slotData.unusable == false && Get<SlotItem>(slotData.slotItem).Data().id == EMPTY_ITEM_ID)
+		{
+		}
+	}
 	size_t slotIndex = -1;
 	switch (_itemType)
 	{
