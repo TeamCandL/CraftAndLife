@@ -270,6 +270,8 @@ void Player::Update()
 	{
 		Get<IPlayerJobController>(objJobController).Update(Data());
 	}
+
+	Get<LightManager>().SetPosition(transform.position);
 }
 
 void Player::Draw()
@@ -290,6 +292,21 @@ void Player::Draw()
 
 	const auto& subParts{ models[jobType].Get().subParts };
 
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
+}
+
+void Player::DrawShadowMap()
+{
+	Get<Dx11Manager>().SetShader(shadowShader);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	const auto& subParts{ models[jobType].Get().subParts };
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);

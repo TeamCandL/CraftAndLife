@@ -77,13 +77,41 @@ bool NormalUIInput::IsChanneled() const
 	       abstructInputSystem_.GetInputSystem().GetKeyDown(KeyCode::X);
 }
 
+bool NormalUIInput::IsMovedLeftTab()
+{
+	if (autoInputValues[InputDirectionType_LeftTab])
+	{
+		return true;
+	}
+
+	return abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(
+	           GameInputGamepadButtons::GameInputGamepadRightShoulder) ||
+	       (abstructInputSystem_.GetInputSystem().GetKeyDown(KeyCode::Tab) &&
+	        abstructInputSystem_.GetInputSystem().GetKey(KeyCode::LeftShift));
+}
+
+bool NormalUIInput::IsMovedRightTab()
+{
+	if (autoInputValues[InputDirectionType_RightTab])
+	{
+		return true;
+	}
+
+	return abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(
+	           GameInputGamepadButtons::GameInputGamepadRightShoulder) ||
+	       (abstructInputSystem_.GetInputSystem().GetKeyDown(KeyCode::Tab) &&
+	        !abstructInputSystem_.GetInputSystem().GetKey(KeyCode::LeftShift));
+}
+
 void NormalUIInput::Update()
 {
 	// 全方向のパルス入力を更新
 	for (InputDirectionType type{}; type < InputDirectionType_Max; type++)
 	{
-		autoInputValues[type] =
-		    UpdateAutoInput(type, abstructInputSystem_.GetPadInputSystem().IsOn(GamePadInputStick::Left, type));
+		autoInputValues[type] = UpdateAutoInput(
+		    type,
+		    abstructInputSystem_.GetPadInputSystem().IsOn(GamePadInputStick::Left, type) ||
+		        abstructInputSystem_.GetPadInputSystem().IsButton(type));
 	}
 }
 

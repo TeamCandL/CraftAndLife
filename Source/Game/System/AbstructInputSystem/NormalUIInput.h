@@ -18,6 +18,8 @@ class NormalUIInput : public IUIInput
 	virtual bool IsMovedRight() override;
 	virtual bool IsSelected() const override;
 	virtual bool IsChanneled() const override;
+	virtual bool IsMovedLeftTab() override;
+	virtual bool IsMovedRightTab() override;
 
 	/// @brief 更新処理
 	virtual void Update() override;

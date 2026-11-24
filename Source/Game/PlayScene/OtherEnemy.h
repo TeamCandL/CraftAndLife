@@ -30,6 +30,8 @@ struct OtherEnemyData
 		Resource<Model>{ "Model/Enemy/Dragon.fbx" },
 	};
 
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
+
 	Component<Transform> transform{ Vec3{}, Quaternion::FromEuler(Vec3{ 90.0f, 0.0f, 0.0f }) };  ///< 座標系
 
 	Vec3 targetPosition{};
@@ -65,6 +67,8 @@ struct OtherEnemy : ObjectBase<OtherEnemyData>
 	void Update() override;
 	/// @brief 描画処理
 	void Draw() override;
+
+	void DrawShadowMap() override;
 
 	/// @brief ホストへ敵の被ダメージを通知
 	void SendEnemyDamage(int32_t enemyId, int32_t damage);
