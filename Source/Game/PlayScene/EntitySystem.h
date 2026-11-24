@@ -54,4 +54,6 @@ struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntityS
 	/// @brief 指定のエンティティの実体を削除する
 	/// @param _entityId エンティティのId
 	void RemoveFromNetwork(const int32_t _entityId) override;
+
+	Vec3 SetForwardToEnemy(GameObject _objEnemyController);
 };
