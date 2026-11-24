@@ -623,6 +623,7 @@ pre-commit install</Command>
     <ClInclude Include="Library\imgui\imstb_textedit.h" />
     <ClInclude Include="Library\imgui\imstb_truetype.h" />
     <ClInclude Include="Library\miniaudio\miniaudio.h" />
+    <ClInclude Include="Library\gemilib\gemimath.h" />
     <ClInclude Include="Library\nlohmann-json\json.hpp" />
     <ClInclude Include="Library\nlohmann-json\json_fwd.hpp" />
     <ClInclude Include="Library\shigaLibrary\SgMath.h" />
@@ -812,6 +813,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceDayController.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceEnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceHarvestableController.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceAllPlayers.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferencePlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\NPCRobo.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBar.h" />
