@@ -246,5 +246,5 @@ Vec3 EntitySystem::SetForwardToEnemy(
 	{
 	    Fwd = (targetPos - transform.position).Normalize();
 	}*/
-	return Fwd;
+	return Vec3{};
 }

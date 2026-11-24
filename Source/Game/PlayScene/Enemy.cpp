@@ -346,6 +346,8 @@ void Enemy::DrawShadowMap()
 	Get<Dx11Manager>().SetShader(shadowShader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
+	models[modelIndex].Get().Draw(0, animIndex);
+
 	const auto& subParts{ models[enemyType].Get().subParts };
 	for (const auto& parts : subParts)
 	{
