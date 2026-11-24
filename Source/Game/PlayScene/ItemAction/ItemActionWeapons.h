@@ -19,6 +19,9 @@ struct ItemActionWeaponsData
 
 	// 採取対象のゲージ
 	GameObject harvestableGauge{};
+
+	// キノコ採取SE
+	Resource<ResourceType::Audio> mushroomSE{ "BGM_SE/Mushroom.mp3" };
 };
 
 struct ItemActionWeapons : ObjectBase<ItemActionWeaponsData>, IItemAction

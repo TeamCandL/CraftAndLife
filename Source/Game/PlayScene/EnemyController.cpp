@@ -20,7 +20,7 @@ void EnemyController::AddEnemy(
 	Enemy& enemy = Get<Enemy>(_enemy);
 
 	enemy.SetID(nextEnemyId++);
-	allEnemys.push_back(_enemy);
+	allEnemies.push_back(_enemy);
 
 	// ID割り当て後にステートを登録
 	NetworkActorServer& networkActor = Get<NetworkActorServer>(Data().objNetworkActorServer);
@@ -48,7 +48,7 @@ std::vector<Vec3> EnemyController::GetAllEnemyPosition()
 {
 	std::vector<Vec3> enemyPositions;
 
-	for (const GameObject obj : allEnemys)
+	for (const GameObject obj : allEnemies)
 	{
 		if (obj.IsEmpty())
 		{
@@ -65,7 +65,7 @@ std::vector<float> EnemyController::GetAllEnemyAngleY()
 {
 	std::vector<float> enemyAngles;
 
-	for (const GameObject obj : allEnemys)
+	for (const GameObject obj : allEnemies)
 	{
 		if (obj.IsEmpty())
 			continue;
@@ -80,7 +80,7 @@ std::vector<int32_t> EnemyController::GetAllEnemyId()
 {
 	std::vector<int32_t> enemyIds;
 
-	for (const GameObject obj : allEnemys)
+	for (const GameObject obj : allEnemies)
 	{
 		if (obj.IsEmpty())
 			continue;
@@ -94,7 +94,7 @@ std::vector<EnemyStatus> EnemyController::GetAllEnemyStatus()
 {
 	std::vector<EnemyStatus> allStatus;
 
-	for (const GameObject obj : allEnemys)
+	for (const GameObject obj : allEnemies)
 	{
 		if (obj.IsEmpty())
 			continue;
@@ -109,11 +109,16 @@ std::vector<EnemyStatus> EnemyController::GetAllEnemyStatus()
 	return allStatus;
 }
 
+std::vector<GameObject> EnemyController::GetAllEnemies()
+{
+	return allEnemies;
+}
+
 void EnemyController::DamagedEnemy(
     int32_t enemyId,
     int32_t damage)
 {
-	for (const GameObject& enemyObj : allEnemys)
+	for (const GameObject& enemyObj : allEnemies)
 	{
 		Enemy& enemy = Get<Enemy>(enemyObj);
 
@@ -132,7 +137,7 @@ void EnemyController::DamagedEnemy(
 void EnemyController::RemoveEnemy(
     int32_t enemyId)
 {
-	for (GameObject& enemyObj : allEnemys)
+	for (GameObject& enemyObj : allEnemies)
 	{
 		if (enemyObj.IsEmpty())
 		{
@@ -156,7 +161,7 @@ void EnemyController::RemoveEnemy(
 bool EnemyController::IsExistEnemy(
     int32_t enemyId)
 {
-	for (GameObject& enemyObj : allEnemys)
+	for (GameObject& enemyObj : allEnemies)
 	{
 		if (enemyObj.IsEmpty())
 		{

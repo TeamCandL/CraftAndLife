@@ -281,15 +281,19 @@ void PlayNetworkController::Update()
 				    converter.ToMessage(_event.data, message);
 
 				    IEntitySystemNetwork& entitySystem = Get<EntitySystem>();
-				    entitySystem.SpawnFromNetwork(
-				        message.entityId,
-				        message.itemId,
-				        Vec3{ message.positionX, message.positionY, message.positionZ },
-				        Vec3{
-				            message.velocityX,
-				            message.velocityY,
-				            message.velocityZ,
-				        });
+				    GameObject spawnedObj              = entitySystem.SpawnFromNetwork(
+                        message.entityId,
+                        message.itemId,
+                        Vec3{ message.positionX, message.positionY, message.positionZ },
+                        Vec3{
+                            message.velocityX,
+                            message.velocityY,
+                            message.velocityZ,
+                        });
+				    if (message.itemId == 26)
+				    {
+					    GetScene().Instantiate<AttachedLoopEffectObject>("Effect/FireBall.efkefc", spawnedObj);
+				    }
 				    break;
 			    }
 			    case ProtocolType::EntityPicked:

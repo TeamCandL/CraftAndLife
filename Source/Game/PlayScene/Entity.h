@@ -13,6 +13,15 @@ struct EntityData
 	    entityId{ _entityId }
 	{
 	}
+	EntityData(
+	    const ItemId _itemId,
+	    const int32_t _entityId,
+	    const GameObject _objEnemyController) :
+	    itemId{ _itemId },
+	    entityId{ _entityId },
+	    objEnemyController{ _objEnemyController }
+	{
+	}
 
 	Resource<Shader> mainShader{ "Shader/Entity.hlsl",
 		                         RasterizerConfig{ .cullMode = D3D11_CULL_NONE,
@@ -21,6 +30,7 @@ struct EntityData
 		                         RasterizerConfig{ .cullMode = D3D11_CULL_FRONT,
 		                                           .fillMode = D3D11_FILL_SOLID } };  ///< エッジ(輪郭)描画用シェーダ
 	Resource<Model> model{};                                                          ///< モデル
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
 
 	Component<Transform> transform{};      ///< 座標系
 	Component<RigidBody> rigidbody{};      ///< 剛体
@@ -47,6 +57,8 @@ struct EntityData
 	inline static const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };  ///< 敵の攻撃のアイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };  ///< プレイヤーの攻撃の矢アイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_OTHER{ 27 };  ///< プレイヤーの攻撃の他アイテムId
+
+	GameObject objEnemyController{};
 };
 
 /// @brief エンティティ
@@ -57,6 +69,7 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	void Start() override;
 	void Update() override;
 	void Draw() override;
+	void DrawShadowMap() override;
 
 	void SetPosition(
 	    const Vec3 _position) override
@@ -103,4 +116,8 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	{
 		isUnderground = _isUnderground;
 	}
+
+	/// @brief エンティティを最寄りの敵の方向へ向ける
+	/// @param _objEnemyController EnemyControllerを与えてあげる必要があります
+	Vec3 SetForwardToEnemy(GameObject _objEnemyController);
 };

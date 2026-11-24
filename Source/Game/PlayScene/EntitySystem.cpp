@@ -3,6 +3,7 @@
 #include "IEntity.h"
 #include "Entity.h"
 #include "Enemy.h"
+#include "EnemyController.h"
 #include "ItemSystem.h"
 #include <Game/Manager/AudioManager.h>
 #include <Game/Manager/SessionManager.h>
@@ -193,7 +194,7 @@ GameObject EntitySystem::PickNearest(
 	return objMinEntity;
 }
 
-void EntitySystem::SpawnFromNetwork(
+GameObject EntitySystem::SpawnFromNetwork(
     const int32_t _entityId,
     const ItemId _itemId,
     const Vec3 _position,
@@ -203,6 +204,7 @@ void EntitySystem::SpawnFromNetwork(
 
 	Get<IEntity>(objEntities.back()).SetPosition(_position);
 	Get<IEntity>(objEntities.back()).SetVelocity(_velocity);
+	return objEntities.back();
 }
 
 void EntitySystem::SetHost(
@@ -220,4 +222,29 @@ void EntitySystem::RemoveFromNetwork(
 
 	Get<IEntity>(objEntities[_entityId]).Pick();
 	GetScene().Destroy(objEntities[_entityId]);
+}
+
+Vec3 EntitySystem::SetForwardToEnemy(
+    GameObject _objEnemyController)
+{
+	/*EnemyController& enemyController = Get<EnemyController>(_objEnemyController);
+	Vec3 targetPos{};
+	float targetDist{ -1.0f };
+	for (GameObject& objEnemy : enemyController.GetAllEnemies())
+	{
+	    Enemy& enemy = Get<Enemy>(objEnemy);
+
+	    float dist = (enemy.GetPosition() - transform.position).Length();
+	    if (targetDist == -1.0f || dist < targetDist)
+	    {
+	        targetDist = dist;
+	        targetPos  = enemy.GetPosition();
+	    }
+	}
+	Vec3 Fwd = transform.Forward();
+	if (targetPos != transform.position)
+	{
+	    Fwd = (targetPos - transform.position).Normalize();
+	}*/
+	return Fwd;
 }
