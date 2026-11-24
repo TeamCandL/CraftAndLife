@@ -378,6 +378,8 @@ pre-commit install</Command>
     </ClCompile>
     <ClCompile Include="Resource\MAP\MAP.cpp" />
     <ClCompile Include="Resource\MAP\MAP_Island.cpp" />
+    <ClCompile Include="Resource\MAP\SeaMAP.cpp" />
+    <ClCompile Include="Resource\MAP\SeaMAP_Island.cpp" />
     <ClCompile Include="Source\AllSystems.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentBase.cpp" />
     <ClCompile Include="Source\Base\Core\ComponentPool\ComponentPools.cpp" />
@@ -632,6 +634,8 @@ pre-commit install</Command>
     <ClInclude Include="Library\ufbx\ufbx.h" />
     <ClInclude Include="Resource\MAP\MAP.h" />
     <ClInclude Include="Resource\MAP\MAP_Island.h" />
+    <ClInclude Include="Resource\MAP\SeaMAP.h" />
+    <ClInclude Include="Resource\MAP\SeaMAP_Island.h" />
     <ClInclude Include="Source\AllSystem.h" />
     <ClInclude Include="Source\Base\Base.h" />
     <ClInclude Include="Source\Base\BasePch.h" />

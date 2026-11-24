@@ -29,6 +29,8 @@
 #include "ClearFade.h"
 #include "Tutorial/TutorialFirstStep.h"
 #include <../Resource/MAP/MAP_Island.h>
+#include "../../Resource/MAP/SeaMAP.h"
+#include "../../Resource/MAP/SeaMAP_Island.h"
 
 void PlayScene::Start()
 {
@@ -42,6 +44,8 @@ void PlayScene::Start()
 	GameObject objHarvestableController = Instantiate<HarvestableController>();
 	GameObject objTerrain               = Instantiate<MAP>(objHarvestableController);
 	GameObject objIsland                = Instantiate<MAP_Island>(objTerrain);
+	// GameObject objTerrain                 = Instantiate<SEAMAP>(objHarvestableController);
+	// GameObject objIsland                  = Instantiate<SEAMAP_Island>(objTerrain);
 
 	// GameObject objTerrain = Instantiate<Terrain>();
 
