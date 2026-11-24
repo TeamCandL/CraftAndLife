@@ -29,3 +29,11 @@ struct OnceEffectObject : EffectObject
 	void Start() override;
 	void Update() override;
 };
+
+struct AttachedLoopEffectObject : EffectObject
+{
+	using EffectObject::EffectObject;
+	void Start() override;
+	void Update() override;
+	GameObject parent{};
+};

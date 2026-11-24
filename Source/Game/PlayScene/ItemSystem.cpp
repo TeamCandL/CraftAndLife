@@ -396,8 +396,8 @@ ItemSystemData::ItemSystemData()
 	allItemList.push_back({ 26,
 	                        ItemType::EnemyAttack,
 	                        "火ィ攻撃",
-	                        "Image/EmptyItem.png",
-	                        "Model/HandMaterial/HandString.fbx",
+	                        {},
+	                        {},
 
 	                        false,
 	                        craft,
