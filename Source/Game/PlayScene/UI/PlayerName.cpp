@@ -21,6 +21,41 @@ void PlayerName::Update()
 	// 他プレイヤーのワールド座標を取得
 	Vec3 playerPosition = Get<OtherPlayer>(targetPlayer).GetPosition();
 
+	// =====================================
+	// 職業に応じて背景画像を切り替える
+	// =====================================
+
+	const PlayerJobType jobType = Get<OtherPlayer>(targetPlayer).Data().jobType;
+
+	// 前回と職業が異なる場合のみ画像を変更
+	if (jobType != currentJobType)
+	{
+		switch (jobType)
+		{
+		case PlayerJobType_Healer:
+			image.texture = Resource<Texture>{ "Image/UI/Healer Plate.png" };
+			break;
+
+		case PlayerJobType_Tank:
+			image.texture = Resource<Texture>{ "Image/UI/Tank Plate.png" };
+			break;
+
+		case PlayerJobType_Fighter:
+			image.texture = Resource<Texture>{ "Image/UI/Fighter Plate.png" };
+			break;
+
+		case PlayerJobType_Archer:
+			image.texture = Resource<Texture>{ "Image/UI/Archer Plate.png" };
+			break;
+
+		default:
+			// 不明な職業の場合は変更しない
+			return;
+		}
+
+		currentJobType = jobType;
+	}
+
 	// 頭上に表示するための高さ
 	Vec3 worldPosition{ playerPosition.x, playerPosition.y + 1.7f, playerPosition.z };
 

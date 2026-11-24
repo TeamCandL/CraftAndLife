@@ -1,6 +1,9 @@
 #include "Entity.h"
 #include <Game/PlayScene/ItemSystem.h>
 #include <Game/PlayScene/TerrainSystem.h>
+#include "EnemyController.h"
+#include "Enemy.h"
+#include "../../../Library/shigaLibrary/SgMath.h"
 
 void Entity::Start()
 {
@@ -193,6 +196,30 @@ void Entity::Draw()
 			    }*/
 		    }
 	    });
+}
+
+void Entity::DrawShadowMap()
+{
+	if (picked || despawned)
+	{
+		return;  // 取得されているなら無視
+	}
+	if (model.IsNull())
+	{
+		return;
+	}
+
+	Get<Dx11Manager>().SetShader(shadowShader);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	const auto& subParts{ model.Get().subParts };
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
 }
 
 void Entity::SetVelocity(

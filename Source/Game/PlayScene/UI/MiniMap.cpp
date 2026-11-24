@@ -42,7 +42,10 @@ void MiniMap::Start()
 
 void MiniMap::Update()
 {
+	// ----------------------------------------
 	// 自分のプレイヤーの情報を取得
+	// ----------------------------------------
+
 	Transform& playerTransform = Get<Transform>(objPlayer);
 
 	Vec3 playerPosition = playerTransform.position;
@@ -53,6 +56,7 @@ void MiniMap::Update()
 	// ----------------------------------------
 	// 東西南北のマークを配置
 	// ----------------------------------------
+
 	for (float angle = 0; angle < DirectX::XM_2PI; angle += DirectX::XM_PIDIV2)
 	{
 		Get<MiniMapPoint>(points[static_cast<int>(angle / DirectX::XM_PIDIV2)]).SetPosition(angle - playerAngle, 150);
@@ -178,11 +182,22 @@ void MiniMap::Update()
 	{
 		auto& enemyController = Get<EnemyController>(Data().objEnemyController);
 
-		auto& allEnemies = enemyController.Data().allEnemys;
+		auto& allEnemies = enemyController.Data().allEnemies;
+
+		// 今フレーム確認した敵アイコンを記録
+		std::vector<bool> seenEnemyIds(enemyIcons.size(), false);
 
 		for (size_t i = 0; i < allEnemies.size(); i++)
 		{
 			GameObject objEnemy = allEnemies[i];
+
+			// 配列サイズを拡張
+			if (seenEnemyIds.size() <= i)
+			{
+				seenEnemyIds.resize(i + 1, false);
+			}
+
+			seenEnemyIds[i] = true;
 
 			// 敵オブジェクトが存在しない
 			if (objEnemy.IsEmpty())
@@ -197,6 +212,21 @@ void MiniMap::Update()
 			// 敵情報を取得
 			UpdateEnemyIcon(i, enemy.GetPosition(), enemy.Data().isBoss, enemy.Data().alive);
 		}
+
+		// ----------------------------------------
+		// 今フレーム存在しなかった敵のアイコンを消す
+		// ----------------------------------------
+
+		for (size_t i = 0; i < enemyIcons.size(); i++)
+		{
+			if (i >= seenEnemyIds.size() || !seenEnemyIds[i])
+			{
+				if (!enemyIcons[i].IsEmpty())
+				{
+					Get<MiniMapPoint>(enemyIcons[i]).SetPosition(0.0f, 10000.0f);
+				}
+			}
+		}
 	}
 
 	// ----------------------------------------
@@ -209,12 +239,26 @@ void MiniMap::Update()
 
 		auto& otherEnemies = otherEnemyController.Data().idToObjOtherEnemy;
 
+		// 今フレーム確認できた敵IDを記録
+		std::vector<bool> seenEnemyIds(enemyIcons.size(), false);
+
 		for (auto& [enemyId, objOtherEnemy] : otherEnemies)
 		{
+			size_t index = static_cast<size_t>(enemyId);
+
+			// 配列サイズを拡張
+			if (seenEnemyIds.size() <= index)
+			{
+				seenEnemyIds.resize(index + 1, false);
+			}
+
+			// 今フレーム存在する敵IDとして記録
+			seenEnemyIds[index] = true;
+
 			// 敵オブジェクトが存在しない
 			if (!objOtherEnemy)
 			{
-				UpdateEnemyIcon(static_cast<size_t>(enemyId), Vec3::Zero(), false, false);
+				UpdateEnemyIcon(index, Vec3::Zero(), false, false);
 
 				continue;
 			}
@@ -228,7 +272,23 @@ void MiniMap::Update()
 			Vec3 enemyPosition = Get<Transform>(objOtherEnemy).position;
 
 			// アイコン更新
-			UpdateEnemyIcon(static_cast<size_t>(enemyId), enemyPosition, isBoss, !enemy.Data().isDead);
+			UpdateEnemyIcon(index, enemyPosition, isBoss, !enemy.Data().isDead);
+		}
+
+		// ----------------------------------------
+		// 今フレーム存在しなかった敵のアイコンを消す
+		// ----------------------------------------
+
+		for (size_t i = 0; i < enemyIcons.size(); i++)
+		{
+			// 今フレーム確認されていない敵
+			if (i >= seenEnemyIds.size() || !seenEnemyIds[i])
+			{
+				if (!enemyIcons[i].IsEmpty())
+				{
+					Get<MiniMapPoint>(enemyIcons[i]).SetPosition(0.0f, 10000.0f);
+				}
+			}
 		}
 	}
 }
@@ -236,6 +296,7 @@ void MiniMap::Update()
 // ----------------------------------------
 // EnemyController受け取り
 // ----------------------------------------
+
 void MiniMap::SetEnemyController(
     GameObject obj)
 {
@@ -245,6 +306,7 @@ void MiniMap::SetEnemyController(
 // ----------------------------------------
 // OtherEnemyController受け取り
 // ----------------------------------------
+
 void MiniMap::SetOtherEnemyController(
     GameObject obj)
 {

@@ -3,6 +3,7 @@
 #include "IEntity.h"
 #include "Entity.h"
 #include "Enemy.h"
+#include "EnemyController.h"
 #include "ItemSystem.h"
 #include <Game/Manager/AudioManager.h>
 #include <Game/Manager/SessionManager.h>
@@ -50,7 +51,8 @@ void EntitySystem::Update()
 				// 地面の下にいる！
 
 				if (Get<SessionManager>().RefStatus().imLobbyHost)
-				{  // ホストである
+				{
+					// ホストである
 					// ならアイテム化しちゃう！
 					ItemId collectibleItemid = Get<ItemSystem>().ConvertAttackItemToCollectibleItem(entity.GetItemId());
 
@@ -193,7 +195,7 @@ GameObject EntitySystem::PickNearest(
 	return objMinEntity;
 }
 
-void EntitySystem::SpawnFromNetwork(
+GameObject EntitySystem::SpawnFromNetwork(
     const int32_t _entityId,
     const ItemId _itemId,
     const Vec3 _position,
@@ -203,6 +205,7 @@ void EntitySystem::SpawnFromNetwork(
 
 	Get<IEntity>(objEntities.back()).SetPosition(_position);
 	Get<IEntity>(objEntities.back()).SetVelocity(_velocity);
+	return objEntities.back();
 }
 
 void EntitySystem::SetHost(
@@ -220,4 +223,10 @@ void EntitySystem::RemoveFromNetwork(
 
 	Get<IEntity>(objEntities[_entityId]).Pick();
 	GetScene().Destroy(objEntities[_entityId]);
+}
+
+Vec3 EntitySystem::SetForwardToEnemy(
+    GameObject _objEnemyController)
+{
+	return Vec3::Zero();
 }

@@ -9,25 +9,37 @@ namespace cha
 	/// @brief ライトの管理
 	class LightManager : public IManager
 	{
-	public:
+	  public:
 		LightManager(Dx11Manager& _dx11Manager);
 		~LightManager() = default;
 
 		/// @brief ライトの更新処理
-		/// @return 
+		/// @return
 		bool Update();
 
 		/// @brief ライトの情報をコンスタントバッファに送る
-		/// @return 
+		/// @return
 		bool Bind();
 
 		/// @brief 描画する座標を設定する
-		inline void SetPosition(const Vec3 _position) { centerPosition = _position; }
+		inline void SetPosition(
+		    const Vec3 _position)
+		{
+			centerPosition = _position;
+		}
 
-	private:
-		Vec3 centerPosition{};  // ライトの中心座標
-		Vec3 direction_{ Vec3::Down() };  // ライトの方向
-		float shadowRange{ 80.0f };  // 影を描画する箱の大きさ
+		/// @brief 日光の方向を変更する
+		/// @param _direction
+		inline void SetDirection(
+		    const Vec3 _direction)
+		{
+			direction_ = _direction;
+		}
+
+	  private:
+		Vec3 centerPosition{};                              // ライトの中心座標
+		Vec3 direction_{ Vec3::Down() };                    // ライトの方向
+		float shadowRange{ 80.0f };                         // 影を描画する箱の大きさ
 		Resource<ResourceType::Material> lightMaterial_{};  // ライト用マテリアル
 
 		float nearClipDistance{ 1.0f };
@@ -35,4 +47,4 @@ namespace cha
 
 		Dx11Manager& dx11Manager_;
 	};
-}
+}  // namespace cha

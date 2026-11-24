@@ -122,13 +122,13 @@ void HotBar::Update()
 
 void HotBar::UpdateSlot()
 {
-	auto playerInput = Get<AbstructInputSystem>().GetPlayerInput();
-	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || playerInput->IsMovedHotbarLeft())
+	auto uiInput = Get<AbstructInputSystem>().GetUIInput();
+	if (Get<InputSystem>().GetKeyDown(KeyCode::I) || uiInput->IsMovedLeftTab())
 	{
 		MoveFocusToLeft();
 		OnChangedSelectedItem();
 	}
-	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || playerInput->IsMovedHotbarRight())
+	if (Get<InputSystem>().GetKeyDown(KeyCode::O) || uiInput->IsMovedRightTab())
 	{
 		MoveFocusToRight();
 		OnChangedSelectedItem();
