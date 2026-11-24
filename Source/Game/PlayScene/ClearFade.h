@@ -13,6 +13,9 @@ struct ClearFadeData
 	// フェード中か
 	bool isFading{ false };
 
+	// BGM終了待ちを無視するか
+	bool forceClear{ false };
+
 	// 結果の種類
 	ResultType resultType{ ResultType::Clear };
 
@@ -23,9 +26,18 @@ struct ClearFadeData
 
 struct ClearFade : ObjectBase<ClearFadeData>
 {
+	// クリアフェードが始まっているか
+	inline static bool isClearFadeStarted{ false };
+
+	// クリアフェード開始状態を取得
+	static bool IsClearFadeStarted()
+	{
+		return isClearFadeStarted;
+	}
+
 	void Start() override;
 	void Update() override;
 
 	// 結果の種類を指定してフェード開始
-	void StartFade(ResultType _resultType = ResultType::Clear);
+	void StartFade(ResultType _resultType = ResultType::Clear, bool _forceClear = false);
 };

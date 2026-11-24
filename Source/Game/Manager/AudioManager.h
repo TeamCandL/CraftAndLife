@@ -23,6 +23,9 @@ struct AudioManager : IManager
 	/// @brief BGMを止める
 	void SetBGMStop();
 
+	// BGMが再生中か確認
+	bool IsBGMPlaying() const;
+
 	/// @brief BGMを再開する
 	void SetBGMStart();
 
@@ -34,7 +37,8 @@ struct AudioManager : IManager
 
 	/// @brief 効果音を再生する
 	/// @param _resource 音声リソース
-	void Play(Resource<ResourceType::Audio>& _resource);
+	/// @param _volume 音量（0.0～1.0）
+	void Play(Resource<ResourceType::Audio>& _resource, float _volume = 1.0f);
 
 	// 2つの効果音を順番に再生する
 	void PlaySequence(Resource<ResourceType::Audio>& _first, Resource<ResourceType::Audio>& _next);
@@ -66,6 +70,12 @@ struct AudioManager : IManager
 	// 弓を引き絞る音を停止
 	void StopBowPull();
 
+	// 蘇生開始SEを再生
+	void PlayResuscitation(Resource<ResourceType::Audio>& _resource);
+
+	// 蘇生開始SEをフェードアウト
+	void FadeOutResuscitation();
+
 	// 着地音を停止する
 	void StopLanding();
 
@@ -92,4 +102,12 @@ struct AudioManager : IManager
 
 	// 弓を引き絞る音用
 	IXAudio2SourceVoice* pBowPullSourceVoice{ nullptr };
+
+	// 蘇生SE専用
+	IXAudio2SourceVoice* pResuscitationSourceVoice{ nullptr };
+
+	// 蘇生SEのフェードアウト管理
+	bool isResuscitationFading{ false };
+	float resuscitationFadeElapsed{ 0.0f };
+	const float RESUSCITATION_FADE_TIME{ 0.5f };
 };

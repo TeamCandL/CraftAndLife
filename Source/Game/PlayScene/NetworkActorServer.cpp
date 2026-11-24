@@ -6,6 +6,8 @@
 #include "EnemyController.h"
 #include "OtherEnemyController.h"
 #include "DayController.h"
+#include "UI/MiniMap.h"
+#include "PlaySceneUIController.h"
 
 void NetworkActorServer::Start()
 {
@@ -87,6 +89,11 @@ void NetworkActorServer::Update()
 		if (Data().objOtherEnemyController.IsEmpty())
 		{
 			Data().objOtherEnemyController = GetScene().Instantiate<OtherEnemyController>(objPlaySceneUIController);
+
+			// ミニマップにゲスト側の敵管理オブジェクトを渡す
+			PlaySceneUIController& uiController = Get<PlaySceneUIController>(objPlaySceneUIController);
+
+			Get<MiniMap>(uiController.Data().objMiniMap).SetOtherEnemyController(Data().objOtherEnemyController);
 		}
 	}
 }
@@ -94,11 +101,14 @@ void NetworkActorServer::Update()
 void NetworkActorServer::CreateEnemy(
     EnemyType type)
 {
+	if (IsSpawnEnemies())
+	{
+		return;
+	}
+
 	GameObject objEnemy = GetScene().Instantiate<Enemy>(Data().objEnemyController, static_cast<int>(type));
 
 	// Data().objEnemyController = GetScene().Instantiate<EnemyController>();
-
-	// Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
 
 	// 生成した敵のステートを登録
 	// EnemyStateRegistries(objEnemy);
@@ -130,18 +140,29 @@ void NetworkActorServer::CreateEnemies()
 	}
 
 	// 敵管理オブジェクトを生成
-	Data().objEnemyController = GetScene().Instantiate<EnemyController>(objPlaySceneUIController);
+	// 初回だけ敵管理オブジェクトを生成
+	if (Data().objEnemyController.IsEmpty())
+	{
+		Data().objEnemyController = GetScene().Instantiate<EnemyController>(objPlaySceneUIController);
 
-	// 自分自身のGameObjectをEnemyControllerに渡す
-	Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
+		// NetworkActorServerを設定
+		Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());
+
+		// ミニマップに敵管理オブジェクトを渡す
+		Get<MiniMap>(Get<PlaySceneUIController>(Data().objPlaySceneUIController).Data().objMiniMap)
+		    .SetEnemyController(Data().objEnemyController);
+	}
 
 	// 敵を生成（同じ種類も複数生成可能）
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
-	CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
-	CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
-	CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
-	if (Get<DayController>(objDayController).GetCurrentDay() == 2)
+	if (Get<DayController>(objDayController).GetCurrentDay() == 1)
+	{
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 10.0f, 0.0f, 20.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ -10.0f, 0.0f, 20.0f });
+		CreateEnemy(EnemyType::Skeleton, Vec3{ 0.0f, 0.0f, 30.0f });
+		CreateEnemy(EnemyType::Spider, Vec3{ 30.0f, 0.0f, 15.0f });
+		CreateEnemy(EnemyType::Spider, Vec3{ -30.0f, 0.0f, 15.0f });
+	}
+	else if (Get<DayController>(objDayController).GetCurrentDay() == 2)
 	{
 		CreateEnemy(EnemyType::Bat, Vec3{ 30.0f, 0.0f, 30.0f });
 		CreateEnemy(EnemyType::Bat, Vec3{ -30.0f, 0.0f, 30.0f });

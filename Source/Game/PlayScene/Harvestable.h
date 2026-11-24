@@ -10,7 +10,8 @@ enum class HarvestableType : int32_t
 {
 	Tree,      // 通常の木
 	TreeHigh,  // 背の高い木
-	Rock       // 岩
+	Rock,      // 岩
+	Mushroom   // キノコ
 };
 
 /// @brief 採取可能なもののデータ
@@ -91,6 +92,15 @@ struct Harvestable : ObjectBase<HarvestableData>
 
 	/// @brief 採取済みかどうかを取得する
 	bool IsHarvested() const;
+
+	// ワールド座標を取得
+	Vec3 GetPosition() const;
+
+	// 最大耐久値を取得
+	int32_t GetMaxDurability() const;
+
+	// 現在の耐久値を取得
+	int32_t GetDurability() const;
 
 	/// @brief ハーベスタブルオブジェクトを破壊する
 	void Break();

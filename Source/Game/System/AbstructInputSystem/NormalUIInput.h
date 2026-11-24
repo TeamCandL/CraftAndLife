@@ -12,13 +12,42 @@ class NormalUIInput : public IUIInput
 	virtual ~NormalUIInput() = default;
 
 	// IUIInput を介して継承されました
-	virtual bool IsMovedUp() const override;
-	virtual bool IsMovedDown() const override;
-	virtual bool IsMovedLeft() const override;
-	virtual bool IsMovedRight() const override;
+	virtual bool IsMovedUp() override;
+	virtual bool IsMovedDown() override;
+	virtual bool IsMovedLeft() override;
+	virtual bool IsMovedRight() override;
 	virtual bool IsSelected() const override;
 	virtual bool IsChanneled() const override;
 
+	/// @brief 更新処理
+	virtual void Update() override;
+
+  private:
+	/// @brief 自動パルス入力の更新処理
+	/// @param _directionType 方向
+	/// @param _isOn 入力があるか true / false
+	/// @return 自動パルス入力の出力
+	bool UpdateAutoInput(const InputDirectionType _directionType, const bool _isOn);
+
   protected:
 	AbstructInputSystem& abstructInputSystem_;
+
+	std::array<float, InputDirectionType_Max> autoInputWaitTimeLefts{
+		AUTO_INPUT_WAIT_THRESHOLD_SEC,
+		AUTO_INPUT_WAIT_THRESHOLD_SEC,
+		AUTO_INPUT_WAIT_THRESHOLD_SEC,
+		AUTO_INPUT_WAIT_THRESHOLD_SEC,
+	};
+	std::array<float, InputDirectionType_Max> autoInputTimeLefts{
+		AUTO_INPUT_DISTANCE_SEC,
+		AUTO_INPUT_DISTANCE_SEC,
+		AUTO_INPUT_DISTANCE_SEC,
+		AUTO_INPUT_DISTANCE_SEC,
+	};
+	std::array<bool, InputDirectionType_Max> autoInputValues{
+		false,
+		false,
+		false,
+		false,
+	};
 };

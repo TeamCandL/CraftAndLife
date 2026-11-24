@@ -10,36 +10,33 @@ struct ChatTextLogData
 		                     .WithFontSize(32)
 		                     .WithFontAlignment(FontAlignment_BottomRight) };
 
-	Component<UITransform> transform{ Vec2{ 1288, 363 }, Vec2{ 632, 531 } };  ///< UIの座標系
-	Component<UIText> text{ font, Color::FromWebCode(0xFF0004) };             ///< UIのテキスト
+	Component<UITransform> transform{ Vec2{ 1288, 363 }, Vec2{ 632, 531 }, UILayerOrder{}.WithUser(105) };
+	Component<UIText> text{ font, Color::FromWebCode(0x000000) };
 
-	std::vector<std::pair<float, std::string>> logs{};  ///< チャットのログ
+	std::vector<std::pair<float, std::string>> logs{};
 	std::vector<std::string> textChatRequests{};
 	const float SHOW_TIME{ 6.0f };
+
+	// 通知音
+	Resource<Audio> noticeSE{ "BGM_SE/Notice.mp3" };
+
+	GameObject objChatTextLogBack{};
 };
 
-/// @brief チャットログのテキストUI
 struct ChatTextLog : ObjectBase<ChatTextLogData>
 {
-	/// @brief 開始処理
 	void Start() override;
-
-	/// @brief 更新処理
 	void Update() override;
 
-	/// @brief ログを追加する
-	/// @param _content チャットの内容
-	void AddLog(const std::string& _content);
+	// 通知音を鳴らすか指定できる
+	void AddLog(const std::string& _content, bool _playNotice = true);
 
-	/// @brief ログ追加リクエスト
-	/// @param _content チャットの内容
 	void AddLogRequest(
 	    const std::string& _content)
 	{
 		textChatRequests.emplace_back(_content);
 	}
-	/// @brief ログ追加リクエストを一括取得
-	/// @return
+
 	std::vector<std::string> TakeLogRequests()
 	{
 		return std::exchange(textChatRequests, {});

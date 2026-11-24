@@ -28,7 +28,9 @@ void Entity::Start()
 	{
 		canHitToEnemy = true;
 	}
-	else if (ITEM_INFO._type == ItemType::PlayerAttackSword || ITEM_INFO._type == ItemType::PlayerAttackArrow)
+	else if (
+	    ITEM_INFO._type == ItemType::PlayerAttackSword || ITEM_INFO._type == ItemType::PlayerAttackArrow ||
+	    ITEM_INFO._id == ITEM_ID_PLAYER_ATTACK_OTHER)
 	{
 		pickupCooldownSec = 99999999.0f;  // 絶対に取得できない
 		canHitToEnemy     = true;
@@ -41,7 +43,10 @@ void Entity::Start()
 	switch (itemId)
 	{
 	case ITEM_ID_PLAYER_ATTACK_ARROW:
-		// case ITEM_ID_ENEMY_ATTACK_STRING:
+		isThrowingItemEntity = true;  // 投げ物
+		break;
+	case ITEM_ID_ENEMY_ATTACK_STRING:
+		canHitToHarvestable  = true;
 		isThrowingItemEntity = true;  // 投げ物
 		break;
 	default:
@@ -87,7 +92,7 @@ void Entity::Update()
 	const float HEIGHT = Get<TerrainSystem>().GetHeight(transform.position.x, transform.position.z);
 	if (HEIGHT >= transform.position.y + deltaY)
 	{
-		if (isThrowingItemEntity)
+		if (isThrowingItemEntity && itemId != ITEM_ID_ENEMY_ATTACK_STRING)
 		{
 			isUnderground = true;
 		}
@@ -108,7 +113,7 @@ void Entity::Update()
 
 	if (isDestroyedOnCollision)
 	{
-		transform.position.y = HEIGHT;
+		transform.position.y = HEIGHT + 1.0f;
 	}
 
 	// TODO: isDestroyedOnCollisionこれうそ

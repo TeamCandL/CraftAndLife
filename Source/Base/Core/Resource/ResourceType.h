@@ -9,10 +9,12 @@ namespace cha
 		Shader,     ///< シェーダ
 		Surface,    ///< 面
 		Model,      ///< 3Dモデル
+		ModelFbx,   ///< 3Dモデル Fbx特化
 		Texture,    ///< テクスチャ
 		Audio,      ///< 音声
 		Material,   ///< コンスタントバッファへ送る素材データ
 		ShaderPro,  ///< 高自由度なシェーダ
 		Font,       ///< フォントリソース
+		Effect,     ///< エフェクト
 	};
 }  // namespace cha

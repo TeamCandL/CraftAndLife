@@ -7,7 +7,12 @@
 #include "../OtherPlayer.h"
 #include "../UI/HotBar.h"
 #include "../OtherPlayerController.h"
-
+#include <Game/Manager/AudioManager.h>
+#include <Game/Common/EffectObject.h>
+void ItemActionMedicals::Start()
+{
+	objHealingEffect = GetScene().Instantiate<EffectObject>("Effect/Resurrecting.efkefc");
+}
 void ItemActionMedicals::Action(
     const ItemId _itemId,
     PlayerData& _playerData,
@@ -45,14 +50,41 @@ void ItemActionMedicals::Action(
 						Get<OtherPlayer>(objHit).Data().hp = RESPAWN_HEALTH;
 						Get<OtherPlayerController>(_playerData.objOtherPlayerController)
 						    .AddRespawn(Get<OtherPlayer>(objHit).Data().name.content, RESPAWN_HEALTH);
+
+						// ヒーラー側にも蘇生SEを再生
+						Get<AudioManager>().Play(reviveSE);
+
+						Get<EffectObject>(objHealingEffect).Stop();
+						// 蘇生エフェクトを再生
+						GetScene().Instantiate<OnceEffectObject>(
+						    "Effect/Resurrection.efkefc",
+						    Get<Transform>(objHealTargetOtherPlayer).position);
 					}
 				}
 				else
 				{
 					if (Get<OtherPlayer>(objHit).Data().hp <= 0)
 					{
-						objHealTargetOtherPlayer = objHit;
-						healTimeLeftSec          = HEAL_TIME;
+						if (objHealTargetOtherPlayer != objHit)
+						{
+							objHealTargetOtherPlayer = objHit;
+							healTimeLeftSec          = HEAL_TIME;
+
+							// 蘇生対象を見つけたときだけSEを1回再生
+							if (!isResuscitationSEPlayed)
+							{
+								Get<AudioManager>().PlayResuscitation(resuscitationSE);
+								isResuscitationSEPlayed = true;
+							}
+
+							// エフェクト再生
+							// 治療エフェクトの再生開始
+							EffectObject& effect = Get<EffectObject>(objHealingEffect);
+							effect.Play();
+							Vec3 pos = Get<Transform>(objHealTargetOtherPlayer).position;
+							// エフェクトの座標を治療中のプレイヤーの座標にする
+							effect.Data().transform.position = Get<Transform>(objHealTargetOtherPlayer).position;
+						}
 					}
 				}
 			}
@@ -87,12 +119,24 @@ void ItemActionMedicals::Update(
 	}
 	else
 	{
+		// ボタンを離したときだけフェードアウト
+		if (isResuscitationSEPlayed)
+		{
+			Get<AudioManager>().FadeOutResuscitation();
+			isResuscitationSEPlayed = false;
+		}
+
 		if (_playerHandData.isActing)
 		{
 			_playerHandData.isActing = false;
-			// transformAnimator.playingTimeSec = 0.0f;
-			// transformAnimator.playAnimation  = "idle";
+
+			// 蘇生対象をリセット
+			objHealTargetOtherPlayer = {};
+			healTimeLeftSec          = HEAL_TIME;
+
 			_playerHandData.transformAnimator.playToLoop = false;
+
+			Get<EffectObject>(objHealingEffect).Stop();
 		}
 	}
 

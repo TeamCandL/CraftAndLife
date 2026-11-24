@@ -142,33 +142,26 @@ namespace cha
 	inline ComponentT* GameObjectCollection::FindComponent(
 	    const uint64_t _id)
 	{
+		if (_id >= indices_.size())
+		{
+			return nullptr;
+		}
+
 		const size_t INDEX{ IdToRegistryIndex(_id) };
+
+		if (INDEX == 0 || INDEX >= registry_.size())
+		{
+			return nullptr;
+		}
+
 		const uint64_t COMPONENT_INDEX{ ComponentRegistry::GetComponentIndex<ComponentT>() };
 
-		if (IsRegisteredIndex(INDEX))
-		{
-			if (!registry_[INDEX].componentFlag.test(COMPONENT_INDEX))
-			{
-				return nullptr;  // 指定コンポーネントが含まれていないためnullptrを返す
-			}
-			return &pComponentPools_->template At<ComponentT>(INDEX);
-		}
-		else if (IsPendingIndex(INDEX))
+		if (!registry_[INDEX].componentFlag.test(COMPONENT_INDEX))
 		{
 			return nullptr;
-			// const size_t PENDING_INDEX = INDEX - registry_.size();
+		}
 
-			// if (!toAdd_[PENDING_INDEX].componentFlag.test(COMPONENT_INDEX))
-			//{
-			//	return nullptr;  // 指定コンポーネントが含まれていないためnullptrを返す
-			// }
-			// return &pComponentPools_->template At<ComponentT>(INDEX);
-		}
-		else
-		{
-			// 単純に範囲外なら nullptr を返す
-			return nullptr;
-		}
+		return &pComponentPools_->template At<ComponentT>(INDEX);
 	}
 
 	template <typename Func>
@@ -363,10 +356,24 @@ namespace cha
 	inline ComponentT& GameObjectCollection::GetComponent(
 	    const uint64_t _id)
 	{
+		if (_id >= indices_.size())
+		{
+			throw std::out_of_range("GameObject ID is out of range.");
+		}
+
 		const size_t INDEX{ IdToRegistryIndex(_id) };
+
+		if (INDEX == 0 || INDEX >= registry_.size())
+		{
+			throw std::out_of_range("GameObject is not registered.");
+		}
+
 		const uint64_t COMPONENT_INDEX{ ComponentRegistry::GetComponentIndex<ComponentT>() };
 
-		VCU_ASSERT(registry_[INDEX].componentFlag.test(COMPONENT_INDEX) && "指定コンポーネントが含まれていない");
+		if (!registry_[INDEX].componentFlag.test(COMPONENT_INDEX))
+		{
+			throw std::out_of_range("The GameObject does not contain the requested component.");
+		}
 
 		return pComponentPools_->template At<ComponentT>(INDEX);
 	}

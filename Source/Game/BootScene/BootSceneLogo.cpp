@@ -2,6 +2,7 @@
 #include <Game/MapTestScene/MapTestScene.h>
 #include <Game/PlayScene/PlayScene.h>
 #include <Game/TitleScene/TitleScene.h>
+#include <Game/ModelTestScene/ModelTestScene.h>
 
 void BootSceneLogo::Start()
 {
@@ -22,8 +23,9 @@ void BootSceneLogo::Update()
 	{
 		// ロゴの表示が終わったためシーン遷移する
 		Get<SceneManager>().Move<TitleScene>();
-		// Get<SceneManager>().Move<MapTestScene>();
-		// Get<SceneManager>().Move<PlayScene>();
+		// Get<SceneManager>().Move<ModelTestScene>();
+		//   Get<SceneManager>().Move<MapTestScene>();
+		//   Get<SceneManager>().Move<PlayScene>();
 		return;
 	}
 

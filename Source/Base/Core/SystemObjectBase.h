@@ -3,6 +3,7 @@
 #include "SystemRegistry.h"
 #include "NullObjectData.h"
 #include "ISystemObject.h"
+#include <AllSystem.h>
 
 namespace cha
 {
@@ -12,16 +13,24 @@ namespace cha
 	template <typename SystemT, typename DataT = NullObjectData>
 	class SystemObjectBase : public ObjectBase<DataT>, public ISystemObject
 	{
-	public:
+	  public:
 		/// @brief 参照関係を登録、リンクする
 		/// @param _linker リンクするやつ
-		virtual void OnDependencyLink(DependencyLinker& _linker) override {}
+		virtual void OnDependencyLink(
+		    DependencyLinker& _linker) override
+		{
+		}
 
 		/// @brief 遅い更新処理
 		void LateUpdate() override {}
 
-	private:
-		inline static uint64_t INDEX_ = 
-			SystemRegistry::GetSystemIndex<SystemT>();  // システムのインデクス
+	  private:
+		static void RegisterAtStartup()
+		{
+			SystemRegistry::GetSystemIndex<SystemT>();
+		}
+
+		static constexpr size_t INDEX = AllSystems::IndexOf<SystemT>();
+		static_assert(AllSystems::Contains<SystemT>(), "AllSystems に登録されていないシステムです");
 	};
-}
+}  // namespace cha

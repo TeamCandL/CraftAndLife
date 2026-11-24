@@ -32,6 +32,9 @@ class NormalPlayerInput : public IPlayerInput
 	virtual bool IsJump() const override;
 	virtual bool IsJumpEnd() const override;
 
+	/// @brief 更新処理
+	virtual void Update() override {}
+
   protected:
 	AbstructInputSystem& abstructInputSystem_;
 };

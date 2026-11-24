@@ -95,9 +95,14 @@ void ClearSceneTrigger::Update()
 	// フェードオブジェクトを取得
 	ClearFade& fade = Get<ClearFade>(Data().objClearFade);
 
-	// フェード中なら何もしない
-	if (fade.Data().isFading)
+	// セッション情報を取得
+	SessionManager& sessionManager = Get<SessionManager>();
+
+	// 全プレイヤーが死亡したらゲームオーバー
+	// クリアフェード中でも優先する
+	if (AreAllPlayersDead(sessionManager))
 	{
+		fade.StartFade(ResultType::GameOver);
 		return;
 	}
 
@@ -108,19 +113,16 @@ void ClearSceneTrigger::Update()
 		return;
 	}
 
-	// 全プレイヤーが死亡したらゲームオーバー
-	SessionManager& sessionManager = Get<SessionManager>();
-
-	if (AreAllPlayersDead(sessionManager))
+	// Enterが押されたら強制CLEAR
+	if (Get<InputSystem>().GetKeyDown(KeyCode::Enter))
 	{
-		fade.StartFade(ResultType::GameOver);
+		fade.StartFade(ResultType::Clear, true);
 		return;
 	}
 
-	// Enterが押されたらクリア
-	if (Get<InputSystem>().GetKeyDown(KeyCode::Enter))
+	// フェード中なら何もしない
+	if (fade.Data().isFading)
 	{
-		fade.StartFade(ResultType::Clear);
 		return;
 	}
 
@@ -158,6 +160,7 @@ void ClearSceneTrigger::Update()
 	}
 
 	const InSessionStatus& status = sessionManager.RefStatus();
+
 	if (CURRENT_DAY >= 3 && CURRENT_TIME >= 45.0f && status.currentTimeSec >= 45.0f)
 	{
 		// ドラゴン撃破でクリア
@@ -168,10 +171,21 @@ void ClearSceneTrigger::Update()
 		}
 
 		// 45秒過ぎた時ボスを倒せなければゲームオーバー
-		if (CURRENT_TIME >= 46.0f && status.currentTimeSec >= 46.0f)
+		if (CURRENT_TIME > 45.0f && status.currentTimeSec > 45.0f)
 		{
 			fade.StartFade(ResultType::GameOver);
 			return;
 		}
+
+		// if (CURRENT_TIME > 45.0f && status.currentTimeSec > 45.0f && !hasDragonState && isDragonAlive)
+		//{
+		//	if (CURRENT_TIME >= 90.0f && status.currentTimeSec >= 90.0f && hasDragonState && !isDragonAlive)
+		//	{
+		//		//数秒後シーン遷移
+		//	}
+		//	//90秒超えたら
+		//	fade.StartFade(ResultType::GameOver);
+		//	return;
+		// }
 	}
 }

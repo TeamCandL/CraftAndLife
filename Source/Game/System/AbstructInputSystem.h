@@ -53,6 +53,9 @@ struct AbstructInputSystem : SystemObjectBase<AbstructInputSystem, AbstructInput
 	{
 		return pUIInput;
 	}
+
+	/// @brief 抽象入力を初期値に戻す
+	void ResetInput();
 };
 
 #include "AbstructInputSystem.inl"

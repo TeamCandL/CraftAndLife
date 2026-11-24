@@ -27,6 +27,8 @@
 #include <Game/Manager/AudioManager.h>
 #include "ClearSceneTrigger.h"
 #include "ClearFade.h"
+#include "Tutorial/TutorialFirstStep.h"
+#include <../Resource/MAP/MAP_Island.h>
 
 void PlayScene::Start()
 {
@@ -39,6 +41,7 @@ void PlayScene::Start()
 
 	GameObject objHarvestableController = Instantiate<HarvestableController>();
 	GameObject objTerrain               = Instantiate<MAP>(objHarvestableController);
+	GameObject objIsland                = Instantiate<MAP_Island>(objTerrain);
 
 	// GameObject objTerrain = Instantiate<Terrain>();
 
@@ -79,4 +82,7 @@ void PlayScene::Start()
 
 	// クリア・ゲームオーバー切り替え判定
 	Instantiate<ClearSceneTrigger>(objDayController, objClearFade, objNetworkActorServer);
+
+	// チュートリアル最初のステップ
+	Instantiate<TutorialFirstStep>(objPlaySceneUIController, objPlayer, objMainCamera);
 }

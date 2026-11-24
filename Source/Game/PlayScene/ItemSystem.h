@@ -18,6 +18,7 @@ enum ItemType
 	EnemyAttack,        ///<	敵の攻撃アイテム
 	PlayerAttackSword,  ///<	プレイヤーの剣攻撃アイテム
 	PlayerAttackArrow,  ///<	プレイヤーの弓攻撃アイテム
+	PlayerAttackTool,   ///<	プレイヤーの採取ツール攻撃アイテム
 	ItemTypeMax,        ///<	その他アイテム
 };
 
@@ -57,7 +58,7 @@ struct ItemAllInfo
 	const bool _isCraftable{};                  ///<	クラフト可能か
 	const std::vector<CraftInfo> _craftInfo{};  ///<	クラフトに必要なアイテムの情報
 
-	const float _coolTime{};           ///<	クールタイム
+	const float _damageLifeTime{};     ///<	攻撃判定の持続時間
 	const int32_t _damageForEnemy{};   ///<	敵への攻撃力
 	const int32_t _damageForObject{};  ///<	オブジェクトへの攻撃力
 	const int32_t _damageForMob{};     ///<	モブへの攻撃力

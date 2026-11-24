@@ -31,9 +31,17 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	// テスト用コード
 	if (Get<InputSystem>().GetKeyDown(KeyCode::O))
 	{
 		hp -= 100;
+	}
+
+	if (isDead)
+	{
+		UpdateDeathAnimation();
+		VCU_LOG("死亡アニメーション中");
+		return;
 	}
 
 	if (!alive)
@@ -52,7 +60,21 @@ void Enemy::Update()
 	{
 		hp = 0;
 		SetAlive(false);
-		DropItem();
+		// DropItem();
+	}
+
+	SessionManager& session = Get<SessionManager>();
+	SessionStateReader readers{ session };
+
+	if (readers.TryGetState(StateTarget::Enemy(GetID()), "alive", alive))
+	{
+		if (!alive)
+		{
+			VCU_LOG("OtherEnemy ID:{} is dead. Destroying...", GetID());
+
+			hp = 0;
+			return;
+		}
 	}
 
 	//// ▼ HPバーの位置と割合の更新
@@ -67,6 +89,8 @@ void Enemy::Update()
 
 	// VCU_LOG("敵の追跡状況：{}", followed);
 	Move(targetPos, transform.position, transform.Down(), speed);
+
+	transform.position = Get<TerrainSystem>().ToSafePosition(transform.position, transform.scale);
 
 	Sensor(transform.Down());
 
@@ -140,15 +164,15 @@ void Enemy::Update()
 	else
 	{
 		// ▼ 死亡時にHPバーを削除
-		if (!objHpBar.IsEmpty())
+		/*if (!objHpBar.IsEmpty())
 		{
-			GetScene().Destroy(objHpBar);
-		}
+		    GetScene().Destroy(objHpBar);
+		}*/
 
 		const int32_t enemyId = GetID();
 		VCU_LOG("[Enemy] 死亡開始 ID={}", enemyId);
 
-		SetActive(false);
+		// SetActive(false);
 
 		EnemyController& controller = Get<EnemyController>(objEnemyController);
 
@@ -160,7 +184,8 @@ void Enemy::Update()
 		// 敵の管理スロットを空にする
 		controller.RemoveEnemy(enemyId);
 
-		DestroyMe();
+		StartDeathAnimation();
+		// DestroyMe();
 
 		VCU_LOG("[Enemy] DestroyMe 呼び出し完了 ID={}", enemyId);
 		return;
@@ -185,7 +210,7 @@ void Enemy::Move(
 	Vec3 ePos{ ex, 0.0f, ez };
 	float length = (tPos - ePos).Length();
 
-	if ((length > 1.0f && followed) || !followed)
+	if ((length > speed / 2.0f && followed) || !followed)
 	{
 		Vec3 crossed = Math::GetCrossProduct(Fwd_, tPos - ePos);
 
@@ -227,34 +252,34 @@ void Enemy::Sensor(
 		float playerDist = (objPlayer._pos - transform.position).Length();
 		if (playerDist <= visibilityDist)
 		{
-			if (objPlayer._attentionLevel >= targetAttentionLevel)
+			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
+			float visibilityDot = std::cosf(visibilityAngle);
+			if (dot <= visibilityDot)
 			{
-				if (objPlayer._attentionLevel > targetAttentionLevel)
+				if (objPlayer._attentionLevel >= targetAttentionLevel)
 				{
-					targetPos_           = objPlayer._pos;
-					targetDist           = playerDist;
-					targetAttentionLevel = objPlayer._attentionLevel;
-				}
-				else if (targetDist < 0.0f)
-				{
-					targetPos_           = objPlayer._pos;
-					targetDist           = playerDist;
-					targetAttentionLevel = objPlayer._attentionLevel;
-				}
-				else
-				{
-					if (targetDist > playerDist)
+					if (objPlayer._attentionLevel > targetAttentionLevel)
 					{
 						targetPos_           = objPlayer._pos;
 						targetDist           = playerDist;
 						targetAttentionLevel = objPlayer._attentionLevel;
 					}
+					else if (targetDist < 0.0f)
+					{
+						targetPos_           = objPlayer._pos;
+						targetDist           = playerDist;
+						targetAttentionLevel = objPlayer._attentionLevel;
+					}
+					else
+					{
+						if (targetDist > playerDist)
+						{
+							targetPos_           = objPlayer._pos;
+							targetDist           = playerDist;
+							targetAttentionLevel = objPlayer._attentionLevel;
+						}
+					}
 				}
-			}
-			float dot           = Math::GetDotProduct(Fwd_, (objPlayer._pos - transform.position));
-			float visibilityDot = std::cosf(visibilityAngle);
-			if (dot <= visibilityDot)
-			{
 			}
 		}
 
@@ -293,7 +318,7 @@ void Enemy::Sensor(
 
 void Enemy::Draw()
 {
-	if (!alive)
+	if (!alive && !isDead)
 		return;
 
 	// VCU_LOG("hostEnemy Position: ({}, {}, {})", transform.position.x, transform.position.y, transform.position.z);
@@ -370,7 +395,6 @@ void Enemy::AttackCollider(
 	attacked = true;
 
 	// Get<AudioManager>().Play(attackSE);
-	const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 
 	Vec3 dir = forward_.Normalize() * 10.0f;
 	if (dir.Length() <= FLT_EPSILON)
@@ -378,8 +402,17 @@ void Enemy::AttackCollider(
 		dir = Vec3::Forward();
 	}
 
-	// 蜘蛛の糸攻撃！
-	Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
+	Get<EntitySystem>().Spawn(20, transform.position, dir);
+	if (enemyType == EnemyType::Spider)  // 蜘蛛の糸攻撃！
+	{
+		const ItemId ITEM_ID_SPIDER_STRING{ 20 };
+		Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
+	}
+	else if (enemyType == EnemyType::Dragon)  //	ドラゴンの火攻撃！
+	{
+		const ItemId ITEM_ID_DRAGON_FIRE{ 26 };
+		Get<EntitySystem>().Spawn(ITEM_ID_DRAGON_FIRE, transform.position, dir);
+	}
 
 	// NOTE: エンティティへ移行しますた
 	// GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f,
@@ -450,7 +483,11 @@ void Enemy::SetWanderingCheckPoint(
 
 void Enemy::DropItem()
 {
-	Get<EntitySystem>().Spawn(dropItemID, transform.position + Vec3::Up(), Vec3::Zero());
+	int32_t dropValue = Random::GetRandom(dropMinCount, dropMaxCount);
+	for (int32_t i = 0; i < dropValue; ++i)
+	{
+		Get<EntitySystem>().Spawn(dropItemID, transform.position + Vec3::Up(), Vec3::Zero());
+	}
 }
 
 void Enemy::RegisterStates(
@@ -460,4 +497,45 @@ void Enemy::RegisterStates(
 	// registry.Register("followed", followed);
 	registry.Register("alive", alive);
 	registry.Register("attacked", attacked);
+	registry.Register("isBoss", isBoss);
+}
+
+void Enemy::StartDeathAnimation()
+{
+	VCU_LOG("StartDeathAnimation 呼び出し");
+	isDead          = true;
+	deathElapsedSec = 0.0f;
+
+	deathStartScale    = transform.scale;
+	deathStartRotation = transform.rotation;
+}
+
+void Enemy::UpdateDeathAnimation()
+{
+	VCU_LOG("deathanim呼び出し");
+	deathElapsedSec += Get<DeltaTime>();
+
+	// 前半：横たわる（0.6秒）
+	float fallProgress = std::clamp(deathElapsedSec / fallDurationSec, 0.0f, 1.0f);
+
+	if (fallProgress < 1.0f)
+	{
+		Quaternion fallRotation = Quaternion::FromEuler(Vec3{ 0.0f, 0.0f, DirectX::XM_PIDIV2 });
+
+		transform.rotation = Quaternion::Slerp(deathStartRotation, deathStartRotation * fallRotation, fallProgress);
+	}
+	else
+	{
+		// 後半：縮小する（0.8秒）
+		float shrinkProgress = std::clamp((deathElapsedSec - fallDurationSec) / shrinkDurationSec, 0.0f, 1.0f);
+
+		float scaleRate = 1.0f - shrinkProgress;
+		transform.scale = deathStartScale * scaleRate;
+
+		if (shrinkProgress >= 1.0f)
+		{
+			DropItem();
+			DestroyMe();
+		}
+	}
 }

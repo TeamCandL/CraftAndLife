@@ -47,4 +47,8 @@ struct MainCamera : ObjectBase<MainCameraData>, IMainCamera
 	void UpdatePositionFromTarget(const GameObject _objTarget) override;
 	float GetAngleX() const override;
 	float GetAngleY() const override;
+	Vec2 GetAngle() const
+	{
+		return angles;
+	}
 };

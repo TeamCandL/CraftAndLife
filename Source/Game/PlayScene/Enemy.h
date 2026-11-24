@@ -15,17 +15,20 @@ struct TargetInfo
 /// @brief 敵のパラメータ初期値。Skeleton, BossSkeleton, Spider, Bat, Dragonの順番でパラメータを格納
 namespace EnemyParam
 {
-	const std::vector<int32_t> Hp{ 50, 300, 30, 20, 500 };                               ///< 体力
+	const std::vector<int32_t> Hp{ 50, 200, 30, 20, 400 };                               ///< 体力
 	const std::vector<int32_t> Damage{ 10, 25, 8, 5, 40 };                               ///< 攻撃力
-	const std::vector<float> Speed{ 6.0f, 3.5f, 10.5f, 7.5f, 8.0f };                     ///< 移動速度
-	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };              /// 近距離攻撃の有無
-	const std::vector<bool> HasLongAttack{ false, false, true, false, true };            /// 遠距離攻撃の有無
-	const std::vector<float> VisibilityDist{ 15.0f, 50.0f, 30.0f, 10.0f, 60.0f };        /// 視認距離
-	const std::vector<float> VisibilityAngle{ 180.0f, 200.0f, 300.0f, 240.0f, 260.0f };  /// 視認角度
-	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 1.0f, 1.0f, 3.0f };             /// 攻撃クールタイム
-	const std::vector<float> RotationAnglePerSec{ 13.5f, 9.0f, 20.0f, 16.5f, 11.5f };    /// 回転速度
-	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };                      /// モデルの大きさ
-	const std::vector<int32_t> DropItemId{ 9, 9, 10, 11, 12 };                           /// ドロップアイテムID
+	const std::vector<float> Speed{ 4.5f, 3.5f, 10.5f, 7.5f, 6.0f };                     ///< 移動速度
+	const std::vector<bool> HasCloseAttack{ true, true, true, true, true };              ///< 近距離攻撃の有無
+	const std::vector<bool> HasLongAttack{ false, false, true, false, true };            ///< 遠距離攻撃の有無
+	const std::vector<float> WanderingRange{ 50.0f, 50.0f, 50.0f, 50.0f, 0.0f };         ///< 徘徊範囲
+	const std::vector<float> VisibilityDist{ 30.0f, 65.0f, 45.0f, 25.0f, 75.0f };        ///< 視認距離
+	const std::vector<float> VisibilityAngle{ 120.0f, 200.0f, 300.0f, 240.0f, 360.0f };  ///< 視認角度
+	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 2.5f, 1.0f, 3.0f };             ///< 攻撃クールタイム
+	const std::vector<float> RotationAnglePerSec{ 22.5f, 18.0f, 45.0f, 30.5f, 25.5f };   ///< 回転速度
+	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };                      ///< モデルの大きさ
+	const std::vector<int32_t> DropItemId{ 9, 25, 10, 11, 12 };                          ///< ドロップアイテムID
+	const std::vector<int32_t> DropMinCount{ 1, 1, 1, 1, 2 };                            ///< ドロップアイテム最小個数
+	const std::vector<int32_t> DropMaxCount{ 1, 1, 3, 2, 3 };                            ///< ドロップアイテム最大個数
 }  // namespace EnemyParam
 
 struct StateRegistry;
@@ -39,7 +42,9 @@ struct EnemyData
 	EnemyData(
 	    GameObject objEnemyController_,
 	    const std::string& _name = "AAA") :
-	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[static_cast<int>(EnemyType::Skeleton)] }
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[static_cast<int>(EnemyType::Skeleton)] },
+	    WAN_RANGE{ EnemyParam::WanderingRange[static_cast<int>(EnemyType::Skeleton)] },
+	    WAN_REFERENCE{ EnemyParam::WanderingRange[static_cast<int>(EnemyType::Skeleton)] / 2 }
 	{
 		nameDEB.content    = _name;
 		objEnemyController = objEnemyController_;
@@ -57,7 +62,10 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[static_cast<int>(EnemyType::Skeleton)];
 		scale               = EnemyParam::Scale[static_cast<int>(EnemyType::Skeleton)];
 		dropItemID          = EnemyParam::DropItemId[static_cast<int>(EnemyType::Skeleton)];
-		transform.scale     = Vec3::One() * scale;
+		dropMinCount        = EnemyParam::DropMinCount[static_cast<int>(EnemyType::Skeleton)];
+		dropMaxCount        = EnemyParam::DropMaxCount[static_cast<int>(EnemyType::Skeleton)];
+
+		transform.scale = Vec3::One() * scale;
 	}
 	/// @brief 位置指定生成
 	/// @param position_ 位置
@@ -65,7 +73,9 @@ struct EnemyData
 	    GameObject objEnemyController_,
 	    const Vec3 position_) :
 	    transform{ position_ },
-	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[static_cast<int>(EnemyType::Skeleton)] }
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[static_cast<int>(EnemyType::Skeleton)] },
+	    WAN_RANGE{ EnemyParam::WanderingRange[static_cast<int>(EnemyType::Skeleton)] },
+	    WAN_REFERENCE{ EnemyParam::WanderingRange[static_cast<int>(EnemyType::Skeleton)] / 2 }
 	{
 		objEnemyController = objEnemyController_;
 
@@ -81,6 +91,8 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[static_cast<int>(EnemyType::Skeleton)];
 		scale               = EnemyParam::Scale[static_cast<int>(EnemyType::Skeleton)];
 		dropItemID          = EnemyParam::DropItemId[static_cast<int>(EnemyType::Skeleton)];
+		dropMinCount        = EnemyParam::DropMinCount[static_cast<int>(EnemyType::Skeleton)];
+		dropMaxCount        = EnemyParam::DropMaxCount[static_cast<int>(EnemyType::Skeleton)];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 種類指定生成
@@ -89,7 +101,9 @@ struct EnemyData
 	    GameObject objEnemyController_,
 	    const int enemyType_) :
 	    enemyType{ static_cast<EnemyType>(enemyType_) },
-	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] }
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] },
+	    WAN_RANGE{ EnemyParam::WanderingRange[enemyType_] },
+	    WAN_REFERENCE{ EnemyParam::WanderingRange[enemyType_] / 2 }
 	{
 		objEnemyController = objEnemyController_;
 
@@ -107,6 +121,8 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
 		dropItemID          = EnemyParam::DropItemId[enemyType_];
+		dropMinCount        = EnemyParam::DropMinCount[enemyType_];
+		dropMaxCount        = EnemyParam::DropMaxCount[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief 位置、種類指定生成
@@ -118,7 +134,9 @@ struct EnemyData
 	    int enemyType_) :
 	    transform{ position_ },
 	    enemyType{ static_cast<EnemyType>(enemyType_) },
-	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] }
+	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] },
+	    WAN_RANGE{ EnemyParam::WanderingRange[enemyType_] },
+	    WAN_REFERENCE{ EnemyParam::WanderingRange[enemyType_] / 2 }
 	{
 		objEnemyController = objEnemyController_;
 
@@ -134,6 +152,8 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
 		dropItemID          = EnemyParam::DropItemId[enemyType_];
+		dropMinCount        = EnemyParam::DropMinCount[enemyType_];
+		dropMaxCount        = EnemyParam::DropMaxCount[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 	/// @brief
@@ -148,6 +168,8 @@ struct EnemyData
 	    transform{ position_ },
 	    enemyType{ static_cast<EnemyType>(enemyType_) },
 	    ATTACK_COOL_TIME{ EnemyParam::AttackCoolTime[enemyType_] },
+	    WAN_RANGE{ EnemyParam::WanderingRange[enemyType_] },
+	    WAN_REFERENCE{ EnemyParam::WanderingRange[enemyType_] / 2 },
 	    isBoss{ isBoss_ }
 	{
 		objEnemyController = objEnemyController_;
@@ -165,6 +187,8 @@ struct EnemyData
 		rotationAnglePerSec = EnemyParam::RotationAnglePerSec[enemyType_];
 		scale               = EnemyParam::Scale[enemyType_];
 		dropItemID          = EnemyParam::DropItemId[enemyType_];
+		dropMinCount        = EnemyParam::DropMinCount[enemyType_];
+		dropMaxCount        = EnemyParam::DropMaxCount[enemyType_];
 		transform.scale     = Vec3::One() * scale;
 	}
 
@@ -232,7 +256,7 @@ struct EnemyData
 	const float ATTACK_COOL_TIME{ 5.0f };       ///< 攻撃クールタイム
 	float nowAttackCoolTime{ 0.0f };            ///< 現在の攻撃クールタイム
 	const float ATTACK_COLL_LIFE_TIME{ 0.5f };  ///< 攻撃判定の寿命
-	const float DAMAGED_COOL_TIME{ 0.5f };      ///< 被ダメージクールタイム
+	const float DAMAGED_COOL_TIME{ 0.35f };     ///< 被ダメージクールタイム
 	float nowDamagedCoolTime{ 0.0f };           ///< 現在の被ダメージクールタイム
 	float scale{ 1.0f };                        ///< モデルの大きさ
 
@@ -244,17 +268,26 @@ struct EnemyData
 
 	const Vec3 DEFAULT_TARGET_POS{ 0.0f, -100.0f, 0.0f };
 
-	const float WAN_RANGE{ 50 };  ///< 徘徊範囲
-	const float WAN_REFERENCE{
-		WAN_RANGE / 2
-	};  ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する
+	const float WAN_RANGE{};  ///< 徘徊範囲
+	const float
+	    WAN_REFERENCE{};  ///< 徘徊基準点,これを現在地(座標)から引いてからランダム値を足すことで、徘徊範囲を決定する
 
 	Vec3 targetPos{};                     ///< 追跡地点
 	GameObject objWanderingCheckPoint{};  ///< 徘徊時のチェックポイント
 	float rotationAnglePerSec{};          ///< 回転速度
 	float torque{};                       ///< 回転力
 
-	int32_t dropItemID{};  ///< ドロップアイテムのID
+	int32_t dropItemID{};    ///< ドロップアイテムのID
+	int32_t dropMinCount{};  ///< ドロップアイテムの最小個数
+	int32_t dropMaxCount{};  ///< ドロップアイテムの最大個数
+
+	// 死亡演出関連
+	bool isDead{ false };                      // 死亡演出中かどうか
+	float deathElapsedSec{ 0.0f };             // 死亡演出の経過時間
+	float fallDurationSec{ 0.6f };             // 横たわるまでの時間
+	float shrinkDurationSec{ 0.8f };           // 縮小して消滅するまでの時間
+	Vec3 deathStartScale{ 1.0f, 1.0f, 1.0f };  // 死亡演出開始時にスケール
+	Quaternion deathStartRotation{};           // 死亡演出開始時の回転
 };
 
 /// @brief 敵
@@ -346,4 +379,8 @@ struct Enemy : ObjectBase<EnemyData>
 	void DropItem();
 
 	void RegisterStates(StateRegistry& registry) const;
+
+	void StartDeathAnimation();
+
+	void UpdateDeathAnimation();
 };

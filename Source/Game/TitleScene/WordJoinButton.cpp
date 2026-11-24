@@ -52,7 +52,7 @@ void WordJoinButton::Update()
 		return;
 	}
 
-	if (Get<UI::Button>(objButton).IsPushed())
+	if (Get<UI::Button>(objButton).IsPushed() || Get<InputSystem>().GetKeyDown(KeyCode::S))
 	{
 		Get<WordInputPanel>(objWordInputPanel).Show();
 		isInputtingWord = true;

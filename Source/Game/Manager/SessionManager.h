@@ -98,8 +98,8 @@ class SessionManager : public IManager
 	/// @param _positions  座標情報
 	/// @param _rotations  回転情報
 	void UpdateEnemies(
-	    SizedBuffer<int>& _enemyIds,
-	    SizedBuffer<int>& _enemyTypes,
+	    SizedBuffer<int32_t>& _enemyIds,
+	    SizedBuffer<int32_t>& _enemyTypes,
 	    SizedBuffer<float>& _positions,
 	    SizedBuffer<float>& _rotations);
 
@@ -137,12 +137,24 @@ class SessionManager : public IManager
 	const InSessionStatus::EnemyStatus& RefEnemyStatus(
 	    int _enemyId) const
 	{
+		VCU_LOG("SessionManager EnemyStatus enemyId: ID={}", _enemyId);
 		return inSessionStatus_.enemiesStatus.at(_enemyId);
 	}
 
 	/// @brief 昼夜サイクルのためのゲーム内時間の更新
 	/// @param _currentTimeSec ホスト側の昼夜サイクルの現在時刻
 	void UpdateDayTime(float _currentTimeSec, int32_t _dayCount);
+
+	int GetEnemyStateSize()
+	{
+		VCU_LOG("登録されている敵の数: {}", inSessionStatus_.enemiesStatus.size());
+
+		for (const auto& [enemyId, status] : inSessionStatus_.enemiesStatus)
+		{
+			VCU_LOG("登録済み敵ID: {}", enemyId);
+		}
+		return static_cast<int>(inSessionStatus_.enemiesStatus.size());
+	}
 
   private:
 	InSessionStatus inSessionStatus_{};  ///< セッション内のステータス
@@ -165,6 +177,9 @@ inline void SessionManager::ForeachEnemyStatus(
 {
 	for (const auto& [id, status] : inSessionStatus_.enemiesStatus)
 	{
+		if (!status.hasReceivedEnemyInfo)
+			continue;
+
 		_func(id, status);
 	}
 }

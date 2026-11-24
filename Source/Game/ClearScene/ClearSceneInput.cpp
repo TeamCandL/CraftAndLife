@@ -9,15 +9,17 @@
 
 void ClearSceneInput::Start()
 {
-	objInputBackground = GetScene().Instantiate<ImageObject>(backgroundTexture, Vec2{ 533, 875 }, Vec2{ 1006, 128 }, 2);
-	Get<ImageObject>(objInputBackground).SetActive(false);
-	FontLoadConfig config;
-	config.fontSize = 64;
-
-	Resource<ResourceType::Font> font{ config };
-	objInputText = GetScene().Instantiate<TextObject>(Vec2{ 533, 875 }, Vec2{ 964, 93 }, 3, font);
-	Get<TextObject>(objInputText).Data().text.content = "Spaceキーを押すと、ゲーム終了";
-	Get<TextObject>(objInputText).SetActive(false);
+	if (resultType == ResultType::Clear)
+	{
+		texture       = Resource<Texture>{ "Image/Clear/quit_game_gameclear.png" };
+		objInputImage = GetScene().Instantiate<ImageObject>(texture, Vec2{ 497, 702 }, Vec2{ 926, 309 }, 3);
+	}
+	else
+	{
+		texture       = Resource<Texture>{ "Image/GAMEOVER/quit_game_gameover.png" };
+		objInputImage = GetScene().Instantiate<ImageObject>(texture, Vec2{ 490, 654 }, Vec2{ 926, 309 }, 3);
+	}
+	Get<TextObject>(objInputImage).SetActive(false);
 }
 
 void ClearSceneInput::Update()
@@ -30,15 +32,19 @@ void ClearSceneInput::Update()
 	{
 		return;
 	}
-	Get<ImageObject>(objInputBackground).SetActive(true);
-	Get<TextObject>(objInputText).SetActive(true);
+	Get<ImageObject>(objInputImage).SetActive(true);
 
 	// Spaceキーが押されたらタイトルへ
 	if (Get<InputSystem>().GetKeyDown(KeyCode::Space))
 	{
 		ManagerRegistry::Ref<AudioManager>().SetBGMStop();
 
-		// Get<SceneManager>().Move<TitleScene>();
 		Get<IssueManager>().Error(L"ゲーム終了");
 	}
+}
+
+ClearSceneInputData::ClearSceneInputData(
+    ResultType _resultType) :
+    resultType{ _resultType }
+{
 }

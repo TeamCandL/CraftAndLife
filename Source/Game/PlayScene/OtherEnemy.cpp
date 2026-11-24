@@ -5,10 +5,11 @@
 #include <Game/Manager/SessionManager/SessionStateReader.h>
 #include "EnemyHpBar.h"
 #include "Enemy.h"
+#include "StateRegistry.h"
 
 void OtherEnemy::Start()
 {
-	VCU_LOG("OtherEnemy Start: ID={}", enemyId);
+	VCU_LOG("OtherEnemy Start: ID={}, Type={}", enemyId, static_cast<int>(enemyType));
 	obb.isTrigger = true;
 }
 
@@ -19,6 +20,12 @@ void OtherEnemy::Update()
 	if (sessionManager.IsExistEnemy(enemyId))
 	{
 		const InSessionStatus::EnemyStatus& status = sessionManager.RefEnemyStatus(enemyId);
+
+		if (isDead)
+		{
+			UpdateDeathAnimation();
+			return;
+		}
 
 		// 座標と角度の更新
 		// transform.position = status.position;
@@ -58,10 +65,10 @@ void OtherEnemy::Update()
 
 		SessionStateReader reader{ sessionManager };
 
-		if (reader.TryGetState(StateTarget::Enemy(enemyId), "hp", hp))
+		/*if (reader.TryGetState(StateTarget::Enemy(enemyId), "hp", hp))
 		{
-			VCU_LOG("OtherEnemy ID:{} HP取得成功: {}", enemyId, hp);
-		}
+		    VCU_LOG("OtherEnemy ID:{} HP取得成功: {}", enemyId, hp);
+		}*/
 
 		if (reader.TryGetState(StateTarget::Enemy(enemyId), "alive", alive))
 		{
@@ -69,15 +76,16 @@ void OtherEnemy::Update()
 			{
 				VCU_LOG("OtherEnemy ID:{} is dead. Destroying...", enemyId);
 
-				DestroyMe();
+				// DestroyMe();
+				StartDeathAnimation();
 				return;
 			}
 		}
 
-		for (const auto& [name, value] : status.states)
+		/*for (const auto& [name, value] : status.states)
 		{
-			VCU_LOG("Enemy ID:{} State:{}", enemyId, name);
-		}
+		    VCU_LOG("Enemy ID:{} State:{}", enemyId, name);
+		}*/
 
 		// 被弾確認
 		if (damagedFlag)
@@ -99,24 +107,25 @@ void OtherEnemy::Update()
 
 void OtherEnemy::Draw()
 {
+	// return;
 	transform.UpdateFamily();
 
 	SessionManager& sessionManager = Get<SessionManager>();
 
-	if (sessionManager.IsExistEnemy(enemyId))
-	{
-		const auto& status = sessionManager.RefEnemyStatus(enemyId);
+	// if (sessionManager.IsExistEnemy(enemyId))
+	//{
+	//	const auto& status = sessionManager.RefEnemyStatus(enemyId);
 
-		VCU_LOG(
-		    "OtherEnemy ID:{} Sync: ({}, {}, {}) Draw: ({}, {}, {})",
-		    enemyId,
-		    status.position.x,
-		    status.position.y,
-		    status.position.z,
-		    transform.position.x,
-		    transform.position.y,
-		    transform.position.z);
-	}
+	//	VCU_LOG(
+	//	    "OtherEnemy ID:{} Sync: ({}, {}, {}) Draw: ({}, {}, {})",
+	//	    enemyId,
+	//	    status.position.x,
+	//	    status.position.y,
+	//	    status.position.z,
+	//	    transform.position.x,
+	//	    transform.position.y,
+	//	    transform.position.z);
+	//}
 
 	Get<Dx11Manager>().SetShader(shader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
@@ -144,4 +153,47 @@ void OtherEnemy::SendEnemyDamage(
 	message.damage  = damage;
 
 	networkSessionManager.Send(message);
+}
+
+void OtherEnemy::StartDeathAnimation()
+{
+	isDead          = true;
+	deathElapsedSec = 0.0f;
+
+	deathStartScale    = transform.scale;
+	deathStartRotation = transform.rotation;
+}
+
+void OtherEnemy::UpdateDeathAnimation()
+{
+	deathElapsedSec += Get<DeltaTime>();
+
+	// 前半：横たわる（0.6秒）
+	float fallProgress = std::clamp(deathElapsedSec / fallDurationSec, 0.0f, 1.0f);
+
+	if (fallProgress < 1.0f)
+	{
+		Quaternion fallRotation = Quaternion::FromEuler(Vec3{ 0.0f, 0.0f, DirectX::XM_PIDIV2 });
+
+		transform.rotation = Quaternion::Slerp(deathStartRotation, deathStartRotation * fallRotation, fallProgress);
+	}
+	else
+	{
+		// 後半：縮小する（0.8秒）
+		float shrinkProgress = std::clamp((deathElapsedSec - fallDurationSec) / shrinkDurationSec, 0.0f, 1.0f);
+
+		float scaleRate = 1.0f - shrinkProgress;
+		transform.scale = deathStartScale * scaleRate;
+
+		if (shrinkProgress >= 1.0f)
+		{
+			DestroyMe();
+		}
+	}
+}
+
+void OtherEnemy::RegisterStates(
+    StateRegistry& registry) const
+{
+	registry.Register("alive", !isDead);
 }

@@ -188,7 +188,7 @@ ItemSystemData::ItemSystemData()
 	                        ItemType::Materials,
 	                        "爪",
 	                        "Image/Item/IconClaw.png",
-	                        "Model/HandMaterial/DragonClaw.fbx",
+	                        "Model/HandMaterial/HandClaw.fbx",
 
 	                        false,
 	                        craft,
@@ -283,7 +283,7 @@ ItemSystemData::ItemSystemData()
 	                        PlayerJobType_Fighter });
 	craft.clear();
 	craft.push_back({ 10, 5 });
-	craft.push_back({ 14, 4 });
+	craft.push_back({ 14, 2 });
 	allItemList.push_back({ 18,
 	                        ItemType::Medicals,
 	                        "医療キット",
@@ -380,6 +380,49 @@ ItemSystemData::ItemSystemData()
 	                        5,
 	                        PlayerJobType_Max,
 	                        Vec3{ 1, 1, 5 } });
+	allItemList.push_back({ 25,
+	                        ItemType::Materials,
+	                        "じゅえる",
+	                        {},
+	                        {},
+	                        false,
+	                        craft,
+	                        0.0f,
+	                        0,
+	                        0,
+	                        0,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
+	allItemList.push_back({ 26,
+	                        ItemType::EnemyAttack,
+	                        "火ィ攻撃",
+	                        "Image/EmptyItem.png",
+	                        "Model/HandMaterial/HandString.fbx",
+
+	                        false,
+	                        craft,
+
+	                        12.0f,
+	                        12,
+	                        0,
+	                        5,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
+	allItemList.push_back({ 27,
+	                        ItemType::PlayerAttackTool,
+	                        "採取ツール攻撃",
+	                        "Image/EmptyItem.png",
+	                        {},
+
+	                        false,
+	                        craft,
+
+	                        1.0f,
+	                        1,
+	                        0,
+	                        0,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
 }
 
 ItemInfo ItemSystem::GetInfo(
@@ -394,7 +437,7 @@ ItemInfo ItemSystem::GetInfo(
 	info._craftInfo   = allItemList[id]._craftInfo;
 
 	info._imageId         = allItemList[id]._imageId;
-	info._coolTime        = allItemList[id]._coolTime;
+	info._coolTime        = allItemList[id]._damageLifeTime;
 	info._damageForEnemy  = allItemList[id]._damageForEnemy;
 	info._damageForObject = allItemList[id]._damageForObject;
 

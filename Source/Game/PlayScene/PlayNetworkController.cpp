@@ -38,6 +38,9 @@
 #include <Game/PlayScene/PlaySceneUIController.h>
 #include <Game/PlayScene/UI/ChatTextLog.h>
 #include <Game/Manager/AudioManager.h>
+#include <Game/Common/EffectObject.h>
+
+#include <vector>
 
 using enum NetworkSessionManager::State;
 
@@ -145,6 +148,16 @@ void PlayNetworkController::Update()
 				    VCU_LOG("敵種類数: {}", enemyMessage.enemyTypes.Size());
 				    VCU_LOG("座標データ数: {}", enemyMessage.positions.Size());
 				    VCU_LOG("回転データ数: {}", enemyMessage.rotations.Size());
+
+				    if (enemyMessage.enemyIds.Size() > 6)
+				    {
+					    VCU_LOG("わうわう～わんだほーい");
+					    VCU_LOG("敵ID数: {}", enemyMessage.enemyIds.Size());
+					    for (size_t i = 0; i < enemyMessage.enemyIds.Size(); ++i)
+					    {
+						    VCU_LOG("受信した敵 ID={}, Type={}", enemyMessage.enemyIds[i], enemyMessage.enemyTypes[i]);
+					    }
+				    }
 
 				    Get<SessionManager>().UpdateEnemies(
 				        enemyMessage.enemyIds,
@@ -300,19 +313,32 @@ void PlayNetworkController::Update()
 					    switch (message.itemId)
 					    {
 					    case ITEM_ID_PLAYER_ATTACK_SWORD:
-						    // 剣の音を鳴らす
-						    Get<AudioManager>().Play(swordDamagedSE);
+						    // 剣の音を鳴らす（音量50%）
+						    Get<AudioManager>().Play(swordDamagedSE, 0.5f);
 						    break;
 					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
-						    // 剣の音を鳴らす
-						    Get<AudioManager>().Play(greatswordDamagedSE);
+						    // 大剣の音を鳴らす（音量50%）
+						    Get<AudioManager>().Play(greatswordDamagedSE, 0.5f);
 						    break;
 					    case ITEM_ID_PLAYER_ATTACK_ARROW:
-						    // 剣の音を鳴らす
+						    // 矢の着弾の音を鳴らす
 						    Get<AudioManager>().Play(impactSE);
 						    break;
 					    default:
 						    // それ以外は音なし 他の人がアイテム拾ったときの音とかもできるよ
+						    break;
+					    }
+
+					    // ヒットエフェクト
+					    switch (message.itemId)
+					    {
+					    case ITEM_ID_PLAYER_ATTACK_SWORD:
+					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
+					    case ITEM_ID_PLAYER_ATTACK_ARROW:
+						    GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", position);
+						    break;
+					    default:
+						    // それ以外はエフェクトなし
 						    break;
 					    }
 				    }
@@ -341,7 +367,15 @@ void PlayNetworkController::Update()
 				    PlaySceneUIController& playSceneUIController = Get<PlaySceneUIController>(objUIController);
 
 				    GameObject objChatTextLog = playSceneUIController.Data().objChatTextLog;
-				    Get<ChatTextLog>(objChatTextLog).AddLog(message.content);
+
+				    // 自分の名前を取得
+				    const std::string& localName = Get<SessionManager>().RefStatus().name;
+
+				    // 他プレイヤーからのログか判定
+				    const bool isOtherPlayer = !message.sender.empty() && message.sender != localName;
+
+				    // ログは全員に表示、通知音は他プレイヤーの場合のみ
+				    Get<ChatTextLog>(objChatTextLog).AddLog(message.content, isOtherPlayer);
 
 				    break;
 			    }
@@ -470,8 +504,7 @@ void PlayNetworkController::Update()
 						continue;
 					}
 
-					Protocol::UpdateEnemy enemyMessage{};
-
+					Protocol::UpdateEnemy enemyMessage;
 					enemyMessage.enemyId   = enemy.enemyId;
 					enemyMessage.enemyType = static_cast<int>(enemy.enemyType);
 
@@ -491,6 +524,11 @@ void PlayNetworkController::Update()
 
 					networkSessionManager.Send(enemyMessage);
 				}
+				// vectorからsizedBufferに変換
+				/*enemyMessage.enemyIds   = SizedBuffer<int32_t>(std::move(enemyIds));
+				enemyMessage.enemyTypes = SizedBuffer<int32_t>(std::move(enemyTypes));
+				enemyMessage.positions  = SizedBuffer<float>(std::move(positions));
+				enemyMessage.rotations  = SizedBuffer<float>(std::move(rotations));*/
 
 				// 敵ステート送信処理
 				const bool fullSync = actorServer.IsFullSync();
@@ -651,10 +689,12 @@ void PlayNetworkController::Update()
 
 		std::vector<std::string> requestLogs =
 		    Get<ChatTextLog>(playSceneUIController.Data().objChatTextLog).TakeLogRequests();
+
 		for (auto& log : requestLogs)
 		{
 			Protocol::TextChated message{};
 			message.content = log;
+			message.sender  = Get<SessionManager>().RefStatus().name;
 
 			networkSessionManager.Send(message);
 		}
@@ -709,7 +749,7 @@ void PlayNetworkController::Update()
 
 		    networkSessionManager.Send(removeMessage);
 
-		    VCU_LOG("エンティティ削除情報送信 ID={}", removeData.entityId);
+		    VCU_LOG("エンティティ削除情報送信 ID={}", removeMessage.entityId);
 		}
 
 		// 送信後に送信待ちデータをクリア
@@ -747,6 +787,8 @@ void PlayNetworkController::Update()
 			breakHarvestableMessage.breakHarvestableId = *foundId;
 			networkSessionManager.Send(breakHarvestableMessage);
 		}
+
+		networkSessionManager.Flush();
 	}
 	break;
 	default:

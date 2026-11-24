@@ -7,17 +7,21 @@
 
 void AbstructInputSystem::Start()
 {
-#if _DEBUG
-	SetPlayerInput<NormalPlayerInput>();
-	SetUIInput<NormalUIInput>();
-#else
-	SetPlayerInput<PadOnlyPlayerInput>();
-	SetUIInput<PadOnlyUIInput>();
-#endif
+	ResetInput();
 }
 
 void AbstructInputSystem::Update()
 {
+	if (pPlayerInput)
+	{
+		pPlayerInput->Update();
+	}
+
+	if (pUIInput)
+	{
+		pUIInput->Update();
+	}
+
 	if (pPlayerInput && pUIInput)
 	{
 		PadInputSystem& padInputSystem = Get<PadInputSystem>();
@@ -97,4 +101,15 @@ RawMouseInputManager& AbstructInputSystem::GetRawMouseInputManager()
 InputSystem& AbstructInputSystem::GetInputSystem()
 {
 	return Get<InputSystem>();
+}
+
+void AbstructInputSystem::ResetInput()
+{
+#if _DEBUG or 1
+	SetPlayerInput<NormalPlayerInput>();
+	SetUIInput<NormalUIInput>();
+#else
+	SetPlayerInput<PadOnlyPlayerInput>();
+	SetUIInput<PadOnlyUIInput>();
+#endif
 }

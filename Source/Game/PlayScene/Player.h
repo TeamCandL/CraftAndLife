@@ -8,7 +8,6 @@
 #include "Player/PlayerJobType.h"
 #include "Player/HelthState.h"
 #include "OtherPlayerController.h"
-#include "ITutorialObserver.h"
 
 struct StateRegistry;
 
@@ -23,11 +22,11 @@ struct PlayerData
 	{
 	}
 
-	Resource<Shader> shaderFront{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
-	Resource<Shader> shaderBack{ "Shader/Unlit.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
-	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
+	Resource<Shader> shaderFront{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
+	Resource<Shader> shaderBack{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };
+	Resource<Shader> shader{ "Shader/UnlitFbx.hlsl" };
 
-	std::array<Resource<Model>, PlayerJobType_Max> models{
+	std::array<Resource<ModelFbx>, PlayerJobType_Max> models{
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",  // Healer
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",    // Tank
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",    // Fighter
@@ -113,8 +112,17 @@ struct PlayerData
 	// 蘇生されたときのSE
 	Resource<Audio> resuscitationSE{ "BGM_SE/Resuscitation.mp3" };
 
+	// 回復SE
+	Resource<Audio> healSE{ "BGM_SE/Heal.mp3" };
+
 	// 死亡時のSE
 	Resource<Audio> deathSE{ "BGM_SE/Death.mp3" };
+
+	// バッグを開けたとき（クラフト画面を開いた時）のSE
+	Resource<Audio> openBagSE{ "BGM_SE/OpenBag.mp3" };
+
+	// 剣・大剣の攻撃音
+	Resource<Audio> swingMissSE{ "BGM_SE/Swing Miss.mp3" };
 
 	// 足音の間隔（秒）
 	const float FOOTSTEP_INTERVAL{ 0.4f };
@@ -150,11 +158,16 @@ struct PlayerData
 	bool filterAddItemOnJob{ false };
 
 	float radius{ 0.5f };  ///< プレイヤーの半径
-	bool isInvincible{ false };
+
+	bool isInvincible{ false };  ///< デバッグ用。無敵状態か否か
+
+	bool hasReviveChance{ true };  ///< 1回死んでも生き返られるchanceを持っているか treu / false
+
+	const ItemId ITEM_ID_MEDICAL_KIT{ 18 };  ///< 医療キッドのアイテムId
 };
 
 /// @brief プレイヤー
-struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
+struct Player : ObjectBase<PlayerData>, IPlayer
 {
 	using ObjectBase<PlayerData>::ObjectBase;
 
@@ -213,8 +226,4 @@ struct Player : ObjectBase<PlayerData>, IPlayer, ITutorialObserver
 	std::vector<ItemStack> GetHavingItem();
 	/// @brief バッグ、ホットバーが現在持っているアイテムを削除する。ホットバーが持つ「バッグ」は削除されない。
 	void ClearAllItem();
-
-	// ITutorialObserver を介して継承されました
-	bool CheckClearedTutorial(const TutorialPhaseType _type) override;
-	GameObject GetNextObserverOnCleardPhase(const TutorialPhaseFlags& _flags) override;
 };

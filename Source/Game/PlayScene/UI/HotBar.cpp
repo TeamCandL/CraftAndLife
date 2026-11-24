@@ -311,7 +311,7 @@ bool HotBar::SwapItem(
 	if (slotIndex == -1)
 		return false;
 
-	return SwapItemImpl(_oldItemStack, _newItemId, slotIndex);
+	return SwapItemImpl(_oldItemStack, _newItemId, static_cast<int>(slotIndex));
 }
 
 std::vector<ItemStack> HotBar::GetAllSlotItem()

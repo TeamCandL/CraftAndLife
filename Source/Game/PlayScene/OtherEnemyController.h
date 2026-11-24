@@ -2,6 +2,21 @@
 #include <Game/Game.h>
 #include "EnemyType.h"
 
+struct EnemySpawnState
+{
+	int32_t _id;
+	bool _spawned{ false };
+
+	bool IsSpawned()
+	{
+		return _spawned;
+	}
+	void Spawned()
+	{
+		_spawned = true;
+	}
+};
+
 struct OtherEnemyControllerData
 {
 	OtherEnemyControllerData(
@@ -10,8 +25,12 @@ struct OtherEnemyControllerData
 	{
 	}
 
-	std::unordered_map<int, GameObject> idToObjOtherEnemy{};  ///< ほかの敵オブジェクト
-	GameObject objPlaySceneUIController{};                    ///< UIコントローラーのオブジェクト
+	std::unordered_map<int, GameObject> idToObjOtherEnemy{};       ///< 敵IDと他プレイヤー側の敵オブジェクトの対応表
+	std::unordered_map<int, GameObject> idToObjOtherEnemyHpBar{};  ///< 敵IDと対応するHPバーオブジェクトの対応表
+	std::vector<EnemySpawnState> enemySpawnList{};                 ///< OtherEnemyが生成済みかの一覧
+	GameObject objPlaySceneUIController{};                         ///< プレイシーンのUIコントローラー
+
+	std::vector<GameObject> objOtherEnemyHpBar;
 };
 
 /// @brief ほか敵オブジェクトを操作する
@@ -24,9 +43,5 @@ struct OtherEnemyController : ObjectBase<OtherEnemyControllerData>
 	/// @brief 更新処理
 	void Update() override;
 
-	bool IsBossEnemy(
-	    EnemyType type)
-	{
-		return type == EnemyType::BossSkeleton || type == EnemyType::Dragon;
-	}
+	bool IsBossEnemy(const int _id);
 };
