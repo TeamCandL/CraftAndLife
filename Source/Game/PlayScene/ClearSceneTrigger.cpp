@@ -113,16 +113,16 @@ void ClearSceneTrigger::Update()
 		return;
 	}
 
-	// フェード中なら何もしない
-	if (fade.Data().isFading)
+	// Enterが押されたら強制CLEAR
+	if (Get<InputSystem>().GetKeyDown(KeyCode::Enter))
 	{
+		fade.StartFade(ResultType::Clear, true);
 		return;
 	}
 
-	// Enterが押されたらクリア
-	if (Get<InputSystem>().GetKeyDown(KeyCode::Enter))
+	// フェード中なら何もしない
+	if (fade.Data().isFading)
 	{
-		fade.StartFade(ResultType::Clear);
 		return;
 	}
 
