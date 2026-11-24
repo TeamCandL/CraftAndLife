@@ -184,9 +184,20 @@ void MiniMap::Update()
 
 		auto& allEnemies = enemyController.Data().allEnemys;
 
+		// 今フレーム確認した敵アイコンを記録
+		std::vector<bool> seenEnemyIds(enemyIcons.size(), false);
+
 		for (size_t i = 0; i < allEnemies.size(); i++)
 		{
 			GameObject objEnemy = allEnemies[i];
+
+			// 配列サイズを拡張
+			if (seenEnemyIds.size() <= i)
+			{
+				seenEnemyIds.resize(i + 1, false);
+			}
+
+			seenEnemyIds[i] = true;
 
 			// 敵オブジェクトが存在しない
 			if (objEnemy.IsEmpty())
@@ -200,6 +211,21 @@ void MiniMap::Update()
 
 			// 敵情報を取得
 			UpdateEnemyIcon(i, enemy.GetPosition(), enemy.Data().isBoss, enemy.Data().alive);
+		}
+
+		// ----------------------------------------
+		// 今フレーム存在しなかった敵のアイコンを消す
+		// ----------------------------------------
+
+		for (size_t i = 0; i < enemyIcons.size(); i++)
+		{
+			if (i >= seenEnemyIds.size() || !seenEnemyIds[i])
+			{
+				if (!enemyIcons[i].IsEmpty())
+				{
+					Get<MiniMapPoint>(enemyIcons[i]).SetPosition(0.0f, 10000.0f);
+				}
+			}
 		}
 	}
 
