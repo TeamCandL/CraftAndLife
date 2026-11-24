@@ -23,5 +23,5 @@ void ClearScene::Start()
 	Instantiate<ClearBGM>(resultType);
 
 	// タイトルに戻るための入力処理
-	Instantiate<ClearSceneInput>();
+	Instantiate<ClearSceneInput>(resultType);
 }
