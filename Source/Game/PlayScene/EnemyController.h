@@ -11,7 +11,7 @@ struct EnemyControllerData
 	{
 	}
 
-	std::vector<GameObject> allEnemys;  ///< 全ての敵の情報を格納する
+	std::vector<GameObject> allEnemies;  ///< 全ての敵の情報を格納する
 	int32_t nextEnemyId = 0;
 
 	GameObject objBossInfo{};               ///< ボスのHPUIのオブジェクト
@@ -39,6 +39,7 @@ struct EnemyController : ObjectBase<EnemyControllerData>
 	std::vector<float> GetAllEnemyAngleY();
 	std::vector<int32_t> GetAllEnemyId();
 	std::vector<EnemyStatus> GetAllEnemyStatus();
+	std::vector<GameObject> GetAllEnemies();
 
 	/// @brief IDを指定して敵にダメージを与える
 	/// @param enemyId ダメージを受ける敵のID

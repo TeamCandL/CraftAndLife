@@ -13,6 +13,15 @@ struct EntityData
 	    entityId{ _entityId }
 	{
 	}
+	EntityData(
+	    const ItemId _itemId,
+	    const int32_t _entityId,
+	    const GameObject _objEnemyController) :
+	    itemId{ _itemId },
+	    entityId{ _entityId },
+	    objEnemyController{ _objEnemyController }
+	{
+	}
 
 	Resource<Shader> mainShader{ "Shader/Entity.hlsl",
 		                         RasterizerConfig{ .cullMode = D3D11_CULL_NONE,
@@ -47,6 +56,8 @@ struct EntityData
 	inline static const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };  ///< 敵の攻撃のアイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };  ///< プレイヤーの攻撃の矢アイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_OTHER{ 27 };  ///< プレイヤーの攻撃の他アイテムId
+
+	GameObject objEnemyController{};
 };
 
 /// @brief エンティティ
@@ -103,4 +114,8 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	{
 		isUnderground = _isUnderground;
 	}
+
+	/// @brief エンティティを最寄りの敵の方向へ向ける
+	/// @param _objEnemyController EnemyControllerを与えてあげる必要があります
+	Vec3 SetForwardToEnemy(GameObject _objEnemyController);
 };

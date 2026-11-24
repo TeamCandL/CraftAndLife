@@ -178,7 +178,7 @@ void MiniMap::Update()
 	{
 		auto& enemyController = Get<EnemyController>(Data().objEnemyController);
 
-		auto& allEnemies = enemyController.Data().allEnemys;
+		auto& allEnemies = enemyController.Data().allEnemies;
 
 		for (size_t i = 0; i < allEnemies.size(); i++)
 		{

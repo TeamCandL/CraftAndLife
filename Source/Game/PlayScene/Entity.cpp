@@ -1,6 +1,9 @@
 #include "Entity.h"
 #include <Game/PlayScene/ItemSystem.h>
 #include <Game/PlayScene/TerrainSystem.h>
+#include "EnemyController.h"
+#include "Enemy.h"
+#include "../../../Library/shigaLibrary/SgMath.h"
 
 void Entity::Start()
 {
