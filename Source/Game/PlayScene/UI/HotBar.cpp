@@ -397,8 +397,15 @@ bool HotBar::SwapItemImpl(
     ItemId _newItemId,
     int _index)
 {
+	return SwapItemImpl(_oldItemStack, _newItemId, slots[_index]);
+}
 
-	SlotItemData& slotItemData = Get<SlotItem>(Get<Slot>(slots[_index]).Data().slotItem).Data();
+bool HotBar::SwapItemImpl(
+    ItemStack& _oldItemStack,
+    ItemId _newItemId,
+    GameObject _slotObj)
+{
+	SlotItemData& slotItemData = Get<SlotItem>(Get<Slot>(_slotObj).Data().slotItem).Data();
 
 	if (slotItemData.id == EMPTY_ITEM_ID)
 	{
@@ -449,8 +456,6 @@ size_t HotBar::GetSlotIndexFrom(
 	case ItemType::Arrow:
 	case ItemType::Medicals:
 		slotIndex = CONSUMABLE_SLOT_INDEX;
-		{
-		}
 		break;
 	case ItemType::Tools:
 		slotIndex = TOOL_SLOT_INDEX;

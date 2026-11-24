@@ -140,6 +140,7 @@ struct HotBar : ObjectBase<HotBarData>
 	bool CanRemoveItem(ItemType _itemType, int _count = 0);
 	void RemoveItem(ItemType _itemType, int _count = 0);
 	bool SwapItemImpl(ItemStack& _oldItemStack, ItemId _newItemId, int _index);
+	bool SwapItemImpl(ItemStack& _oldItemStack, ItemId _newItemId, GameObject _slotObj);
 	/// @brief
 	/// 指定された方向にフォーカスを移動。フォーカスは循環する。一番右のスロットでさらに右を押したら一番左へ行く。
 	/// @param _dir フォーカスを移動する方向を指定する値
