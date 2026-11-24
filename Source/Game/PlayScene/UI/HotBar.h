@@ -146,6 +146,7 @@ struct HotBar : ObjectBase<HotBarData>
 	void MoveFocusImpl(int _dir);
 	SlotItemData& GetSlotItemData(int _idx);
 	size_t GetSlotIndexFrom(ItemType _itemType);
+	GameObject GetSlot(ItemType _itemType);
 	void OnChangedSelectedItem();
 	/// @brief 指定された方向に、使用可能なスロットが見つかるまでフォーカスを移動
 	/// @param _dir

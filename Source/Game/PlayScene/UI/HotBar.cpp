@@ -3,6 +3,7 @@
 #include "MiniMapPoint.h"
 #include <Game/System/AbstructInputSystem.h>
 #include <Game/Manager/AudioManager.h>
+#include <ranges>
 
 const unsigned int BIT_FLAG(
     const unsigned int _bit)
@@ -243,19 +244,19 @@ bool HotBar::TrySetItem(
     ItemId _id)
 {
 	ItemInfo info    = Get<ItemSystem>().GetInfo(_id);
-	size_t slotIndex = GetSlotIndexFrom(info._type);
+	GameObject slot  = GetSlot(info._type);
 	bool cannotStack = CannotStack(info._type);
 
-	if (slotIndex == -1)
+	if (!slot)
 		return false;
 
-	SlotItemData& slotItemData = Get<SlotItem>(Get<Slot>(slots[slotIndex]).Data().slotItem).Data();
+	SlotItemData& slotItemData = Get<SlotItem>(Get<Slot>(slot).Data().slotItem).Data();
 
 	if (slotItemData.id == EMPTY_ITEM_ID)
 	{
 		slotItemData.id = _id;
 		slotItemData.count++;
-		if (slotIndex == currentSlotIdx)
+		if (slot == slots[currentSlotIdx])
 			OnChangedSelectedItem();
 		return true;
 	}
@@ -435,20 +436,6 @@ SlotItemData& HotBar::GetSlotItemData(
 size_t HotBar::GetSlotIndexFrom(
     ItemType _itemType)
 {
-	auto [begin, end] = std::equal_range(
-	    slots.begin(),
-	    slots.end(),
-	    [this, _itemType](GameObject& _slot)
-	    {
-		    return Get<Slot>(_slot).Data().flag.test(BIT_FLAG(_itemType));
-	    });
-	for (auto itr = begin; itr != end; itr++)
-	{
-		SlotData& slotData = Get<Slot>(*itr).Data();
-		if (slotData.unusable == false && Get<SlotItem>(slotData.slotItem).Data().id == EMPTY_ITEM_ID)
-		{
-		}
-	}
 	size_t slotIndex = -1;
 	switch (_itemType)
 	{
@@ -474,6 +461,26 @@ size_t HotBar::GetSlotIndexFrom(
 		break;
 	}
 	return slotIndex;
+}
+
+GameObject HotBar::GetSlot(
+    ItemType _itemType)
+{
+	auto range = slots | std::views::filter(
+	                         [this, _itemType](GameObject& _slot)
+	                         {
+		                         return Get<Slot>(_slot).Data().flag.test(BIT_FLAG(_itemType));
+	                         });
+
+	for (auto& obj : range)
+	{
+		SlotData& slotData = Get<Slot>(obj).Data();
+		if (slotData.unusable == false && Get<SlotItem>(slotData.slotItem).Data().id == EMPTY_ITEM_ID)
+		{
+			return obj;
+		}
+	}
+	return GameObject{};
 }
 
 void HotBar::OnChangedSelectedItem()
