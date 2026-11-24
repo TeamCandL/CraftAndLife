@@ -9,18 +9,15 @@
 
 namespace cha
 {
-	template<typename T>
+	template <typename T>
 	concept ObjectT = std::is_base_of_v<IObject, T>;
-
-	template<typename DataT>
-	class ObjectBase;
 
 	class ComponentPools;
 
 	/// @brief ゲームオブジェクトを持つ
 	class GameObjectCollection
 	{
-	public:
+	  public:
 		/// @brief ゲームオブジェクトコレクションの初期化処理
 		GameObjectCollection();
 		/// @brief ゲームオブジェクトコレクションの解放処理
@@ -31,13 +28,11 @@ namespace cha
 		/// @tparam SystemObjectT システムオブジェクトの型
 		/// @param ..._args 可変長引数
 		/// @return 追加したゲームオブジェクト
-		template<std::derived_from<ISystemObject> SystemObjectT, typename ...Args>
-		GameObject Add(Args&&... _args);
+		template <std::derived_from<ISystemObject> SystemObjectT, typename... Args> GameObject Add(Args&&... _args);
 
 		/// @brief ゲームオブジェクトを生成する
 		/// @return 追加したゲームオブジェクト
-		template<typename ObjectT, typename ...Args>
-		GameObject Add(Args&&... _args);
+		template <typename ObjectT, typename... Args> GameObject Add(Args&&... _args);
 
 		/// @brief ゲームオブジェクトを削除予定にする
 		/// @param _gameObject ゲームオブジェクト
@@ -50,58 +45,51 @@ namespace cha
 		/// @param _gameObject 指定のゲームオブジェクト
 		/// @return 存在する true / false
 		bool Exist(const GameObject _gameObject) const;
-		
+
 		/// @brief 指定のゲームオブジェクトが存在するかを取得
 		/// @param _id 指定のゲームオブジェクトのId
 		/// @return 存在する true / false
 		bool Exist(const uint64_t _id) const;
 
 		/// @brief ゲームオブジェクトを取得
-		/// @tparam T 
-		/// @param _gameObject 
-		/// @return 
-		template<typename ObjectT = ObjectBase<>>
-		ObjectT& At(const GameObject _gameObject);
+		/// @tparam T
+		/// @param _gameObject
+		/// @return
+		template <typename ObjectT = ObjectBase<>> ObjectT& At(const GameObject _gameObject);
 
 		/// @brief ゲームオブジェクトを取得
-		/// @tparam T 
-		/// @param _id 
-		/// @return 
-		template<typename ObjectT>
-		ObjectT& At(const uint64_t _id);
+		/// @tparam T
+		/// @param _id
+		/// @return
+		template <typename ObjectT> ObjectT& At(const uint64_t _id);
 
 		/// @brief 指定ゲームオブジェクトが所有するコンポーネントを見つける
 		/// @tparam ComponentT コンポーネントの型
 		/// @param _gameObject ゲームオブジェクト
 		/// @return コンポーネントを所有していればポインタ / 見つからなければ nullptr
-		template<typename ComponentT>
-		ComponentT* FindComponent(const GameObject _gameObject);
+		template <typename ComponentT> ComponentT* FindComponent(const GameObject _gameObject);
 
 		/// @brief コンポーネントを見つける
 		/// @tparam ComponentT コンポーネントの型
 		/// @return コンポーネントが見つかればコンポーネントのポインタ / 見つからなければ nullptr
-		template<typename ComponentT>
-		ComponentT* FindComponent(const uint64_t _id);
+		template <typename ComponentT> ComponentT* FindComponent(const uint64_t _id);
 
 		/// @brief レジストリ内インデックスからの速い参照
 		/// @param _index インデックス
 		/// @tparam Func ラムダ式
 		/// @param _callback コールバック処理
-		/// @return 
-		template<typename Func>
-		void AtFast(const uint64_t _index, Func&& _fanc);
+		/// @return
+		template <typename Func> void AtFast(const uint64_t _index, Func&& _fanc);
 
 		/// @brief すべてのオブジェクトを処理する
 		/// @tparam Func ラムダ式
 		/// @param _callback コールバック処理
-		template<typename Func>
-		void ForEach(Func&& _callback);
+		template <typename Func> void ForEach(Func&& _callback);
 
 		/// @brief システムオブジェクトを処理する
 		/// @tparam Func ラムダ式 ISystemObject&
 		/// @param _callback コールバック処理
-		template<typename Func>
-		void ForEachSystem(Func&& _callback);
+		template <typename Func> void ForEachSystem(Func&& _callback);
 
 		/// @brief 予定されたゲームオブジェクトを処理する
 		void Flush();
@@ -109,15 +97,13 @@ namespace cha
 		/// @brief ビューを取得する
 		/// @tparam ...ComponentsT コンポーネント型
 		/// @return ビュー
-		template<typename ...ComponentsT>
-		auto GetView();
+		template <typename... ComponentsT> auto GetView();
 
 		/// @brief オブジェクトIdからコンポーネントを参照する
 		/// @tparam ComponentT コンポーネントの型
 		/// @param _id オブジェクトId
 		/// @return コンポーネントの参照ポインタ
-		template<typename ComponentT>
-		ComponentT& GetComponent(const uint64_t _id);
+		template <typename ComponentT> ComponentT& GetComponent(const uint64_t _id);
 
 		/// @brief ゲームオブジェクトを作成する
 		/// @param _id オブジェクトId
@@ -126,9 +112,12 @@ namespace cha
 
 		/// @brief 総オブジェクト数を取得する
 		/// @return 総オブジェクト数
-		inline size_t GetSize() const { return registry_.size(); }
+		inline size_t GetSize() const
+		{
+			return registry_.size();
+		}
 
-	private:
+	  private:
 		/// @brief ゲームオブジェクトを削除する
 		/// @param _id 削除するゲームオブジェクトId
 		void Remove(const uint64_t _id);
@@ -158,20 +147,21 @@ namespace cha
 		/// @brief コンポーネントレジストリを平らにする
 		void FillComponentRegistry();
 
-	private:
-		const size_t SYSTEM_COUNT_;  ///< 登録済みのシステム数
+	  private:
+		const size_t SYSTEM_COUNT_;                                         ///< 登録済みのシステム数
 		std::vector<std::shared_ptr<ISystemObject>> systemsSubRegistry_{};  ///< システムのサブレジストリ
 
-		std::vector<size_t> indices_{};  ///< ゲームオブジェクトIdはこの配列のインデクスとなり、この配列要素の値はレジストリのインデクスとなる。
-		
+		std::vector<size_t>
+		    indices_{};  ///< ゲームオブジェクトIdはこの配列のインデクスとなり、この配列要素の値はレジストリのインデクスとなる。
+
 		std::vector<GameObjectElement> registry_{};  ///< レジストリ
-		
+
 		std::vector<GameObjectElement> toAdd_{};  ///< 次のループで登録される予定の要素
-		
+
 		std::set<uint64_t> toDestroyIds_{};  ///< 削除予定のゲームオブジェクトId
 
 		std::unique_ptr<ComponentPools> pComponentPools_{};  ///< コンポーネントプール
 	};
-}
+}  // namespace cha
 
 #include "GameObjectCollection.inl"

@@ -51,7 +51,8 @@ void EntitySystem::Update()
 				// 地面の下にいる！
 
 				if (Get<SessionManager>().RefStatus().imLobbyHost)
-				{  // ホストである
+				{
+					// ホストである
 					// ならアイテム化しちゃう！
 					ItemId collectibleItemid = Get<ItemSystem>().ConvertAttackItemToCollectibleItem(entity.GetItemId());
 
@@ -227,24 +228,5 @@ void EntitySystem::RemoveFromNetwork(
 Vec3 EntitySystem::SetForwardToEnemy(
     GameObject _objEnemyController)
 {
-	/*EnemyController& enemyController = Get<EnemyController>(_objEnemyController);
-	Vec3 targetPos{};
-	float targetDist{ -1.0f };
-	for (GameObject& objEnemy : enemyController.GetAllEnemies())
-	{
-	    Enemy& enemy = Get<Enemy>(objEnemy);
-
-	    float dist = (enemy.GetPosition() - transform.position).Length();
-	    if (targetDist == -1.0f || dist < targetDist)
-	    {
-	        targetDist = dist;
-	        targetPos  = enemy.GetPosition();
-	    }
-	}
-	Vec3 Fwd = transform.Forward();
-	if (targetPos != transform.position)
-	{
-	    Fwd = (targetPos - transform.position).Normalize();
-	}
-	return Fwd;*/
+	return Vec3::Zero();
 }
