@@ -31,6 +31,8 @@ struct OtherPlayerData
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-f.fbx",
 	};
 
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
+
 	PlayerRoleType role{ PlayerRoleType_Healer };
 
 	// ネットワークから受信した目標座標
@@ -64,6 +66,7 @@ struct OtherPlayer : ObjectBase<OtherPlayerData>, IPlayer
 	void Start() override;
 	void Update() override;
 	void Draw() override;
+	void DrawShadowMap() override;
 
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;

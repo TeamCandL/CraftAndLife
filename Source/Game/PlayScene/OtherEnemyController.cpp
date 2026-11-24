@@ -29,6 +29,14 @@ void OtherEnemyController::Update()
 		}
 	}
 
+	for (auto& [enemyId, obj] : idToObjOtherEnemyHpBar)
+	{
+		if (!sessionManager.IsExistEnemy(enemyId))
+		{
+			GetScene().Destroy(obj);
+		}
+	}
+
 	int enemyStateSize = sessionManager.GetEnemyStateSize();
 	while (enemySpawnList.size() < enemyStateSize)
 	{

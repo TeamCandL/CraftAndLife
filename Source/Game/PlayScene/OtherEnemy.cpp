@@ -142,6 +142,21 @@ void OtherEnemy::Draw()
 	}
 }
 
+void OtherEnemy::DrawShadowMap()
+{
+	Get<Dx11Manager>().SetShader(shadowShader);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	const auto& subParts{ models[enemyType].Get().subParts };
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
+}
+
 void OtherEnemy::SendEnemyDamage(
     int32_t enemyId,
     int32_t damage)

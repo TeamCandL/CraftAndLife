@@ -194,7 +194,7 @@ GameObject EntitySystem::PickNearest(
 	return objMinEntity;
 }
 
-void EntitySystem::SpawnFromNetwork(
+GameObject EntitySystem::SpawnFromNetwork(
     const int32_t _entityId,
     const ItemId _itemId,
     const Vec3 _position,
@@ -204,6 +204,7 @@ void EntitySystem::SpawnFromNetwork(
 
 	Get<IEntity>(objEntities.back()).SetPosition(_position);
 	Get<IEntity>(objEntities.back()).SetVelocity(_velocity);
+	return objEntities.back();
 }
 
 void EntitySystem::SetHost(

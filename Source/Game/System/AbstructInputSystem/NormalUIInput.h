@@ -18,6 +18,8 @@ class NormalUIInput : public IUIInput
 	virtual bool IsMovedRight() override;
 	virtual bool IsSelected() const override;
 	virtual bool IsChanneled() const override;
+	virtual bool IsMovedLeftTab() override;
+	virtual bool IsMovedRightTab() override;
 
 	/// @brief 更新処理
 	virtual void Update() override;
@@ -33,21 +35,14 @@ class NormalUIInput : public IUIInput
 	AbstructInputSystem& abstructInputSystem_;
 
 	std::array<float, InputDirectionType_Max> autoInputWaitTimeLefts{
-		AUTO_INPUT_WAIT_THRESHOLD_SEC,
-		AUTO_INPUT_WAIT_THRESHOLD_SEC,
-		AUTO_INPUT_WAIT_THRESHOLD_SEC,
-		AUTO_INPUT_WAIT_THRESHOLD_SEC,
+		AUTO_INPUT_WAIT_THRESHOLD_SEC, AUTO_INPUT_WAIT_THRESHOLD_SEC, AUTO_INPUT_WAIT_THRESHOLD_SEC,
+		AUTO_INPUT_WAIT_THRESHOLD_SEC, AUTO_INPUT_WAIT_THRESHOLD_SEC, AUTO_INPUT_WAIT_THRESHOLD_SEC,
 	};
 	std::array<float, InputDirectionType_Max> autoInputTimeLefts{
-		AUTO_INPUT_DISTANCE_SEC,
-		AUTO_INPUT_DISTANCE_SEC,
-		AUTO_INPUT_DISTANCE_SEC,
-		AUTO_INPUT_DISTANCE_SEC,
+		AUTO_INPUT_DISTANCE_SEC, AUTO_INPUT_DISTANCE_SEC, AUTO_INPUT_DISTANCE_SEC,
+		AUTO_INPUT_DISTANCE_SEC, AUTO_INPUT_DISTANCE_SEC, AUTO_INPUT_DISTANCE_SEC,
 	};
 	std::array<bool, InputDirectionType_Max> autoInputValues{
-		false,
-		false,
-		false,
-		false,
+		false, false, false, false, false, false,
 	};
 };
