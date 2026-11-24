@@ -46,6 +46,10 @@ void OtherPlayer::Start()
 
 void OtherPlayer::Update()
 {
+	ImGui::Begin("OtherPlayer");
+	ImGui::InputInt("jobType", &jobType);
+	ImGui::End();
+
 	SessionManager& sessionManager = Get<SessionManager>();
 
 	if (!sessionManager.HasAllPlayersStatus())
@@ -102,6 +106,19 @@ void OtherPlayer::Update()
 
 	// 対象プレイヤーを指定
 	const StateTarget target = StateTarget::Player(playerId);
+
+	// =====================================
+	// 職業情報を取得
+	// =====================================
+
+	if (reader.TryGetState(target, "job", Data().jobType))
+	{
+		VCU_LOG("{} の職業取得成功: {}", name.content, Data().jobType);
+	}
+	else
+	{
+		VCU_LOG("{} の職業取得失敗", name.content);
+	}
 
 	// =====================================
 	// HPを取得

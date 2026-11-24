@@ -3,6 +3,7 @@
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
 #include "Player/HelthState.h"
+#include "Player/PlayerJobType.h"
 
 struct OtherPlayerData
 {
@@ -33,7 +34,11 @@ struct OtherPlayerData
 
 	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
 
+	// キャラクターのモデル役職
 	PlayerRoleType role{ PlayerRoleType_Healer };
+
+	// 職業タイプ
+	PlayerJobType jobType{ PlayerJobType_Healer };
 
 	// ネットワークから受信した目標座標
 	Vec3 targetPosition{};
