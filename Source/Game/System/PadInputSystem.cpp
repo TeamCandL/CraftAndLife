@@ -93,6 +93,30 @@ bool PadInputSystem::IsButton(
 	return (current.buttons & static_cast<uint32_t>(_button)) != 0;
 }
 
+bool PadInputSystem::IsButton(
+    const InputDirectionType _dirType) const
+{
+	switch (_dirType)
+	{
+	case InputDirectionType_Up:
+		return IsButton(GameInputGamepadDPadUp);
+	case InputDirectionType_Down:
+		return IsButton(GameInputGamepadDPadDown);
+	case InputDirectionType_Left:
+		return IsButton(GameInputGamepadDPadLeft);
+	case InputDirectionType_Right:
+		return IsButton(GameInputGamepadDPadRight);
+	case InputDirectionType_LeftTab:
+		return IsButton(GameInputGamepadLeftShoulder);
+	case InputDirectionType_RightTab:
+		return IsButton(GameInputGamepadRightShoulder);
+	case InputDirectionType_Max:
+	default:
+		break;
+	}
+	return false;
+}
+
 bool PadInputSystem::IsButtonTriggered(
     const GamePadInputTriggerButton _button) const
 {

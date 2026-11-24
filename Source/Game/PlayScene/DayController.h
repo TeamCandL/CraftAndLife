@@ -8,6 +8,11 @@ struct DayControllerData
 		float timeSec{};
 		Float4 skyParam{};
 	};
+	struct LightAnimKey
+	{
+		float timeSec{};
+		Vec3 directionParam{};
+	};
 
 	using SkyParamType = uint32_t;
 	enum SkyParamType_ : SkyParamType
@@ -17,6 +22,16 @@ struct DayControllerData
 		SkyParamType_Sunset,
 		SkyParamType_Sunrise,
 		SkyParamType_Max,
+	};
+	using LightParamType = uint32_t;
+	enum LightParamType_ : LightParamType
+	{
+		LightParamType_MX,
+		LightParamType_MXM,
+		LightParamType_Zero,
+		LightParamType_PXM,
+		LightParamType_PX,
+		LightParamType_Max,
 	};
 
 	DayControllerData(
@@ -30,12 +45,52 @@ struct DayControllerData
 		Float4{ 0.55f, 0.0f, 0.61f, 0.34f },
 		Float4{ 0.45f, 0.0f, 0.3f, 0.08f },
 	};
-	std::vector<SkyAnimKey> skyAnimKeys{
-		{ 0.0f, SKY_PARAMS[SkyParamType_MidDay] },     { 80.0f, SKY_PARAMS[SkyParamType_MidDay] },
-		{ 85.0f, SKY_PARAMS[SkyParamType_Sunset] },    { 90.0f, SKY_PARAMS[SkyParamType_MidNight] },
-		{ 170.0f, SKY_PARAMS[SkyParamType_MidNight] }, { 175.0f, SKY_PARAMS[SkyParamType_Sunrise] },
-		{ 180.0f, SKY_PARAMS[SkyParamType_MidDay] },
+
+	const std::array<Vec3, LightParamType_Max> LIGHT_PARAMS{
+		Vec3{ -2.5f, -1.0f, 0.0f },  // 東からの朝焼け
+		Vec3{ -2.1f, -1.0f, 0.0f }, Vec3{ 0.0f, -1.0f, 0.0f },
+		Vec3{ +2.1f, -1.0f, 0.0f }, Vec3{ +2.5f, -1.0f, 0.0f },  // 西からの夕焼け
 	};
+
+	std::vector<SkyAnimKey> skyAnimKeys{
+		{
+		    0.0f,
+		    SKY_PARAMS[SkyParamType_MidDay],
+		},
+		{
+		    80.0f,
+		    SKY_PARAMS[SkyParamType_MidDay],
+		},
+		{
+		    85.0f,
+		    SKY_PARAMS[SkyParamType_Sunset],
+		},
+		{
+		    90.0f,
+		    SKY_PARAMS[SkyParamType_MidNight],
+		},
+		{
+		    170.0f,
+		    SKY_PARAMS[SkyParamType_MidNight],
+		},
+		{
+		    175.0f,
+		    SKY_PARAMS[SkyParamType_Sunrise],
+		},
+		{
+		    180.0f,
+		    SKY_PARAMS[SkyParamType_MidDay],
+		},
+	};
+
+	std::vector<LightAnimKey> lightAnimKeys{
+		{ 0.0f, LIGHT_PARAMS[LightParamType_MXM] },    { 40.0f, LIGHT_PARAMS[LightParamType_Zero] },
+		{ 80.0f, LIGHT_PARAMS[LightParamType_PXM] },   { 90.0f, LIGHT_PARAMS[LightParamType_PX] },
+		{ 90.0f, LIGHT_PARAMS[LightParamType_MX] },    { 100.0f, LIGHT_PARAMS[LightParamType_MXM] },
+		{ 140.0f, LIGHT_PARAMS[LightParamType_Zero] }, { 170.0f, LIGHT_PARAMS[LightParamType_PX] },
+		{ 170.0f, LIGHT_PARAMS[LightParamType_MX] },   { 180.0f, LIGHT_PARAMS[LightParamType_MXM] },
+	};
+	Vec3 lightDir{ 0, -1, 0 };
 
 	float boost{ 1.0f };
 

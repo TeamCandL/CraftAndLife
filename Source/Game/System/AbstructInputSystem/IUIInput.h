@@ -23,6 +23,12 @@ class IUIInput : public IInput
 	/// @brief 右方向への移動があったか
 	/// @return あった true / false
 	virtual bool IsMovedRight() = 0;
+	/// @brief 左方向へのタブ移動があったか
+	/// @return あった true / false
+	virtual bool IsMovedLeftTab() = 0;
+	/// @brief 右方向へのタブ移動があったか
+	/// @return あった true / false
+	virtual bool IsMovedRightTab() = 0;
 	/// @brief 選択されたか
 	/// @return 選択された true / false
 	virtual bool IsSelected() const = 0;

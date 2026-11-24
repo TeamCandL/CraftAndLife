@@ -14,7 +14,7 @@ class IEntitySystemNetwork
 	/// @param _itemId アイテムID
 	/// @param _position 生成位置
 	/// @param _velocity 初速度
-	virtual void SpawnFromNetwork(
+	virtual GameObject SpawnFromNetwork(
 	    const int32_t _entityId,
 	    const ItemId _itemId,
 	    const Vec3 _position,

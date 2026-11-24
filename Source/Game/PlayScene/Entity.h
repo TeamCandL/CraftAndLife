@@ -21,6 +21,7 @@ struct EntityData
 		                         RasterizerConfig{ .cullMode = D3D11_CULL_FRONT,
 		                                           .fillMode = D3D11_FILL_SOLID } };  ///< エッジ(輪郭)描画用シェーダ
 	Resource<Model> model{};                                                          ///< モデル
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
 
 	Component<Transform> transform{};      ///< 座標系
 	Component<RigidBody> rigidbody{};      ///< 剛体
@@ -57,6 +58,7 @@ struct Entity : ObjectBase<EntityData>, IEntity
 	void Start() override;
 	void Update() override;
 	void Draw() override;
+	void DrawShadowMap() override;
 
 	void SetPosition(
 	    const Vec3 _position) override

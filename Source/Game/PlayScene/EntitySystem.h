@@ -44,8 +44,11 @@ struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntityS
 	/// @param _itemId アイテムID
 	/// @param _position 生成位置
 	/// @param _velocity 初速度
-	void SpawnFromNetwork(const int32_t _entityId, const ItemId _itemId, const Vec3 _position, const Vec3 _velocity)
-	    override;
+	GameObject SpawnFromNetwork(
+	    const int32_t _entityId,
+	    const ItemId _itemId,
+	    const Vec3 _position,
+	    const Vec3 _velocity) override;
 
 	/// @brief ホストであるか設定する
 	/// @param _isHost ホストである true / false

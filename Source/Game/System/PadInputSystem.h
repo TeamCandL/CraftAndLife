@@ -67,6 +67,10 @@ struct PadInputSystem : SystemObjectBase<PadInputSystem, PadInputSystemData>
 	/// @param _button 指定のボタン
 	/// @return 押されている true / false
 	bool IsButton(const GameInputGamepadButtons _button) const;
+	/// @brief 方向ボタンの入力を取得
+	/// @param _button
+	/// @return
+	bool IsButton(const InputDirectionType _dirType) const;
 	/// @brief 指定のボタンが押された瞬間か
 	/// @param _button 指定のボタン
 	/// @return 押された瞬間 true / false

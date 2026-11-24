@@ -237,6 +237,28 @@ void PlayerHand::Draw()
 	}
 }
 
+void PlayerHand::DrawShadowMap()
+{
+	Resource<Model> hModel = Get<ItemSystem>().GetModel(haveItemId);
+
+	if (hModel.IsNull())
+	{
+		return;
+	}
+
+	Get<Dx11Manager>().SetShader(shadowShader);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	const auto& subParts{ hModel.Get().subParts };
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
+}
+
 void PlayerHand::SetItem(
     const ItemId _itemId)
 {

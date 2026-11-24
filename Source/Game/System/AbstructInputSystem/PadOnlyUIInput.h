@@ -16,6 +16,8 @@ class PadOnlyUIInput : public IUIInput
 	bool IsMovedDown() override;
 	bool IsMovedLeft() override;
 	bool IsMovedRight() override;
+	bool IsMovedLeftTab() override;
+	bool IsMovedRightTab() override;
 	bool IsSelected() const override;
 	bool IsChanneled() const override;
 
@@ -33,21 +35,14 @@ class PadOnlyUIInput : public IUIInput
 	AbstructInputSystem& abstructInputSystem_;
 
 	std::array<float, InputDirectionType_Max> autoInputWaitTimeLefts{
-		AUTO_INPUT_WAIT_THRESHOLD_SEC,
-		AUTO_INPUT_WAIT_THRESHOLD_SEC,
-		AUTO_INPUT_WAIT_THRESHOLD_SEC,
-		AUTO_INPUT_WAIT_THRESHOLD_SEC,
+		AUTO_INPUT_WAIT_THRESHOLD_SEC, AUTO_INPUT_WAIT_THRESHOLD_SEC, AUTO_INPUT_WAIT_THRESHOLD_SEC,
+		AUTO_INPUT_WAIT_THRESHOLD_SEC, AUTO_INPUT_WAIT_THRESHOLD_SEC, AUTO_INPUT_WAIT_THRESHOLD_SEC,
 	};
 	std::array<float, InputDirectionType_Max> autoInputTimeLefts{
-		AUTO_INPUT_DISTANCE_SEC,
-		AUTO_INPUT_DISTANCE_SEC,
-		AUTO_INPUT_DISTANCE_SEC,
-		AUTO_INPUT_DISTANCE_SEC,
+		AUTO_INPUT_DISTANCE_SEC, AUTO_INPUT_DISTANCE_SEC, AUTO_INPUT_DISTANCE_SEC,
+		AUTO_INPUT_DISTANCE_SEC, AUTO_INPUT_DISTANCE_SEC, AUTO_INPUT_DISTANCE_SEC,
 	};
 	std::array<bool, InputDirectionType_Max> autoInputValues{
-		false,
-		false,
-		false,
-		false,
+		false, false, false, false, false, false,
 	};
 };

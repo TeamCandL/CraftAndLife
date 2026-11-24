@@ -14,6 +14,7 @@ struct PlayerHandData
 	}
 
 	Resource<Shader> shader{ "Shader/Unlit.hlsl" };
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
 
 	Component<Transform> transform{};
 	Component<TransformAnimator> transformAnimator{};
@@ -42,6 +43,9 @@ struct PlayerHand : ObjectBase<PlayerHandData>
 
 	/// @brief 描画処理
 	void Draw() override;
+
+	/// @brief
+	void DrawShadowMap() override;
 
 	/// @brief アイテムをセットする
 	/// @param アイテムのId

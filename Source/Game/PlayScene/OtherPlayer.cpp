@@ -229,6 +229,21 @@ void OtherPlayer::Draw()
 	}
 }
 
+void OtherPlayer::DrawShadowMap()
+{
+	Get<Dx11Manager>().SetShader(shadowShader);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	const auto& subParts{ models[role].Get().subParts };
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
+}
+
 Vec3 OtherPlayer::GetPosition() const
 {
 	return transform.position;
