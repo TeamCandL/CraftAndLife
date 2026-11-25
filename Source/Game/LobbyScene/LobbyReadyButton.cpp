@@ -4,6 +4,8 @@
 #include <Game/Network/Protocols/ReadySelf.h>
 #include <Game/Network/Protocols/StartGame.h>
 #include <Game/Manager/SessionManager.h>
+#include <unordered_set>
+
 void LobbyReadyButton::Start()
 {
 
@@ -27,7 +29,11 @@ void LobbyReadyButton::Update()
 	auto& status = Get<SessionManager>().RefStatus();
 	if (status.imLobbyHost)
 	{
-		if (isStatable)
+		if (showDuplicateRoleMessage)
+		{
+			Get<UIText>(objButton).content = "役職が重複しています！";
+		}
+		else if (isStatable)
 		{
 			Get<UIText>(objButton).content = "ゲーム開始";
 		}
@@ -42,16 +48,46 @@ void LobbyReadyButton::Update()
 	}
 	if (Get<UI::Button>(objButton).IsPushed() || Get<InputSystem>().GetKeyDown(KeyCode::S))
 	{
-		isStatable                                   = true;
 		NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
+
 		if (networkSessionManager.GetCurrentState() == InLobbyNotReady)
 		{
+			isStatable = true;
 			networkSessionManager.SetCurrentState(InLobbyWaiting);
+
 			Protocol::ReadySelf message{};
 			networkSessionManager.Send(message);
 		}
 		else
 		{
+			// 役職の重複チェック
+			std::unordered_set<int32_t> selectedRoles;
+
+			bool hasDuplicateRole = false;
+
+			for (const auto& [playerId, roleId] : status.memberRoles)
+			{
+				if (!selectedRoles.insert(roleId).second)
+				{
+					hasDuplicateRole = true;
+
+					VCU_LOG("役職重複: PlayerID={}, RoleID={}", playerId, roleId);
+					break;
+				}
+			}
+
+			if (hasDuplicateRole)
+			{
+				showDuplicateRoleMessage = true;
+
+				VCU_LOG("役職が重複しています。ゲームを開始できません。");
+				// メッセージボックス出したいねー
+				return;
+			}
+
+			// 重複がなければゲーム開始
+			showDuplicateRoleMessage = false;
+
 			Protocol::StartGame message{};
 			networkSessionManager.Send(message);
 		}

@@ -15,6 +15,7 @@ struct LobbyReadyButtonData
 	Vec2 scale{ 482, 142 };  ///< ボタンのサイズピクセル
 
 	bool isStatable{ false };
+	bool showDuplicateRoleMessage = false;
 };
 
 /// @brief ロビー準備okボタン
