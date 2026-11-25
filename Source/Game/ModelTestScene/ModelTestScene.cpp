@@ -12,6 +12,6 @@ void ModelTestScene::Start()
 	Instantiate<GameManager>();
 	Instantiate<DebugCamera>();
 	Instantiate<Sky>();
-	// Instantiate<MAP>(Instantiate<HarvestableController>());
+	Instantiate<MAP>(Instantiate<HarvestableController>());
 	Instantiate<NPCRobo>();
 }

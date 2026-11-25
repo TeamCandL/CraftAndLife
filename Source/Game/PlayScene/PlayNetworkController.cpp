@@ -312,7 +312,7 @@ void PlayNetworkController::Update()
 					    VCU_LOG("他人が拾った！！");
 
 				    // エンティティ拾ったときの座標が音聞こえる範囲なら
-				    if (true)  // (Get<Transform>(objPlayer).position - position).Length() <= CanListenDistance
+				    if (true)  // (Get<Transform>(objAllPlayers).position - position).Length() <= CanListenDistance
 				    {
 					    switch (message.itemId)
 					    {

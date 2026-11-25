@@ -286,7 +286,7 @@ void Enemy::Sensor(
 		/// @brief 生存状態のプレイヤーから追跡対象を決定する
 		{
 			// int32_t playerId{};
-			// if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
+			// if (sessionManager.TryGetPlayerId(objAllPlayers._name, playerId))
 			//{
 			//	StateTarget target = StateTarget::Player(playerId);
 

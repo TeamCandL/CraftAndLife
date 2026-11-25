@@ -198,6 +198,7 @@ void UISystem::UpdateRenderer()
 			        // TODO: _spriteRenderer.のテクスチャを参照する
 			        (*pSpriteRendererMaterialProperty)->hasTexture = { pSpriteRenderer->texture, FALSE, FALSE, FALSE };
 			        (*pSpriteRendererMaterialProperty)->baseColor  = pSpriteRenderer->baseColor;
+			        (*pSpriteRendererMaterialProperty)->imageSize  = pSpriteRenderer->texture.Get().imageSize;
 
 			        dx11.SetMaterial(material);
 			        if (pSpriteRenderer->texture)

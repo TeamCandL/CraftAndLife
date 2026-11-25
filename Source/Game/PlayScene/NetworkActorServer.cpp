@@ -12,9 +12,9 @@
 void NetworkActorServer::Start()
 {
 	// プレイヤーのステートを登録
-	// if (!Data().isPlayerStateRegistered && !Data().objPlayer.IsEmpty())
+	// if (!Data().isPlayerStateRegistered && !Data().objAllPlayers.IsEmpty())
 	//{
-	//	Player& player = Get<Player>(Data().objPlayer);
+	//	Player& player = Get<Player>(Data().objAllPlayers);
 	//	player.RegisterStates(Data().playerStateRegistry);
 
 	//	Data().isPlayerStateRegistered = true;
