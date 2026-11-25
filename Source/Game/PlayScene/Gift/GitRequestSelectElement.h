@@ -3,7 +3,13 @@
 
 struct GitRequestSelectElementData
 {
-	// Component<UIImageCircle>
+	GitRequestSelectElementData(
+	    const Resource<Texture> _texture) :
+	    image{ _texture }
+	{
+	}
+
+	Component<UIImageCircle> image{};
 };
 struct GitRequestSelectElement : ObjectBase<GitRequestSelectElementData>
 {
