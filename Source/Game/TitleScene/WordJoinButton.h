@@ -23,10 +23,6 @@ struct WordJoinButtonData
 	std::string inputPlayerName{};
 
 	Resource<Audio> pushSound{ "Sound/stopbutton.mp3" };
-
-	static constexpr std::array<std::string_view, 10> defaultPlayerNames{
-
-	};
 };
 
 /// @brief 合言葉で参加するボタン

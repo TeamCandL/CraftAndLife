@@ -8,8 +8,20 @@
 
 void WordJoinButton::Start()
 {
-	inputWord       = "hello";
-	inputPlayerName = "a";
+	// デフォルトのプレイヤー名候補
+	static const std::vector<std::string> defaultNames = { "マツダ",   "ニシカワ", "サトウ", "シガー",
+		                                                   "コーダン", "クドー",   "れんじ", "Range",
+		                                                   "れんち",   "さる",     "ばなな" };
+
+	inputWord          = "hello";
+	static bool seeded = false;
+	if (!seeded)
+	{
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
+		seeded = true;
+	}
+	int randIndex   = std::rand() % defaultNames.size();
+	inputPlayerName = defaultNames[randIndex];
 	objButton       = GetScene().Instantiate<UI::Button>(imageFileName, imageFileName, imageFileName, "", begin, scale);
 }
 
