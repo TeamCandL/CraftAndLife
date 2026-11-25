@@ -41,13 +41,13 @@ void PlayerBag::Update()
 	static ItemId id{ 0 };
 	static bool isOpen{ false };
 	auto& status = Get<SessionManager>().RefStatus();
-	// デバッグ用 バッグ開閉
-	if (Get<InputSystem>().GetKeyDown(KeyCode::U))
-	{
-		SetActiveAll(isOpen);
-		isOpen = !isOpen;
-	}
-	UpdateUI();
+	// デバッグ用 バッグ開閉 コメントアウトしているけど、削除しないでください
+	// if (Get<InputSystem>().GetKeyDown(KeyCode::U))
+	//{
+	//	SetActiveAll(isOpen);
+	//	isOpen = !isOpen;
+	//}
+	// UpdateUI();
 #ifdef USE_IMGUI
 	// デバッグ用のUI
 	ImGui::Begin(std::format("Bag:{}", status.name.c_str()).c_str());
