@@ -84,6 +84,27 @@ void Harvestable::Draw()
 	}
 }
 
+void Harvestable::DrawShadowMap()
+{
+	// 採取済みなら描画しない
+	if (isHarvested)
+	{
+		return;
+	}
+
+	Get<Dx11Manager>().SetShader(shadowShader);
+	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
+
+	const auto& subParts{ model.Get().subParts };
+	for (const auto& parts : subParts)
+	{
+		Get<Dx11Manager>().SetSurface(parts.mesh);
+		Get<Dx11Manager>().SetMaterial(parts.material);
+		Get<Dx11Manager>().SetMaterial(parts.transformMaterial);
+		Get<Dx11Manager>().Draw();
+	}
+}
+
 /// @brief ダメージを受ける
 void Harvestable::TakeDamage(
     int32_t damage)

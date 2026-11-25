@@ -3,6 +3,7 @@
 #include "PlayerRoleType.h"
 #include <Game/Game.h>
 #include "Player/HelthState.h"
+#include "Player/PlayerJobType.h"
 
 struct OtherPlayerData
 {
@@ -24,14 +25,20 @@ struct OtherPlayerData
 	Component<StaticOBB> obb{};
 	Component<OBBRenderer> obbRenderer{};
 
-	std::array<Resource<Model>, PlayerRoleType_Max> models{
+	std::array<Resource<ModelFbx>, PlayerRoleType_Max> models{
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-b.fbx",
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-b.fbx",
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-male-f.fbx",
 		"Model/kenny/kenney_mini-characters/Models/FBX format/character-female-f.fbx",
 	};
 
+	Resource<Shader> shadowShader{ "Shader/ShadowMap.hlsl" };
+
+	// キャラクターのモデル役職
 	PlayerRoleType role{ PlayerRoleType_Healer };
+
+	// 職業タイプ
+	PlayerJobType jobType{ PlayerJobType_Healer };
 
 	// ネットワークから受信した目標座標
 	Vec3 targetPosition{};
@@ -64,6 +71,7 @@ struct OtherPlayer : ObjectBase<OtherPlayerData>, IPlayer
 	void Start() override;
 	void Update() override;
 	void Draw() override;
+	void DrawShadowMap() override;
 
 	Vec3 GetPosition() const override;
 	float GetAngleY() const override;

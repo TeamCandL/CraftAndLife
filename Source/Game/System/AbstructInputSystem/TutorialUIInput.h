@@ -21,6 +21,8 @@ class TutorialUIInput : public NormalUIInput
 	bool IsMovedRight() override;
 	bool IsSelected() const override;
 	bool IsChanneled() const override;
+	bool IsMovedLeftTab() override;
+	bool IsMovedRightTab() override;
 
   private:
 	TutorialSystem& tutorialSystem_;

@@ -108,6 +108,7 @@ struct MapData
 	// --------------------------------------------------------
 
 	Resource<Shader> shader{ "Shader/Terrain.hlsl" };
+	Resource<Shader> shaderShadowMap{ "Shader/ShadowMap.hlsl" };
 
 	//地面テクスチャ変更場所
 	Resource<Texture> texture{ "Texture/Terrain/TileGrass.png", true };
@@ -178,6 +179,7 @@ struct MAP : ObjectBase<MapData>, ITerrain
 	void Update() override;  // 更新
 	void Draw() override;    // 描画
 	float GetHeight(const float _worldX, const float _worldZ) override;
+
   private:
 	// 地形データから描画用メッシュを作り直す
 	void Reload();

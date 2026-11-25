@@ -9,6 +9,9 @@ struct PlayerNameData
 	// 名前を表示する対象のプレイヤー
 	GameObject targetPlayer{};
 
+	// 現在表示している職業
+	int32_t currentJobType{ -1 };
+
 	// 背景画像
 	Resource<Texture> texture{ "Image/UI/PlayerName_background.png" };
 

@@ -66,3 +66,20 @@ void OnceEffectObject::Update()
 		DestroyMe();
 	}
 }
+
+void AttachedLoopEffectObject::Start()
+{
+	EffectObject::Start();
+	effectPlayer.isLoop = true;
+	Play();
+}
+
+void AttachedLoopEffectObject::Update()
+{
+	EffectObject::Update();
+	if (effectPlayer.ref == nullptr || !transform.parent)
+	{
+		effectPlayer.destroyMe = true;
+		DestroyMe();
+	}
+}
