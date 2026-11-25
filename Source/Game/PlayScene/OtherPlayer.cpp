@@ -251,9 +251,9 @@ void OtherPlayer::DrawShadowMap()
 	Get<Dx11Manager>().SetShader(shadowShader);
 	Get<Dx11Manager>().SetMaterial(transform.GetMaterial());
 
-	models[role].Get().Draw(0, animIndex);
+	modelsFbx[role].Get().Draw(0, animIndex);
 
-	const auto& subParts{ models[role].Get().subParts };
+	const auto& subParts{ modelsFbx[role].Get().subParts };
 	for (const auto& parts : subParts)
 	{
 		Get<Dx11Manager>().SetSurface(parts.mesh);
