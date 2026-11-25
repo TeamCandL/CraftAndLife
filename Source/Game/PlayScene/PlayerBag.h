@@ -113,6 +113,10 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	/// @return ItemInfoの vector<CraftInfo> _craftInfoと同じ順番で格納された、素材の充足状況
 	std::vector<CraftMaterialRequirement> GetCraftRequirements(const ItemId _craftItemId);
 
+	/// @brief 指定したIdのアイテムを破棄する。破棄する個数は一つ
+	/// @param _id
+	/// @return 破棄に成功した場合true/失敗した場合false
+	bool DiscardItem(const ItemId _id);
 	void ClearItems();
 
   private:

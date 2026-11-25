@@ -355,6 +355,42 @@ std::vector<CraftMaterialRequirement> PlayerBag::GetCraftRequirements(
 	return craftMaterials;
 }
 
+bool PlayerBag::DiscardItem(
+    const ItemId _id)
+{
+	auto foundItemStack = std::find_if(
+	    items.begin(),
+	    items.end(),
+	    [_id](const BagItemStack& _itemStack)
+	    {
+		    return _itemStack.id == _id;
+	    });
+	// 破棄したいアイテムを持っていない場合
+	if (foundItemStack == items.end())
+	{
+		return false;
+	}
+	const int DISCARD_COUNT{ 1 };
+	// 破棄したい数より所持数が少ない場合
+	if (foundItemStack->count < DISCARD_COUNT)
+	{
+		return false;
+	}
+
+	// アイテム数を減らす
+	foundItemStack->count -= DISCARD_COUNT;
+	// 破棄した結果そのスロットが空になったら、空状態にする
+	if (foundItemStack->count == 0)
+	{
+		foundItemStack->Reset();
+		// バッグの中身をソートする
+		Sort();
+	}
+
+	// バッグ内のアイテムを破棄するのに成功!
+	return true;
+}
+
 void PlayerBag::ClearItems()
 {
 	// BagItemStack emptyStack = BagItemStack::EmptyStack();

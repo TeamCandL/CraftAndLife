@@ -25,11 +25,6 @@
 #include <Game/PlayScene/ClearFade.h>
 #include <Game/Common/EffectObject.h>
 
-namespace
-{
-	GameObject objHealingEffect{};  ///< 治療中エフェクトのオブジェクト
-
-}
 void Player::Start()
 {
 #ifdef _DEBUG
@@ -37,7 +32,6 @@ void Player::Start()
 #else
 	filterAddItemOnJob = true;
 #endif  // _DEBUG
-	objHealingEffect = GetScene().Instantiate<EffectObject>("Effect/Resurrecting.efkefc");
 
 	obb.isTrigger = true;
 
@@ -120,6 +114,15 @@ void Player::Update()
 	if (ImGui::Button("Expansion Consumable"))
 	{
 		Get<HotBar>(objHotbar).ExpansionConsumableSlot();
+	}
+	static ItemId id = { 2 };
+	ImGui::DragInt("ID", &id);
+	if (ImGui::Button("Discard Item"))
+	{
+		if (Get<PlayerBag>(objPlayerBag).DiscardItem(id))
+		{
+			SpawnItem(id);
+		}
 	}
 	ImGui::DragInt("anim", &animIndex, 1, 0);
 	ImGui::DragInt("jobType", &jobType, 1, 0, 3);
