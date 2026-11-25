@@ -22,6 +22,7 @@ struct BagItemStack
 	{
 		return BagItemStack{};
 	}
+	void Reset();
 	bool operator==(const BagItemStack& _other) const = default;
 };
 
@@ -90,6 +91,10 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	std::vector<CraftMaterialRequirement> GetCraftRequirements(const ItemId _craftItemId);
 
 	void ClearItems();
+	/// @brief 指定したIdのアイテムを破棄する。破棄する個数は一つ
+	/// @param _id
+	/// @return 破棄に成功した場合true/失敗した場合false
+	bool DiscardItem(const ItemId _id);
 
   private:
 	void Sort();
