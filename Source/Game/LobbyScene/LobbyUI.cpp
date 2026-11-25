@@ -125,10 +125,17 @@ void LobbyUI::Update()
 		// ジョブ名
 		if (memberNames[i] == status.name && roleSelectButton.IsInitialized())
 		{
-			Get<TextObject>(playerLists[i].jobNameText).SetContent(GetJobName(status.memberRoles[i]));
+			VCU_LOG("自分の役職表示: Index={}, Name={}, currentRoleId={}", i, memberNames[i], currentRoleId);
+			Get<TextObject>(playerLists[i].jobNameText)
+			    .SetContent(GetJobName(static_cast<PlayerJobType>(currentRoleId)));
 		}
 		else
 		{
+			VCU_LOG(
+			    "他プレイヤーの役職表示: Index={}, Name={}, memberRole={}",
+			    i,
+			    memberNames[i],
+			    static_cast<int>(status.memberRoles[i]));
 			Get<TextObject>(playerLists[i].jobNameText).SetContent(GetJobName(status.memberRoles[i]));
 		}
 	}

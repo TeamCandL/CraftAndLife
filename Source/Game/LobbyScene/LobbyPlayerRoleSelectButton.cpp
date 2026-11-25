@@ -66,5 +66,6 @@ void LobbyPlayerRoleSelectButton::Update()
 		VCU_LOG("役職変更送信: RoleID={}", currentRoleId);
 
 		isRoleChange = false;
+		networkSessionManager.Flush();
 	}
 }

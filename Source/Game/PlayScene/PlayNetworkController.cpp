@@ -21,6 +21,7 @@
 #include <Game/Network/Protocols/EntityPicked.h>
 #include <Game/Network/Protocols/PlayerRespawned.h>
 #include <Game/Network/Protocols/TextChated.h>
+#include <Game/Network/Protocols/UpdatedPlayerRole.h>
 #include <Game/PlayScene/Player.h>
 #include <Game/PlayScene/Enemy.h>
 #include <Game/PlayScene/EnemyController.h>
