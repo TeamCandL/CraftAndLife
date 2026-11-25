@@ -212,7 +212,8 @@ void NPCRobo::InitializeAI()
 
 	rootSequenceNode.nodes.emplace_back(std::shared_ptr<AINodeSwitch>(
 	    "",
-	    std::vector<std::pair<std::shared_ptr<AINodeCondition>, std::shared_ptr<AINode>>>{ {} }));
+	    std::vector<std::pair<std::shared_ptr<AINodeCondition>, std::shared_ptr<AINode>>>{
+	        { condIsLowHp, std::make_shared<AINodeSequence>() } }));
 }
 
 void NPCRobo::UpdateAI() {}

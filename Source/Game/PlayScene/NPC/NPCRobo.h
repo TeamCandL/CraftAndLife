@@ -110,15 +110,12 @@ struct NPCRoboData
 		}
 		AIResult Update() override
 		{
+			AIResult result{};
 			for (auto& pNode : nodes)
 			{
-				AIResult result = pNode->Update();
-				if (result != AIResult_No)
-				{
-					return result;
-				}
+				result = pNode->Update();
 			}
-			return AIResult_No;
+			return result;
 		}
 		std::string name{};
 		std::vector<std::shared_ptr<AINode>> nodes{};
@@ -174,7 +171,7 @@ struct NPCRoboData
 	{
 		AINodeSwitch(
 		    const std::string& _name,
-		    std::vector<std::pair<std::shared_ptr<AINodeCondition>, std::shared_ptr<AINode>>>&& _nodes) :
+		    std::vector<std::pair<std::shared_ptr<AINode>, std::shared_ptr<AINode>>>&& _nodes) :
 		    name{ _name },
 		    nodes{ std::move(_nodes) }
 		{
@@ -202,7 +199,7 @@ struct NPCRoboData
 		}
 
 		std::string name{};
-		std::vector<std::pair<std::shared_ptr<AINodeCondition>, std::shared_ptr<AINode>>> nodes{};
+		std::vector<std::pair<std::shared_ptr<AINode>, std::shared_ptr<AINode>>> nodes{};
 	};
 
 	AINodeSequence rootSequenceNode{ "ルートノード", std::vector<std::shared_ptr<AINode>>{} };  ///< 最も親のノード
