@@ -9,13 +9,13 @@ struct PlayerNameData
 	// 名前を表示する対象のプレイヤー
 	GameObject targetPlayer{};
 
-	// 現在表示している職業
-	int32_t currentJobType{ -1 };
+	// 現在表示している役職
+	int32_t currentRole{ -1 };
 
 	// 背景画像
 	Resource<Texture> texture{ "Image/UI/PlayerName_background.png" };
 
-	Component<UITransform> backgroundTransform{ Vec2::Zero(), Vec2{ 240, 65 }, UILayerOrder{}.WithUser(9999) };
+	Component<UITransform> backgroundTransform{ Vec2::Zero(), Vec2{ 60, 60 }, UILayerOrder{}.WithUser(9999) };
 
 	Component<UIImage> image{ texture };
 
@@ -27,7 +27,7 @@ struct PlayerNameData
 		                     .WithFontAlignment(FontAlignment_Center) };
 
 	// 名前のテキスト
-	Component<UITransform> textTransform{ Vec2::Zero(), Vec2{ 220, 40 }, UILayerOrder{}.WithUser(10000) };
+	Component<UITransform> textTransform{ Vec2::Zero(), Vec2{ 207, 60 }, UILayerOrder{}.WithUser(10000) };
 
 	Component<UIText> text{ font, Color::WHITE };
 
