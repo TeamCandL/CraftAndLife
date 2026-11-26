@@ -43,8 +43,9 @@ void PlayScene::Start()
 
 	GameObject objHarvestableController = Instantiate<HarvestableController>();
 	GameObject objTerrain               = Instantiate<MAP>(objHarvestableController);
-	// GameObject objTerrain             = Instantiate<SEAMAP>(objHarvestableController);
-	GameObject objTerrainIsland = Instantiate<MAP_Island>(objHarvestableController);
+	GameObject objIsland                = Instantiate<MAP_Island>(objTerrain);
+	// GameObject objTerrain                 = Instantiate<SEAMAP>(objHarvestableController);
+	// GameObject objIsland                  = Instantiate<SEAMAP_Island>(objTerrain);
 
 	// GameObject objTerrain = Instantiate<Terrain>();
 
