@@ -213,11 +213,11 @@ void UISystem::UpdateRenderer()
 			        (*pSpriteRendererMaterialProperty)->hasTexture = { pImageCircle->texture, FALSE, FALSE, FALSE };
 			        (*pSpriteRendererMaterialProperty)->baseColor  = pImageCircle->baseColor;
 			        (*pSpriteRendererMaterialProperty)->addColor   = pImageCircle->addColor;
-			        (*pSpriteRendererMaterialProperty)->imageSize  = pImageCircle->texture.Get().imageSize;
 
 			        dx11.SetMaterial(material);
 			        if (pImageCircle->texture)
 			        {
+				        (*pSpriteRendererMaterialProperty)->imageSize = pImageCircle->texture.Get().imageSize;
 				        dx11.SetTexture(pImageCircle->texture);  // テクスチャがあるなら送信する
 			        }
 			        dx11.SetSurface(surfaceQuad);
@@ -255,11 +255,11 @@ void UISystem::UpdateRenderer()
 			        (*pSpriteRendererMaterialProperty)->hasTexture = { pSpriteRenderer->texture, FALSE, FALSE, FALSE };
 			        (*pSpriteRendererMaterialProperty)->baseColor  = pSpriteRenderer->baseColor;
 			        (*pSpriteRendererMaterialProperty)->addColor   = pSpriteRenderer->addColor;
-			        (*pSpriteRendererMaterialProperty)->imageSize  = pSpriteRenderer->texture.Get().imageSize;
 
 			        dx11.SetMaterial(material);
 			        if (pSpriteRenderer->texture)
 			        {
+				        (*pSpriteRendererMaterialProperty)->imageSize = pSpriteRenderer->texture.Get().imageSize;
 				        dx11.SetTexture(pSpriteRenderer->texture);  // テクスチャがあるなら送信する
 			        }
 			        dx11.SetSurface(surfaceQuad);
