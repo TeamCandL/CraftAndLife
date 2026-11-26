@@ -214,12 +214,12 @@ void UISystem::UpdateRenderer()
 			        (*pSpriteRendererMaterialProperty)->baseColor  = pImageCircle->baseColor;
 			        (*pSpriteRendererMaterialProperty)->addColor   = pImageCircle->addColor;
 
-			        dx11.SetMaterial(material);
-			        if (pImageCircle->texture)
+			        if (!pImageCircle->texture.IsNull())
 			        {
 				        (*pSpriteRendererMaterialProperty)->imageSize = pImageCircle->texture.Get().imageSize;
 				        dx11.SetTexture(pImageCircle->texture);  // テクスチャがあるなら送信する
 			        }
+			        dx11.SetMaterial(material);
 			        dx11.SetSurface(surfaceQuad);
 			        dx11.Draw();
 			        dx11.ChangeDepthState(DepthStateType_Standard);
@@ -256,12 +256,12 @@ void UISystem::UpdateRenderer()
 			        (*pSpriteRendererMaterialProperty)->baseColor  = pSpriteRenderer->baseColor;
 			        (*pSpriteRendererMaterialProperty)->addColor   = pSpriteRenderer->addColor;
 
-			        dx11.SetMaterial(material);
 			        if (pSpriteRenderer->texture)
 			        {
 				        (*pSpriteRendererMaterialProperty)->imageSize = pSpriteRenderer->texture.Get().imageSize;
 				        dx11.SetTexture(pSpriteRenderer->texture);  // テクスチャがあるなら送信する
 			        }
+			        dx11.SetMaterial(material);
 			        dx11.SetSurface(surfaceQuad);
 			        dx11.Draw();
 			        dx11.ChangeDepthState(DepthStateType_Standard);

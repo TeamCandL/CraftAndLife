@@ -925,7 +925,6 @@ void Player::UpdateGiftRequestSelector()
 
 void Player::ShowGiftRequestSelector()
 {
-	return;
 	GetScene().Destroy(objGiftRequestSelector);
 
 	std::vector<GiftRequestSelectItemInfo> itemsInfo{};
