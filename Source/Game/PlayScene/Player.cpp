@@ -24,6 +24,7 @@
 #include <shigaLibrary/SgRandom.h>
 #include <Game/PlayScene/ClearFade.h>
 #include <Game/Common/EffectObject.h>
+#include "Gift/GiftRequestSelector.h"
 
 namespace
 {
@@ -265,6 +266,8 @@ void Player::Update()
 	{
 		Respawn(maxHP);
 	}
+
+	UpdateGiftRequestSelector();
 
 	if (!objJobController.IsEmpty())
 	{
@@ -891,6 +894,35 @@ void Player::SpawnItem(
 	    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 
 	VCU_LOG("objPawn");
+}
+
+void Player::UpdateGiftRequestSelector()
+{
+	auto pPlayerInput = Get<AbstructInputSystem>().GetPlayerInput();
+	if (pPlayerInput->IsMessageBegin())
+	{
+		if (objGiftRequestSelector.IsEmpty())
+		{
+			// Get<PlayerBag>(objPlayerBag).
+			/*objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::vector<ItemId>{
+			    7,
+			    8,
+			    10,
+			    14,
+			});*/
+		}
+		else
+		{
+			std::optional<ItemId> selectedItemId =
+			    Get<GiftRequestSelector>(objGiftRequestSelector).TryGetSelectedItemId();
+			if (selectedItemId.has_value())  // 選択されているアイテムIdがある！
+			{
+				VCU_LOG("選択されているアイテムIdは{}", *selectedItemId);
+			}
+
+			GetScene().Destroy(objGiftRequestSelector);
+		}
+	}
 }
 
 std::vector<ItemStack> Player::GetHavingItem()

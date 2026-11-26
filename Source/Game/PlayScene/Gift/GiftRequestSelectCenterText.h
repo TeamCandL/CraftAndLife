@@ -4,7 +4,7 @@
 /// @brief ギフトリクエスト中央の説明テキストのデータ
 struct GiftRequestSelectCenterTextData
 {
-	// 名前のフォント
+	// フォント
 	Resource<Font> font{ FontLoadConfig{}
 		                     .WithFile("Font/Stick/Stick-Regular.ttf")
 		                     .WithFamilyName(L"Stick")

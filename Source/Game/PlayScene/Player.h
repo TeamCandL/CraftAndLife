@@ -54,6 +54,7 @@ struct PlayerData
 	GameObject objPlayerBag{};
 	GameObject objHotbar{};
 	GameObject objOtherPlayerController{};  ///< 他プレイヤーのコントローラーオブジェクト
+	GameObject objGiftRequestSelector{};    ///< ギフトリクエストオブジェクト
 	PlayerRoleType role{ PlayerRoleType_Max };
 
 	float angleX{};
@@ -223,6 +224,8 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 	void UpdatePickNearestItem();
 	void TryAddItem(ItemId _id);
 	void SpawnItem(ItemId _id);
+
+	void UpdateGiftRequestSelector();
 
 	/// @brief バッグ、ホットバーが現在持っているアイテムを返す。ホットバーが持つ「バッグ」は返さない
 	/// @return

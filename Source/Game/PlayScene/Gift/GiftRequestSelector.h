@@ -1,21 +1,22 @@
 #pragma once
 #include <Game/Game.h>
 #include "../ItemId.h"
+#include "GiftRequestSelectItemInfo.h"
 
 /// @brief ギフトリクエスト選択するやつのデータ
 struct GiftRequestSelectorData
 {
 	GiftRequestSelectorData(
-	    std::vector<ItemId>&& _itemIds) :
-	    itemIds{ std::move(_itemIds) }
+	    std::vector<GiftRequestSelectItemInfo>&& _selectItemInfo) :
+	    selectItemInfo{ std::move(_selectItemInfo) }
 	{
 	}
 
 	Resource<Texture> textureBackground{ "Image/UI/Gift/gift_request_item_background.png" };
 
-	float deadZone{ 0.6f };         ///< 入力を無視するスティックを倒した距離
-	std::vector<ItemId> itemIds{};  ///< 選択候補としてのアイテムId
-	Vec2 dir{};                     ///< 選択方向
+	float deadZone{ 0.6f };                                   ///< 入力を無視するスティックを倒した距離
+	std::vector<GiftRequestSelectItemInfo> selectItemInfo{};  ///< 選択候補としてのアイテムId
+	Vec2 dir{};                                               ///< 選択方向
 
 	GameObject objCenterBackground{};       ///< 中央の背景オブジェクト
 	GameObject objCenterText{};             ///< 中央の説明テキストオブジェクト

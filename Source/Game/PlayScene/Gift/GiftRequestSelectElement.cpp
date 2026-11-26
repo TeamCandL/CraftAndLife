@@ -1,6 +1,7 @@
 #include "pch\pch.h"
 #include "GiftRequestSelectElement.h"
 #include "GiftRequestSelectElementIcon.h"
+#include "GiftRequestSelectElementText.h"
 #include "../ItemSystem.h"
 
 void GiftRequestSelectElement::Start()
@@ -14,6 +15,10 @@ void GiftRequestSelectElement::Start()
 
 	objIcon = GetScene().Instantiate<GiftRequestSelectElementIcon>(
 	    ITEM_INFO._imageId,
+	    CENTER_POSITION + Vec2{ std::cosf(ICON_CENTER_ANGLE_RAD) * ICON_MID_RADIUS,
+	                            std::sinf(ICON_CENTER_ANGLE_RAD) * ICON_MID_RADIUS });
+	objIcon = GetScene().Instantiate<GiftRequestSelectElementText>(
+	    std::format("x{}", count),
 	    CENTER_POSITION + Vec2{ std::cosf(ICON_CENTER_ANGLE_RAD) * ICON_MID_RADIUS,
 	                            std::sinf(ICON_CENTER_ANGLE_RAD) * ICON_MID_RADIUS });
 }

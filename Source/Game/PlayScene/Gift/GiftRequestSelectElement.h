@@ -1,6 +1,6 @@
 #pragma once
 #include <Game/Game.h>
-#include "../ItemId.h"
+#include "GiftRequestSelectItemInfo.h"
 
 /// @brief ギフトリクエスト選択要素のデータ
 struct GiftRequestSelectElementData
@@ -9,9 +9,10 @@ struct GiftRequestSelectElementData
 	    const Resource<Texture> _texture,
 	    const float _beginAngleRad,
 	    const float _endAngleRad,
-	    const ItemId _itemId) :
+	    const GiftRequestSelectItemInfo& _selectItemInfo) :
 	    image{ _texture },
-	    itemId{ _itemId }
+	    itemId{ _selectItemInfo.itemId },
+	    count{ _selectItemInfo.count }
 	{
 		image.minRadius     = 161.0f;
 		image.maxRadius     = 374.0f;
@@ -24,6 +25,7 @@ struct GiftRequestSelectElementData
 		                              UILayerOrder{}.WithUser(10020) };  ///< UI座標系
 	Component<UIImageCircle> image{};                                    ///< 画像コンポーネント
 	ItemId itemId{};                                                     ///< アイテムId
+	int32_t count{};                                                     ///< アイテムの個数
 	GameObject objIcon{};                                                ///< アイテムのアイコンオブジェクト
 };
 

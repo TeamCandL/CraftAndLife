@@ -23,14 +23,14 @@ void GiftRequestSelector::Start()
 		}
 	};
 
-	objElements.resize(itemIds.size());
-	for (size_t i = 0; i < itemIds.size(); i++)
+	objElements.resize(selectItemInfo.size());
+	for (size_t i = 0; i < selectItemInfo.size(); i++)
 	{
 		objElements[i] = GetScene().Instantiate<GiftRequestSelectElement>(
 		    textureBackground,
 		    normalizeAngle(GetElementRangeAngleRad() * static_cast<float>(i) + (GetElementRangeAngleRad() * 0.5f)),
 		    normalizeAngle(GetElementRangeAngleRad() * static_cast<float>(i + 1) + (GetElementRangeAngleRad() * 0.5f)),
-		    itemIds[i]);
+		    selectItemInfo[i]);
 	}
 }
 
@@ -46,7 +46,7 @@ void GiftRequestSelector::Update()
 	{
 		const ItemInfo ITEM_INFO = Get<ItemSystem>().GetInfo(*itemId);
 		Get<GiftRequestSelectCenterText>(objCenterText)
-		    .SetText(std::format("「{}」\nが欲しい！\nと叫ぶ", ITEM_INFO._name));
+		    .SetText(std::format("アイテム\n「{}」\nをドロップする", ITEM_INFO._name));
 	}
 	else
 	{
@@ -63,17 +63,13 @@ void GiftRequestSelector::OnDestroy()
 
 	for (auto& obj : objElements)
 	{
-		if (!obj.IsEmpty())
-		{
-			continue;
-		}
 		GetScene().Destroy(obj);
 	}
 }
 
 float GiftRequestSelector::GetElementRangeAngleRad() const
 {
-	return DirectX::XM_2PI / static_cast<float>(itemIds.size());
+	return DirectX::XM_2PI / static_cast<float>(selectItemInfo.size());
 }
 
 std::optional<ItemId> GiftRequestSelector::TryGetSelectedItemId()
@@ -84,7 +80,7 @@ std::optional<ItemId> GiftRequestSelector::TryGetSelectedItemId()
 		return std::nullopt;
 	}
 
-	return itemIds[selectedIndex];
+	return selectItemInfo[selectedIndex].itemId;
 }
 
 int32_t GiftRequestSelector::GetSelectedIndex()
@@ -114,10 +110,6 @@ int32_t GiftRequestSelector::GetSelectedIndex()
 	{
 		angleRad += DirectX::XM_2PI;
 	}
-
-	ImGui::Begin("SelectedIndex");
-	ImGui::Text("%3.2f", angleRad);
-	ImGui::End();
 
 	return static_cast<int32_t>((DirectX::XM_2PI - angleRad) / ELEMENT_RANGE_ANGLE_RAD);
 }

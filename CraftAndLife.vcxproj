@@ -818,6 +818,8 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectCenterBackground.h" />
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectCenterText.h" />
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectElementIcon.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectElementText.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectItemInfo.h" />
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelector.h" />
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectElement.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
