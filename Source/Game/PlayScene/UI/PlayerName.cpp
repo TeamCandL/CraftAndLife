@@ -45,11 +45,11 @@ void PlayerName::Update()
 			break;
 
 		case PlayerRoleType_Archer:
-			image.texture = Resource<Texture>{ "Image/UI/Archer Plate.png" };
+			image.texture = Resource<Texture>{ "Image/UI/Fighter Plate.png" };
 			break;
 
 		case PlayerRoleType_Fighter:
-			image.texture = Resource<Texture>{ "Image/UI/Fighter Plate.png" };
+			image.texture = Resource<Texture>{ "Image/UI/Archer Plate.png" };
 			break;
 
 		default:
