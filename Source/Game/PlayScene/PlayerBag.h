@@ -95,6 +95,10 @@ struct PlayerBag : ObjectBase<PlayerBagData>
 	/// @param _id
 	/// @return 破棄に成功した場合true/失敗した場合false
 	bool DiscardItem(const ItemId _id);
+	/// @brief 指定したIdのアイテムの個数を返す。無いなら0
+	/// @param _id
+	/// @return
+	int GetItemCount(const ItemId _id);
 
   private:
 	void Sort();
