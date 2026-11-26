@@ -903,6 +903,7 @@ void Player::UpdateGiftRequestSelector()
 	{
 		if (objGiftRequestSelector.IsEmpty())
 		{
+			ShowGiftRequestSelector();
 			// Get<PlayerBag>(objPlayerBag).
 			/*objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::vector<ItemId>{
 			    7,
@@ -923,6 +924,11 @@ void Player::UpdateGiftRequestSelector()
 			GetScene().Destroy(objGiftRequestSelector);
 		}
 	}
+}
+
+void Player::ShowGiftRequestSelector()
+{
+	// Get<PlayerBag>(objPlayerBag)
 }
 
 std::vector<ItemStack> Player::GetHavingItem()

@@ -226,6 +226,7 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 	void SpawnItem(ItemId _id);
 
 	void UpdateGiftRequestSelector();
+	void ShowGiftRequestSelector();
 
 	/// @brief バッグ、ホットバーが現在持っているアイテムを返す。ホットバーが持つ「バッグ」は返さない
 	/// @return
