@@ -3,6 +3,7 @@
 #include <Game/PlayScene/TerrainSystem.h>
 #include "EnemyController.h"
 #include "Enemy.h"
+#include "EntitySystem.h"
 #include "../../../Library/shigaLibrary/SgMath.h"
 
 void Entity::Start()
@@ -42,9 +43,15 @@ void Entity::Start()
 			despawnTimeLeftSec = ITEM_INFO._coolTime;
 		}
 	}
-
+	EntitySystem& entitySystem{ Get<EntitySystem>() };
+	Vec3 fwdToEnemy{};
 	switch (itemId)
 	{
+	case ITEM_ID_PLAYER_ATTACK_SWORD:
+	case ITEM_ID_PLAYER_ATTACK_BIG_SWORD:
+		fwdToEnemy = entitySystem.GetFacingTheEnemy(entitySystem.Data().objEnemyController, ToGameObject());
+		SetForward(fwdToEnemy);
+		break;
 	case ITEM_ID_PLAYER_ATTACK_ARROW:
 		isThrowingItemEntity = true;  // 投げ物
 		break;
@@ -135,6 +142,12 @@ void Entity::Update()
 		{
 			velocity *= std::pow(friction, DELTA_TIME);
 		}
+	}
+
+	if (enemyDetected)
+	{
+		Vec3 move{ transform.Forward() * SPPED_OF_TRACKING_ENEMIES };
+		transform.position += move * Get<DeltaTime>();
 	}
 }
 
@@ -289,4 +302,14 @@ bool Entity::IsUnderground() const
 void Entity::SetForward(
     Vec3 _Fwd)
 {
+	transform.rotation = Quaternion::FromLookAtQuaternion(transform.position, transform.position + _Fwd, Vec3::Up());
+	// Vec3 difference    = _Fwd - transform.Forward().Normalize();
+	// const float RotationRatio = 1.0f;
+	// float torque              = difference.y * RotationRatio;
+	// Vec3 angles               = transform.rotation.ToEuler();
+	// angles.x                  = 0.0f;
+	// angles.y                  = torque;
+	// angles.z                  = 0.0f;
+	// transform.rotation        = transform.rotation + Quaternion::FromEuler(angles);
+	enemyDetected = true;
 }

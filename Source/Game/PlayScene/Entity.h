@@ -52,11 +52,16 @@ struct EntityData
 	float gravityPerSec{ 9.8f };  ///< 重力加速度(秒)
 	float friction{ 0.9f };       ///< 摩擦力
 
-	float despawnTimeLeftSec{ 60.0f * 2.0f };                      ///< 死ぬまでの時間(秒)
-	float pickupCooldownSec{ 3.0f };                               ///< 拾えない時間(秒)
-	inline static const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };  ///< 敵の攻撃のアイテムId
-	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };  ///< プレイヤーの攻撃の矢アイテムId
-	inline static const ItemId ITEM_ID_PLAYER_ATTACK_OTHER{ 27 };  ///< プレイヤーの攻撃の他アイテムId
+	float despawnTimeLeftSec{ 60.0f * 2.0f };                          ///< 死ぬまでの時間(秒)
+	float pickupCooldownSec{ 3.0f };                                   ///< 拾えない時間(秒)
+	inline static const ItemId ITEM_ID_ENEMY_ATTACK_STRING{ 20 };      ///< 敵の攻撃のアイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_SWORD{ 22 };      ///< プレイヤーの剣攻撃アイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_BIG_SWORD{ 23 };  ///< プレイヤーの大剣攻撃アイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };      ///< プレイヤーの攻撃の矢アイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_OTHER{ 27 };      ///< プレイヤーの攻撃の他アイテムId
+
+	bool enemyDetected{ false };
+	const float SPPED_OF_TRACKING_ENEMIES{ 1.0f };
 
 	GameObject objEnemyController{};
 };

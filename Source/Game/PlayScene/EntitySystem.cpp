@@ -225,7 +225,7 @@ void EntitySystem::RemoveFromNetwork(
 	GetScene().Destroy(objEntities[_entityId]);
 }
 
-void EntitySystem::SetForwardToEnemy(
+Vec3 EntitySystem::GetFacingTheEnemy(
     GameObject _objEnemyController,
     GameObject _objEntity)
 {
@@ -250,5 +250,5 @@ void EntitySystem::SetForwardToEnemy(
 		Fwd = (targetPos - entity.GetPosition()).Normalize();
 	}
 
-	entity.SetForward(Fwd);
+	return Fwd;
 }

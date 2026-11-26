@@ -282,27 +282,6 @@ void Enemy::Sensor(
 				}
 			}
 		}
-
-		/// @brief 生存状態のプレイヤーから追跡対象を決定する
-		{
-			// int32_t playerId{};
-			// if (sessionManager.TryGetPlayerId(objPlayer._name, playerId))
-			//{
-			//	StateTarget target = StateTarget::Player(playerId);
-
-			//	int32_t helthState{};
-			//	bool flag = reader.TryGetState(target, "helthState", helthState);
-			//	if (flag)
-			//	{
-			//		if (helthState == HelthState_::HelthState_Live)
-			//		{
-			//		}
-			//	}
-			//	else
-			//	{
-			//	}
-			//}
-		}
 	}
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{
@@ -422,7 +401,6 @@ void Enemy::AttackCollider(
 		dir = Vec3::Forward();
 	}
 
-	Get<EntitySystem>().Spawn(20, transform.position, dir);
 	if (enemyType == EnemyType::Spider)  // 蜘蛛の糸攻撃！
 	{
 		const ItemId ITEM_ID_SPIDER_STRING{ 20 };
