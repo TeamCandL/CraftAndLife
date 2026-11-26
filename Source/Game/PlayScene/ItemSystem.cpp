@@ -224,7 +224,7 @@ ItemSystemData::ItemSystemData()
 	                        0 });
 	craft.clear();
 	craft.push_back({ 7, 1 });
-	craft.push_back({ 8, 2 });
+	craft.push_back({ 8, 1 });
 	allItemList.push_back({ 15,
 	                        ItemType::Arrow,
 	                        "矢",
