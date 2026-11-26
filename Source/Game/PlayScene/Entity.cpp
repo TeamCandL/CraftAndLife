@@ -285,3 +285,8 @@ bool Entity::IsUnderground() const
 {
 	return isUnderground;
 }
+
+void Entity::SetForward(
+    Vec3 _Fwd)
+{
+}

@@ -117,7 +117,11 @@ struct Entity : ObjectBase<EntityData>, IEntity
 		isUnderground = _isUnderground;
 	}
 
+	Vec3 GetForward()
+	{
+		return transform.Forward();
+	}
 	/// @brief エンティティを最寄りの敵の方向へ向ける
 	/// @param _objEnemyController EnemyControllerを与えてあげる必要があります
-	Vec3 SetForwardToEnemy(GameObject _objEnemyController);
+	void SetForward(Vec3 _Fwd);
 };
