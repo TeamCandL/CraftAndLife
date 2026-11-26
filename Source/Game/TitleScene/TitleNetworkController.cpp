@@ -4,6 +4,7 @@
 #include <Game/Manager/SessionManager.h>
 #include <Game/Network/Protocols/JoinRoom.h>
 #include <Game/Network/Protocols/JoinOk.h>
+#include <Game/Network/Protocols/JoinNG.h>
 #include <Game/Manager/SessionManager.h>
 #include "../LobbyScene/LobbyScene.h"
 
@@ -66,6 +67,27 @@ void TitleNetworkController::Update()
 
 				    // Get<SessionManager>().SetPlayerName(protocol.playerName);
 				    Get<SceneManager>().Move<LobbyScene>();
+				    break;
+			    }
+			    case ProtocolType::JoinNG:
+			    {
+				    Protocol::JoinNG protocol{};
+				    converter.ToMessage(_event.data, protocol);
+
+				    for (int32_t error : protocol.errorTypes)
+				    {
+					    // エラーメッセージログ出す
+					    switch (static_cast<JoinError>(error))
+					    {
+					    case JoinError::NameDuplicate:
+						    VCU_LOG("プレイヤー名が重複しています");
+						    break;
+
+					    case JoinError::LobbyFull:
+						    VCU_LOG("ロビーが満員です");
+						    break;
+					    }
+				    }
 				    break;
 			    }
 			    default:

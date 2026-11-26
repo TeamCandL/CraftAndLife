@@ -581,6 +581,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\TitleScene\GameStart.cpp" />
     <ClCompile Include="Source\Game\TitleScene\GameStartGuide.cpp" />
     <ClCompile Include="Source\Game\TitleScene\Lobby.cpp" />
+    <ClCompile Include="Source\Game\TitleScene\LobbyJoinErrorUI.cpp" />
     <ClCompile Include="Source\Game\TitleScene\LobbyPlayer.cpp" />
     <ClCompile Include="Source\Game\TitleScene\LobbyPlayerName.cpp" />
     <ClCompile Include="Source\Game\TitleScene\LobbyPlayerNameOne.cpp" />
@@ -781,6 +782,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\EntityPickRequest.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntitySpawned.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntitySpawnRequest.h" />
+    <ClInclude Include="Source\Game\Network\Protocols\JoinNG.h" />
     <ClInclude Include="Source\Game\Network\Protocols\PlayerRespawned.h" />
     <ClInclude Include="Source\Game\Network\Protocols\TextChated.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateDayTime.h" />
@@ -1008,6 +1010,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TitleScene\GameStart.h" />
     <ClInclude Include="Source\Game\TitleScene\GameStartGuide.h" />
     <ClInclude Include="Source\Game\TitleScene\Lobby.h" />
+    <ClInclude Include="Source\Game\TitleScene\LobbyJoinErrorUI.h" />
     <ClInclude Include="Source\Game\TitleScene\LobbyPlayer.h" />
     <ClInclude Include="Source\Game\TitleScene\LobbyPlayerName.h" />
     <ClInclude Include="Source\Game\TitleScene\LobbyPlayerNameOne.h" />

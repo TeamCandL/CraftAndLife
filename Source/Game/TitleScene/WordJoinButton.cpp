@@ -53,7 +53,7 @@ void WordJoinButton::Update()
 			return;  // 表示されているならそのまま
 		}
 
-		if (inputWord.size() > 0)
+		if (inputWord.size() > 0 && inputPlayerName.size())
 		{
 			// 何らかしらの入力があったらロビーに進むために接続だけする
 			NetworkSessionManager& networkSessionManager = Get<NetworkSessionManager>();
@@ -62,7 +62,6 @@ void WordJoinButton::Update()
 
 			Get<SessionManager>().SetJoinRoomName(inputWord);
 			Get<SessionManager>().SetPlayerName(inputPlayerName);
-			// ここで名前のセットもする
 		}
 		isInputtingWord = false;
 
