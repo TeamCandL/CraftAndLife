@@ -67,5 +67,10 @@ struct EntitySystem : SystemObjectBase<EntitySystem, EntitySystemData>, IEntityS
 	{
 		objEnemyController = _objEnemyController;
 	}
-	void SetForwardToEnemy(GameObject _objEnemyController, GameObject _objEnetity);
+
+	/// @brief Entityからの最寄りの敵への向きを取得
+	/// @param _objEnemyController 全ての敵の位置を取得するためにEnemyControllerが必要
+	/// @param _objEnetity 指定するEntityを付与。
+	/// @return Vec3で向きを返してくれるよ（正規化済みの値だからそのまま使えるよ）
+	Vec3 GetFacingTheEnemy(GameObject _objEnemyController, GameObject _objEnetity);
 };
