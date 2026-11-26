@@ -17,6 +17,8 @@ struct GiftRequestSelectorData
 	std::vector<ItemId> itemIds{};  ///< 選択候補としてのアイテムId
 	Vec2 dir{};                     ///< 選択方向
 
+	GameObject objCenterBackground{};       ///< 中央の背景オブジェクト
+	GameObject objCenterText{};             ///< 中央の説明テキストオブジェクト
 	std::vector<GameObject> objElements{};  ///< 選択候補表示用UIオブジェクト
 };
 

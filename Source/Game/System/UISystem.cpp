@@ -175,48 +175,6 @@ void UISystem::UpdateBindWorld()
 
 void UISystem::UpdateRenderer()
 {
-	auto viewImage = GetView<UITransform, UIImage>();
-
-	viewImage.ForEachWithIndex(
-	    [this](const size_t _index, IObject& _object, UITransform& _transform, UIImage& _spriteRenderer)
-	    {
-		    // NOTE: ラムダ式のキャプチャの関係上ここにポインターを持つ
-		    auto* pTransform      = &_transform;
-		    auto* pSpriteRenderer = &_spriteRenderer;
-
-		    Get<UIManager>().AddRenderer(
-		        [this, pTransform, pSpriteRenderer]
-		        {
-			        // UI用にマテリアル送信
-			        Dx11Manager& dx11 = Get<Dx11Manager>();
-			        dx11.ChangeDepthState(DepthStateType_None);
-			        dx11.SetBlendState(BlendStateType_Alpha);  // 透過描画もする
-
-			        dx11.SetShader(uiShader);                     // UI描画用シェーダをセット
-			        dx11.SetMaterial(pTransform->GetMaterial());  // UITransformのマテリアルをセット
-
-			        SpriteRendererMaterialProperty* pSpriteRendererMaterialProperty =
-			            static_cast<SpriteRendererMaterialProperty*>(material.Get().pProperty.get());
-
-			        // TODO: _spriteRenderer.のテクスチャを参照する
-			        (*pSpriteRendererMaterialProperty)->hasTexture = { pSpriteRenderer->texture, FALSE, FALSE, FALSE };
-			        (*pSpriteRendererMaterialProperty)->baseColor  = pSpriteRenderer->baseColor;
-			        (*pSpriteRendererMaterialProperty)->addColor   = pSpriteRenderer->addColor;
-			        (*pSpriteRendererMaterialProperty)->imageSize  = pSpriteRenderer->texture.Get().imageSize;
-
-			        dx11.SetMaterial(material);
-			        if (pSpriteRenderer->texture)
-			        {
-				        dx11.SetTexture(pSpriteRenderer->texture);  // テクスチャがあるなら送信する
-			        }
-			        dx11.SetSurface(surfaceQuad);
-			        dx11.Draw();
-			        dx11.ChangeDepthState(DepthStateType_Standard);
-			        dx11.SetBlendState(BlendStateType_None);
-		        },
-		        pTransform->layerOrder.WithUIType(UILayerOrder::UIType_Figure));
-	    });
-
 	auto viewImageCircle = GetView<UITransform, UIImageCircle>();
 
 	viewImageCircle.ForEachWithIndex(
@@ -261,6 +219,48 @@ void UISystem::UpdateRenderer()
 			        if (pImageCircle->texture)
 			        {
 				        dx11.SetTexture(pImageCircle->texture);  // テクスチャがあるなら送信する
+			        }
+			        dx11.SetSurface(surfaceQuad);
+			        dx11.Draw();
+			        dx11.ChangeDepthState(DepthStateType_Standard);
+			        dx11.SetBlendState(BlendStateType_None);
+		        },
+		        pTransform->layerOrder.WithUIType(UILayerOrder::UIType_Figure));
+	    });
+
+	auto viewImage = GetView<UITransform, UIImage>();
+
+	viewImage.ForEachWithIndex(
+	    [this](const size_t _index, IObject& _object, UITransform& _transform, UIImage& _spriteRenderer)
+	    {
+		    // NOTE: ラムダ式のキャプチャの関係上ここにポインターを持つ
+		    auto* pTransform      = &_transform;
+		    auto* pSpriteRenderer = &_spriteRenderer;
+
+		    Get<UIManager>().AddRenderer(
+		        [this, pTransform, pSpriteRenderer]
+		        {
+			        // UI用にマテリアル送信
+			        Dx11Manager& dx11 = Get<Dx11Manager>();
+			        dx11.ChangeDepthState(DepthStateType_None);
+			        dx11.SetBlendState(BlendStateType_Alpha);  // 透過描画もする
+
+			        dx11.SetShader(uiShader);                     // UI描画用シェーダをセット
+			        dx11.SetMaterial(pTransform->GetMaterial());  // UITransformのマテリアルをセット
+
+			        SpriteRendererMaterialProperty* pSpriteRendererMaterialProperty =
+			            static_cast<SpriteRendererMaterialProperty*>(material.Get().pProperty.get());
+
+			        // TODO: _spriteRenderer.のテクスチャを参照する
+			        (*pSpriteRendererMaterialProperty)->hasTexture = { pSpriteRenderer->texture, FALSE, FALSE, FALSE };
+			        (*pSpriteRendererMaterialProperty)->baseColor  = pSpriteRenderer->baseColor;
+			        (*pSpriteRendererMaterialProperty)->addColor   = pSpriteRenderer->addColor;
+			        (*pSpriteRendererMaterialProperty)->imageSize  = pSpriteRenderer->texture.Get().imageSize;
+
+			        dx11.SetMaterial(material);
+			        if (pSpriteRenderer->texture)
+			        {
+				        dx11.SetTexture(pSpriteRenderer->texture);  // テクスチャがあるなら送信する
 			        }
 			        dx11.SetSurface(surfaceQuad);
 			        dx11.Draw();

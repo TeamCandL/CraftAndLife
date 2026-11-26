@@ -10,9 +10,10 @@ void TestPlayer::Update()
 		if (objGiftRequestSelector.IsEmpty())
 		{
 			objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::vector<ItemId>{
-			    11,
-			    12,
-			    13,
+			    7,
+			    8,
+			    10,
+			    14,
 			});
 		}
 		else

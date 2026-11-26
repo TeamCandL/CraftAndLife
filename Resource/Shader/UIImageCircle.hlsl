@@ -59,13 +59,37 @@ float4 PS(VSOutput input) : SV_Target0
 		// 無視！
 		return float4(0.0f, 0.0f, 0.0f, 0.0f);
 	}
+
+	float angleBegin = UIImageCircleMaterial_MinRadius_MaxRadius_BeginAngleRad_EndAngleRad.z;
+	float angleEnd = UIImageCircleMaterial_MinRadius_MaxRadius_BeginAngleRad_EndAngleRad.w;
+
+	//if (angleBegin < 0.0f)
+	//{
+	//	angleBegin += TAU;
+	//}
+	//if (angleEnd < 0.0f)
+	//{
+	//	angleEnd += TAU;
+	//}
 	
-	// ピクセルの角度が指定角度範囲外なら
-	if (angleRad < UIImageCircleMaterial_MinRadius_MaxRadius_BeginAngleRad_EndAngleRad.z ||
-		UIImageCircleMaterial_MinRadius_MaxRadius_BeginAngleRad_EndAngleRad.w < angleRad)
+	if (angleEnd > TAU)
 	{
-		// 無視！
-		return float4(0.0f, 0.0f, 0.0f, 0.0f);
+		if (angleRad < angleBegin &&
+		angleRad > angleEnd - TAU)
+		{
+			// 無視！
+			return float4(0.0f, 0.0f, 0.0f, 0.0f);
+		}
+	}
+	else
+	{
+		// ピクセルの角度が指定角度範囲外なら
+		if (angleRad < angleBegin ||
+			angleEnd < angleRad)
+		{
+			// 無視！
+			return float4(0.0f, 0.0f, 0.0f, 0.0f);
+		}
 	}
 	
 	float4 diffuse;
