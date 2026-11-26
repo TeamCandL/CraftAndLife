@@ -9,7 +9,7 @@ struct Name3Data
 		                     .WithFontSize(32)
 		                     .WithFontAlignment(FontAlignment_Left) };
 
-	Component<UITransform> transform{ Vec2{ 90, 554 }, Vec2{ 192, 27 }, UILayerOrder{}.WithUser(10000) };
+	Component<UITransform> transform{ Vec2{ 90, 538 }, Vec2{ 192, 27 }, UILayerOrder{}.WithUser(10000) };
 	Component<UIText> text{ font, Color::WHITE };
 };
 

@@ -5,7 +5,7 @@ struct OtherInfoData
 {
 	Resource<Texture> texture{ "Image/UI/other_info.png" };
 
-	Component<UITransform> transform{ Vec2{ 0, 367 }, Vec2{ 314, 334 } };
+	Component<UITransform> transform{ Vec2{ 0, 360 }, Vec2{ 314, 334 } };
 	Component<UIImage> image{ texture };
 };
 
