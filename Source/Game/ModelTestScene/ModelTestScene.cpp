@@ -6,6 +6,7 @@
 #include <Game/Tool/DebugCamera.h>
 #include <Game/PlayScene/HarvestableController.h>
 #include <Game/PlayScene/NPC/NPCRobo.h>
+#include <Game/PlayScene/Gift/GiftRequestBox.h>
 
 void ModelTestScene::Start()
 {

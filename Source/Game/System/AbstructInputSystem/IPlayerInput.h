@@ -65,4 +65,7 @@ class IPlayerInput : public IInput
 	/// @brief ジャンプ入力が終了されたかを取得
 	/// @return ジャンプ入力が終了された true / false
 	virtual bool IsJumpEnd() const = 0;
+	/// @brief メッセージ入力が開始されたかを取得
+	/// @return メッセージ入力が開始された true / false
+	virtual bool IsMessageBegin() const = 0;
 };

@@ -25,7 +25,7 @@ void BootSceneLogo::Update()
 		// Get<SceneManager>().Move<TitleScene>();
 		Get<SceneManager>().Move<ModelTestScene>();
 		//   Get<SceneManager>().Move<MapTestScene>();
-		//   Get<SceneManager>().Move<PlayScene>();
+		// Get<SceneManager>().Move<PlayScene>();
 		return;
 	}
 

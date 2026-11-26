@@ -26,6 +26,7 @@ struct TranslationSystem;
 struct UIRaycasterSystem;
 struct UISystem;
 struct UITranslationSystem;
+struct YzMassSystem;
 struct NullObjectSystem;
 
 namespace cha
@@ -79,5 +80,6 @@ namespace cha
 	    UIRaycasterSystem,
 	    UISystem,
 	    UITranslationSystem,
+	    YzMassSystem,
 	    NullObjectSystem>;
 }  // namespace cha
