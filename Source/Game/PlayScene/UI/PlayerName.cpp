@@ -1,3 +1,4 @@
+
 #include "pch\pch.h"
 #include "PlayerName.h"
 
@@ -18,42 +19,49 @@ void PlayerName::Update()
 		return;
 	}
 
+	// 他プレイヤーの情報を取得
+	auto& otherPlayer = Get<OtherPlayer>(targetPlayer);
+
 	// 他プレイヤーのワールド座標を取得
-	Vec3 playerPosition = Get<OtherPlayer>(targetPlayer).GetPosition();
+	Vec3 playerPosition = otherPlayer.GetPosition();
 
 	// =====================================
-	// 職業に応じて背景画像を切り替える
+	// ROLEに応じて背景画像を切り替える
 	// =====================================
 
-	const PlayerJobType jobType = Get<OtherPlayer>(targetPlayer).Data().jobType;
+	const PlayerRoleType role = otherPlayer.Data().role;
 
-	// 前回と職業が異なる場合のみ画像を変更
-	if (jobType != currentJobType)
+	// 前回とROLEが異なる場合のみ画像を変更
+	if (role != currentRole)
 	{
-		switch (jobType)
+		switch (role)
 		{
-		case PlayerJobType_Healer:
+		case PlayerRoleType_Healer:
 			image.texture = Resource<Texture>{ "Image/UI/Healer Plate.png" };
 			break;
 
-		case PlayerJobType_Tank:
+		case PlayerRoleType_Tank:
 			image.texture = Resource<Texture>{ "Image/UI/Tank Plate.png" };
 			break;
 
-		case PlayerJobType_Fighter:
-			image.texture = Resource<Texture>{ "Image/UI/Fighter Plate.png" };
-			break;
-
-		case PlayerJobType_Archer:
+		case PlayerRoleType_Archer:
 			image.texture = Resource<Texture>{ "Image/UI/Archer Plate.png" };
 			break;
 
+		case PlayerRoleType_Fighter:
+			image.texture = Resource<Texture>{ "Image/UI/Fighter Plate.png" };
+			break;
+
 		default:
-			// 不明な職業の場合は変更しない
-			return;
+			// 不明なROLEの場合は画像を変更しない
+			break;
 		}
 
-		currentJobType = jobType;
+		// 正常なROLEの場合のみ更新
+		if (role >= PlayerRoleType_Healer && role < PlayerRoleType_Max)
+		{
+			currentRole = role;
+		}
 	}
 
 	// 頭上に表示するための高さ
@@ -99,7 +107,7 @@ void PlayerName::Update()
 
 	// UIサイズを元に戻す
 	backgroundTransform.scale = Vec2{ 207, 60 };
-	textTransform.scale       = Vec2{ 192, 27 };
+	textTransform.scale       = Vec2{ 207, 60 };
 
 	// 背景画像の位置
 	backgroundTransform.position = Vec2{ screenPos.x - 120.0f, screenPos.y - 45.0f };
