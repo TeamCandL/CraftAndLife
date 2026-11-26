@@ -358,6 +358,20 @@ bool PlayerBag::DiscardItem(
 	return true;
 }
 
+int PlayerBag::GetItemCount(
+    const ItemId _id)
+{
+	int count = 0;
+	for (const auto& bagItemStack : items)
+	{
+		if (_id == bagItemStack.id)
+		{
+			count += bagItemStack.count;
+		}
+	}
+	return count;
+}
+
 void PlayerBag::Sort()
 {
 	// アイテムIDの昇順でソート、同じIDの場合は個数の降順でソート
