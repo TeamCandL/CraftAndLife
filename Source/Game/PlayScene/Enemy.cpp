@@ -401,7 +401,6 @@ void Enemy::AttackCollider(
 		dir = Vec3::Forward();
 	}
 
-	Get<EntitySystem>().Spawn(20, transform.position, dir);
 	if (enemyType == EnemyType::Spider)  // 蜘蛛の糸攻撃！
 	{
 		const ItemId ITEM_ID_SPIDER_STRING{ 20 };
