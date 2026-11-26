@@ -23,7 +23,7 @@ struct Gauge4Data
 
 	const float maxWidth{ 192.0f };
 
-	Component<UITransform> transform{ Vec2{ 27, 666 }, Vec2{ 192, 24 } };
+	Component<UITransform> transform{ Vec2{ 94, 666 }, Vec2{ 192, 24 } };
 
 	Component<UIImage> image{ texture };
 };
