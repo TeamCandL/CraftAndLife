@@ -9,13 +9,15 @@ struct UIImageCircle : ComponentBase<UIImageCircle>
 	explicit UIImageCircle(
 	    const Resource<ResourceType::Texture>& _texture) :
 	    texture{ _texture },
-	    baseColor{ Color::WHITE }
+	    baseColor{ Color::WHITE },
+	    addColor{ Color::CLEAR }
 	{
 	}
 	~UIImageCircle() = default;
 
 	Resource<ResourceType::Texture> texture{};  ///< テクスチャ
 	Color baseColor{};                          ///< ベースの色
+	Color addColor{};                           ///< ベースの加法混色
 	float minRadius{};                          ///< 円中心からの切り抜き半径
 	float maxRadius{};                          ///< 円中心からの表示半径
 	float beginAngleRad{};                      ///< 円の開始地点

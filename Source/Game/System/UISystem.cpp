@@ -8,9 +8,12 @@
 #include "../Component/UI/UIRaycastTarget.h"
 #include "../Component/UI/UIWorldBinder.h"
 #include "UISystem/SpriteRendererMaterial.h"
+#include "../Common/UICircleImageMaterial.h"
 
 void UISystem::Start()
 {
+	materialImageCircle.Get().slot = 6;
+
 	Get<Dx11Manager>().Ref(
 	    [this](const ComPtr<ID3D11Device>& _pDevice)
 	    {
@@ -198,12 +201,66 @@ void UISystem::UpdateRenderer()
 			        // TODO: _spriteRenderer.のテクスチャを参照する
 			        (*pSpriteRendererMaterialProperty)->hasTexture = { pSpriteRenderer->texture, FALSE, FALSE, FALSE };
 			        (*pSpriteRendererMaterialProperty)->baseColor  = pSpriteRenderer->baseColor;
+			        (*pSpriteRendererMaterialProperty)->addColor   = pSpriteRenderer->addColor;
 			        (*pSpriteRendererMaterialProperty)->imageSize  = pSpriteRenderer->texture.Get().imageSize;
 
 			        dx11.SetMaterial(material);
 			        if (pSpriteRenderer->texture)
 			        {
 				        dx11.SetTexture(pSpriteRenderer->texture);  // テクスチャがあるなら送信する
+			        }
+			        dx11.SetSurface(surfaceQuad);
+			        dx11.Draw();
+			        dx11.ChangeDepthState(DepthStateType_Standard);
+			        dx11.SetBlendState(BlendStateType_None);
+		        },
+		        pTransform->layerOrder.WithUIType(UILayerOrder::UIType_Figure));
+	    });
+
+	auto viewImageCircle = GetView<UITransform, UIImageCircle>();
+
+	viewImageCircle.ForEachWithIndex(
+	    [this](const size_t _index, IObject& _object, UITransform& _transform, UIImageCircle& _imageCircle)
+	    {
+		    // NOTE: ラムダ式のキャプチャの関係上ここにポインターを持つ
+		    auto* pTransform   = &_transform;
+		    auto* pImageCircle = &_imageCircle;
+
+		    Get<UIManager>().AddRenderer(
+		        [this, pTransform, pImageCircle]
+		        {
+			        // UI用にマテリアル送信
+			        Dx11Manager& dx11 = Get<Dx11Manager>();
+			        dx11.ChangeDepthState(DepthStateType_None);
+			        dx11.SetBlendState(BlendStateType_Alpha);  // 透過描画もする
+
+			        dx11.SetShader(uiImageCircleShader);          // UI描画用シェーダをセット
+			        dx11.SetMaterial(pTransform->GetMaterial());  // UITransformのマテリアルをセット
+
+			        UICircleImageMaterialProperty* pUICircleImageMaterialProperty =
+			            static_cast<UICircleImageMaterialProperty*>(materialImageCircle.Get().pProperty.get());
+
+			        (*pUICircleImageMaterialProperty)->ratio = Float4{
+				        pImageCircle->minRadius,
+				        pImageCircle->maxRadius,
+				        pImageCircle->beginAngleRad,
+				        pImageCircle->endAngleRad,
+			        };
+
+			        dx11.SetMaterial(materialImageCircle);
+
+			        SpriteRendererMaterialProperty* pSpriteRendererMaterialProperty =
+			            static_cast<SpriteRendererMaterialProperty*>(material.Get().pProperty.get());
+
+			        (*pSpriteRendererMaterialProperty)->hasTexture = { pImageCircle->texture, FALSE, FALSE, FALSE };
+			        (*pSpriteRendererMaterialProperty)->baseColor  = pImageCircle->baseColor;
+			        (*pSpriteRendererMaterialProperty)->addColor   = pImageCircle->addColor;
+			        (*pSpriteRendererMaterialProperty)->imageSize  = pImageCircle->texture.Get().imageSize;
+
+			        dx11.SetMaterial(material);
+			        if (pImageCircle->texture)
+			        {
+				        dx11.SetTexture(pImageCircle->texture);  // テクスチャがあるなら送信する
 			        }
 			        dx11.SetSurface(surfaceQuad);
 			        dx11.Draw();

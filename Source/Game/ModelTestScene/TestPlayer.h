@@ -3,7 +3,7 @@
 
 struct TestPlayerData
 {
-	GameObject objGiftRequestBox{};
+	GameObject objGiftRequestSelector{};
 };
 
 /// @brief テストプレイヤー

@@ -7,6 +7,7 @@
 #include <Game/PlayScene/HarvestableController.h>
 #include <Game/PlayScene/NPC/NPCRobo.h>
 #include <Game/PlayScene/Gift/GiftRequestBox.h>
+#include "TestPlayer.h"
 
 void ModelTestScene::Start()
 {
@@ -15,4 +16,5 @@ void ModelTestScene::Start()
 	Instantiate<Sky>();
 	Instantiate<MAP>(Instantiate<HarvestableController>());
 	Instantiate<NPCRobo>();
+	Instantiate<TestPlayer>();
 }

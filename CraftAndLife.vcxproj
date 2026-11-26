@@ -476,6 +476,8 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyHpBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyHpBarBackGround.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Gift\GiftRequestSelectElement.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Gift\GiftRequestSelector.cpp" />
     <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.cpp" />
@@ -811,7 +813,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestBox.h" />
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelector.h" />
-    <ClInclude Include="Source\Game\PlayScene\Gift\GitRequestSelectElement.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectElement.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
     <ClInclude Include="Source\Game\PlayScene\IEntitySystemNetwork.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />

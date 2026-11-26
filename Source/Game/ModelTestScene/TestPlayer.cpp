@@ -1,19 +1,30 @@
 #include "pch\pch.h"
 #include "TestPlayer.h"
-#include <Game/PlayScene/Gift/GiftRequestBox.h>
+#include <Game/PlayScene/Gift/GiftRequestSelector.h>
 #include <Game/System/AbstructInputSystem.h>
 
 void TestPlayer::Update()
 {
 	if (Get<AbstructInputSystem>().GetPlayerInput()->IsMessageBegin())
 	{
-		if (objGiftRequestBox.IsEmpty())
+		if (objGiftRequestSelector.IsEmpty())
 		{
-			objGiftRequestBox = GetScene().Instantiate<GiftRequestBox>();
+			objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::vector<ItemId>{
+			    11,
+			    12,
+			    13,
+			});
 		}
 		else
 		{
-			GetScene().Destroy(objGiftRequestBox);
+			std::optional<ItemId> selectedItemId =
+			    Get<GiftRequestSelector>(objGiftRequestSelector).TryGetSelectedItemId();
+			if (selectedItemId.has_value())  // 選択されているアイテムIdがある！
+			{
+				VCU_LOG("選択されているアイテムIdは{}", *selectedItemId);
+			}
+
+			GetScene().Destroy(objGiftRequestSelector);
 		}
 	}
 }

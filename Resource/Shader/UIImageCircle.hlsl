@@ -34,6 +34,8 @@ VSOutput VS(VSInput input)
 
 float4 PS(VSOutput input) : SV_Target0
 {
+	//return float4(1, 1, 0, 1);
+	
 	// 中心に移動
 	float2 st = input.uv.xy - float2(0.5f, 0.5f);
 
@@ -70,10 +72,15 @@ float4 PS(VSOutput input) : SV_Target0
 	if (SpriteRendererMaterial_HasTexture.x)
 	{
 		diffuse = g_texture.Sample(g_sampler, input.uv);
+		// テクスチャがある場合は baseColor で乗算してアルファや色を調整する
+		diffuse.rgb *= SpriteRendererMaterial_BaseColor.rgb;
+		diffuse.a *= SpriteRendererMaterial_BaseColor.a;
 	}
 	else
 	{
 		diffuse = SpriteRendererMaterial_BaseColor;
 	}
+	diffuse += SpriteRendererMaterial_AddColor;
+	
 	return diffuse;
 }
