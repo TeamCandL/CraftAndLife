@@ -13,7 +13,7 @@ struct GiftRequestSelectorData
 
 	Resource<Texture> textureBackground{ "Image/UI/Gift/gift_request_item_background.png" };
 
-	float deadZone{ 0.03f };        ///< 入力を無視するスティックを倒した距離
+	float deadZone{ 0.6f };         ///< 入力を無視するスティックを倒した距離
 	std::vector<ItemId> itemIds{};  ///< 選択候補としてのアイテムId
 	Vec2 dir{};                     ///< 選択方向
 

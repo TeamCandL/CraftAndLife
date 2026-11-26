@@ -89,7 +89,12 @@ std::optional<ItemId> GiftRequestSelector::TryGetSelectedItemId()
 
 int32_t GiftRequestSelector::GetSelectedIndex()
 {
-	dir = Get<AbstructInputSystem>().GetPlayerInput()->GetMoveCamera();
+	Vec2 currentDir = Get<AbstructInputSystem>().GetPlayerInput()->GetMoveCamera();
+
+	if (currentDir.Length() > deadZone)
+	{
+		dir = currentDir;
+	}
 
 	if (dir.Length() <= deadZone)
 	{
