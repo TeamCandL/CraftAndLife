@@ -227,6 +227,12 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 
 	void UpdateGiftRequestSelector();
 	void ShowGiftRequestSelector();
+	/// @brief ギフトリクエスト選択UIが表示されているかを取得する
+	/// @return 表示されている true / false
+	bool IsShownGiftRequestSelector() const
+	{
+		return !objGiftRequestSelector.IsEmpty();
+	}
 
 	/// @brief バッグ、ホットバーが現在持っているアイテムを返す。ホットバーが持つ「バッグ」は返さない
 	/// @return

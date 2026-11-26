@@ -898,13 +898,6 @@ void Player::UpdateGiftRequestSelector()
 		if (objGiftRequestSelector.IsEmpty())
 		{
 			ShowGiftRequestSelector();
-			// Get<PlayerBag>(objPlayerBag).
-			/*objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::vector<ItemId>{
-			    7,
-			    8,
-			    10,
-			    14,
-			});*/
 		}
 		else
 		{
@@ -918,11 +911,38 @@ void Player::UpdateGiftRequestSelector()
 			GetScene().Destroy(objGiftRequestSelector);
 		}
 	}
+	else
+	{
+		if (IsShownGiftRequestSelector())
+		{
+			if (pPlayerInput->IsInteractBegin())
+			{
+				ShowGiftRequestSelector();
+			}
+		}
+	}
 }
 
 void Player::ShowGiftRequestSelector()
 {
-	// Get<PlayerBag>(objPlayerBag)
+	return;
+	GetScene().Destroy(objGiftRequestSelector);
+
+	std::vector<GiftRequestSelectItemInfo> itemsInfo{};
+
+	static const ItemId CHECK_ITEM_IDS[]{ 7, 8, 10, 14 };
+
+	for (auto itemId : CHECK_ITEM_IDS)
+	{
+		int count = Get<PlayerBag>(objPlayerBag).GetItemCount(itemId);
+		if (count <= 0)
+		{
+			continue;
+		}
+		itemsInfo.emplace_back(itemId, count);
+	}
+
+	objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::move(itemsInfo));
 }
 
 std::vector<ItemStack> Player::GetHavingItem()
