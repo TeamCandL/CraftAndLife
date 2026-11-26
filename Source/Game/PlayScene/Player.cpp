@@ -26,11 +26,6 @@
 #include <Game/Common/EffectObject.h>
 #include "Gift/GiftRequestSelector.h"
 
-namespace
-{
-	GameObject objHealingEffect{};  ///< 治療中エフェクトのオブジェクト
-
-}
 void Player::Start()
 {
 #ifdef _DEBUG
@@ -38,7 +33,6 @@ void Player::Start()
 #else
 	filterAddItemOnJob = true;
 #endif  // _DEBUG
-	objHealingEffect = GetScene().Instantiate<EffectObject>("Effect/Resurrecting.efkefc");
 
 	obb.isTrigger = true;
 

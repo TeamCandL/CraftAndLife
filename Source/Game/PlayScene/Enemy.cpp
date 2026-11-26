@@ -422,15 +422,18 @@ void Enemy::AttackCollider(
 		dir = Vec3::Forward();
 	}
 
-	Get<EntitySystem>().Spawn(20, transform.position, dir);
 	if (enemyType == EnemyType::Spider)  // 蜘蛛の糸攻撃！
 	{
 		const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 		Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
 	}
-	else if (enemyType == EnemyType::Dragon)  //	ドラゴンの火攻撃！
+	else if (enemyType == EnemyType::Dragon)  // ドラゴンの火攻撃！
 	{
 		const ItemId ITEM_ID_DRAGON_FIRE{ 26 };
+
+		// 火炎攻撃SE
+		Get<AudioManager>().Play(flameSE);
+
 		Get<EntitySystem>().Spawn(ITEM_ID_DRAGON_FIRE, transform.position, dir);
 	}
 

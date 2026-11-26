@@ -31,7 +31,7 @@ void PlaySceneUIController::Start()
 	objTaskBackground = GetScene().Instantiate<TaskBackground>(objDayContloller);
 	objMiniMap        = GetScene().Instantiate<MiniMap>(objPlayer, objOtherPlayerController);
 	objOtherInfo      = GetScene().Instantiate<OtherInfo>();
-	objSelfInfo       = GetScene().Instantiate<SelfInfo>();
+	objSelfInfo       = GetScene().Instantiate<SelfInfo>(objPlayer);
 	objMyGauge        = GetScene().Instantiate<MyGauge>(objPlayer);
 	objGauge1         = GetScene().Instantiate<Gauge1>(objPlayer, objOtherPlayerController, 0);
 	objGauge2         = GetScene().Instantiate<Gauge2>(objPlayer, objOtherPlayerController, 1);

@@ -26,7 +26,7 @@ struct Gauge1Data
 
 	const float maxWidth{ 192.0f };
 
-	Component<UITransform> transform{ Vec2{ 27, 423 }, Vec2{ 192, 24 } };
+	Component<UITransform> transform{ Vec2{ 94, 417 }, Vec2{ 192, 24 } };
 
 	Component<UIImage> image{ texture };
 };

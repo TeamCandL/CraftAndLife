@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "EnemyController.h"
+#include "EntitySystem.h"
 #include "OtherEnemyController.h"
 #include "DayController.h"
 #include "UI/MiniMap.h"
@@ -144,6 +145,7 @@ void NetworkActorServer::CreateEnemies()
 	if (Data().objEnemyController.IsEmpty())
 	{
 		Data().objEnemyController = GetScene().Instantiate<EnemyController>(objPlaySceneUIController);
+		Get<EntitySystem>().SetObjEnemyController(objEnemyController);
 
 		// NetworkActorServerを設定
 		Get<EnemyController>(Data().objEnemyController).SetNetworkActorServer(ToGameObject());

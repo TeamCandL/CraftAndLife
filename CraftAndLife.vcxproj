@@ -465,6 +465,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
     <ClCompile Include="Source\Game\Network\MessageRegistry.cpp" />
     <ClCompile Include="Source\Game\Network\NetworkSessionManager.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Animal.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ClearFade.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ClearSceneTrigger.cpp" />
     <ClCompile Include="Source\Game\PlayScene\DayController.cpp" />
@@ -805,6 +806,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEntityRemove.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEntitySpawn.h" />
     <ClInclude Include="Source\Game\Network\Protocols\UpdateEnemyDamage.h" />
+    <ClInclude Include="Source\Game\PlayScene\Animal.h" />
     <ClInclude Include="Source\Game\PlayScene\ClearFade.h" />
     <ClInclude Include="Source\Game\PlayScene\ClearSceneTrigger.h" />
     <ClInclude Include="Source\Game\PlayScene\DayController.h" />

@@ -225,8 +225,30 @@ void EntitySystem::RemoveFromNetwork(
 	GetScene().Destroy(objEntities[_entityId]);
 }
 
-Vec3 EntitySystem::SetForwardToEnemy(
-    GameObject _objEnemyController)
+Vec3 EntitySystem::GetFacingTheEnemy(
+    GameObject _objEnemyController,
+    GameObject _objEntity)
 {
-	return Vec3::Zero();
+	EnemyController& enemyController = Get<EnemyController>(_objEnemyController);
+	Entity& entity                   = Get<Entity>(_objEntity);
+	Vec3 targetPos{};
+	float targetDist{ -1.0f };
+	for (GameObject& objEnemy : enemyController.GetAllEnemies())
+	{
+		Enemy& enemy = Get<Enemy>(objEnemy);
+
+		float dist = (enemy.GetPosition() - entity.GetPosition()).Length();
+		if (targetDist == -1.0f || dist < targetDist)
+		{
+			targetDist = dist;
+			targetPos  = enemy.GetPosition();
+		}
+	}
+	Vec3 Fwd = entity.GetForward();
+	if (targetPos != entity.GetPosition())
+	{
+		Fwd = (targetPos - entity.GetPosition()).Normalize();
+	}
+
+	return Fwd;
 }
