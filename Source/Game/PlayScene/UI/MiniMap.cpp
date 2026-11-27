@@ -182,7 +182,7 @@ void MiniMap::Update()
 	{
 		auto& enemyController = Get<EnemyController>(Data().objEnemyController);
 
-		auto& allEnemies = enemyController.Data().allEnemies;
+		auto& allEnemies = enemyController.Data().allAliveEnemies;
 
 		// 今フレーム確認した敵アイコンを記録
 		std::vector<bool> seenEnemyIds(enemyIcons.size(), false);

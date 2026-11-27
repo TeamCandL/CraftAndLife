@@ -343,6 +343,7 @@ void PlayNetworkController::Update()
 					    case ITEM_ID_PLAYER_ATTACK_SWORD:
 					    case ITEM_ID_PLAYER_ATTACK_SWORD_BIG:
 					    case ITEM_ID_PLAYER_ATTACK_ARROW:
+					    case ITEM_ID_PLAYER_ATTACK_TOOL:
 						    GetScene().Instantiate<OnceEffectObject>("Effect/Hit.efkefc", position);
 						    break;
 					    default:
