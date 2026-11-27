@@ -5,9 +5,16 @@
 #include "Enemy.h"
 #include "EntitySystem.h"
 #include "../../../Library/shigaLibrary/SgMath.h"
+#include <Game/Manager/AudioManager.h>
 
 void Entity::Start()
 {
+	if (itemId == ITEM_ID_PLAYER_ATTACK_FIRE_BALL)
+	{
+		// 火炎攻撃SE
+		Get<AudioManager>().Play(flameSE);
+	}
+
 	model     = Get<ItemSystem>().GetModel(itemId);
 	obb.scale = Get<ItemSystem>().GetInfo(itemId).colliderSize;
 

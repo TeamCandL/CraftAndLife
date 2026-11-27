@@ -219,8 +219,6 @@ struct EnemyData
 
 	// Resource<Model> model{"Model/Enemy/Bat.fbx"};
 
-	Resource<Audio> flameSE{ "BGM_SE/Flame.mp3" };
-
 	std::array<Resource<Model>, EnemyType_Max> models{
 		Resource<Model>{ "Model/Enemy/Skeleton.fbx" }, Resource<Model>{ "Model/Enemy/Skeleton.fbx" },
 		Resource<Model>{ "Model/Enemy/Spider.fbx" },   Resource<Model>{ "Model/Enemy/Bat.fbx" },

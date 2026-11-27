@@ -432,9 +432,6 @@ void Enemy::AttackCollider(
 	{
 		const ItemId ITEM_ID_DRAGON_FIRE{ 26 };
 
-		// 火炎攻撃SE
-		Get<AudioManager>().Play(flameSE);
-
 		Get<EntitySystem>().Spawn(ITEM_ID_DRAGON_FIRE, transform.position, dir);
 	}
 

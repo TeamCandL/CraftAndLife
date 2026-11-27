@@ -59,11 +59,14 @@ struct EntityData
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_BIG_SWORD{ 23 };  ///< プレイヤーの大剣攻撃アイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };      ///< プレイヤーの攻撃の矢アイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_OTHER{ 27 };      ///< プレイヤーの攻撃の他アイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_FIRE_BALL{ 26 };  ///< 火の玉アイテムId
 
 	bool enemyDetected{ false };
 	const float SPPED_OF_TRACKING_ENEMIES{ 1.0f };
 
 	GameObject objEnemyController{};
+
+	Resource<Audio> flameSE{ "BGM_SE/Flame.mp3" };
 };
 
 /// @brief エンティティ
