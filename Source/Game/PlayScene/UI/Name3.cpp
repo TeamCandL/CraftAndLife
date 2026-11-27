@@ -16,7 +16,7 @@ void Name3::Update()
 	{
 		int32_t roleId = -1;
 
-		if (sessionManager.TryGetPlayerRole(id, roleId) && roleId == PlayerJobType_Fighter)
+		if (sessionManager.TryGetPlayerRole(id, roleId) && roleId == PlayerJobType_Healer)
 		{
 			playerId = id;
 			break;
