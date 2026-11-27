@@ -1009,6 +1009,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\TitleScene\CreatePlayerName.h" />
     <ClInclude Include="Source\Game\TitleScene\GameStart.h" />
     <ClInclude Include="Source\Game\TitleScene\GameStartGuide.h" />
+    <ClInclude Include="Source\Game\TitleScene\JoinError.h" />
     <ClInclude Include="Source\Game\TitleScene\Lobby.h" />
     <ClInclude Include="Source\Game\TitleScene\LobbyJoinErrorUI.h" />
     <ClInclude Include="Source\Game\TitleScene\LobbyPlayer.h" />

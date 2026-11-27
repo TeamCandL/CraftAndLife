@@ -39,8 +39,15 @@ class SessionManager : public IManager
 	void SetJoinRoomName(const std::string_view _name);
 
 	/// @brief 自分がロビーのホストかどうかの設定をする
-	/// @pram _isLobbyHost　ホストかどうか
+	/// @pram _isLobbyHost ホストかどうか
 	void SetLobbyHost(bool _isLobbyHost);
+
+	/// @brief ロビーにjoinするときにjoinNGを返されたときのエラーIDをセットする
+	/// @pram _errors エラーIDの配列
+	void SetJoinError(const SizedBuffer<int32_t>& _errors);
+
+	///  @brief RefStatusでInSessionStatus取得するとき書き換えができないためエラー内容をクリアにする関数
+	void ResetJoinError();
 
 	/// @brief ワールド内の全プレイヤーを更新する
 	/// @param _names プレイヤー名

@@ -3,16 +3,25 @@
 #include "pch\pch.h"
 #include "MultiMessage.h"
 
+namespace
+{
+	int count = 0;
+}
+
 void NetworkSessionManager::Connect()
 {
+	VCU_LOG("connect呼び出しcount: count ={}", count);
+	count++;
+
 	bool succeed = transport_.Initialize();
+	VCU_LOG("Initialize結果: {}", succeed);
 	VCU_ASSERT(succeed && "ENetTransportの初期化に失敗");
 
 	static const fs::path CONNECTION_JSON_FILE{ "ConnectionConfig.json" };
 
 	json connectionJson{};
 	std::ifstream ifs{ CONNECTION_JSON_FILE };
-
+	VCU_LOG("connect結果: {}", succeed);
 	VCU_ASSERT((ifs && ifs.is_open()) && "接続設定のjsonファイルが開けなかった");
 
 	ifs >> connectionJson;

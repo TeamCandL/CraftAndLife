@@ -28,11 +28,12 @@ struct InSessionStatus
 		std::unordered_map<std::string, StateValue> states{};
 	};
 
-	int32_t haveItemId{};                                ///< 持っているアイテムのId
-	std::string joinRoomName{};                          ///< 参加する部屋名
-	std::string name{};                                  ///< プレイヤー名
-	std::vector<std::string> memberNames{};              ///< ロビー内メンバー名一覧
-	std::vector<int32_t> memberId{};                     ///< ロビー内メンバーのID
+	int32_t haveItemId{};                    ///< 持っているアイテムのId
+	std::string joinRoomName{};              ///< 参加する部屋名
+	std::vector<int32_t> joinErrorTypes;     ///< ロビー参加時に名前の重複、人数オーバーしてないかを入れる配列
+	std::string name{};                      ///< プレイヤー名
+	std::vector<std::string> memberNames{};  ///< ロビー内メンバー名一覧
+	std::vector<int32_t> memberId{};         ///< ロビー内メンバーのID
 	std::unordered_map<int32_t, int32_t> memberRoles{};  ///< ロビー内メンバーのジョブID
 
 	bool imLobbyHost{ false };                                      ///< 私はホストであるか

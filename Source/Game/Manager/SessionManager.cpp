@@ -278,6 +278,23 @@ void SessionManager::SetLobbyHost(
 	inSessionStatus_.imLobbyHost = _imLobbyHost;
 }
 
+void SessionManager::SetJoinError(
+    const SizedBuffer<int32_t>& _errors)
+{
+	inSessionStatus_.joinErrorTypes = _errors.get_internal_vector();
+	VCU_LOG("エラータイプセット完了: 件数={}", inSessionStatus_.joinErrorTypes.size());
+
+	for (const auto& error : inSessionStatus_.joinErrorTypes)
+	{
+		VCU_LOG("受信エラータイプ: {}", error);
+	}
+}
+
+void SessionManager::ResetJoinError()
+{
+	inSessionStatus_.joinErrorTypes.clear();
+}
+
 void SessionManager::UpdatePlayers(
     const std::string_view _names,
     SizedBuffer<float>& _positions,

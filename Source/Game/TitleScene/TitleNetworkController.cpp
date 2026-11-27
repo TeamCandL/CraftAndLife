@@ -73,7 +73,8 @@ void TitleNetworkController::Update()
 			    {
 				    Protocol::JoinNG protocol{};
 				    converter.ToMessage(_event.data, protocol);
-
+				    SessionManager& session = Get<SessionManager>();
+				    session.SetJoinError(protocol.errorTypes);
 				    for (int32_t error : protocol.errorTypes)
 				    {
 					    // エラーメッセージログ出す

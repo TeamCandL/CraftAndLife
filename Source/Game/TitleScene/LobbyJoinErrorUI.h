@@ -1,12 +1,13 @@
 #pragma once
 #include <Game/Game.h>
+#include "JoinError.h"
 
 struct LobbyJoinErrorUIData
 {
-	const Vec2 IMAGE_SIZE{ 100, 300 };
+	const Vec2 IMAGE_SIZE{ 1350, 267 };
 	Resource<Texture> texture{ "Image/Title/ErrorMessagePanel.png" };
 
-	Component<UITransform> transform{ Vec2::Zero(), Vec2::Zero() };
+	Component<UITransform> transform{ Vec2{ 285, 540 }, Vec2{ 1350, 267 } };
 	Component<UIImage> image{};
 	Component<UIRaycastTarget> target{};
 };
@@ -27,4 +28,6 @@ struct LobbyJoinErrorUI : ObjectBase<LobbyJoinErrorUIData>
 
 	/// @brief パネルを非表示にする
 	void Hide();
+
+	void SetErrorText(const std::vector<int32_t>& errors);
 };

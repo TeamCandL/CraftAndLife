@@ -8,6 +8,7 @@
 #include "TitleLogoStartGuide.h"
 #include "TitlePageContlroller.h"
 #include "TitleBGM.h"
+#include "LobbyJoinErrorUI.h"
 
 void TitleScene::Start()
 {
@@ -23,4 +24,6 @@ void TitleScene::Start()
 
 	GameObject objWordInputPanel = Instantiate<WordInputPanel>();
 	Instantiate<WordJoinButton>(objWordInputPanel);
+
+	Instantiate<LobbyJoinErrorUI>();
 }
