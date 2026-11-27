@@ -11,7 +11,8 @@ struct EnemyControllerData
 	{
 	}
 
-	std::vector<GameObject> allEnemies;  ///< 全ての敵の情報を格納する
+	std::vector<GameObject> allEnemies;       ///< 全ての敵の情報を格納する
+	std::vector<GameObject> allAliveEnemies;  ///<	全ての生きている敵を格納する
 	int32_t nextEnemyId = 0;
 
 	GameObject objBossInfo{};               ///< ボスのHPUIのオブジェクト
@@ -55,4 +56,7 @@ struct EnemyController : ObjectBase<EnemyControllerData>
 	void SetNetworkActorServer(GameObject obj);
 
 	GameObject GetNetworkActorServer() const;
+
+	void DeadEnemy(GameObject _objEnemy);
+	void PopEnemy(int32_t _id);
 };
