@@ -10,6 +10,11 @@
 #include <gemilib/gemimath.h>
 #include <shigaLibrary/SgRandom.h>
 
+namespace
+{
+	// inline static
+}
+
 void NPCRobo::Start()
 {
 	transform.scale = Vec3::One() * 200.0f;
