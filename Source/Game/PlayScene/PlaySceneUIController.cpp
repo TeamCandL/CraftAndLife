@@ -28,6 +28,7 @@
 
 void PlaySceneUIController::Start()
 {
+	objCraftUI        = GetScene().Instantiate<CraftUI>(objPlayer, objChatTextLog);
 	objTaskBackground = GetScene().Instantiate<TaskBackground>(objDayContloller);
 	objMiniMap        = GetScene().Instantiate<MiniMap>(objPlayer, objOtherPlayerController);
 	objOtherInfo      = GetScene().Instantiate<OtherInfo>();
@@ -48,6 +49,5 @@ void PlaySceneUIController::Start()
 	objBossGaugeR     = GetScene().Instantiate<BossGaugeR>(objBossInfo);
 	objBossGauge      = GetScene().Instantiate<BossGauge>(objBossInfo);
 	objChatTextLog    = GetScene().Instantiate<ChatTextLog>();
-	objCraftUI        = GetScene().Instantiate<CraftUI>(objPlayer, objChatTextLog);
 	objTutorialUI     = GetScene().Instantiate<TutorialUI>();
 }

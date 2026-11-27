@@ -302,6 +302,9 @@ bool Entity::IsUnderground() const
 void Entity::SetForward(
     Vec3 _Fwd)
 {
+	if (_Fwd.Length() <= FLT_EPSILON)
+		return;
+
 	transform.rotation = Quaternion::FromLookAtQuaternion(transform.position, transform.position + _Fwd, Vec3::Up());
 	// Vec3 difference    = _Fwd - transform.Forward().Normalize();
 	// const float RotationRatio = 1.0f;

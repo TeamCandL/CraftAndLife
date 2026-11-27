@@ -25,7 +25,7 @@ struct EnemyHpBarBgData
 	Resource<Texture> bgTexture{ "Image/UI/EnemyHpBack.png" };
 	Component<UITransform> backgroundTransform{ Vec2{ -BG_WIDTH / 2, -BG_HEIGHT / 2 },
 		                                        Vec2{ BG_WIDTH, BG_HEIGHT },
-		                                        UILayerOrder{ 1 }.WithUser(9999) };
+		                                        UILayerOrder{ 1 }.WithUser(0) };
 	Component<UIImage> backgroundImage{ bgTexture };
 	Component<Transform> transform{};
 	Component<UIWorldBinder> uiWorldBinder{ backgroundTransform, transform, 10.0f };

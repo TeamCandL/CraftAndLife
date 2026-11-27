@@ -115,6 +115,11 @@ std::vector<GameObject> EnemyController::GetAllEnemies()
 	return allEnemies;
 }
 
+std::vector<GameObject> EnemyController::GetAllAliveEnemies()
+{
+	return allAliveEnemies;
+}
+
 void EnemyController::DamagedEnemy(
     int32_t enemyId,
     int32_t damage)

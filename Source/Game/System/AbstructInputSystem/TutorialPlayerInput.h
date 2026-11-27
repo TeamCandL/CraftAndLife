@@ -35,6 +35,7 @@ class TutorialPlayerInput : public NormalPlayerInput
 	bool IsJumpBegin() const override;
 	bool IsJump() const override;
 	bool IsJumpEnd() const override;
+	bool IsMessageBegin() const override;
 
   private:
 	TutorialSystem& tutorialSystem_;

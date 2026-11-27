@@ -32,7 +32,7 @@ namespace UI
 		    text{ _font, _color, _label },
 		    value{ _value }
 		{
-			transform.layerOrder = 1;
+			transform.layerOrder = 3;
 		}
 
 		Resource<ResourceType::Font> font{};              // 文字フォント

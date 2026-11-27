@@ -31,6 +31,7 @@ namespace
 
 void HotBar::Start()
 {
+	transform.layerOrder = 2;
 	// 武器
 	slots[WEAPON_SLOT_INDEX] = GetScene().Instantiate<Slot>(slotEmptyTexture);
 	// ツール(斧やハンマー)
@@ -43,7 +44,7 @@ void HotBar::Start()
 	for (int i = 0; i < slots.size(); i++)
 	{
 		SlotData& slotData            = Get<Slot>(slots[i]).Data();
-		slotData.transform.layerOrder = 1;
+		slotData.transform.layerOrder = 3;
 		slotData.transform.scale      = Vec2{ slotEmptyImageExtents, slotEmptyImageExtents };
 		slotData.selected             = (currentSlotIdx == i);
 		slotData.slotItem             = GetScene().Instantiate<SlotItem>();

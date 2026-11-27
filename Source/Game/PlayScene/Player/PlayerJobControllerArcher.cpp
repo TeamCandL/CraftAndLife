@@ -2,6 +2,7 @@
 #include "PlayerJobControllerArcher.h"
 #include "../Player.h"
 #include <Game/System/AbstructInputSystem.h>
+#include <Game/Manager/AudioManager.h>
 
 void PlayerJobControllerArcher::Update(
     PlayerData& _data)
@@ -21,6 +22,9 @@ void PlayerJobControllerArcher::Update(
 
 	if (pPlayerInput->IsSubActionBegin())
 	{
+		// ダッシュSE
+		Get<AudioManager>().Play(dashSE);
+
 		_data.jobStatus.moveVelocity = dir * dashForce;
 	}
 

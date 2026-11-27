@@ -6,6 +6,7 @@
 void UI::ListBox::Start()
 {
 	selectedElementCursor = GetScene().Instantiate<SelectedElementCursor>();
+	transform.layerOrder  = 2;
 	Get<SelectedElementCursor>(selectedElementCursor).Data().transform.layerOrder = 6;
 	Get<SelectedElementCursor>(selectedElementCursor).Data().transform.scale      = Vec2{ 32, 32 };
 }
