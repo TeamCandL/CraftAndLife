@@ -19,7 +19,7 @@ struct EnemyHpBarBgData
 	}
 
 	const int32_t BG_WIDTH{ 210 };  // 背景の最大幅
-	const int32_t BG_HEIGHT{ 44 };  // 背景の高さ
+	const int32_t BG_HEIGHT{ 36 };  // 背景の高さ
 	// --- 背景用（後ろ・レイヤー9999） ---
 	Resource<Texture> bgTexture{ "Image/UI/EnemyHpBack.png" };
 	Component<UITransform> backgroundTransform{ Vec2{ -BG_WIDTH / 2, -BG_HEIGHT / 2 },

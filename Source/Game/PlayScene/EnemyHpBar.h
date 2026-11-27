@@ -27,7 +27,7 @@ struct EnemyHpBarData
 	}
 
 	const int32_t BAR_WIDTH  = 200;  // ゲージの最大幅
-	const int32_t BAR_HEIGHT = 38;   // ゲージの高さ
+	const int32_t BAR_HEIGHT = 30;   // ゲージの高さ
 	// --- 減るゲージ（バー）用（手前・レイヤー10000） ---
 	Resource<Texture> barTexture{ "Image/UI/EnemyHpBar.png" };
 	Component<UITransform> barTransform{ Vec2{ -BAR_WIDTH / 2, -BAR_HEIGHT / 2 },

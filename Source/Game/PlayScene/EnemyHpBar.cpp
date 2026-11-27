@@ -10,7 +10,7 @@ void EnemyHpBar::Start()
 {
 	Enemy& enemy = Get<Enemy>(ownerEnemy);
 	hp = maxHp    = enemy.GetHp();
-	objBackGround = GetScene().Instantiate<EnemyHpBarBg>(this->ToGameObject(), m_worldPosition);
+	objBackGround = GetScene().Instantiate<EnemyHpBarBg>(ToGameObject(), m_worldPosition);
 	// 初期化処理
 }
 
