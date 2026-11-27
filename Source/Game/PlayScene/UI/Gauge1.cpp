@@ -6,6 +6,7 @@
 #include "../OtherPlayerController.h"
 
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/Player/PlayerJobType.h>
 
 void Gauge1::Start()
 {
@@ -16,7 +17,26 @@ void Gauge1::Update()
 {
 	SessionManager& sessionManager = Get<SessionManager>();
 
-	// プレイヤーIDから名前を取得
+	// FighterのプレイヤーIDを取得
+	int32_t playerId = -1;
+
+	for (const int32_t id : sessionManager.RefStatus().memberId)
+	{
+		int32_t roleId = -1;
+
+		if (sessionManager.TryGetPlayerRole(id, roleId) && roleId == PlayerJobType_Fighter)
+		{
+			playerId = id;
+			break;
+		}
+	}
+
+	if (playerId == -1)
+	{
+		transform.scale.x = 0.0f;
+		return;
+	}
+
 	std::string playerName;
 
 	if (!sessionManager.TryGetPlayerName(playerId, playerName))
@@ -28,7 +48,6 @@ void Gauge1::Update()
 	int32_t hp    = 0;
 	int32_t maxHP = 0;
 
-	// 担当プレイヤーが自分の場合
 	if (playerName == sessionManager.RefStatus().name)
 	{
 		Player& player = Get<Player>(objPlayer);
@@ -36,7 +55,6 @@ void Gauge1::Update()
 		hp    = player.Data().hp;
 		maxHP = player.Data().maxHP;
 	}
-	// 担当プレイヤーが他人の場合
 	else
 	{
 		OtherPlayerController& controller = Get<OtherPlayerController>(objOtherPlayerController);
@@ -55,23 +73,19 @@ void Gauge1::Update()
 		maxHP = otherPlayer.GetMaxHP();
 	}
 
-	// 最大HPが0以下なら計算しない
 	if (maxHP <= 0)
 	{
 		transform.scale.x = 0.0f;
 		return;
 	}
 
-	// HPの割合を計算
 	float hpRate = static_cast<float>(hp) / static_cast<float>(maxHP);
 
-	// 0～1の範囲に制限
 	if (hpRate < 0.0f)
 		hpRate = 0.0f;
 
 	if (hpRate > 1.0f)
 		hpRate = 1.0f;
 
-	// HPに応じてゲージ幅を変更
 	transform.scale.x = maxWidth * hpRate;
 }
