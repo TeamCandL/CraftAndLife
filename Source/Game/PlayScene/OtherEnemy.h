@@ -55,6 +55,13 @@ struct OtherEnemyData
 	float shrinkDurationSec{ 0.8f };           // 縮小して消滅するまでの時間
 	Vec3 deathStartScale{ 1.0f, 1.0f, 1.0f };  // 死亡演出開始時にスケール
 	Quaternion deathStartRotation{};           // 死亡演出開始時の回転
+
+	// 火炎攻撃SE
+	Resource<Audio> flameSE{ "BGM_SE/Flame.mp3" };
+
+	// 火炎攻撃回数の同期確認用
+	int32_t lastFlameAttackCount{ 0 };
+	bool isFlameAttackCountInitialized{ false };
 };
 
 struct OtherEnemy : ObjectBase<OtherEnemyData>

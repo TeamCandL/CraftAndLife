@@ -428,15 +428,8 @@ void Enemy::AttackCollider(
 		const ItemId ITEM_ID_SPIDER_STRING{ 20 };
 		Get<EntitySystem>().Spawn(ITEM_ID_SPIDER_STRING, transform.position, dir);
 	}
-	else if (enemyType == EnemyType::Dragon)  // ドラゴンの火攻撃！
-	{
-		const ItemId ITEM_ID_DRAGON_FIRE{ 26 };
-
-		// 火炎攻撃SE
-		Get<AudioManager>().Play(flameSE);
-
-		Get<EntitySystem>().Spawn(ITEM_ID_DRAGON_FIRE, transform.position, dir);
-	}
+	// ドラゴンの火炎攻撃回数（ネットワーク同期用）
+	int32_t flameAttackCount{ 0 };
 
 	// NOTE: エンティティへ移行しますた
 	// GetScene().Instantiate<EnemyAttackColl>(transform.position, damage, ATTACK_COLL_LIFE_TIME * 40.0f,
@@ -522,6 +515,9 @@ void Enemy::RegisterStates(
 	registry.Register("alive", alive);
 	registry.Register("attacked", attacked);
 	registry.Register("isBoss", isBoss);
+
+	// 火炎攻撃回数を同期
+	registry.Register("flameAttackCount", flameAttackCount);
 }
 
 void Enemy::StartDeathAnimation()

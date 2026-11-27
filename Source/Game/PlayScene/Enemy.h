@@ -269,6 +269,9 @@ struct EnemyData
 	bool alive{ true };      ///< 生きているか
 	bool attacked{ false };  ///< 攻撃中か
 
+	// ドラゴンの火炎攻撃回数（ネットワーク同期用）
+	int32_t flameAttackCount{ 0 };
+
 	const Vec3 DEFAULT_TARGET_POS{ 0.0f, -100.0f, 0.0f };
 
 	const float WAN_RANGE{};  ///< 徘徊範囲
