@@ -4,8 +4,10 @@
 /// @brief スプライト描画のマテリアルプロパティ
 struct SpriteRendererMaterialProperty_
 {
-	Int4 hasTexture;  // テクスチャを持っているか
-	Color baseColor;  // ベースの色
+	Int4 hasTexture{};                // テクスチャを持っているか
+	Color baseColor{ Color::WHITE };  // ベースの色
+	Color addColor{ Color::CLEAR };   // 加算する色
+	Float4 imageSize{};               // 画像サイズ
 };
 
 /// @brief スプライト描画のマテリアルプロパティ

@@ -21,7 +21,7 @@ struct MainCamera : ObjectBase<MainCameraData>, IMainCamera
 	/// @brief 開始処理
 	void Start() override;
 	/// @brief 更新処理
-	void Update() override;
+	void UpdateLocal();
 
 	/// @brief カメラの座標を設定する
 	/// @param _worldPosition ワールド座標

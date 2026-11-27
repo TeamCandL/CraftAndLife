@@ -8,5 +8,7 @@ class IAIReferenceDayController
 	IAIReferenceDayController()          = default;
 	virtual ~IAIReferenceDayController() = default;
 
+	/// @brief 今が昼であるかを取得
+	/// @return 昼である true / false
 	virtual bool IsDaytime() const = 0;
 };

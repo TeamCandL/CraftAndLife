@@ -8,11 +8,12 @@ struct UIImage : ComponentBase<UIImage>
 
 	explicit UIImage(
 	    const Resource<ResourceType::Texture>& _texture) :
-	    texture{ _texture },
-	    baseColor{ Color::WHITE }
+	    texture{ _texture }
 	{
 	}
 	~UIImage() = default;
-	Resource<ResourceType::Texture> texture{};  // テクスチャ
-	Color baseColor{};                          // ベースの色
+
+	Resource<ResourceType::Texture> texture{};  ///< テクスチャ
+	Color baseColor{ Color::WHITE };            ///< ベースの色
+	Color addColor{ Color::CLEAR };             ///< 加法混色
 };

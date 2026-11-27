@@ -43,5 +43,7 @@ float4 PS(VSOutput input) : SV_Target0
 	{
 		diffuse = SpriteRendererMaterial_BaseColor;
 	}
+	diffuse.rgb += SpriteRendererMaterial_AddColor.rgb;
+	
 	return diffuse;
 }

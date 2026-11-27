@@ -10,7 +10,7 @@ void MainCamera::Start()
 	position   = { 0.0f, 0.0f, -10.0f };
 }
 
-void MainCamera::Update()
+void MainCamera::UpdateLocal()
 {
 	RawMouseInputManager& rawMouseInput = Get<cha::RawMouseInputManager>();
 	CursorSystem& cursor                = Get<CursorSystem>();
@@ -130,6 +130,7 @@ void MainCamera::UpdatePositionFromTarget(
 {
 	if (!objUpdater.IsEmpty())
 	{
+		UpdateLocal();
 		Get<IMainCameraUpdater>(objUpdater).UpdatePositionFromTarget(Data(), _objTarget);
 	}
 }

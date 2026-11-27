@@ -24,6 +24,7 @@
 #include <shigaLibrary/SgRandom.h>
 #include <Game/PlayScene/ClearFade.h>
 #include <Game/Common/EffectObject.h>
+#include "Gift/GiftRequestSelector.h"
 
 void Player::Start()
 {
@@ -188,15 +189,21 @@ void Player::Update()
 	nowAttackCoolTime -= Get<DeltaTime>();
 	nowDamagedCoolTime -= Get<DeltaTime>();
 
-	// プレイヤーの更新処理
-	Get<IPlayerController>(objPlayerController).Update(Data());
+	if (!IsShownGiftRequestSelector())
+	{
+		// プレイヤーの更新処理
+		Get<IPlayerController>(objPlayerController).Update(Data());
 
-	// カメラの更新処理
-	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
+		// カメラの更新処理
+		Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
+	}
 
 	if (helthState == HelthState_Live)
 	{
-		MoveBody();
+		if (!IsShownGiftRequestSelector())
+		{
+			MoveBody();
+		}
 	}
 	else if (helthState == HelthState_Dead)
 	{
@@ -221,8 +228,8 @@ void Player::Update()
 	if (isOpenCraftUI == false)
 	{
 		HotBar& hotbar = Get<HotBar>(objHotbar);
-		// 選択スロットのアイテムを投げ捨てる
-		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
+		// 選択スロットのアイテムを投げ捨てる ギフトリクエスト選択がされていない状態なら可能！
+		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && !IsShownGiftRequestSelector())
 		{
 			if (hotbar.CanRemoveSelectedItem())
 			{
@@ -259,6 +266,8 @@ void Player::Update()
 	{
 		Respawn(maxHP);
 	}
+
+	UpdateGiftRequestSelector();
 
 	if (!objJobController.IsEmpty())
 	{
@@ -885,6 +894,63 @@ void Player::SpawnItem(
 	    transform.Forward() * 3.0f + Vec3::Up() * 2.0f);
 
 	VCU_LOG("objPawn");
+}
+
+void Player::UpdateGiftRequestSelector()
+{
+	auto pPlayerInput = Get<AbstructInputSystem>().GetPlayerInput();
+	if (pPlayerInput->IsMessageBegin())
+	{
+		if (objGiftRequestSelector.IsEmpty())
+		{
+			ShowGiftRequestSelector();
+		}
+		else
+		{
+			GetScene().Destroy(objGiftRequestSelector);
+		}
+	}
+	else
+	{
+		if (IsShownGiftRequestSelector())
+		{
+			if (pPlayerInput->IsInteractBegin())
+			{
+				std::optional<ItemId> selectedItemId =
+				    Get<GiftRequestSelector>(objGiftRequestSelector).TryGetSelectedItemId();
+				if (selectedItemId.has_value())  // 選択されているアイテムIdがある！
+				{
+					if (Get<PlayerBag>(objPlayerBag).DiscardItem(*selectedItemId))
+					{
+						SpawnItem(*selectedItemId);
+					}
+				}
+
+				ShowGiftRequestSelector();
+			}
+		}
+	}
+}
+
+void Player::ShowGiftRequestSelector()
+{
+	GetScene().Destroy(objGiftRequestSelector);
+
+	std::vector<GiftRequestSelectItemInfo> itemsInfo{};
+
+	static const ItemId CHECK_ITEM_IDS[]{ 7, 8, 10, 14 };
+
+	for (auto itemId : CHECK_ITEM_IDS)
+	{
+		int count = Get<PlayerBag>(objPlayerBag).GetItemCount(itemId);
+		if (count <= 0)
+		{
+			continue;
+		}
+		itemsInfo.emplace_back(itemId, count);
+	}
+
+	objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::move(itemsInfo));
 }
 
 std::vector<ItemStack> Player::GetHavingItem()
