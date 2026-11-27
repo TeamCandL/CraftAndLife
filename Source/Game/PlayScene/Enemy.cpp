@@ -60,6 +60,7 @@ void Enemy::Update()
 	{
 		hp = 0;
 		SetAlive(false);
+		Get<EnemyController>(objEnemyController).DeadEnemy(ToGameObject());
 		// DropItem();
 	}
 

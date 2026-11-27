@@ -229,14 +229,16 @@ Vec3 EntitySystem::GetFacingTheEnemy(
     GameObject _objEnemyController,
     GameObject _objEntity)
 {
+	if (_objEnemyController.IsEmpty())
+		return Vec3::Zero();
 	EnemyController& enemyController = Get<EnemyController>(_objEnemyController);
 	Entity& entity                   = Get<Entity>(_objEntity);
 	Vec3 Fwd                         = entity.GetForward();
 	Vec3 targetPos{};
 	float targetDist{ -1.0f };
-	if (enemyController.Data().allEnemies.size() > 0)
+	if (enemyController.Data().allAliveEnemies.size() > 0)
 	{
-		for (GameObject& objEnemy : enemyController.GetAllEnemies())
+		for (GameObject objEnemy : enemyController.GetAllAliveEnemies())
 		{
 			Enemy& enemy = Get<Enemy>(objEnemy);
 
