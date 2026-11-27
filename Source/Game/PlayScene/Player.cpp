@@ -779,7 +779,9 @@ void Player::GiveItem(
 		// エフェクトに座標、向きを指定して再生
 		GetScene().Instantiate<OnceEffectObject>("Effect/PlayerDamaged.efkefc", transform.position, toPlayer);
 	}
-	else if (ITEM_INFO._type == ItemType::PlayerAttackArrow || ITEM_INFO._type == ItemType::PlayerAttackSword)
+	else if (
+	    ITEM_INFO._type == ItemType::PlayerAttackArrow || ITEM_INFO._type == ItemType::PlayerAttackSword ||
+	    ITEM_INFO._type == ItemType::PlayerAttackTool)
 	{
 	}
 	else

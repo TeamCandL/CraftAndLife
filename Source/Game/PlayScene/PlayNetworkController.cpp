@@ -328,6 +328,10 @@ void PlayNetworkController::Update()
 						    // 矢の着弾の音を鳴らす
 						    Get<AudioManager>().Play(impactSE);
 						    break;
+					    case ITEM_ID_PLAYER_ATTACK_TOOL:
+						    // 矢の着弾の音を鳴らす
+						    Get<AudioManager>().Play(toolDamagedSE);
+						    break;
 					    default:
 						    // それ以外は音なし 他の人がアイテム拾ったときの音とかもできるよ
 						    break;
