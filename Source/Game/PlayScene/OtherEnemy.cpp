@@ -6,6 +6,7 @@
 #include "EnemyHpBar.h"
 #include "Enemy.h"
 #include "StateRegistry.h"
+#include <Game/Manager/AudioManager.h>
 
 void OtherEnemy::Start()
 {
@@ -69,6 +70,34 @@ void OtherEnemy::Update()
 		{
 		    VCU_LOG("OtherEnemy ID:{} HP取得成功: {}", enemyId, hp);
 		}*/
+
+		// ドラゴンの火炎攻撃を検知
+		if (enemyType == EnemyType::Dragon)
+		{
+			int32_t currentFlameAttackCount = 0;
+
+			if (reader.TryGetState(StateTarget::Enemy(enemyId), "flameAttackCount", currentFlameAttackCount))
+			{
+				// 初回取得時は現在値を記録するだけ
+				if (!isFlameAttackCountInitialized)
+				{
+					lastFlameAttackCount          = currentFlameAttackCount;
+					isFlameAttackCountInitialized = true;
+				}
+				// 攻撃回数が増えていたらSEを再生
+				else if (currentFlameAttackCount > lastFlameAttackCount)
+				{
+					int32_t attackCount = currentFlameAttackCount - lastFlameAttackCount;
+
+					for (int32_t i = 0; i < attackCount; ++i)
+					{
+						Get<AudioManager>().Play(flameSE);
+					}
+
+					lastFlameAttackCount = currentFlameAttackCount;
+				}
+			}
+		}
 
 		if (reader.TryGetState(StateTarget::Enemy(enemyId), "alive", alive))
 		{
