@@ -7,7 +7,7 @@ void GhostCamera::Update(
     MainCameraData& _data)
 {
 	// _data.hogehogeが面倒なので参照して省略しまくる
-	auto& [angles, position, moveSpeedPerSec, rotateSpeedPerSec, isHideCursor, objUpdater] = _data;
+	auto& [angles, position, moveSpeedPerSec, rotateSpeedPerSec, isHideCursor, isActiveControl, objUpdater] = _data;
 
 	// MEMO: これと同じこと
 	//     : Vec2& angles = _data.angles;

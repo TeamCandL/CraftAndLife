@@ -189,21 +189,18 @@ void Player::Update()
 	nowAttackCoolTime -= Get<DeltaTime>();
 	nowDamagedCoolTime -= Get<DeltaTime>();
 
-	if (!IsShownGiftRequestSelector())
-	{
-		// プレイヤーの更新処理
-		Get<IPlayerController>(objPlayerController).Update(Data());
+	// プレイヤーの更新処理
+	Get<IPlayerController>(objPlayerController).Update(Data());
 
-		// カメラの更新処理
-		Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
-	}
+	// カメラが操作可能かをセットする
+	Get<IMainCamera>(objMainCamera).SetActiveControl(!IsShownGiftRequestSelector());
+
+	// カメラの更新処理
+	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
 
 	if (helthState == HelthState_Live)
 	{
-		if (!IsShownGiftRequestSelector())
-		{
-			MoveBody();
-		}
+		MoveBody();
 	}
 	else if (helthState == HelthState_Dead)
 	{
@@ -818,6 +815,11 @@ void Player::UpdatePickNearestItem()
 		return;  // 生きていないなら取れないよ！！！
 	}
 	GameObject objPick = Get<EntitySystem>().PickNearest(transform.position, entityPickupRadius);
+
+	if (!objPick.IsEmpty() && IsShownGiftRequestSelector())
+	{
+		ShowGiftRequestSelector();
+	}
 }
 
 void Player::TryAddItem(
@@ -936,7 +938,11 @@ void Player::UpdateGiftRequestSelector()
 
 void Player::ShowGiftRequestSelector()
 {
-	GetScene().Destroy(objGiftRequestSelector);
+	if (!objGiftRequestSelector.IsEmpty())
+	{
+		giftRequestSelectorPreviousDirection = Get<GiftRequestSelector>(objGiftRequestSelector).GetSelectorDirection();
+		GetScene().Destroy(objGiftRequestSelector);
+	}
 
 	std::vector<GiftRequestSelectItemInfo> itemsInfo{};
 

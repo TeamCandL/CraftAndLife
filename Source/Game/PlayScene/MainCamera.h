@@ -11,6 +11,7 @@ struct MainCameraData
 	float moveSpeedPerSec{ 0.01f };        ///< カメラの移動スピード(/秒)
 	Vec2 rotateSpeedPerSec{ 3.0f, 5.0f };  ///< カメラの回転スピード(/秒)
 	bool isHideCursor{ false };            ///< カーソルを隠すか
+	bool isActiveControl{};                ///< 操作可能か true / false
 
 	GameObject objUpdater{};  ///< カメラの更新処理ステート用オブジェクト
 };
@@ -50,5 +51,11 @@ struct MainCamera : ObjectBase<MainCameraData>, IMainCamera
 	Vec2 GetAngle() const
 	{
 		return angles;
+	}
+
+	void SetActiveControl(
+	    const bool _isActiveControl) override
+	{
+		isActiveControl = _isActiveControl;
 	}
 };

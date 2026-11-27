@@ -13,7 +13,7 @@ void TPSCamera::Update(
     MainCameraData& _data)
 {
 	// _data.hogehogeが面倒なので参照して省略しまくる
-	auto& [angles, position, moveSpeedPerSec, rotateSpeedPerSec, isHideCursor, objUpdater] = _data;
+	auto& [angles, position, moveSpeedPerSec, rotateSpeedPerSec, isHideCursor, isActiveControl, objUpdater] = _data;
 
 	// MEMO: これと同じこと
 	//     : Vec2& angles = _data.angles;
@@ -39,11 +39,14 @@ void TPSCamera::Update(
 	const float MOVE_SPEED{ moveSpeedPerSec * DELTA_TIME };
 
 #pragma region カメラの回転処理
-	float xRotateAssist{ angles.x * angles.x * xRotateAssistRatio + 1.0f };
+	if (isActiveControl)
+	{
+		float xRotateAssist{ angles.x * angles.x * xRotateAssistRatio + 1.0f };
 
-	// カメラ移動をカメラの回転に適用
-	angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED.x * xRotateAssist;
-	angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED.y;
+		// カメラ移動をカメラの回転に適用
+		angles.x += -pPlayerInput->GetMoveCamera().y * ROTATE_SPEED.x * xRotateAssist;
+		angles.y += pPlayerInput->GetMoveCamera().x * ROTATE_SPEED.y;
+	}
 
 	// 角度に制限をつける
 	angles.x = std::clamp(angles.x, angleLimitXMin, angleLimitXMax);
