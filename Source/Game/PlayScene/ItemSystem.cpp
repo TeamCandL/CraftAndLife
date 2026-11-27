@@ -410,7 +410,7 @@ ItemSystemData::ItemSystemData()
 	                        Vec3{ 1, 1, 1 } });
 	allItemList.push_back({ 27,
 	                        ItemType::PlayerAttackTool,
-	                        "採取ツール攻撃",
+	                        "ハンマー攻撃",
 	                        "Image/EmptyItem.png",
 	                        {},
 
@@ -418,7 +418,22 @@ ItemSystemData::ItemSystemData()
 	                        craft,
 
 	                        1.0f,
-	                        1,
+	                        2,
+	                        0,
+	                        0,
+	                        PlayerJobType_Max,
+	                        Vec3{ 1, 1, 1 } });
+	allItemList.push_back({ 28,
+	                        ItemType::PlayerAttackTool,
+	                        "斧攻撃",
+	                        "Image/EmptyItem.png",
+	                        {},
+
+	                        false,
+	                        craft,
+
+	                        1.0f,
+	                        2,
 	                        0,
 	                        0,
 	                        PlayerJobType_Max,
