@@ -21,6 +21,7 @@ void EnemyController::AddEnemy(
 
 	enemy.SetID(nextEnemyId++);
 	allEnemies.push_back(_enemy);
+	allAliveEnemies.push_back(_enemy);
 
 	// ID割り当て後にステートを登録
 	NetworkActorServer& networkActor = Get<NetworkActorServer>(Data().objNetworkActorServer);
@@ -186,4 +187,32 @@ void EnemyController::SetNetworkActorServer(
 GameObject EnemyController::GetNetworkActorServer() const
 {
 	return Data().objNetworkActorServer;
+}
+
+void EnemyController::DeadEnemy(
+    GameObject _objEnemy)
+{
+	int32_t targetId = Get<Enemy>(_objEnemy).GetID();
+	for (GameObject objEnemy : allAliveEnemies)
+	{
+		int32_t referenceId = Get<Enemy>(objEnemy).GetID();
+		if (targetId == referenceId)
+		{
+			PopEnemy(targetId);
+		}
+	}
+}
+
+void EnemyController::PopEnemy(
+    int32_t _targetId)
+{
+	for (auto it = allAliveEnemies.begin(); it != allAliveEnemies.end();)
+	{
+		if (Get<Enemy>(*it).GetID() == _targetId)
+		{
+			allAliveEnemies.erase(it);
+			return;
+		}
+		it++;
+	}
 }
