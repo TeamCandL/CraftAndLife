@@ -114,7 +114,7 @@ void CraftUI::Start()
         Resource<ResourceType::Texture>("Image/UI/selected_item_background.png"),
         Vec2{ 700, 241 },
         Vec2{ 619, 186 },
-        2);
+        3);
 	{
 		nlohmann::json j = selectedItemJson["background"];
 		SetImageObjectFromJson(j, objSelectedItemBackground);
@@ -124,7 +124,7 @@ void CraftUI::Start()
 	    Resource<ResourceType::Texture>("Image/EmptyItem.png"),
 	    Vec2{ 789, 270 },
 	    Vec2{ 128, 128 },
-	    3);
+	    4);
 	{
 		SetImageObjectFromJson(selectedItemJson["icon"], objSelectedItemImage);
 	}
@@ -133,12 +133,12 @@ void CraftUI::Start()
 
 	Resource<ResourceType::Font> font{ config };
 
-	objSelectedItemText = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 3, font);
+	objSelectedItemText = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 4, font);
 	{
 		SetTextObjectFromJson(selectedItemJson["name"], objSelectedItemText);
 	}
 
-	objSelectedItemOnlyJobLabel = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 3, font);
+	objSelectedItemOnlyJobLabel = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 4, font);
 	{
 		SetTextObjectFromJson(selectedItemJson["only_job_label"], objSelectedItemOnlyJobLabel);
 	}
@@ -147,15 +147,15 @@ void CraftUI::Start()
 	/// 充足状況画面
 	/// --------------------
 	nlohmann::json recipeGroupJson = j["recipe_group"]["children"];
-	objRecipeMaterialLabel         = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 3);
+	objRecipeMaterialLabel         = scene.Instantiate<TextObject>(Vec2{ 1089, 280 }, Vec2{ 64, 64 }, 4);
 	SetTextObjectFromJson(recipeGroupJson["material_label"], objRecipeMaterialLabel);
 
-	objRecipeHeldLabel = scene.Instantiate<TextObject>(Vec2{ 913, 454 }, Vec2{ 192, 46 }, 3);
+	objRecipeHeldLabel = scene.Instantiate<TextObject>(Vec2{ 913, 454 }, Vec2{ 192, 46 }, 4);
 	SetTextObjectFromJson(recipeGroupJson["held_label"], objRecipeHeldLabel);
-	objRecipeRequiredLabel = scene.Instantiate<TextObject>(Vec2{ 1139, 452 }, Vec2{ 64, 64 }, 3);
+	objRecipeRequiredLabel = scene.Instantiate<TextObject>(Vec2{ 1139, 452 }, Vec2{ 64, 64 }, 4);
 	SetTextObjectFromJson(recipeGroupJson["required_label"], objRecipeRequiredLabel);
 
-	objRecipeSlashLabel = scene.Instantiate<TextObject>(Vec2{ 1115, 454 }, Vec2{ 32, 32 }, 3);
+	objRecipeSlashLabel = scene.Instantiate<TextObject>(Vec2{ 1115, 454 }, Vec2{ 32, 32 }, 4);
 	SetTextObjectFromJson(recipeGroupJson["slash_label"], objRecipeSlashLabel);
 
 	// 個々の素材のUI
@@ -187,7 +187,7 @@ void CraftUI::Start()
 		materialElementSlashBegin.y = j.at("y").get<int>();
 	}
 
-	objCraftBackgroundImage = GetScene().Instantiate<ImageObject>(craftPreviewbackgroundTexture, Vec2{}, Vec2{}, 0);
+	objCraftBackgroundImage = GetScene().Instantiate<ImageObject>(craftPreviewbackgroundTexture, Vec2{}, Vec2{}, 2);
 	SetImageObjectFromJson(j["craft_preview"], objCraftBackgroundImage);
 	for (int i = 0; i < craftableItems.size(); i++)
 	{
