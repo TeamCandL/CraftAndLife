@@ -27,7 +27,7 @@ void TaskBackground::Update()
 			remainingTime = 0.0f;
 		}
 
-		text.content = std::format("Day: {} / Rest: {:05.2f}", currentDay, remainingTime);
+		text.content = std::format("Day: {} / 制限時間: {:05.2f}", currentDay, remainingTime);
 	}
 	else
 	{

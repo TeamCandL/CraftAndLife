@@ -7,7 +7,8 @@ struct EnemyHpBarBgData
 {
 	EnemyHpBarBgData() = default;
 	EnemyHpBarBgData(
-	    const Vec3& initialPos)
+	    const Vec3& initialPos) :
+	    m_worldPosition(initialPos)
 	{
 	}
 	EnemyHpBarBgData(

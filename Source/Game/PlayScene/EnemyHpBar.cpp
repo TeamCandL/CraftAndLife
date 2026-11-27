@@ -37,7 +37,14 @@ void EnemyHpBar::Update()
 	}
 }
 
-void EnemyHpBar::OnDestroy() {}
+void EnemyHpBar::OnDestroy()
+{
+	if (!objBackGround.IsEmpty())
+	{
+		Get<EnemyHpBarBg>(objBackGround).SetActive(false);
+		Get<EnemyHpBarBg>(objBackGround).DestroyMe();
+	}
+}
 
 void EnemyHpBar::SetTargetPosition(
     const Vec3& position)

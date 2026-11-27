@@ -6,10 +6,16 @@ void EnemyHpBarBg::Start() {}
 
 void EnemyHpBarBg::Update()
 {
-	if (!Get<EnemyHpBar>(ownerEnemyHp).IsActive())
+	OutputDebugStringA("EnemyHpBarBg Update\n");
+
+	auto& hpBar = Get<EnemyHpBar>(ownerEnemyHp);
+
+	if (!hpBar.IsActive())
 	{
-		SetActive(false);
+		OutputDebugStringA("HPBar Inactive\n");
+		// SetActive(false);
 		DestroyMe();
+		return;
 	}
 }
 
