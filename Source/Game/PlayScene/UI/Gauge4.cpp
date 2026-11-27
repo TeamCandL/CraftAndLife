@@ -1,4 +1,3 @@
-
 #include "pch\pch.h"
 #include "Gauge4.h"
 
@@ -7,6 +6,7 @@
 #include "../OtherPlayerController.h"
 
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/Player/PlayerJobType.h>
 
 void Gauge4::Start()
 {
@@ -16,6 +16,26 @@ void Gauge4::Start()
 void Gauge4::Update()
 {
 	SessionManager& sessionManager = Get<SessionManager>();
+
+	// ArcherのプレイヤーIDを取得
+	int32_t playerId = -1;
+
+	for (const int32_t id : sessionManager.RefStatus().memberId)
+	{
+		int32_t roleId = -1;
+
+		if (sessionManager.TryGetPlayerRole(id, roleId) && roleId == PlayerJobType_Archer)
+		{
+			playerId = id;
+			break;
+		}
+	}
+
+	if (playerId == -1)
+	{
+		transform.scale.x = 0.0f;
+		return;
+	}
 
 	std::string playerName;
 
@@ -63,6 +83,7 @@ void Gauge4::Update()
 
 	if (hpRate < 0.0f)
 		hpRate = 0.0f;
+
 	if (hpRate > 1.0f)
 		hpRate = 1.0f;
 

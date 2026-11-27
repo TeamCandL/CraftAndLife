@@ -1,4 +1,3 @@
-
 #include "pch\pch.h"
 #include "Gauge2.h"
 
@@ -7,6 +6,7 @@
 #include "../OtherPlayerController.h"
 
 #include <Game/Manager/SessionManager.h>
+#include <Game/PlayScene/Player/PlayerJobType.h>
 
 void Gauge2::Start()
 {
@@ -17,9 +17,28 @@ void Gauge2::Update()
 {
 	SessionManager& sessionManager = Get<SessionManager>();
 
+	// TankのプレイヤーIDを取得
+	int32_t playerId = -1;
+
+	for (const int32_t id : sessionManager.RefStatus().memberId)
+	{
+		int32_t roleId = -1;
+
+		if (sessionManager.TryGetPlayerRole(id, roleId) && roleId == PlayerJobType_Tank)
+		{
+			playerId = id;
+			break;
+		}
+	}
+
+	if (playerId == -1)
+	{
+		transform.scale.x = 0.0f;
+		return;
+	}
+
 	std::string playerName;
 
-	// 担当プレイヤーの名前を取得
 	if (!sessionManager.TryGetPlayerName(playerId, playerName))
 	{
 		transform.scale.x = 0.0f;
@@ -29,7 +48,6 @@ void Gauge2::Update()
 	int32_t hp    = 0;
 	int32_t maxHP = 0;
 
-	// 自分自身の場合
 	if (playerName == sessionManager.RefStatus().name)
 	{
 		Player& player = Get<Player>(objPlayer);
@@ -37,7 +55,6 @@ void Gauge2::Update()
 		hp    = player.Data().hp;
 		maxHP = player.Data().maxHP;
 	}
-	// 他プレイヤーの場合
 	else
 	{
 		OtherPlayerController& controller = Get<OtherPlayerController>(objOtherPlayerController);
@@ -66,6 +83,7 @@ void Gauge2::Update()
 
 	if (hpRate < 0.0f)
 		hpRate = 0.0f;
+
 	if (hpRate > 1.0f)
 		hpRate = 1.0f;
 

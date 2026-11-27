@@ -38,7 +38,9 @@ struct PlayNetworkControllerData
 
 	// 大剣でダメージを受けたときのSE
 	Resource<Audio> greatswordDamagedSE{ "BGM_SE/Strike with a greatsword.mp3" };
-	Resource<Audio> toolDamagedSE{ "Sound/DoorChime2.wav" };
+
+	// ツールでダメージを受けた時のSE
+	Resource<Audio> toolDamagedSE{ "BGM_SE/ToolDamage.mp3" };
 
 	Resource<Audio> impactSE{ "BGM_SE/Impact.mp3" };
 
