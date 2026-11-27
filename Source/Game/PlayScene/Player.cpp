@@ -907,6 +907,8 @@ void Player::UpdateGiftRequestSelector()
 		}
 		else
 		{
+			giftRequestSelectorPreviousDirection =
+			    Get<GiftRequestSelector>(objGiftRequestSelector).GetSelectorDirection();
 			GetScene().Destroy(objGiftRequestSelector);
 		}
 	}
@@ -950,7 +952,8 @@ void Player::ShowGiftRequestSelector()
 		itemsInfo.emplace_back(itemId, count);
 	}
 
-	objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::move(itemsInfo));
+	objGiftRequestSelector =
+	    GetScene().Instantiate<GiftRequestSelector>(giftRequestSelectorPreviousDirection, std::move(itemsInfo));
 }
 
 std::vector<ItemStack> Player::GetHavingItem()

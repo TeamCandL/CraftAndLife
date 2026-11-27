@@ -9,12 +9,14 @@ void TestPlayer::Update()
 	{
 		if (objGiftRequestSelector.IsEmpty())
 		{
-			objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(std::vector<GiftRequestSelectItemInfo>{
-			    { 7, 2 },
-			    { 8, 5 },
-			    { 10, 6 },
-			    { 14, 1 },
-			});
+			objGiftRequestSelector = GetScene().Instantiate<GiftRequestSelector>(
+			    Vec2::Zero(),
+			    std::vector<GiftRequestSelectItemInfo>{
+			        { 7, 2 },
+			        { 8, 5 },
+			        { 10, 6 },
+			        { 14, 1 },
+			    });
 		}
 		else
 		{

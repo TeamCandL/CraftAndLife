@@ -7,8 +7,10 @@
 struct GiftRequestSelectorData
 {
 	GiftRequestSelectorData(
+	    Vec2 _direction,
 	    std::vector<GiftRequestSelectItemInfo>&& _selectItemInfo) :
-	    selectItemInfo{ std::move(_selectItemInfo) }
+	    selectItemInfo{ std::move(_selectItemInfo) },
+	    dir{ _direction }
 	{
 	}
 
@@ -47,4 +49,9 @@ struct GiftRequestSelector : ObjectBase<GiftRequestSelectorData>
 	/// @brief 選択中のindex
 	/// @return -1で未選択
 	int32_t GetSelectedIndex();
+
+	Vec2 GetSelectorDirection() const
+	{
+		return dir;
+	}
 };
