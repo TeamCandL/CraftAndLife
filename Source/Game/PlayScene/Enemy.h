@@ -25,7 +25,7 @@ namespace EnemyParam
 	const std::vector<float> VisibilityAngle{ 120.0f, 200.0f, 300.0f, 240.0f, 360.0f };  ///< 視認角度
 	const std::vector<float> AttackCoolTime{ 2.0f, 1.5f, 2.5f, 1.0f, 3.0f };             ///< 攻撃クールタイム
 	const std::vector<float> RotationAnglePerSec{ 22.5f, 18.0f, 45.0f, 30.5f, 25.5f };   ///< 回転速度
-	const std::vector<float> Scale{ 0.7f, 1.1f, 0.4f, 0.3f, 1.2f };                      ///< モデルの大きさ
+	const std::vector<float> Scale{ 0.7f, 1.1f, 0.15f, 0.3f, 1.2f };                     ///< モデルの大きさ
 	const std::vector<int32_t> DropItemId{ 9, 25, 10, 11, 12 };                          ///< ドロップアイテムID
 	const std::vector<int32_t> DropMinCount{ 1, 1, 1, 1, 2 };                            ///< ドロップアイテム最小個数
 	const std::vector<int32_t> DropMaxCount{ 1, 1, 3, 2, 3 };                            ///< ドロップアイテム最大個数
