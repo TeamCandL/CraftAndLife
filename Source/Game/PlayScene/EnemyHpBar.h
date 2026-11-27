@@ -32,7 +32,7 @@ struct EnemyHpBarData
 	Resource<Texture> barTexture{ "Image/UI/EnemyHpBar.png" };
 	Component<UITransform> barTransform{ Vec2{ -BAR_WIDTH / 2, -BAR_HEIGHT / 2 },
 		                                 Vec2{ BAR_WIDTH, BAR_HEIGHT },
-		                                 UILayerOrder{ 2 }.WithUser(10000) };
+		                                 UILayerOrder{ 1 }.WithUser(1) };
 	Component<UIImage> barImage{ barTexture };
 	Component<Transform> transform{};
 	Component<UIWorldBinder> uiWorldBinder{ barTransform, transform, 0.0f };
