@@ -73,4 +73,11 @@ void GameManager::Update()
 	{
 		Get<IssueManager>().Error(L"ゲーム終了");
 	}
+
+	// F1キーでHUD非表示切り替え
+	if (input.GetKeyDown(KeyCode::F1))
+	{
+		UISystem& uiSystem = Get<UISystem>();
+		uiSystem.SetHideHUD(!uiSystem.IsHideHUD());
+	}
 }

@@ -90,6 +90,11 @@ void UISystem::Start()
 
 void UISystem::Update()
 {
+	if (isHideHUD)
+	{
+		return;  // HUD非表示なら以降無視
+	}
+
 	UpdateBindWorld();
 	UpdateText();
 	UpdateRenderer();

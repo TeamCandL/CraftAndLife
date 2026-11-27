@@ -22,6 +22,7 @@ struct UISystemData
 	};
 
 	bool isWantCaptureMouse{ false };  // マウス操作をUIが奪ったか
+	bool isHideHUD{ false };           ///< HUD非表示か true / false
 };
 
 /// @brief UIのシステム
@@ -38,6 +39,20 @@ struct UISystem : SystemObjectBase<UISystem, UISystemData>
 	inline bool WantCaptureMouse() const
 	{
 		return isWantCaptureMouse;
+	}
+
+	/// @brief HUDを非表示にするかを設定
+	/// @param _isHideHUD HUD非表示 true / false
+	void SetHideHUD(
+	    bool _isHideHUD)
+	{
+		isHideHUD = _isHideHUD;
+	}
+	/// @brief HUDが非表示であるか
+	/// @return 非表示である true / false
+	bool IsHideHUD() const
+	{
+		return isHideHUD;
 	}
 
   private:
