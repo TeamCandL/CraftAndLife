@@ -189,15 +189,21 @@ void Player::Update()
 	nowAttackCoolTime -= Get<DeltaTime>();
 	nowDamagedCoolTime -= Get<DeltaTime>();
 
-	// プレイヤーの更新処理
-	Get<IPlayerController>(objPlayerController).Update(Data());
+	if (!IsShownGiftRequestSelector())
+	{
+		// プレイヤーの更新処理
+		Get<IPlayerController>(objPlayerController).Update(Data());
 
-	// カメラの更新処理
-	Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
+		// カメラの更新処理
+		Get<IMainCamera>(objMainCamera).UpdatePositionFromTarget(this->ToGameObject());
+	}
 
 	if (helthState == HelthState_Live)
 	{
-		MoveBody();
+		if (!IsShownGiftRequestSelector())
+		{
+			MoveBody();
+		}
 	}
 	else if (helthState == HelthState_Dead)
 	{
@@ -222,8 +228,8 @@ void Player::Update()
 	if (isOpenCraftUI == false)
 	{
 		HotBar& hotbar = Get<HotBar>(objHotbar);
-		// 選択スロットのアイテムを投げ捨てる
-		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin())
+		// 選択スロットのアイテムを投げ捨てる ギフトリクエスト選択がされていない状態なら可能！
+		if (Get<AbstructInputSystem>().GetPlayerInput()->IsInteractBegin() && !IsShownGiftRequestSelector())
 		{
 			if (hotbar.CanRemoveSelectedItem())
 			{
@@ -901,13 +907,6 @@ void Player::UpdateGiftRequestSelector()
 		}
 		else
 		{
-			std::optional<ItemId> selectedItemId =
-			    Get<GiftRequestSelector>(objGiftRequestSelector).TryGetSelectedItemId();
-			if (selectedItemId.has_value())  // 選択されているアイテムIdがある！
-			{
-				VCU_LOG("選択されているアイテムIdは{}", *selectedItemId);
-			}
-
 			GetScene().Destroy(objGiftRequestSelector);
 		}
 	}
@@ -917,6 +916,16 @@ void Player::UpdateGiftRequestSelector()
 		{
 			if (pPlayerInput->IsInteractBegin())
 			{
+				std::optional<ItemId> selectedItemId =
+				    Get<GiftRequestSelector>(objGiftRequestSelector).TryGetSelectedItemId();
+				if (selectedItemId.has_value())  // 選択されているアイテムIdがある！
+				{
+					if (Get<PlayerBag>(objPlayerBag).DiscardItem(*selectedItemId))
+					{
+						SpawnItem(*selectedItemId);
+					}
+				}
+
 				ShowGiftRequestSelector();
 			}
 		}

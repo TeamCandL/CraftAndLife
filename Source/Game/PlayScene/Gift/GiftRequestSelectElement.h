@@ -8,16 +8,19 @@ struct GiftRequestSelectElementData
 	GiftRequestSelectElementData(
 	    const Resource<Texture> _texture,
 	    const float _beginAngleRad,
-	    const float _endAngleRad,
+	    const float _sizeAngleRad,
 	    const GiftRequestSelectItemInfo& _selectItemInfo) :
 	    image{ _texture },
 	    itemId{ _selectItemInfo.itemId },
-	    count{ _selectItemInfo.count }
+	    count{ _selectItemInfo.count },
+	    beginAngleRad{ _beginAngleRad },
+	    sizeAngleRad{ _sizeAngleRad }
 	{
-		image.minRadius     = 161.0f;
-		image.maxRadius     = 374.0f;
-		image.beginAngleRad = _beginAngleRad;
-		image.endAngleRad   = _endAngleRad;
+		image.minRadius = 161.0f;
+		image.maxRadius = 374.0f;
+		image.beginAngleRad =
+		    _beginAngleRad + DirectX::XM_PIDIV2;  ///< ImageCiecleComponentは0時開始だけど数学上は3時開始のためずらす
+		image.sizeAngleRad = -_sizeAngleRad;
 	}
 
 	Component<UITransform> transform{ Vec2{ 587, 167 },
@@ -27,6 +30,9 @@ struct GiftRequestSelectElementData
 	ItemId itemId{};                                                     ///< アイテムId
 	int32_t count{};                                                     ///< アイテムの個数
 	GameObject objIcon{};                                                ///< アイテムのアイコンオブジェクト
+	GameObject objText{};                                                ///< アイテムのテキスト
+	float beginAngleRad{};                                               ///< 開始角度
+	float sizeAngleRad{};                                                ///< 占める角度
 };
 
 /// @brief ギフトリクエスト選択要素

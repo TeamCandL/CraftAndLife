@@ -21,5 +21,5 @@ struct UIImageCircle : ComponentBase<UIImageCircle>
 	float minRadius{};                          ///< 円中心からの切り抜き半径
 	float maxRadius{};                          ///< 円中心からの表示半径
 	float beginAngleRad{};                      ///< 円の開始地点
-	float endAngleRad{};                        ///< 円の終了地点
+	float sizeAngleRad{};                       ///< 円の終了地点
 };

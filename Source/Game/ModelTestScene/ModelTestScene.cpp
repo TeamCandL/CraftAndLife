@@ -8,6 +8,7 @@
 #include <Game/PlayScene/NPC/NPCRobo.h>
 #include <Game/PlayScene/Gift/GiftRequestBox.h>
 #include "TestPlayer.h"
+#include "TestImageCircle.h"
 
 void ModelTestScene::Start()
 {
@@ -17,4 +18,5 @@ void ModelTestScene::Start()
 	Instantiate<MAP>(Instantiate<HarvestableController>());
 	Instantiate<NPCRobo>();
 	Instantiate<TestPlayer>();
+	// Instantiate<TestImageCircle>();
 }

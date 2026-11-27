@@ -19,7 +19,7 @@ struct GiftRequestSelectElementTextData
 		           UILayerOrder{}.WithUser(10030) },
 	    text{ font, Color::WHITE },
 	    baseScale{ Vec2::One() * _scale },
-	    selectedScale{ Vec2::One() * _scale * SELECTED_SCALE_RATIO }
+	    focusedScale{ Vec2::One() * _scale * SELECTED_SCALE_RATIO }
 	{
 		text.content = _content;
 	}
@@ -29,7 +29,7 @@ struct GiftRequestSelectElementTextData
 	Component<UITransform> transform{ Vec2{}, Vec2{}, UILayerOrder{}.WithUser(10030) };  ///< UI座標系
 	Component<UIText> text{};                                                            ///< UI画像
 	Vec2 baseScale{};                                                                    ///< 基準となるアイコンのサイズ
-	Vec2 selectedScale{};                                                                ///< 選択状態でのアイコンサイズ
+	Vec2 focusedScale{};                                                                 ///< 選択状態でのアイコンサイズ
 };
 
 /// @brief ギフトリクエスト選択UIの各要素アイコン

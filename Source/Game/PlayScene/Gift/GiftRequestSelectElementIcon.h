@@ -13,8 +13,9 @@ struct GiftRequestSelectElementIconData
 		           Vec2::One() * _scale,
 		           UILayerOrder{}.WithUser(10030) },
 	    image{ _texture },
-	    baseScale{ Vec2::One() * _scale },
-	    selectedScale{ Vec2::One() * _scale * SELECTED_SCALE_RATIO }
+	    baseScale{ _scale },
+	    focusedScale{ _scale * SELECTED_SCALE_RATIO },
+	    centerPosition{ _centerPosition }
 	{
 	}
 
@@ -22,8 +23,9 @@ struct GiftRequestSelectElementIconData
 
 	Component<UITransform> transform{ Vec2{}, Vec2{}, UILayerOrder{}.WithUser(10030) };  ///< UI座標系
 	Component<UIImage> image{};                                                          ///< UI画像
-	Vec2 baseScale{};                                                                    ///< 基準となるアイコンのサイズ
-	Vec2 selectedScale{};                                                                ///< 選択状態でのアイコンサイズ
+	float baseScale{};                                                                   ///< 基準となるアイコンのサイズ
+	float focusedScale{};                                                                ///< 選択状態でのアイコンサイズ
+	Vec2 centerPosition{};                                                               ///< 中心座標
 };
 
 /// @brief ギフトリクエスト選択UIの各要素アイコン
@@ -33,5 +35,5 @@ struct GiftRequestSelectElementIcon : ObjectBase<GiftRequestSelectElementIconDat
 
 	/// @brief 選択状態をセットする
 	/// @param _isSelected 選択状態
-	void SetSelected(const bool _isSelected);
+	void SetFocus(const bool _isSelected);
 };

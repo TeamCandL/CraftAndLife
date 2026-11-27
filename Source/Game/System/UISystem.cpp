@@ -202,7 +202,7 @@ void UISystem::UpdateRenderer()
 				        pImageCircle->minRadius,
 				        pImageCircle->maxRadius,
 				        pImageCircle->beginAngleRad,
-				        pImageCircle->endAngleRad,
+				        pImageCircle->sizeAngleRad,
 			        };
 
 			        dx11.SetMaterial(materialImageCircle);
