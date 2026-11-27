@@ -929,6 +929,9 @@ void Player::UpdateGiftRequestSelector()
 					if (Get<PlayerBag>(objPlayerBag).DiscardItem(*selectedItemId))
 					{
 						SpawnItem(*selectedItemId);
+
+						// アイテムを捨てたときのSE
+						Get<AudioManager>().Play(lostWeaponSE);
 					}
 				}
 
