@@ -54,6 +54,7 @@ struct PlayerData
 	GameObject objPlayerBag{};
 	GameObject objHotbar{};
 	GameObject objOtherPlayerController{};  ///< 他プレイヤーのコントローラーオブジェクト
+	GameObject objGiftRequestSelector{};    ///< ギフトリクエストオブジェクト
 	PlayerRoleType role{ PlayerRoleType_Max };
 
 	float angleX{};
@@ -165,6 +166,8 @@ struct PlayerData
 	bool hasReviveChance{ true };  ///< 1回死んでも生き返られるchanceを持っているか treu / false
 
 	const ItemId ITEM_ID_MEDICAL_KIT{ 18 };  ///< 医療キッドのアイテムId
+
+	Vec2 giftRequestSelectorPreviousDirection{};
 };
 
 /// @brief プレイヤー
@@ -223,6 +226,15 @@ struct Player : ObjectBase<PlayerData>, IPlayer
 	void UpdatePickNearestItem();
 	void TryAddItem(ItemId _id);
 	void SpawnItem(ItemId _id);
+
+	void UpdateGiftRequestSelector();
+	void ShowGiftRequestSelector();
+	/// @brief ギフトリクエスト選択UIが表示されているかを取得する
+	/// @return 表示されている true / false
+	bool IsShownGiftRequestSelector() const
+	{
+		return !objGiftRequestSelector.IsEmpty();
+	}
 
 	/// @brief バッグ、ホットバーが現在持っているアイテムを返す。ホットバーが持つ「バッグ」は返さない
 	/// @return

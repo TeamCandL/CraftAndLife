@@ -18,6 +18,22 @@ namespace
 
 struct NPCRoboData
 {
+	const struct Props
+	{
+		const float NEARBY_DISTANCE{ 5.0f };           ///< どの距離を持って近いとするか
+		const int32_t LOW_HP_VALUE{ 20 };              ///< 少ないと判断するhp量
+		const float PERCEIVE_DEG{ 60.0f };             ///< 知覚可能な角度
+		const Vec2Int MAP_POSITION_MAX{ 100, 100 };    ///< マップ座標最大値
+		const Vec2Int MAP_POSITION_MIN{ -100, -100 };  ///< マップ座標最小値
+
+		const ItemId ITEM_ID_MIN{ 3 };   ///< アイテムId:最小
+		const ItemId ITEM_ID_ROCK{ 7 };  ///< アイテムId:石
+		const ItemId ITEM_ID_WOOD{ 8 };  ///< アイテムId:木材
+		const ItemId ITEM_ID_MAX{ 18 };  ///< アイテムId:最大
+
+		const float MOVE_SPEED_PER_SEC{ 3.0f };  ///< 1秒間に進む速度
+	} AI_CONFIG;                                 ///< AI用の設定
+
 	Resource<ModelFbx> model{ "Model/kenney_mini-characters/Models/FBX format/character-robot.fbx" };     ///< モデル
 	Resource<Shader> shader{ "Shader/UnlitFbx.hlsl", RasterizerConfig{ .cullMode = D3D11_CULL_FRONT } };  ///< シェーダ
 
@@ -37,7 +53,7 @@ struct NPCRoboData
 	ItemId itemIdWant{};     ///< 欲しいアイテムId
 
 	// 参照したいゲームオブジェクト
-	GameObject objPlayer{};                 ///< プレイヤー
+	GameObject objAllPlayers{};             ///< プレイヤー
 	GameObject objHarvestableController{};  ///< ハーベスタブルオブジェクト
 	GameObject objEnemyController{};        ///< 敵コントローラー
 	GameObject objDayController{};          ///< 日コントローラー
@@ -50,7 +66,7 @@ struct NPCRoboData
 	    const GameObject _objHarvestableController = {},
 	    const GameObject _objEnemyController       = {},
 	    const GameObject _objDayController         = {}) :
-	    objPlayer{ _objPlayer },
+	    objAllPlayers{ _objPlayer },
 	    objHarvestableController{ _objHarvestableController },
 	    objEnemyController{ _objEnemyController },
 	    objDayController{ _objDayController }
@@ -60,8 +76,8 @@ struct NPCRoboData
 	using AIResult = int32_t;
 	enum AIResult_ : AIResult
 	{
-		AIResult_Next,
-		AIResult_Stop,
+		AIResult_No,
+		AIResult_Yes,
 	};
 
 	struct AINode
@@ -70,12 +86,18 @@ struct NPCRoboData
 		virtual ~AINode()                                 = default;
 		virtual AIResult Update()                         = 0;
 		virtual std::string GetNodeDesc(uint32_t _indent) = 0;
-
-		std::string name{};
 	};
 
 	struct AINodeSequence : AINode
 	{
+		AINodeSequence(
+		    const std::string& _name,
+		    std::vector<std::shared_ptr<AINode>>&& _nodes) :
+		    name{ _name },
+		    nodes{ std::move(_nodes) }
+		{
+		}
+
 		std::string GetNodeDesc(
 		    uint32_t _indent) override
 		{
@@ -88,20 +110,27 @@ struct NPCRoboData
 		}
 		AIResult Update() override
 		{
+			AIResult result{};
 			for (auto& pNode : nodes)
 			{
-				AIResult result = pNode->Update();
-				if (result != AIResult_Next)
-				{
-					return result;
-				}
+				result = pNode->Update();
 			}
-			return AIResult_Next;
+			return result;
 		}
+		std::string name{};
 		std::vector<std::shared_ptr<AINode>> nodes{};
 	};
 	struct AINodeAction : AINode
 	{
+		template <typename Func>
+		AINodeAction(
+		    const std::string& _name,
+		    Func&& _func) :
+		    name{ _name },
+		    action{ std::forward<Func>(_func) }
+		{
+		}
+
 		std::string GetNodeDesc(
 		    uint32_t _indent) override
 		{
@@ -111,10 +140,20 @@ struct NPCRoboData
 		{
 			return action();
 		}
+		std::string name{};
 		std::function<AIResult()> action{};
 	};
 	struct AINodeCondition : AINode
 	{
+		template <typename Func>
+		AINodeCondition(
+		    const std::string& _name,
+		    Func&& _func) :
+		    name{ _name },
+		    expression{ std::forward<Func>(_func) }
+		{
+		}
+
 		std::string GetNodeDesc(
 		    uint32_t _indent) override
 		{
@@ -122,13 +161,22 @@ struct NPCRoboData
 		}
 		AIResult Update() override
 		{
-			return expression() ? AIResult_Stop : AIResult_Next;
+			return expression() ? AIResult_Yes : AIResult_No;
 		}
+		std::string name{};
 		std::function<bool()> expression{};  // 式
 	};
 
 	struct AINodeSwitch : AINode
 	{
+		AINodeSwitch(
+		    const std::string& _name,
+		    std::vector<std::pair<std::shared_ptr<AINode>, std::shared_ptr<AINode>>>&& _nodes) :
+		    name{ _name },
+		    nodes{ std::move(_nodes) }
+		{
+		}
+
 		std::string GetNodeDesc(
 		    uint32_t _indent) override
 		{
@@ -143,17 +191,18 @@ struct NPCRoboData
 		{
 			for (auto& [pCondition, pNode] : nodes)
 			{
-				if (pCondition->Update() == AIResult_Stop)
+				if (pCondition->Update() == AIResult_Yes)
 				{
 					return pNode->Update();
 				}
 			}
 		}
 
-		std::vector<std::pair<std::shared_ptr<AINodeCondition>, std::shared_ptr<AINode>>> nodes{};
+		std::string name{};
+		std::vector<std::pair<std::shared_ptr<AINode>, std::shared_ptr<AINode>>> nodes{};
 	};
 
-	AINodeSequence rootSequenceNode{};  ///< 最も親のノード
+	AINodeSequence rootSequenceNode{ "ルートノード", std::vector<std::shared_ptr<AINode>>{} };  ///< 最も親のノード
 };
 
 struct NPCRobo : ObjectBase<NPCRoboData>

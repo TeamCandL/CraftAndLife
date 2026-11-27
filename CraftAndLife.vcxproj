@@ -459,6 +459,8 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\Manager\SessionManager\SessionStateReader.cpp" />
     <ClCompile Include="Source\Game\MapTestScene\MapTestScene.cpp" />
     <ClCompile Include="Source\Game\ModelTestScene\ModelTestScene.cpp" />
+    <ClCompile Include="Source\Game\ModelTestScene\TestImageCircle.cpp" />
+    <ClCompile Include="Source\Game\ModelTestScene\TestPlayer.cpp" />
     <ClCompile Include="Source\Game\Network\ENetTransport.cpp" />
     <ClCompile Include="Source\Game\Network\INetworkMessage.cpp" />
     <ClCompile Include="Source\Game\Network\MessageConverter.cpp" />
@@ -476,6 +478,10 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\PlayScene\EnemyHpBar.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EnemyHpBarBackGround.cpp" />
     <ClCompile Include="Source\Game\PlayScene\EntitySystem.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Gift\GiftRequestSelectCenterText.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Gift\GiftRequestSelectElement.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Gift\GiftRequestSelectElementIcon.cpp" />
+    <ClCompile Include="Source\Game\PlayScene\Gift\GiftRequestSelector.cpp" />
     <ClCompile Include="Source\Game\PlayScene\HarvestableController.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionBackpack.cpp" />
     <ClCompile Include="Source\Game\PlayScene\ItemAction\ItemActionConsumables.cpp" />
@@ -576,6 +582,7 @@ pre-commit install</Command>
     <ClCompile Include="Source\Game\System\UIRaycasterSystem.cpp" />
     <ClCompile Include="Source\Game\System\UISystem.cpp" />
     <ClCompile Include="Source\Game\System\UITranslationSystem.cpp" />
+    <ClCompile Include="Source\Game\System\YzMassSystem.cpp" />
     <ClCompile Include="Source\Game\Terrain\Terrain.cpp" />
     <ClCompile Include="Source\Game\TestScene\DestroyTesting.cpp" />
     <ClCompile Include="Source\Game\TestScene\LifeChecker.cpp" />
@@ -628,6 +635,7 @@ pre-commit install</Command>
     <ClInclude Include="Library\imgui\imstb_textedit.h" />
     <ClInclude Include="Library\imgui\imstb_truetype.h" />
     <ClInclude Include="Library\miniaudio\miniaudio.h" />
+    <ClInclude Include="Library\gemilib\gemimath.h" />
     <ClInclude Include="Library\nlohmann-json\json.hpp" />
     <ClInclude Include="Library\nlohmann-json\json_fwd.hpp" />
     <ClInclude Include="Library\shigaLibrary\SgMath.h" />
@@ -774,12 +782,15 @@ pre-commit install</Command>
     </ClInclude>
     <ClInclude Include="Source\Game\Component\EffectPlayer\EffectPlayer.h" />
     <ClInclude Include="Source\Game\Component\TransformAnimator.h" />
+    <ClInclude Include="Source\Game\Component\UI\UIImageCircle.h" />
     <ClInclude Include="Source\Game\Component\UI\UIWorldBinder.h" />
     <ClInclude Include="Source\Game\LobbyScene\LobbyUI.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\SessionStateReader.h" />
     <ClInclude Include="Source\Game\Manager\SessionManager\StateTarget.h" />
     <ClInclude Include="Source\Game\MapTestScene\MapTestScene.h" />
     <ClInclude Include="Source\Game\ModelTestScene\ModelTestScene.h" />
+    <ClInclude Include="Source\Game\ModelTestScene\TestImageCircle.h" />
+    <ClInclude Include="Source\Game\ModelTestScene\TestPlayer.h" />
     <ClInclude Include="Source\Game\Network\MultiMessage.h" />
     <ClInclude Include="Source\Game\Network\Protocols\BreakHarvestable.h" />
     <ClInclude Include="Source\Game\Network\Protocols\EntityPicked.h" />
@@ -807,6 +818,14 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\EnemyHpBarBackGround.h" />
     <ClInclude Include="Source\Game\PlayScene\EntitySystem.h" />
     <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestBox.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectCenterBackground.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectCenterText.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectElementIcon.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectElementText.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectItemInfo.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelector.h" />
+    <ClInclude Include="Source\Game\PlayScene\Gift\GiftRequestSelectElement.h" />
     <ClInclude Include="Source\Game\PlayScene\HarvestableController.h" />
     <ClInclude Include="Source\Game\PlayScene\IEntitySystemNetwork.h" />
     <ClInclude Include="Source\Game\PlayScene\ItemAction\IItemAction.h" />
@@ -820,6 +839,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceDayController.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceEnemyController.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceHarvestableController.h" />
+    <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferenceAllPlayers.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\AI\IAIReferencePlayer.h" />
     <ClInclude Include="Source\Game\PlayScene\NPC\NPCRobo.h" />
     <ClInclude Include="Source\Game\PlayScene\OtherEnemyHpBar.h" />
@@ -903,6 +923,7 @@ pre-commit install</Command>
     <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialPlayerInput.h" />
     <ClInclude Include="Source\Game\System\AbstructInputSystem\TutorialUIInput.h" />
     <ClInclude Include="Source\Game\System\AnimationSystem.h" />
+    <ClInclude Include="Source\Game\System\YzMassSystem.h" />
     <ClInclude Include="Source\Game\Terrain\TerrainMaterial.h" />
     <ClInclude Include="Source\Game\Common\UICircleImageMaterial.h" />
     <ClInclude Include="Source\Game\Common\UI\Button.h" />
@@ -1060,6 +1081,7 @@ pre-commit install</Command>
     <None Include="Resource\Shader\Material\TerrainMaterial.hlsli" />
     <None Include="Resource\Shader\Material\TimeMaterial.hlsli" />
     <None Include="Resource\Shader\Material\UICircleImageMaterial.hlsli" />
+    <None Include="Resource\Shader\Material\UIImageCircleMaterial.hlsli" />
     <None Include="Resource\Shader\ModelTransform.hlsli" />
     <None Include="Resource\Shader\ShadowMapTexture.hlsli" />
     <None Include="Resource\Shader\Transform.hlsli" />
@@ -1100,6 +1122,7 @@ pre-commit install</Command>
     <FxCompile Include="Resource\Shader\ToonEdge.hlsl" />
     <FxCompile Include="Resource\Shader\UI.hlsl" />
     <FxCompile Include="Resource\Shader\UICircleImage.hlsl" />
+    <FxCompile Include="Resource\Shader\UIImageCircle.hlsl" />
     <FxCompile Include="Resource\Shader\Unlit.hlsl" />
     <FxCompile Include="Resource\Shader\UnlitFbx.hlsl" />
   </ItemGroup>

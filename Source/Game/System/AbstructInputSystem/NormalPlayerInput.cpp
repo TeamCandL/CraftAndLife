@@ -133,3 +133,11 @@ bool NormalPlayerInput::IsJumpEnd() const
 	return abstructInputSystem_.GetPadInputSystem().IsButtonReleased(GameInputGamepadA) ||
 	       abstructInputSystem_.GetInputSystem().GetKeyUp(KeyCode::Space);
 }
+
+bool NormalPlayerInput::IsMessageBegin() const
+{
+	return abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GameInputGamepadX) ||
+	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GameInputGamepadRightThumbstick) ||
+	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GameInputGamepadY) ||
+	       abstructInputSystem_.GetInputSystem().GetKeyDown(KeyCode::R);
+}

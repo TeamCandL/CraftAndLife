@@ -282,6 +282,27 @@ void Enemy::Sensor(
 				}
 			}
 		}
+
+		/// @brief 生存状態のプレイヤーから追跡対象を決定する
+		{
+			// int32_t playerId{};
+			// if (sessionManager.TryGetPlayerId(objAllPlayers._name, playerId))
+			//{
+			//	StateTarget target = StateTarget::Player(playerId);
+
+			//	int32_t helthState{};
+			//	bool flag = reader.TryGetState(target, "helthState", helthState);
+			//	if (flag)
+			//	{
+			//		if (helthState == HelthState_::HelthState_Live)
+			//		{
+			//		}
+			//	}
+			//	else
+			//	{
+			//	}
+			//}
+		}
 	}
 	if (targetPos_ != DEFAULT_TARGET_POS)
 	{

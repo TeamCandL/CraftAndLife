@@ -21,6 +21,7 @@
 #include <Base/Manager/SceneManager.h>
 #include <Game/System/IMESystem.h>
 #include <Game/System/PadInputSystem.h>
+#include <Game/System/YzMassSystem.h>
 #include <Game/System/AbstructInputSystem.h>
 #include <Game/PlayScene/TerrainSystem.h>
 #include <Game/PlayScene/ItemSystem.h>
@@ -30,6 +31,7 @@
 
 void GameManager::Start()
 {
+	GetScene().Instantiate<YzMassSystem>();
 	GetScene().Instantiate<InputSystem>();
 	GetScene().Instantiate<PadInputSystem>();
 	GetScene().Instantiate<AbstructInputSystem>();

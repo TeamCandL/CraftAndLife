@@ -21,20 +21,22 @@ namespace cha
 		/// @param _b 青成分 0.0f ~ 1.0f
 		/// @param _a 不透明度成分 0.0f ~ 1.0f
 		Color(
-			const float _r,
-			const float _g,
-			const float _b,
-			const float _a = 1.0f) :
-			r{ _r },
-			g{ _g },
-			b{ _b },
-			a{ _a }
-		{}
+		    const float _r,
+		    const float _g,
+		    const float _b,
+		    const float _a = 1.0f) :
+		    r{ _r },
+		    g{ _g },
+		    b{ _b },
+		    a{ _a }
+		{
+		}
 
 		/// @brief 色構造体デフォルトコンストラクタ
 		Color() :
-			Color{ 1.0f, 1.0f, 1.0f }
-		{}
+		    Color{ 1.0f, 1.0f, 1.0f }
+		{
+		}
 
 #pragma region データ本体
 		union
@@ -63,10 +65,11 @@ namespace cha
 
 			return code;
 		}
-		
+
 		/// @brief 色構造体をカラーコードから初期化する
 		/// @param _code カラーコード
-		inline Color(const UINT _code)
+		inline Color(
+		    const UINT _code)
 		{
 			r = static_cast<float>((_code >> (8 * 0)) & UINT8_MAX) / static_cast<float>(UINT8_MAX);
 			g = static_cast<float>((_code >> (8 * 1)) & UINT8_MAX) / static_cast<float>(UINT8_MAX);
@@ -79,7 +82,7 @@ namespace cha
 		inline UINT ToWebCodeA() const
 		{
 			UINT code{};
-			code |= static_cast<UINT>(std::clamp(r, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 24; // Rを最上位に
+			code |= static_cast<UINT>(std::clamp(r, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 24;  // Rを最上位に
 			code |= static_cast<UINT>(std::clamp(g, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 16;
 			code |= static_cast<UINT>(std::clamp(b, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 8;
 			code |= static_cast<UINT>(std::clamp(a, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 0;  // Aを最下位に
@@ -91,7 +94,7 @@ namespace cha
 		inline UINT ToWebCode() const
 		{
 			UINT code{};
-			code |= static_cast<UINT>(std::clamp(r, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 16; // Rを最上位に
+			code |= static_cast<UINT>(std::clamp(r, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 16;  // Rを最上位に
 			code |= static_cast<UINT>(std::clamp(g, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 8;
 			code |= static_cast<UINT>(std::clamp(b, 0.0f, 1.0f) * static_cast<float>(UINT8_MAX)) << 0;
 			return code;
@@ -100,10 +103,10 @@ namespace cha
 		/// @brief α値を含むWebのカラーコードから色を取得
 		/// @param _code Webカラーコード
 		/// @return 色
-		static inline Color FromWebCodeA(const UINT _code)
+		static inline Color FromWebCodeA(
+		    const UINT _code)
 		{
-			return Color
-			{
+			return Color{
 				static_cast<float>((_code >> 24) & UINT8_MAX) / static_cast<float>(UINT8_MAX),
 				static_cast<float>((_code >> 16) & UINT8_MAX) / static_cast<float>(UINT8_MAX),
 				static_cast<float>((_code >> 8) & UINT8_MAX) / static_cast<float>(UINT8_MAX),
@@ -114,10 +117,10 @@ namespace cha
 		/// @brief α値を含むWebのカラーコードから色を取得
 		/// @param _code Webカラーコード
 		/// @return 色
-		static inline Color FromWebCode(const UINT _code)
+		static inline Color FromWebCode(
+		    const UINT _code)
 		{
-			return Color
-			{
+			return Color{
 				static_cast<float>((_code >> 16) & UINT8_MAX) / static_cast<float>(UINT8_MAX),
 				static_cast<float>((_code >> 8) & UINT8_MAX) / static_cast<float>(UINT8_MAX),
 				static_cast<float>((_code >> 0) & UINT8_MAX) / static_cast<float>(UINT8_MAX),
@@ -126,8 +129,10 @@ namespace cha
 
 		static const Color WHITE;  ///< テンプレート色: 白
 		static const Color BLACK;  ///< テンプレート色: 黒
+		static const Color CLEAR;  ///< テンプレート色: 透明
 	};
 
 	inline const Color Color::WHITE{ 1, 1, 1 };
 	inline const Color Color::BLACK{ 0, 0, 0 };
-}
+	inline const Color Color::CLEAR{ 0, 0, 0, 0 };
+}  // namespace cha

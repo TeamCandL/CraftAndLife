@@ -1,5 +1,6 @@
 #pragma once
 #include <Game/Game.h>
+#include <Game/Common/UICircleImageMaterial.h>
 
 /// @brief UIのシステムのデータ
 struct UISystemData
@@ -7,9 +8,18 @@ struct UISystemData
 	Resource<ResourceType::Shader> uiShader{
 		"Shader/UI.hlsl",
 		RasterizerConfig{ .cullMode = D3D11_CULL_NONE, .fillMode = D3D11_FILL_SOLID, .frontCounterClockwise = false }
-	};                                              // UI用のシェーダ
+	};  // UI用のシェーダ
+
+	Resource<ResourceType::Shader> uiImageCircleShader{
+		"Shader/UIImageCircle.hlsl",
+		RasterizerConfig{ .cullMode = D3D11_CULL_NONE, .fillMode = D3D11_FILL_SOLID, .frontCounterClockwise = false }
+	};  // UI円画像用のシェーダ
+
 	Resource<ResourceType::Surface> surfaceQuad{};  // 四角の面
 	Resource<ResourceType::Material> material{ MaterialResource::InstanceEmpty<UITransformMaterialProperty>() };
+	Resource<ResourceType::Material> materialImageCircle{
+		MaterialResource::InstanceEmpty<UICircleImageMaterialProperty>()
+	};
 
 	bool isWantCaptureMouse{ false };  // マウス操作をUIが奪ったか
 };

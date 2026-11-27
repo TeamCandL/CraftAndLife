@@ -1,8 +1,9 @@
 #include "pch\pch.h"
 #include "PadOnlyPlayerInput.h"
 
-PadOnlyPlayerInput::PadOnlyPlayerInput(AbstructInputSystem& _abstructInputSystem) :
-	abstructInputSystem_{ _abstructInputSystem }
+PadOnlyPlayerInput::PadOnlyPlayerInput(
+    AbstructInputSystem& _abstructInputSystem) :
+    abstructInputSystem_{ _abstructInputSystem }
 {
 }
 
@@ -94,4 +95,11 @@ bool PadOnlyPlayerInput::IsJump() const
 bool PadOnlyPlayerInput::IsJumpEnd() const
 {
 	return abstructInputSystem_.GetPadInputSystem().IsButtonReleased(GameInputGamepadA);
+}
+
+bool PadOnlyPlayerInput::IsMessageBegin() const
+{
+	return abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GameInputGamepadX) ||
+	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GameInputGamepadRightThumbstick) ||
+	       abstructInputSystem_.GetPadInputSystem().IsButtonTriggered(GameInputGamepadY);
 }

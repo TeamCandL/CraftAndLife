@@ -7,9 +7,9 @@ namespace cha
 	struct ModelMaterialProperty_
 	{
 		Mat4x4 toWorldMatrix{ Mat4x4::Identity() };
-		Int4 hasTextureSkinAnim{ FALSE, FALSE, FALSE, FALSE };
+		Int4 hasTextureSkinAnim{};
 		Float4 baseColor{};
 	};
 
 	using ModelMaterialProperty = MaterialProperty<ModelMaterialProperty_>;
-}
+}  // namespace cha

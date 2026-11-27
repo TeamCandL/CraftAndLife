@@ -31,6 +31,7 @@ class PadOnlyPlayerInput : public IPlayerInput
 	bool IsJumpBegin() const override;
 	bool IsJump() const override;
 	bool IsJumpEnd() const override;
+	bool IsMessageBegin() const override;
 
 	/// @brief 更新処理
 	virtual void Update() override {}

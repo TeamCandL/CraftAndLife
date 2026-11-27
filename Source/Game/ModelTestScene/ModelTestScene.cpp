@@ -6,12 +6,17 @@
 #include <Game/Tool/DebugCamera.h>
 #include <Game/PlayScene/HarvestableController.h>
 #include <Game/PlayScene/NPC/NPCRobo.h>
+#include <Game/PlayScene/Gift/GiftRequestBox.h>
+#include "TestPlayer.h"
+#include "TestImageCircle.h"
 
 void ModelTestScene::Start()
 {
 	Instantiate<GameManager>();
 	Instantiate<DebugCamera>();
 	Instantiate<Sky>();
-	// Instantiate<MAP>(Instantiate<HarvestableController>());
+	Instantiate<MAP>(Instantiate<HarvestableController>());
 	Instantiate<NPCRobo>();
+	Instantiate<TestPlayer>();
+	// Instantiate<TestImageCircle>();
 }

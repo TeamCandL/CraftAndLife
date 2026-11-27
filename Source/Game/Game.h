@@ -19,6 +19,7 @@
 #include "Component/DynamicTransform.h"
 #include "Component/UI/UITransform.h"
 #include "Component/UI/UIImage.h"
+#include "Component/UI/UIImageCircle.h"
 #include "Component/UI/UIText.h"
 #include "Component/UI/UIRaycastTarget.h"
 #include "Component/EffectPlayer/EffectPlayer.h"

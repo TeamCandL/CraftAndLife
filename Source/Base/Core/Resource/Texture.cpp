@@ -50,6 +50,8 @@ bool cha::TextureRegistry::TryLoad(
 			}
 		}
 
+		_out.imageSize = Vec2{ static_cast<float>(metadata.width), static_cast<float>(metadata.height) };
+
 		// もしフォーマットがアルファ無視ならアルファ付きに変換する
 		if (!DirectX::HasAlpha(metadata.format) && metadata.format != DXGI_FORMAT_R8G8B8A8_UNORM)
 		{
@@ -176,6 +178,8 @@ bool cha::TextureRegistry::TryLoad(
 		texDesc.CPUAccessFlags       = 0;
 		texDesc.MiscFlags            = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
+		_out.imageSize = Vec2{ static_cast<float>(texDesc.Width), static_cast<float>(texDesc.Height) };
+
 		ComPtr<ID3D11Texture2D> pCubeTexture{};
 		ManagerRegistry::Ref<Dx11Manager>().Ref(
 		    [this, &hResult, &texDesc, &subResourceData, &pCubeTexture, &_out](const ComPtr<ID3D11Device>& _pDevice)
@@ -231,25 +235,34 @@ bool cha::TextureRegistry::TryLoad(
 		return true;
 	}
 	case TextureType_ShadowMap:
-	{  // シェーダリソースビューも作る
-		const D3D11_SHADER_RESOURCE_VIEW_DESC DESC{ .Format        = DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-			                                        .ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D,
-			                                        .Texture2D{
-			                                            .MostDetailedMip = 0,
-			                                            .MipLevels       = 1,
-			                                        } };
 
-		ManagerRegistry::Ref<Dx11Manager>().Ref(
-		    [this, &hResult, &DESC, &_config, &_out](const ComPtr<ID3D11Device>& _pDevice)
-		    {
-			    hResult = _pDevice->CreateShaderResourceView(_config.pTexture2D.Get(), &DESC, _out.pSRV.GetAddressOf());
-		    });
-		if (FAILED(hResult))
+		if (_config.pTexture2D)
 		{
-			VCU_ASSERT(SUCCEEDED(hResult) && "シャドウマップ深度バッファビューの作成に失敗");
-			return false;
+			D3D11_TEXTURE2D_DESC desc{};
+			_config.pTexture2D->GetDesc(&desc);
+			_out.imageSize = Vec2{ static_cast<float>(desc.Width), static_cast<float>(desc.Height) };
 		}
-	}
+
+		{  // シェーダリソースビューも作る
+			const D3D11_SHADER_RESOURCE_VIEW_DESC DESC{ .Format        = DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+				                                        .ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D,
+				                                        .Texture2D{
+				                                            .MostDetailedMip = 0,
+				                                            .MipLevels       = 1,
+				                                        } };
+
+			ManagerRegistry::Ref<Dx11Manager>().Ref(
+			    [this, &hResult, &DESC, &_config, &_out](const ComPtr<ID3D11Device>& _pDevice)
+			    {
+				    hResult =
+				        _pDevice->CreateShaderResourceView(_config.pTexture2D.Get(), &DESC, _out.pSRV.GetAddressOf());
+			    });
+			if (FAILED(hResult))
+			{
+				VCU_ASSERT(SUCCEEDED(hResult) && "シャドウマップ深度バッファビューの作成に失敗");
+				return false;
+			}
+		}
 
 		{  // サンプラー
 			ManagerRegistry::Ref<Dx11Manager>().Ref(
