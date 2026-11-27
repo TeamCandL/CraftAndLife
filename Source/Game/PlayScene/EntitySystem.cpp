@@ -231,23 +231,26 @@ Vec3 EntitySystem::GetFacingTheEnemy(
 {
 	EnemyController& enemyController = Get<EnemyController>(_objEnemyController);
 	Entity& entity                   = Get<Entity>(_objEntity);
+	Vec3 Fwd                         = entity.GetForward();
 	Vec3 targetPos{};
 	float targetDist{ -1.0f };
-	for (GameObject& objEnemy : enemyController.GetAllEnemies())
+	if (enemyController.Data().allEnemies.size() > 0)
 	{
-		Enemy& enemy = Get<Enemy>(objEnemy);
-
-		float dist = (enemy.GetPosition() - entity.GetPosition()).Length();
-		if (targetDist == -1.0f || dist < targetDist)
+		for (GameObject& objEnemy : enemyController.GetAllEnemies())
 		{
-			targetDist = dist;
-			targetPos  = enemy.GetPosition();
+			Enemy& enemy = Get<Enemy>(objEnemy);
+
+			float dist = (enemy.GetPosition() - entity.GetPosition()).Length();
+			if (targetDist == -1.0f || dist < targetDist)
+			{
+				targetDist = dist;
+				targetPos  = enemy.GetPosition();
+			}
 		}
-	}
-	Vec3 Fwd = entity.GetForward();
-	if (targetPos != entity.GetPosition())
-	{
-		Fwd = (targetPos - entity.GetPosition()).Normalize();
+		if (targetPos != entity.GetPosition())
+		{
+			Fwd = (targetPos - entity.GetPosition()).Normalize();
+		}
 	}
 
 	return Fwd;
