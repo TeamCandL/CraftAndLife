@@ -38,6 +38,7 @@ struct PlayNetworkControllerData
 
 	// 大剣でダメージを受けたときのSE
 	Resource<Audio> greatswordDamagedSE{ "BGM_SE/Strike with a greatsword.mp3" };
+	Resource<Audio> toolDamagedSE{ "Sound/DoorChime2.wav" };
 
 	Resource<Audio> impactSE{ "BGM_SE/Impact.mp3" };
 
@@ -47,6 +48,7 @@ struct PlayNetworkControllerData
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_SWORD{ 22 };      ///< 剣攻撃のアイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_SWORD_BIG{ 23 };  ///< 大剣攻撃のアイテムId
 	inline static const ItemId ITEM_ID_PLAYER_ATTACK_ARROW{ 24 };      ///< 矢攻撃のアイテムId
+	inline static const ItemId ITEM_ID_PLAYER_ATTACK_TOOL{ 27 };       ///< 道具での攻撃のアイテムId
 };
 
 struct PlayNetworkController : ObjectBase<PlayNetworkControllerData>
