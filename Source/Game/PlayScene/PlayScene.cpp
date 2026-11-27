@@ -31,6 +31,7 @@
 #include <../Resource/MAP/MAP_Island.h>
 #include "../../Resource/MAP/SeaMAP.h"
 #include "../../Resource/MAP/SeaMAP_Island.h"
+#include "NPC/NPCRobo.h"
 
 void PlayScene::Start()
 {
@@ -89,4 +90,6 @@ void PlayScene::Start()
 
 	// チュートリアル最初のステップ
 	Instantiate<TutorialFirstStep>(objPlaySceneUIController, objPlayer, objMainCamera);
+
+	Instantiate<NPCRobo>();
 }

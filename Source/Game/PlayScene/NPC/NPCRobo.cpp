@@ -210,6 +210,13 @@ void NPCRobo::InitializeAI()
 	    });
 #pragma endregion
 
+	/*auto seqA = std::shared_ptr<AINodeSequence>("A", std::vector<std::shared_ptr<AINode>>
+	{
+	    actSetTargetNearbyPlayer,
+	        actLookAtMovePos,
+	                                          std::make_shared<AINodeCondition>()
+	});*/
+
 	/*rootSequenceNode.nodes.emplace_back(std::shared_ptr<AINodeSwitch>(
 	    "",
 	    std::vector<std::pair<std::shared_ptr<AINodeCondition>, std::shared_ptr<AINode>>>{

@@ -29,10 +29,17 @@ void BootSceneLogo::Update()
 		return;
 	}
 
+	bool isOnSkip = Get<RawMouseInputManager>().GetMouseDown(MouseCode_Left);
+
 	last -= fadeOutTime;
 	if (last <= 0.0f)
 	{
 		image.baseColor.a = 1.0f - -last / fadeOutTime;
+
+		if (isOnSkip)
+		{
+			timeLeftSec = 0.0f;
+		}
 		return;
 	}
 
@@ -40,6 +47,11 @@ void BootSceneLogo::Update()
 	if (last <= 0.0f)
 	{
 		image.baseColor.a = 1.0f;
+
+		if (isOnSkip)
+		{
+			timeLeftSec = fadeOutTime;
+		}
 		return;
 	}
 
@@ -47,6 +59,11 @@ void BootSceneLogo::Update()
 	if (last <= 0.0f)
 	{
 		image.baseColor.a = -last / fadeOutTime;
+
+		if (isOnSkip)
+		{
+			timeLeftSec = fadeOutTime + stayTime;
+		}
 		return;
 	}
 }
