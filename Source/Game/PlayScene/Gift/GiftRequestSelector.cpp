@@ -69,6 +69,11 @@ float GiftRequestSelector::GetElementRangeAngleRad() const
 
 std::optional<ItemId> GiftRequestSelector::TryGetSelectedItemId()
 {
+	if (objElements.size() <= 0)
+	{
+		return std::nullopt;
+	}
+
 	int32_t selectedIndex = GetSelectedIndex();
 	if (selectedIndex < 0)
 	{

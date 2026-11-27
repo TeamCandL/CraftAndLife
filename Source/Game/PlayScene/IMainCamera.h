@@ -31,4 +31,8 @@ class IMainCamera
 	/// @brief カメラの種類を設定する
 	/// @param _type カメラの種類
 	virtual void SetCameraType(const MainCameraType _type) = 0;
+
+	/// @brief 操作可能かをセットする
+	/// @param _isActiveControl 操作可能 true / false
+	virtual void SetActiveControl(const bool _isActiveControl) = 0;
 };
