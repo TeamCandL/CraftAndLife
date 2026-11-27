@@ -214,3 +214,14 @@ bool TutorialPlayerInput::IsJumpEnd() const
 		return false;
 	}
 }
+
+bool TutorialPlayerInput::IsMessageBegin() const
+{
+	switch (tutorialSystem_.GetFocusType())
+	{
+	case TutorialForcusType_None_Max:
+		return __super::IsJumpEnd();
+	default:
+		return false;
+	}
+}
