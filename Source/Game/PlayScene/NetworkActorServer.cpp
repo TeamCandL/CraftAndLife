@@ -71,6 +71,16 @@ void NetworkActorServer::Update()
 			CreateEnemies();
 		}
 
+		//	※Mキー押しすぎ注意！！！蜘蛛が生成されます！！！！！
+		if (Get<InputSystem>().GetKeyDown(KeyCode::M) && IsSpawnEnemies())
+		{
+			CreateEnemy(EnemyType::Spider, Vec3{ 0, 0, 0 });
+		}
+		if (Get<InputSystem>().GetKey(KeyCode::I) && IsSpawnEnemies())
+		{
+			CreateEnemy(EnemyType::Spider, Vec3{ 0, 0, 0 });
+		}
+
 #elif 0
 		// CreateEnemies();
 
